@@ -56,9 +56,9 @@ namespace MrRobot.inc
         /// <summary>
         /// Запись данных в log-файл
         /// </summary>
-        public static void LogWrite(string txt = "")
+        public static void LogWrite(string txt = "", string fileName = "log.txt")
         {
-            var file = new FileStream("log.txt", FileMode.OpenOrCreate);
+            var file = new FileStream(fileName, FileMode.OpenOrCreate);
             txt = txt.Length > 0 ? $"{format.DTimeNow()}: {txt}\n" : file.Length == 0 ? "" : "\n";
             byte[] buffer = Encoding.Default.GetBytes(txt);
             file.Seek(0, SeekOrigin.End);

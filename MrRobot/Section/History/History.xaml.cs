@@ -336,9 +336,10 @@ namespace MrRobot.Section.History
             if (Candle.InfoUnit(item.Id) == null)
                 return;
 
+            ChartHead.Update(item);
             var chart = new Chart("History", item.Table);
             HistoryBrowser.Address = chart.PageHtml;
-            ChartHead.Update(item);
+            WriteLine(chart.PageHtml);
 
             BrowserGrid.Visibility = Visibility.Visible;
         }

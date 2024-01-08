@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
 using static System.Console;
 
 using CefSharp;
@@ -14,7 +15,6 @@ using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
 using MrRobot.Section.Trade;
-using System.Runtime.ExceptionServices;
 
 namespace MrRobot
 {
@@ -41,35 +41,16 @@ namespace MrRobot
             };
 
 
-            //try
-            //{
-            //    // Установка каталога кеша для Веб-браузера
-            //    var Settings = new CefSettings();
-            //    Settings.CachePath = Directory.GetCurrentDirectory() + @"\CefSharpCache";
-            //    global.LogWrite(Directory.GetCurrentDirectory() + @"\CefSharpCache");
-            //    Cef.Initialize(Settings);
-            //}
-            //catch (Exception ex)
-            //{
-            //    global.LogWrite($"Не удалось настроить CefSettings: {ex.Message}");
-            //    Environment.Exit(0);
-            //}
-
-
-            global.LogWrite("CefSettings прошли.");
+            // Установка каталога кеша для Веб-браузера
+            var Settings = new CefSettings();
+            Settings.CachePath = Directory.GetCurrentDirectory() + @"\CefSharpCache";
+            Cef.Initialize(Settings);
 
 
             if (Instrument.Count > 0)
                 Candle.ListCreate();
 
-            global.LogWrite("Instrument.Count прошли.");
-
             InitializeComponent();
-
-            global.LogWrite("MAIN InitializeComponent прошли.");
-
-
-
             MainMenuCreate();
 
             // Очистка нижней строки приложения
@@ -173,8 +154,6 @@ namespace MrRobot
                     break;
             }
         }
-
-
         void MainMenuButtonClick(object sender, RoutedEventArgs e)
         {
             var but = sender as Button;
@@ -213,11 +192,11 @@ namespace MrRobot
         }
         private static void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
         {
-            global.LogWrite($"Необработанное исключение: {e.ExceptionObject}");
+            global.LogWrite($"Необработанное исключение: {e.ExceptionObject}", "error.txt");
         }
         private static void FirstChanceExceptionEventHandler(object sender, FirstChanceExceptionEventArgs e)
         {
-            global.LogWrite($"Обработанное исключение: {e.Exception}");
+            global.LogWrite($"Обработанное исключение: {e.Exception}", "error.txt");
         }
 
 
