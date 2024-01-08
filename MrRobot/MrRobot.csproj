@@ -1,0 +1,515 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\CefSharp.Common.120.1.110\build\CefSharp.Common.props" Condition="Exists('packages\CefSharp.Common.120.1.110\build\CefSharp.Common.props')" />
+  <Import Project="packages\cef.redist.x86.120.1.10\build\cef.redist.x86.props" Condition="Exists('packages\cef.redist.x86.120.1.10\build\cef.redist.x86.props')" />
+  <Import Project="packages\cef.redist.x64.120.1.10\build\cef.redist.x64.props" Condition="Exists('packages\cef.redist.x64.120.1.10\build\cef.redist.x64.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9ABE3AAC-34A3-4DD8-9D06-E3A101D8A7C3}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MrRobot</RootNamespace>
+    <AssemblyName>MrRobot</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>MrRobot.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CefSharp, Version=120.1.110.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>packages\CefSharp.Common.120.1.110\lib\net462\CefSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp.Core, Version=120.1.110.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>packages\CefSharp.Common.120.1.110\lib\net462\CefSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp.Wpf, Version=120.1.110.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>packages\CefSharp.Wpf.120.1.110\lib\net462\CefSharp.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="MySqlConnector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
+      <HintPath>packages\MySqlConnector.2.3.3\lib\net48\MySqlConnector.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\StockMarketChartWPF\StockMarketChartWPF\bin\x64\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RobotAPI">
+      <HintPath>..\!Robots\RobotAPI\bin\Debug\RobotAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Diagnostics.DiagnosticSource.8.0.0\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Section\Converter.xaml.cs">
+      <DependentUpon>Converter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\History\History.xaml.cs">
+      <DependentUpon>History.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\History\HistoryMarket.cs" />
+    <Compile Include="Section\History\HistoryService.cs" />
+    <Compile Include="Section\Pattern\Pattern.xaml.cs">
+      <DependentUpon>Pattern.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\Pattern\PatternArchive.xaml.cs">
+      <DependentUpon>PatternArchive.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\Pattern\PatternCode.xaml.cs">
+      <DependentUpon>PatternCode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\SectionUpd.cs" />
+    <Compile Include="Section\Setting\AutoProgon.cs" />
+    <Compile Include="Section\Setting\Setting.xaml.cs">
+      <DependentUpon>Setting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\Tester\RobotBind.cs" />
+    <Compile Include="Section\Tester\Tester.xaml.cs">
+      <DependentUpon>Tester.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\Trade\Depth.cs" />
+    <Compile Include="Section\Trade\RobotBind.cs" />
+    <Compile Include="Section\Trade\Trade.xaml.cs">
+      <DependentUpon>Trade.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Entity\ChartHead.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entity\Candle.cs" />
+    <Compile Include="Entity\Chart.cs" />
+    <Compile Include="Entity\ChartHead.xaml.cs">
+      <DependentUpon>ChartHead.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\Instrument.cs" />
+    <Compile Include="Entity\Market.cs" />
+    <Compile Include="Entity\Robots.cs" />
+    <Compile Include="inc\format.cs" />
+    <Compile Include="inc\global.cs" />
+    <Compile Include="inc\mysql.cs" />
+    <Compile Include="inc\position.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Section\Converter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Section\History\History.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Pattern\Pattern.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Pattern\PatternArchive.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Pattern\PatternCode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Setting\Setting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Tester\Tester.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Trade\Trade.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="!\Browser\Converter\Chart.tmp" />
+    <None Include="!\Browser\History\Chart.tmp" />
+    <None Include="!\Browser\Pattern\Chart.tmp" />
+    <None Include="!\Browser\Pattern\PatternChartVisualShow.tmp" />
+    <None Include="!\Browser\Pattern\PatternFound.tmp" />
+    <None Include="!\Browser\Tester\Chart.tmp" />
+    <None Include="!\Browser\Tester\TesterProcess.tmp" />
+    <None Include="!\Browser\Trade\ChartActual.tmp" />
+    <None Include="!\locales\en-US.pak" />
+    <None Include="!\mysql\my.ini" />
+    <None Include="!\mysql\server\data\auto.cnf" />
+    <None Include="!\mysql\server\data\mrrobot\db.opt" />
+    <None Include="!\mysql\server\data\mrrobot\_candle_data_info.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_candle_data_info.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_candle_data_info.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_instrument.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_instrument.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_instrument.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_instrument_log.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_instrument_log.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_instrument_log.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_market.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_market.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_market.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_order_spot.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_order_spot.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_order_spot.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_order_tester.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_order_tester.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_order_tester.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_pattern_found.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_pattern_found.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_pattern_found.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_pattern_search.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_pattern_search.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_pattern_search.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_position.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_position.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_position.MYI" />
+    <None Include="!\mysql\server\data\mrrobot\_robot.frm" />
+    <None Include="!\mysql\server\data\mrrobot\_robot.MYD" />
+    <None Include="!\mysql\server\data\mrrobot\_robot.MYI" />
+    <None Include="!\mysql\server\data\mysql\columns_priv.frm" />
+    <None Include="!\mysql\server\data\mysql\columns_priv.MYD" />
+    <None Include="!\mysql\server\data\mysql\columns_priv.MYI" />
+    <None Include="!\mysql\server\data\mysql\db.frm" />
+    <None Include="!\mysql\server\data\mysql\db.MYD" />
+    <None Include="!\mysql\server\data\mysql\db.MYI" />
+    <None Include="!\mysql\server\data\mysql\event.frm" />
+    <None Include="!\mysql\server\data\mysql\event.MYD" />
+    <None Include="!\mysql\server\data\mysql\event.MYI" />
+    <None Include="!\mysql\server\data\mysql\func.frm" />
+    <None Include="!\mysql\server\data\mysql\func.MYD" />
+    <None Include="!\mysql\server\data\mysql\func.MYI" />
+    <None Include="!\mysql\server\data\mysql\general_log.CSM" />
+    <None Include="!\mysql\server\data\mysql\general_log.CSV" />
+    <None Include="!\mysql\server\data\mysql\general_log.frm" />
+    <None Include="!\mysql\server\data\mysql\help_category.frm" />
+    <None Include="!\mysql\server\data\mysql\help_category.MYD" />
+    <None Include="!\mysql\server\data\mysql\help_category.MYI" />
+    <None Include="!\mysql\server\data\mysql\help_keyword.frm" />
+    <None Include="!\mysql\server\data\mysql\help_keyword.MYD" />
+    <None Include="!\mysql\server\data\mysql\help_keyword.MYI" />
+    <None Include="!\mysql\server\data\mysql\help_relation.frm" />
+    <None Include="!\mysql\server\data\mysql\help_relation.MYD" />
+    <None Include="!\mysql\server\data\mysql\help_relation.MYI" />
+    <None Include="!\mysql\server\data\mysql\help_topic.frm" />
+    <None Include="!\mysql\server\data\mysql\help_topic.MYD" />
+    <None Include="!\mysql\server\data\mysql\help_topic.MYI" />
+    <None Include="!\mysql\server\data\mysql\innodb_index_stats.frm" />
+    <None Include="!\mysql\server\data\mysql\innodb_index_stats.ibd" />
+    <None Include="!\mysql\server\data\mysql\innodb_table_stats.frm" />
+    <None Include="!\mysql\server\data\mysql\innodb_table_stats.ibd" />
+    <None Include="!\mysql\server\data\mysql\ndb_binlog_index.frm" />
+    <None Include="!\mysql\server\data\mysql\ndb_binlog_index.MYD" />
+    <None Include="!\mysql\server\data\mysql\ndb_binlog_index.MYI" />
+    <None Include="!\mysql\server\data\mysql\plugin.frm" />
+    <None Include="!\mysql\server\data\mysql\plugin.MYD" />
+    <None Include="!\mysql\server\data\mysql\plugin.MYI" />
+    <None Include="!\mysql\server\data\mysql\proc.frm" />
+    <None Include="!\mysql\server\data\mysql\proc.MYD" />
+    <None Include="!\mysql\server\data\mysql\proc.MYI" />
+    <None Include="!\mysql\server\data\mysql\procs_priv.frm" />
+    <None Include="!\mysql\server\data\mysql\procs_priv.MYD" />
+    <None Include="!\mysql\server\data\mysql\procs_priv.MYI" />
+    <None Include="!\mysql\server\data\mysql\proxies_priv.frm" />
+    <None Include="!\mysql\server\data\mysql\proxies_priv.MYD" />
+    <None Include="!\mysql\server\data\mysql\proxies_priv.MYI" />
+    <None Include="!\mysql\server\data\mysql\servers.frm" />
+    <None Include="!\mysql\server\data\mysql\servers.MYD" />
+    <None Include="!\mysql\server\data\mysql\servers.MYI" />
+    <None Include="!\mysql\server\data\mysql\slave_master_info.frm" />
+    <None Include="!\mysql\server\data\mysql\slave_master_info.ibd" />
+    <None Include="!\mysql\server\data\mysql\slave_relay_log_info.frm" />
+    <None Include="!\mysql\server\data\mysql\slave_relay_log_info.ibd" />
+    <None Include="!\mysql\server\data\mysql\slave_worker_info.frm" />
+    <None Include="!\mysql\server\data\mysql\slave_worker_info.ibd" />
+    <None Include="!\mysql\server\data\mysql\slow_log.CSM" />
+    <None Include="!\mysql\server\data\mysql\slow_log.CSV" />
+    <None Include="!\mysql\server\data\mysql\slow_log.frm" />
+    <None Include="!\mysql\server\data\mysql\tables_priv.frm" />
+    <None Include="!\mysql\server\data\mysql\tables_priv.MYD" />
+    <None Include="!\mysql\server\data\mysql\tables_priv.MYI" />
+    <None Include="!\mysql\server\data\mysql\time_zone.frm" />
+    <None Include="!\mysql\server\data\mysql\time_zone.MYD" />
+    <None Include="!\mysql\server\data\mysql\time_zone.MYI" />
+    <None Include="!\mysql\server\data\mysql\time_zone_leap_second.frm" />
+    <None Include="!\mysql\server\data\mysql\time_zone_leap_second.MYD" />
+    <None Include="!\mysql\server\data\mysql\time_zone_leap_second.MYI" />
+    <None Include="!\mysql\server\data\mysql\time_zone_name.frm" />
+    <None Include="!\mysql\server\data\mysql\time_zone_name.MYD" />
+    <None Include="!\mysql\server\data\mysql\time_zone_name.MYI" />
+    <None Include="!\mysql\server\data\mysql\time_zone_transition.frm" />
+    <None Include="!\mysql\server\data\mysql\time_zone_transition.MYD" />
+    <None Include="!\mysql\server\data\mysql\time_zone_transition.MYI" />
+    <None Include="!\mysql\server\data\mysql\time_zone_transition_type.frm" />
+    <None Include="!\mysql\server\data\mysql\time_zone_transition_type.MYD" />
+    <None Include="!\mysql\server\data\mysql\time_zone_transition_type.MYI" />
+    <None Include="!\mysql\server\data\mysql\user.frm" />
+    <None Include="!\mysql\server\data\mysql\user.MYD" />
+    <None Include="!\mysql\server\data\mysql\user.MYI" />
+    <None Include="!\mysql\server\data\performance_schema\accounts.frm" />
+    <None Include="!\mysql\server\data\performance_schema\cond_instances.frm" />
+    <None Include="!\mysql\server\data\performance_schema\db.opt" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_current.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_history.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_history_long.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_summary_by_account_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_summary_by_host_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_summary_by_thread_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_summary_by_user_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_stages_summary_global_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_current.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_history.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_history_long.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_summary_by_account_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_summary_by_digest.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_summary_by_host_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_summary_by_thread_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_summary_by_user_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_statements_summary_global_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_current.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_history.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_history_long.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_summary_by_account_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_summary_by_host_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_summary_by_instance.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_summary_by_thread_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_summary_by_user_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\events_waits_summary_global_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\file_instances.frm" />
+    <None Include="!\mysql\server\data\performance_schema\file_summary_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\file_summary_by_instance.frm" />
+    <None Include="!\mysql\server\data\performance_schema\hosts.frm" />
+    <None Include="!\mysql\server\data\performance_schema\host_cache.frm" />
+    <None Include="!\mysql\server\data\performance_schema\mutex_instances.frm" />
+    <None Include="!\mysql\server\data\performance_schema\objects_summary_global_by_type.frm" />
+    <None Include="!\mysql\server\data\performance_schema\performance_timers.frm" />
+    <None Include="!\mysql\server\data\performance_schema\rwlock_instances.frm" />
+    <None Include="!\mysql\server\data\performance_schema\session_account_connect_attrs.frm" />
+    <None Include="!\mysql\server\data\performance_schema\session_connect_attrs.frm" />
+    <None Include="!\mysql\server\data\performance_schema\setup_actors.frm" />
+    <None Include="!\mysql\server\data\performance_schema\setup_consumers.frm" />
+    <None Include="!\mysql\server\data\performance_schema\setup_instruments.frm" />
+    <None Include="!\mysql\server\data\performance_schema\setup_objects.frm" />
+    <None Include="!\mysql\server\data\performance_schema\setup_timers.frm" />
+    <None Include="!\mysql\server\data\performance_schema\socket_instances.frm" />
+    <None Include="!\mysql\server\data\performance_schema\socket_summary_by_event_name.frm" />
+    <None Include="!\mysql\server\data\performance_schema\socket_summary_by_instance.frm" />
+    <None Include="!\mysql\server\data\performance_schema\table_io_waits_summary_by_index_usage.frm" />
+    <None Include="!\mysql\server\data\performance_schema\table_io_waits_summary_by_table.frm" />
+    <None Include="!\mysql\server\data\performance_schema\table_lock_waits_summary_by_table.frm" />
+    <None Include="!\mysql\server\data\performance_schema\threads.frm" />
+    <None Include="!\mysql\server\data\performance_schema\users.frm" />
+    <None Include="!\mysql\server\lib\debug\auth_win_client.lib" />
+    <None Include="!\mysql\server\lib\debug\clientlib.lib" />
+    <None Include="!\mysql\server\lib\debug\mysqlclient.lib" />
+    <None Include="!\mysql\server\lib\debug\mysys.lib" />
+    <None Include="!\mysql\server\lib\debug\mysys_ssl.lib" />
+    <None Include="!\mysql\server\lib\debug\strings.lib" />
+    <None Include="!\mysql\server\lib\debug\taocrypt.lib" />
+    <None Include="!\mysql\server\lib\debug\vio.lib" />
+    <None Include="!\mysql\server\lib\debug\yassl.lib" />
+    <None Include="!\mysql\server\lib\debug\zlib.lib" />
+    <None Include="!\mysql\server\lib\libmysql.lib" />
+    <None Include="!\mysql\server\lib\mysqlclient.lib" />
+    <None Include="!\mysql\server\my.ini" />
+    <None Include="!\mysql\server\share\english\errmsg.sys" />
+    <None Include="!\mysql\server\share\russian\errmsg.sys" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\images\button-converter-over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-converter.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-History-over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-History.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-pattern-over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-pattern.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-setting-over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-setting.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-tester-over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-tester.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-trade-over.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\images\button-trade.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="MrRobot.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="!\Browser\lightweight-charts.production.js" />
+    <Content Include="!\Browser\PageEmpty.html" />
+    <Content Include="!\Browser\styles.css" />
+    <Content Include="!\mysql\server\bin\mysql.exe" />
+    <Content Include="!\mysql\server\bin\mysqld.exe" />
+    <Content Include="!\mysql\server\bin\mysqldump.exe" />
+    <Content Include="!\mysql\server\lib\libmysql.dll" />
+    <Content Include="!\mysql\server\lib\plugin\adt_null.dll" />
+    <Content Include="!\mysql\server\lib\plugin\auth.dll" />
+    <Content Include="!\mysql\server\lib\plugin\auth_test_plugin.dll" />
+    <Content Include="!\mysql\server\lib\plugin\libdaemon_example.dll" />
+    <Content Include="!\mysql\server\lib\plugin\mypluglib.dll" />
+    <Content Include="!\mysql\server\lib\plugin\qa_auth_client.dll" />
+    <Content Include="!\mysql\server\lib\plugin\qa_auth_interface.dll" />
+    <Content Include="!\mysql\server\lib\plugin\qa_auth_server.dll" />
+    <Content Include="!\mysql\server\lib\plugin\semisync_master.dll" />
+    <Content Include="!\mysql\server\lib\plugin\semisync_slave.dll" />
+    <Content Include="!\mysql\server\lib\plugin\validate_password.dll" />
+    <Content Include="!\table.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\cef.redist.x64.120.1.10\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\cef.redist.x64.120.1.10\build\cef.redist.x64.props'))" />
+    <Error Condition="!Exists('packages\cef.redist.x86.120.1.10\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\cef.redist.x86.120.1.10\build\cef.redist.x86.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.Common.120.1.110\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.120.1.110\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.Common.120.1.110\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.120.1.110\build\CefSharp.Common.targets'))" />
+  </Target>
+  <Import Project="packages\CefSharp.Common.120.1.110\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.120.1.110\build\CefSharp.Common.targets')" />
+</Project>
