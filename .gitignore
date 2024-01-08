@@ -1,6 +1,7 @@
 /MrRobot/!
 /MrRobot/packages
-/MrRobot/.vs/MrRobot
-/MrRobot/bin/x64/Debug
-/MrRobot/obj/x64/Debug
+/MrRobot/.vs
+/MrRobot/bin
+/MrRobot/obj
 /RobotAPI/bin/Debug
+/RobotAPI/obj/Debug

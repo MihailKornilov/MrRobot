@@ -1,0 +1,346 @@
+﻿<UserControl x:Class="MrRobot.Section.Tester"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
+             xmlns:Entity="clr-namespace:MrRobot.Entity"
+             mc:Ignorable="d" 
+             d:DesignHeight="750"
+             d:DesignWidth="1200">
+
+    <UserControl.Resources>
+        <!-- Шаблон для Инструментов -->
+        <DataTemplate x:Key="InstrumentListTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Width="60" Padding="0,5" Content="{Binding Market}" Foreground="#770"/>
+                <Label Width="110" Padding="0,5" Content="{Binding Name}"/>
+                <Label Width="35" FontWeight="Medium" Content="{Binding TF}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Шаблон для Роботов -->
+        <DataTemplate x:Key="RobotListTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding Num}"
+                       Width="{Binding NumWidth}"
+                       Padding="0,2,3,2"
+                       Foreground="#888"
+                       FontWeight="Medium"
+                       HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Name}" Foreground="{Binding NameColor}" Padding="0,2"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Шаблон для Робот-Лога -->
+        <DataTemplate x:Key="TesterLogTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding DTime}" Width="130" Padding="0" Foreground="#AAA"/>
+                <Label Content="{Binding CandleTime}" Width="100" Padding="0" Foreground="#770"/>
+                <Label Content="{Binding Text}" Width="1000" Padding="0"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Шаблон для активных ордеров -->
+        <DataTemplate x:Key="OrderActiveTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding Num}" Width="51" Padding="0,0,7,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Type}" Width="42" Padding="0"/>
+                <Label Content="{Binding Side}" Width="50" Padding="0" Foreground="{Binding SideColor}" FontWeight="Bold"/>
+                <WrapPanel Width="160">
+                    <Label Content="{Binding PriceOpenStr}" Padding="0" MinWidth="20"/>
+                    <Label Content="{Binding QuoteCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
+                </WrapPanel>
+                <Label Content="{Binding DtimeOpen}" Width="160" Padding="23,0,0,0"/>
+                <WrapPanel Width="169">
+                    <Label Content="{Binding QtyStr}" Padding="0"/>
+                    <Label Content="{Binding BaseCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
+                </WrapPanel>
+                <WrapPanel Width="171">
+                    <Label Content="{Binding CostStr}" Padding="0"/>
+                    <Label Content="{Binding QuoteCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
+                </WrapPanel>
+                <WrapPanel Width="170">
+                    <Label Content="{Binding CommissionStr}" Padding="0"/>
+                    <Label Content="{Binding CommissCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
+                </WrapPanel>
+                <Label Content="{Binding PN}" Width="83" Padding="0" Foreground="{Binding PNcolor}"/>
+                <WrapPanel Width="170">
+                    <Label Content="{Binding ProfitStr}" Padding="0" Foreground="{Binding ProfitColor}"/>
+                    <Label Content="{Binding BaseCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
+                </WrapPanel>
+            </StackPanel>
+        </DataTemplate>
+        
+        <!-- Шаблон SPOT исполненных ордеров -->
+        <DataTemplate x:Key="OrderSpotExecTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding Num}" Width="67" Padding="0,0,7,0" Foreground="#999" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Type}" Width="42" Padding="0"/>
+                <Label Content="{Binding Side}" Width="44" Padding="0" Foreground="{Binding SideColor}" FontWeight="Bold"/>
+                <WrapPanel Width="150">
+                    <Label Content="{Binding PriceOpenStr}" Padding="0" MinWidth="20"/>
+                    <Label Content="{Binding QuoteCoin}" Style="{StaticResource OrderCoin}"/>
+                </WrapPanel>
+                <WrapPanel Width="180">
+                    <Label Content="{Binding QtyStr}" Padding="0"/>
+                    <Label Content="{Binding BaseCoin}" Style="{StaticResource OrderCoin}"/>
+                </WrapPanel>
+                <WrapPanel Width="171">
+                    <Label Content="{Binding CostStr}" Padding="0"/>
+                    <Label Content="{Binding QuoteCoin}" Style="{StaticResource OrderCoin}"/>
+                </WrapPanel>
+                <WrapPanel Width="179">
+                    <Label Content="{Binding CommissionStr}" Padding="0"/>
+                    <Label Content="{Binding CommissCoin}" Style="{StaticResource OrderCoin}"/>
+                </WrapPanel>
+                <Label Content="{Binding DtimeOpen}" Width="160" Padding="23,0,0,0"/>
+            </StackPanel>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid Background="#FFF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="41"/>
+            <RowDefinition Height="170"/>
+            <RowDefinition Height="7"/>
+            <RowDefinition/>
+            <RowDefinition Height="165"/>
+        </Grid.RowDefinitions>
+
+        <!-- ЗАГОЛОВОК -->
+        <StackPanel Grid.Row="0" Background="#D9E3EC">
+            <Separator Background="#C2CBD3" Margin="0"/>
+            <TextBlock Text="Тестирование стратегий" Style="{StaticResource HeadName}"/>
+            <Separator Background="#C2CBD3" Margin="0"/>
+        </StackPanel>
+
+        <!-- ПАНЕЛЬ НАСТРОЕК РОБОТА -->
+        <Grid Grid.Row="1" Background="#ECF3F8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="360"/>
+                <ColumnDefinition Width="330"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Список доступных инструментов -->
+            <StackPanel Grid.Column="0">
+                <Label Content="Инструменты:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
+                <ListBox Name="InstrumentListBox"
+                         Width="240"
+                         Height="130"
+                         Margin="10,5,0,0"
+                         HorizontalAlignment="Left"
+                         ItemTemplate="{StaticResource InstrumentListTmp}"
+                         SelectionChanged="InstrumentListChanged"/>
+            </StackPanel>
+
+            <!-- Список доступных роботов -->
+            <StackPanel Name="RobotPanel" Grid.Column="1">
+                <Label Content="Роботы:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
+                <WrapPanel Margin="10,5,0,0">
+                    <ComboBox Name="RobotsListBox"
+                              Width="170"
+                              Height="25"
+                              HorizontalAlignment="Left"
+                              ItemTemplate="{StaticResource RobotListTmp}"
+                              SelectionChanged="RobotListChanged"/>
+                    <Button Name="RobotAddButton"
+                            Content="+"
+                            Margin="5,0,0,0"
+                            Width="25"
+                            Height="25"
+                            FontWeight="Bold"
+                            HorizontalAlignment="Left"/>
+                </WrapPanel>
+            </StackPanel>
+
+            <!-- Текущие активы (балансы монет) -->
+            <StackPanel Name="BalancePanel" Grid.Column="2" Visibility="Hidden">
+                <Label Content="Балансы:" Margin="0,10,0,0" Style="{StaticResource LabelDark}"/>
+                <Border BorderThickness="1"
+                        BorderBrush="#ddb"
+                        Background="#ffe"
+                        Margin="0,4,0,0"
+                        Height="100">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Width="65">
+                            <Label Content="Депозит:"  Padding="0" FontSize="11" Margin="5,25,0,0" Foreground="#555"/>
+                            <Label Content="Комиссии:" Padding="0" FontSize="11" Margin="5,7,0,0"  Foreground="#555"/>
+                        </StackPanel>
+                        <StackPanel Width="145">
+                            <Label Name="BaseBalanceCoin" Padding="0,5,7,0" FontWeight="Bold" Foreground="#555" HorizontalContentAlignment="Right"/>
+                            <Label Name="BaseBalanceSum" Style="{StaticResource BalanceSum}"/>
+                            <Label Name="BaseCommissSum" Style="{StaticResource BalanceSum}" Foreground="#999"/>
+                        </StackPanel>
+                        <StackPanel Width="145">
+                            <Label Name="QuoteBalanceCoin" Padding="0,5,7,0" FontWeight="Bold" Foreground="#555" HorizontalContentAlignment="Right"/>
+                            <Label Name="QuoteBalanceSum" Style="{StaticResource BalanceSum}"/>
+                            <Label Name="QuoteCommissSum" Style="{StaticResource BalanceSum}" Foreground="#999"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Настройки визуализации -->
+            <StackPanel Name="VisualPanel" Grid.Column="3" Margin="10,23,0,0" Visibility="Hidden">
+                <CheckBox Name="UseTF1Check"
+                          Margin="10,10,0,5"
+                          Cursor="Hand"
+                          Checked="UseTF1Checked"
+                          Unchecked="UseTF1Checked"
+                          Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="Для формирования свечей"/>
+                        <TextBlock Text="использовать таймфрейм 1m"/>
+                    </StackPanel>
+                </CheckBox>
+                <CheckBox Name="VisualCheck"
+                          Content="Визуализация"
+                          Margin="10,10,0,0"
+                          Cursor="Hand"
+                          Checked="VisualChecked"
+                          Unchecked="VisualChecked"/>
+                <Button Name="NoVisualButton"
+                        Content="Запуск теста без визуализации"
+                        Width="190"
+                        Height="23"
+                        HorizontalAlignment="Left"
+                        Margin="10,5,0,0"
+                        Cursor="Hand"
+                        Click="NoVisualStart"/>
+            </StackPanel>
+
+        </Grid>
+
+        <!-- ПРОГРЕСС-БАР ПРОЦЕССА ТЕСТИРОВАНИЯ -->
+        <ProgressBar Name="TesterBar" Grid.Row="2" Height="7"/>
+
+        <!-- ГРАФИК ТЕСТЕРА -->
+        <Grid Grid.Row="3" Background="#222" Margin="0,0,1,1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="34"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Height="34" VerticalAlignment="Top" Background="#555">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="700"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Заголовок графика -->
+                <Entity:ChartHead Grid.Column="0" x:Name="TesterChartHead"/>
+
+                <!-- Управление процессом тестирования -->
+                <Grid Grid.Column="1" Height="33" Background="#222" VerticalAlignment="Top">
+                    <WrapPanel Name="ProcessPanel"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,5,0"
+                               VerticalAlignment="Center"
+                               Visibility="Hidden">
+                        <Slider Name="AutoGoSlider"
+                                Width="150"
+                                Margin="0,3,5,0"
+                                TickPlacement="TopLeft"
+                                Minimum="0"
+                                Maximum="10"
+                                IsSnapToTickEnabled="True"
+                                ValueChanged="AutoGoSliderChanged"/>
+                        <Button Name="AutoGoButton"
+                                Content="Старт"
+                                Width="40"
+                                Height="23"
+                                Margin="0,0,5,0"
+                                Background="#1AA573"
+                                Foreground="#0A422E"
+                                Cursor="Hand"
+                                Click="AutoGo"/>
+                        <Button Name="CandleAddButton"
+                                Content="Добавить свечу"
+                                Width="100"
+                                Height="23"
+                                Cursor="Hand"
+                                Click="CandleAdd"/>
+                    </WrapPanel>
+                </Grid>
+            </Grid>
+            <wpf:ChromiumWebBrowser Name="TesterBrowser" Grid.Row="1"/>
+        </Grid>
+
+        <!-- ЛОГИ и ОРДЕРА -->
+        <Grid Grid.Row="4">
+            <TabControl Name="LogMenu"
+                        VerticalAlignment="Top"
+                        Padding="0"
+                        BorderThickness="0"
+                        SelectionChanged="LogMenuPosition">
+                <TabItem Header="Робот лог">
+                    <TabItem.Content>
+                        <ListBox Name="RobotLogList"
+                                 Height="145"
+                                 BorderThickness="0"
+                                 HorizontalAlignment="Left"
+                                 ItemTemplate="{StaticResource TesterLogTmp}"/>
+                    </TabItem.Content>
+                </TabItem>
+
+                <!-- Список отложенных SPOT ордеров -->
+                <TabItem Header="Отложенные ордера">
+                    <TabItem.Content>
+                        <StackPanel HorizontalAlignment="Left">
+                            <WrapPanel Background="#EEE" Margin="3,3,1,0">
+                                <Label Content="Id" Width="54" Style="{StaticResource OrderItemRight}"/>
+                                <Label Content="Type" Width="91" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Цена открытия" Width="183" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Время открытия" Width="138" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Объём" Width="169" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Стоимость ордера" Width="170" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Комиссия" Width="170" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Пункты" Width="83" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Прибыль/убыток" Width="136" Style="{StaticResource OrderItem}"/>
+                            </WrapPanel>
+                            <Separator Background="#BBB" Margin="3,0,1,0"/>
+                            <ListBox Name="OrderActive"
+                                     Width="1282"
+                                     Height="100"
+                                     Margin="2,0,0,0"
+                                     BorderThickness="0"
+                                     ItemTemplate="{StaticResource OrderActiveTmp}"/>
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+
+                <!-- Список SPOT исполненных ордеров -->
+                <TabItem Header="Исполненные ордера">
+                    <TabItem.Content>
+                        <StackPanel HorizontalAlignment="Left">
+                            <WrapPanel Background="#EEE" Margin="3,3,1,0">
+                                <Label Content="Id" Width="64" Style="{StaticResource OrderItemRight}"/>
+                                <Label Content="Type" Width="85" Margin="8,0,0,0" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Цена" Width="150" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Объём" Width="180" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Стоимость" Width="170" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Комиссия" Width="202" Style="{StaticResource OrderItem}"/>
+                                <Label Content="Время исполнения" Width="150" Style="{StaticResource OrderItem}"/>
+                            </WrapPanel>
+                            <Separator Background="#BBB" Margin="3,0,1,0"/>
+                            <ListBox Name="OrderExecuted"
+                                     Width="1282"
+                                     Height="125"
+                                     Margin="2,0,0,0"
+                                     BorderThickness="0"
+                                     ItemTemplate="{StaticResource OrderSpotExecTmp}"/>
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+
+                <TabItem Header="Систем лог"/>
+            </TabControl>
+            
+            
+        </Grid>
+        
+    </Grid>
+</UserControl>

@@ -1,0 +1,124 @@
+﻿<Window x:Class="MrRobot.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		
+		xmlns:Section="clr-namespace:MrRobot.Section"
+		xmlns:History="clr-namespace:MrRobot.Section.History"
+		xmlns:Pattern="clr-namespace:MrRobot.Section.Pattern"
+        xmlns:Trade="clr-namespace:MrRobot.Section.Trade"
+
+		mc:Ignorable="d"
+		
+		Name="MW"
+		Title="Mr.Robot v0.0.1"
+		Width="1366"    MinWidth="1175"
+		Height="800"    MinHeight="800"
+		Left="550"      Top="100"
+		Background="#FFF">
+
+	<Window.Resources>
+		<!-- Шаблон для главного меню -->
+		<DataTemplate x:Key="MainMenuItemTmp">
+			<Button Width="64" Height="64" Click="MainMenuButtonClick" TabIndex="{Binding Index}">
+				<Button.Template>
+					<ControlTemplate TargetType="Button">
+						<Image Name="img" Source="{Binding Image}"/>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="true">
+								<Setter TargetName="img" Property="Source" Value="{Binding ImageOver}"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Button.Template>
+			</Button>
+		</DataTemplate>
+
+		<Style TargetType="ListBoxItem">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ListBoxItem">
+						<Border Name="Bd" Background="{TemplateBinding Panel.Background}">
+							<ContentPresenter Content="{TemplateBinding ContentControl.Content}"
+											  ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="Selector.IsSelectionActive" Value="False"/>
+									<Condition Property="Selector.IsSelected" Value="True"/>
+								</MultiTrigger.Conditions>
+                                <Setter Property="Panel.Background" Value="#B9D0E6" TargetName="Bd"/>
+							</MultiTrigger>
+
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="Selector.IsSelectionActive" Value="True"/>
+									<Condition Property="Selector.IsSelected" Value="True"/>
+								</MultiTrigger.Conditions>
+                                <Setter Property="Panel.Background" Value="#B9D0E6" TargetName="Bd"/>
+							</MultiTrigger>
+
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+
+	</Window.Resources>
+	
+	
+	
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition/>
+			<RowDefinition Height="23"/>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="64"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<!-- КНОПКИ ГЛАВНОГО МЕНЮ -->
+			<Grid Grid.Column="0" Background="#C8DCEE">
+				<StackPanel Grid.Column="0" Background="#DCEBF8" Margin="0,0,1,0">
+					<Separator Background="#C8DCEE" Margin="0"/>
+					<ListBox Name="MainMenuListBox"
+							 Width="64"
+							 Height="400"
+							 Background="Transparent"
+							 BorderThickness="0"
+							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+							 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             SelectionChanged="MainMenuChanged"
+							 ItemTemplate="{StaticResource MainMenuItemTmp}"/>
+				</StackPanel>
+			</Grid>
+
+            <History:History	 Grid.Column="1" x:Name="History"	Visibility="Collapsed"/>
+            <Section:Converter	 Grid.Column="1" x:Name="Converter"	Visibility="Collapsed"/>
+            <Pattern:Pattern	 Grid.Column="1" x:Name="Pattern"	Visibility="Collapsed"/>
+            <Section:Tester		 Grid.Column="1" x:Name="Tester"	Visibility="Collapsed"/>
+            <Trade:Trade		 Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
+            <Section:Setting	 Grid.Column="1" x:Name="Setting"	Visibility="Collapsed"/>
+
+        </Grid>
+		
+		<!-- НИЖНЯЯ СТРОКА ДЛЯ ВЫВОДА КОРОТКИХ СООБЩЕНИЙ -->
+		<Grid Grid.Row="1" Background="#CCDAE6">
+			<StackPanel Height="22" Background="#D2E0ED" Margin="0,1,0,0">
+				<TextBlock Name="MainLineBottom"
+						   Height="22"
+						   Padding="6,0,0,0"
+						   FontSize="15"/>
+			</StackPanel>
+		</Grid>
+
+	</Grid>
+    
+</Window>

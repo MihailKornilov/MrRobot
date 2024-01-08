@@ -1,0 +1,46 @@
+﻿<Window x:Class="MrRobot.Section.Pattern.PatternCode"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Pattern Code Create"
+        Width="900"
+        Height="500"
+        Left="700"
+        Top="130">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="41"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Background="#D9E3EC">
+            <Separator Background="#C2CBD3" Margin="0"/>
+            <TextBlock Text="Формирование кода для робота на основе паттерна" Style="{StaticResource HeadName}"/>
+            <Separator Background="#C2CBD3" Margin="0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Background="#FFFFE8">
+            <TextBox Name="PatternCodeBox"
+                     Margin="10"
+                     Height="360"
+                     AcceptsReturn="True"
+                     BorderBrush="#E0E0D1"
+                     Padding="5,7"
+                     FontSize="16"
+                     FontFamily="Courier New"/>
+            <TextBox Name="PatternOnly"
+                     Margin="10,0"
+                     Height="50"
+                     AcceptsReturn="True"
+                     BorderBrush="#E0E0D1"
+                     Padding="5,7"
+                     FontSize="20"
+                     FontWeight="Medium"
+                     FontFamily="Courier New"/>
+        </StackPanel>
+    </Grid>
+
+</Window>

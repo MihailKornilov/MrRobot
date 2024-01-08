@@ -1,0 +1,244 @@
+﻿<UserControl x:Class="MrRobot.Section.Pattern.PatternArchive"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Background="#FFF"
+             d:DesignWidth="1300"
+             d:DesignHeight="700">
+
+    <UserControl.Resources>
+        <!-- Шаблон для истории поисков -->
+        <DataTemplate x:Key="ArchiveSearchTmp">
+            <WrapPanel>
+                <Label Content="{Binding IdStr}" Width="63" Padding="0,0,12,0" Foreground="#555" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Dtime}" Width="101" Padding="0" Foreground="#AAA" FontWeight="Medium"/>
+                <WrapPanel Width="120">
+                    <Label Content="{Binding Symbol}" Padding="0" FontWeight="Medium"/>
+                    <Label Content="{Binding TF}" Width="30" Padding="0" Margin="5,0,0,0" Foreground="#777"/>
+                </WrapPanel>
+                <Label Content="{Binding CandlesCount}" Padding="0" Width="130"/>
+                <Label Content="{Binding PatternLength}" Width="90" Padding="0,0,45,0" HorizontalContentAlignment="Center"/>
+                <Label Content="{Binding ScatterPercent}" Width="70" Padding="0,0,25,0" HorizontalContentAlignment="Center"/>
+                <Label Content="{Binding FoundCount}" Width="100" Padding="0,0,21,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Duration}" Width="100" Padding="0" HorizontalContentAlignment="Right"/>
+            </WrapPanel>
+        </DataTemplate>
+
+        <!-- Шаблон для строки паттерна -->
+        <DataTemplate x:Key="ArchivePatternTmp">
+            <WrapPanel>
+                <Label Content="{Binding IdStr}" Width="73" Padding="0,0,12,0" Foreground="#555" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Dtime}" Width="101" Padding="0" Foreground="#AAA" FontWeight="Medium"/>
+                <WrapPanel Width="120">
+                    <Label Content="{Binding Symbol}" Padding="0" FontWeight="Medium"/>
+                    <Label Content="{Binding TF}" Width="30" Padding="0" Margin="5,0,0,0" Foreground="#777"/>
+                </WrapPanel>
+                <Label Content="{Binding CandlesCount}" Padding="0" Width="130"/>
+                <Label Content="{Binding PatternLength}" Width="90" Padding="0,0,45,0" HorizontalContentAlignment="Center"/>
+                <Label Content="{Binding Repeat}" Width="100" Padding="0,0,55,0" HorizontalContentAlignment="Center" FontWeight="Medium"/>
+                <StackPanel Width="85" Orientation="Horizontal">
+                    <Label Content="{Binding ProfitCount}" Padding="0" Margin="5,0,0,0" Foreground="#2a2"/>
+                    <Label Content="/" Padding="2,0" Foreground="#CCC"/>
+                    <Label Content="{Binding LossCount}" Padding="0" Foreground="#c22"/>
+                </StackPanel>
+                <Label Content="{Binding Procent}" Width="75" Padding="0" Foreground="#BBB"/>
+            </WrapPanel>
+        </DataTemplate>
+
+        <Style x:Key="Value" TargetType="Label">
+            <Setter Property="Padding" Value="0,2"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="ValueLink" TargetType="Label">
+            <Setter Property="Padding" Value="0,2"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#0B0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#4D4"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PatternListHead" TargetType="Label">
+            <Setter Property="Padding" Value="0,8,0,0"/>
+            <Setter Property="Foreground" Value="#777"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="PatternListHeadLink" TargetType="Label">
+            <Setter Property="Padding" Value="0,8,0,0"/>
+            <Setter Property="Foreground" Value="#777"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#222"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PatternListHead1" TargetType="Label">
+            <Setter Property="Padding" Value="0,2,0,0"/>
+            <Setter Property="Foreground" Value="#777"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="PatternListHead2" TargetType="Label">
+            <Setter Property="Margin" Value="0,-2,0,0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Foreground" Value="#777"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Статистика -->
+        <Grid Grid.Column="0" Background="#DCE8EE">
+            <StackPanel Background="#ECF9FF" Margin="0,0,1,0">
+                <WrapPanel Margin="10,10,0,0">
+                    <Label Content="Всего поисков:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="SearchAll" Style="{StaticResource Value}"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,2,0,0">
+                    <Label Content="С результатами:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="SearchWithResult" Style="{StaticResource Value}"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,15,0,0">
+                    <Label Content="Всего паттернов:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="PatternAll" Style="{StaticResource Value}"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,0,0,0">
+                    <Label Content="Прибыльные:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="PatternProfit"  Style="{StaticResource ValueLink}" MouseLeftButtonDown="PatternProfitShow"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,0,0,0">
+                    <Label Content="Прибыльные 50%:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="PatternProfit50" Style="{StaticResource ValueLink}" FontWeight="Bold" MouseLeftButtonDown="PatternProfitShow"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,0,0,0">
+                    <Label Content="Прибыльные 60%:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="PatternProfit60" Style="{StaticResource ValueLink}" FontWeight="Bold" MouseLeftButtonDown="PatternProfitShow"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,0,0,0">
+                    <Label Content="Прибыльные 70%:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="PatternProfit70" Style="{StaticResource ValueLink}" FontWeight="Bold" MouseLeftButtonDown="PatternProfitShow"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,0,0,0">
+                    <Label Content="Убыточные:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="PatternLoss" Style="{StaticResource Value}" Foreground="#A33"/>
+                </WrapPanel>
+                <WrapPanel Margin="10,0,0,0">
+                    <Label Content="Не проверены:" Style="{StaticResource LabelMain}"/>
+                    <Label Name="PatternNotTested" Style="{StaticResource Value}"/>
+                </WrapPanel>
+            </StackPanel>
+        </Grid>
+
+        <TabControl Grid.Column="1"
+                    Name="ArchiveMenu"
+                    Margin="7,7,0,0"
+                    BorderThickness="1"
+                    BorderBrush="#D3DDE6">
+            <TabItem>
+                <TabItem.Header>Поиски</TabItem.Header>
+                <TabItem.Content>
+                    <StackPanel>
+                        <!-- Заголовок истории поиска  -->
+                        <WrapPanel Background="#EEE" Width="800" Height="33" Margin="3,3,1,0" HorizontalAlignment="Left">
+                            <Label Content="ID поиска" Width="55" HorizontalContentAlignment="Right" Margin="0,0,12,0" Style="{StaticResource PatternListHead}"/>
+                            <Label Content="Дата" Width="100" Style="{StaticResource PatternListHead}"/>
+                            <Label Content="Инструмент" Width="250" Style="{StaticResource PatternListHead}"/>
+                            <StackPanel Width="90">
+                                <Label Content="  Длина" Style="{StaticResource PatternListHead1}"/>
+                                <Label Content="паттерна" Style="{StaticResource PatternListHead2}"/>
+                            </StackPanel>
+                            <Label Content="Разбос %" Width="70" Style="{StaticResource PatternListHead}"/>
+                            <StackPanel Width="120">
+                                <Label Content="Кол-во" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead1}"/>
+                                <Label Content="совпадений" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead2}"/>
+                            </StackPanel>
+                            <StackPanel Width="82">
+                                <Label Content="Время" HorizontalContentAlignment="Right" Margin="0" Style="{StaticResource PatternListHead1}"/>
+                                <Label Content="выполнения" HorizontalContentAlignment="Right" Margin="0" Style="{StaticResource PatternListHead2}"/>
+                            </StackPanel>
+                        </WrapPanel>
+
+                        <ListBox Name="ArchiveData"
+                                 MinWidth="792"
+                                 Height="625"
+                                 HorizontalAlignment="Left"
+                                 BorderThickness="0"
+                                 Margin="2,1,0,0"
+                                 ItemTemplate="{StaticResource ArchiveSearchTmp}">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                    <EventSetter Event="MouseDoubleClick" Handler="ArchiveUnitClick"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </StackPanel>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>Паттерны</TabItem.Header>
+                <TabItem.Content>
+                    <StackPanel>
+                        <!-- Заголовок паттерна  -->
+                        <WrapPanel Background="#EEE" Width="800" Height="33" Margin="3,3,1,0" HorizontalAlignment="Left">
+                            <Label Content="ID паттерна" Width="65" HorizontalContentAlignment="Right" Margin="0,0,12,0" Style="{StaticResource PatternListHead}"/>
+                            <Label Content="Дата" Width="100" Style="{StaticResource PatternListHeadLink}" MouseLeftButtonDown="PatternProfitShow"/>
+                            <Label Content="Инструмент" Width="250" Style="{StaticResource PatternListHead}"/>
+                            <StackPanel Width="90">
+                                <Label Content="  Длина" Style="{StaticResource PatternListHead1}"/>
+                                <Label Content="паттерна" Style="{StaticResource PatternListHead2}"/>
+                            </StackPanel>
+                            <StackPanel Width="90">
+                                <Label Content=" Кол-во" Margin="0,0,40,0" Style="{StaticResource PatternListHead1}"/>
+                                <Label Content="повторов" Margin="0,0,40,0" Style="{StaticResource PatternListHead2}"/>
+                            </StackPanel>
+                            <StackPanel Width="60" Margin="0,0,20,0">
+                                <Label Content="Результат" Style="{StaticResource PatternListHead1}"/>
+                                <Label Content="    теста" Style="{StaticResource PatternListHead2}"/>
+                            </StackPanel>
+                            <Label Content="Процент" Width="50" Style="{StaticResource PatternListHeadLink}" MouseLeftButtonDown="PatternProfitShow"/>
+                        </WrapPanel>
+
+                        <!-- Список паттернов  -->
+                        <ListBox Name="ArchivePatternList"
+                                 MinWidth="792"
+                                 Height="625"
+                                 HorizontalAlignment="Left"
+                                 BorderThickness="0"
+                                 Margin="2,1,0,0"
+                                 ItemTemplate="{StaticResource ArchivePatternTmp}">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                    <EventSetter Event="MouseDoubleClick" Handler="ArchiveUnitClick"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </StackPanel>
+                </TabItem.Content>
+            </TabItem>
+
+        </TabControl>
+
+    </Grid>
+</UserControl>

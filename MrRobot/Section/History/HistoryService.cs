@@ -1,0 +1,226 @@
+﻿using System;
+using System.Net;
+using System.Windows;
+using System.Windows.Controls;
+using System.Threading.Tasks;
+using static System.Console;
+
+using Newtonsoft.Json;
+using MrRobot.inc;
+using MrRobot.Entity;
+
+namespace MrRobot.Section.History
+{
+    public partial class History : UserControl
+    {
+        /// <summary>
+        /// Обновление валютных пар для ByBit
+        /// </summary>
+        private async void InstrumentUpdateGo(object sender, RoutedEventArgs e)
+        {
+            InstrumentUpdateButton.Visibility = Visibility.Collapsed;
+            InstrumentUpdateBar.Value = 0;
+            InstrumentUpdateBarText.Content = "";
+            InstrumentUpdateBarPanel.Visibility = Visibility.Visible;
+
+            var progress = new Progress<int>(v => {
+                InstrumentUpdateBar.Value = v;
+                InstrumentUpdateBarText.Content = v + "%";
+            });
+            await Task.Run(() => InstrumentUpdateProcess(progress));
+            await Task.Run(() => Candle.DataControl(prgs: progress));
+
+            InstrumentUpdateButton.Visibility = Visibility.Visible;
+            InstrumentUpdateBarPanel.Visibility = Visibility.Collapsed;
+            Instrument.ListCreate(true);
+        }
+        private void InstrumentUpdateProcess(IProgress<int> Progress)
+        {
+            /*
+            "symbol":"BTCUSDT",
+            "baseCoin":"BTC",
+            "quoteCoin":"USDT",
+            "innovation":"0",
+            "status":"Trading",
+            "marginTrading":"both",
+            "lotSizeFilter":{
+                "basePrecision":"0.000001",
+                "quotePrecision":"0.00000001",
+                "minOrderQty":"0.000048",
+                "maxOrderQty":"71.73956243",
+                "minOrderAmt":"1",
+                "maxOrderAmt":"2000000"},
+            "priceFilter":{"tickSize":"0.01"}
+             */
+
+            // Ассоциативный массив инструментов по Symbol
+            var mass = Instrument.SymbolUnitAss();
+
+            WebClient wc = new WebClient();
+            string json = wc.DownloadString("https://api.bybit.com/v5/market/instruments-info?category=spot");
+            dynamic array = JsonConvert.DeserializeObject(json);
+            var list = array.result.list;
+
+            var bar = new ProBar(list.Count);
+            for (int i = 0; i < list.Count; i++)
+            {
+                if(bar.isUpd(i))
+                    Progress.Report(bar.Value);
+
+                var v = list[i];
+                var lsf = v.lotSizeFilter;
+                string symbol = v.symbol;
+
+                //Инструмент присутствует в списке
+                if (mass.ContainsKey(symbol))
+                {
+                    var unit = mass[symbol];
+                    InstrumentValueCheck(unit, "basePrecision", unit.BasePrecision, lsf.basePrecision);
+                    InstrumentValueCheck(unit, "quotePrecision", unit.QuotePrecision, lsf.quotePrecision);
+                    InstrumentValueCheck(unit, "minOrderQty", unit.MinOrderQty, lsf.minOrderQty);
+                    InstrumentValueCheck(unit, "tickSize", unit.TickSize, v.priceFilter.tickSize);
+                    InstrumentValueCheck(unit, "status", unit.Status, v.status == "Trading" ? "1" : "0");
+                    //Thread.Sleep(1);
+                    continue;
+                }
+
+                //Если отсутствует, внесение нового инструмента в базу
+                int marketId = 1;
+                string sql = "INSERT INTO`_instrument`(" +
+                                "`marketId`," +
+                                "`symbol`," +
+                                "`baseCoin`," +
+                                "`quoteCoin`," +
+                                "`basePrecision`," +
+                                "`quotePrecision`," +
+                                "`minOrderQty`," +
+                                "`minOrderAmt`," +
+                                "`tickSize`" +
+                             ")VALUES(" +
+                               $"{marketId}," +
+                               $"'{symbol}'," +
+                               $"'{v.baseCoin}'," +
+                               $"'{v.quoteCoin}'," +
+                               $"{lsf.basePrecision}," +
+                               $"{lsf.quotePrecision}," +
+                               $"{lsf.minOrderQty}," +
+                               $"{lsf.minOrderAmt}," +
+                               $"{v.priceFilter.tickSize}" +
+                              ")";
+                var instr = new InstrumentUnit
+                {
+                    Id = Convert.ToInt32(mysql.Query(sql)),
+                    MarketId = marketId,
+                    Symbol = symbol
+                };
+                InstrumentLogInsert(instr, "Новый инструмент", "", (v.baseCoin + "/" + v.quoteCoin).ToString());
+                InstrumentHistoryBeginUpdate(instr);
+            }
+        }
+
+        /// <summary>
+        /// Проверка и обновление изменённых параметров в инструменте
+        /// </summary>
+        private void InstrumentValueCheck(InstrumentUnit unit, string param, dynamic oldV, dynamic newV)
+        {
+            string oldS = format.E(oldV);
+            string newS = format.E(newV);
+
+            if (oldS == newS)
+                return;
+
+            string sql = "UPDATE`_instrument`" +
+                        $"SET`{param}`='{newS}'" +
+                        $"WHERE`id`={unit.Id}";
+            mysql.Query(sql);
+
+            InstrumentLogInsert(unit, $"Изменился параметр \"{param}\"", oldS, newS);
+        }
+
+        /// <summary>
+        /// Внесение лога изменения в инструменте
+        /// </summary>
+        private void InstrumentLogInsert(InstrumentUnit unit, string about, string oldV, string newV)
+        {
+            string sql = "INSERT INTO `_instrument_log`(" +
+                            "`marketId`," +
+                            "`instrumentId`," +
+                            "`about`," +
+                            "`old`," +
+                            "`new`" +
+                         ") VALUES (" +
+                            $"{unit.MarketId}," +
+                            $"{unit.Id}," +
+                            $"'{about}'," +
+                            $"'{oldV}'," +
+                            $"'{newV}'" +
+                         ")";
+            mysql.Query(sql);
+        }
+
+        /// <summary>
+        /// Обновление начала истории по каждому инструменту ByBit
+        /// </summary>
+        private void InstrumentHistoryBeginUpdate(InstrumentUnit unit)
+        {
+            string start = "1577826000";    //2020-01-01 - начало истории для всех инструментов
+
+            WebClient wc = new WebClient();
+
+            // Сначала получение списка по неделям
+            string str = $"https://api.bybit.com/v5/market/kline?category=spot&symbol={unit.Symbol}&interval=W&start={start}000&limit=1000";
+            string json = wc.DownloadString(str);
+            dynamic arr = JsonConvert.DeserializeObject(json);
+            if (arr.retMsg == null)
+                return;
+            if (arr.retMsg != "OK")
+                return;
+
+            int count = arr.result.list.Count;
+            if (count == 0)
+                return;
+
+
+
+            // Затем список по 15 мин., начиная с первого дня недели
+            string last = arr.result.list[count - 1][0];
+            str = $"https://api.bybit.com/v5/market/kline?category=spot&symbol={unit.Symbol}&interval=15&start={last}&limit=1000";
+            json = wc.DownloadString(str);
+            arr = JsonConvert.DeserializeObject(json);
+
+            if (arr.retMsg == null)
+                return;
+            if (arr.retMsg != "OK")
+                return;
+
+            count = arr.result.list.Count;
+            if (count == 0)
+                return;
+
+
+
+            // Затем список по 1 мин. для максимально точного получения начала истории
+            last = arr.result.list[count - 1][0];
+            str = $"https://api.bybit.com/v5/market/kline?category=spot&symbol={unit.Symbol}&interval=1&start={last}&limit=20";
+            json = wc.DownloadString(str);
+            arr = JsonConvert.DeserializeObject(json);
+
+            if (arr.retMsg == null)
+                return;
+            if (arr.retMsg != "OK")
+                return;
+
+            count = arr.result.list.Count;
+            if (count == 0)
+                return;
+
+            last = arr.result.list[count - 1][0];
+            last = last.Substring(0, 10);
+
+            string sql = "UPDATE `_instrument`" +
+                        $"SET `historyBegin`=FROM_UNIXTIME({last})" +
+                        $"WHERE `id`={unit.Id}";
+            mysql.Query(sql);
+        }
+    }
+}
