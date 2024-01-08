@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
+    <title>TITLE</title>
+    <link href="../styles.css" rel="stylesheet">
+    <script type="text/javascript" src="../lightweight-charts.production.js"></script>
+</head>
+    <body>
+        <div id="container"></div>
+
+        <script type="text/javascript">
+            const container = document.getElementById('container');
+            const chart = LightweightCharts.createChart(container,
+            {
+                layout: {
+                    background: { color: "#222" },
+                    textColor: "#C3BCDB",
+                },
+                grid: {
+                    vertLines: { color: "#444" },
+                    horzLines: { color: "#444" },
+                },
+                timeScale: {
+                    borderColor: "#71649C",
+                    timeVisible: true,
+                    secondsVisible: false
+                }
+            });
+
+
+
+
+            //---=== Информация о свечке в верхнем левом углу при наведении мышью ===---
+            const areaSeries = chart.addAreaSeries({
+                topColor: '#2962FF',
+                bottomColor: 'rgba(41, 98, 255, 0.28)',
+                lineColor: '#2962FF',
+                lineWidth: 2,
+                crossHairMarkerVisible: false,
+                priceFormat:{
+                    minMove:TICK_SIZE,
+                    precision:NOL_COUNT
+                }
+            });
+
+            const legend = document.createElement('div');
+            legend.id = 'legend';
+            container.appendChild(legend);
+
+            chart.subscribeCrosshairMove(param => {
+                const candle = param.seriesData.get(candles);
+                if (candle == undefined)
+                    return legend.innerHTML = '';
+
+                const vol = param.seriesData.get(volume);
+                let color = candle.open < candle.close ? "#5FB85D" : "#E06D6A";
+
+                legend.innerHTML =
+                    `<div style="color:${color}"><span>High:</span><b>${candle.high.toFixed(NOL_COUNT)}</b></div>` +
+                    `<div style="color:${color}"><span>Open:</span><b>${candle.open.toFixed(NOL_COUNT)}</b></div>` +
+                    `<div style="color:${color}"><span>Close:</span><b>${candle.close.toFixed(NOL_COUNT)}</b></div>` +
+                    `<div style="color:${color}"><span>Low:</span><b>${candle.low.toFixed(NOL_COUNT)}</b></div>` +
+                    `<div style="color:${color}"><span>Volume:</span><b>${vol.value}</b></div>`;
+            });
+
+
+
+
+
+
+            //---=== СВЕЧНЫЕ ДАННЫЕ ===---
+            const candles = chart.addCandlestickSeries({//Указывает, что график будет свечным
+                wickUpColor: "#56B854",
+                upColor: "#56B854",
+                wickDownColor: "#F6465D",
+                downColor: "#F6465D",
+                borderVisible: false
+            });
+            candles.setData(CANDLES_DATA);
+
+
+
+
+
+
+            //---=== ДАННЫЕ ОБ ОБЪЁМАХ ===---
+            const volume = chart.addHistogramSeries({
+                color: '#26a69a',
+                priceFormat: {
+                    type: 'volume'
+                },
+                priceScaleId: ''
+            });
+            volume.priceScale().applyOptions({
+                scaleMargins: {
+                    top: 0.7,
+                    bottom: 0
+                }
+            });
+            volume.setData(VOLUME_DATA);
+
+            chart.timeScale().scrollToPosition(10);
+
+            window.addEventListener("resize", () => { chart.resize(window.innerWidth, window.innerHeight); });
+        </script>
+    </body>
+</html>

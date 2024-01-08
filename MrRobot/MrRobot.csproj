@@ -89,7 +89,7 @@
       <HintPath>..\StockMarketChartWPF\StockMarketChartWPF\bin\x64\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RobotAPI">
-      <HintPath>..\!Robots\RobotAPI\bin\Debug\RobotAPI.dll</HintPath>
+      <HintPath>..\RobotAPI\bin\Debug\RobotAPI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -241,14 +241,30 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="!\Browser\Converter\Chart.tmp" />
-    <None Include="!\Browser\History\Chart.tmp" />
-    <None Include="!\Browser\Pattern\Chart.tmp" />
-    <None Include="!\Browser\Pattern\PatternChartVisualShow.tmp" />
-    <None Include="!\Browser\Pattern\PatternFound.tmp" />
-    <None Include="!\Browser\Tester\Chart.tmp" />
-    <None Include="!\Browser\Tester\TesterProcess.tmp" />
-    <None Include="!\Browser\Trade\ChartActual.tmp" />
+    <Content Include="Browser\Converter\Chart.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\History\Chart.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\Pattern\Chart.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\Pattern\PatternChartVisualShow.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\Pattern\PatternFound.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\Tester\Chart.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\Tester\TesterProcess.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\Trade\ChartActual.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="!\locales\en-US.pak" />
     <None Include="!\mysql\my.ini" />
     <None Include="!\mysql\server\data\auto.cnf" />
@@ -481,9 +497,15 @@
     <Resource Include="MrRobot.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="!\Browser\lightweight-charts.production.js" />
-    <Content Include="!\Browser\PageEmpty.html" />
-    <Content Include="!\Browser\styles.css" />
+    <Content Include="Browser\lightweight-charts.production.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\PageEmpty.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\styles.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="!\mysql\server\bin\mysql.exe" />
     <Content Include="!\mysql\server\bin\mysqld.exe" />
     <Content Include="!\mysql\server\bin\mysqldump.exe" />
