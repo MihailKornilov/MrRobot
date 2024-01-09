@@ -5,3 +5,7 @@
 /MrRobot/obj
 /RobotAPI/bin/Debug
 /RobotAPI/obj/Debug
+/InnoSetup/.vs/InnoSetup
+/InnoSetup/obj/Debug
+/RobotAPI/bin/Release
+/RobotAPI/obj/Release

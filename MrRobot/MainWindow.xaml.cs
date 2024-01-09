@@ -176,8 +176,6 @@ namespace MrRobot
 
         void AppLoadControl()
         {
-            //InnoSetup();
-
             global.LogWrite();
             global.LogWrite("MrRobot загружается...");
 
@@ -205,41 +203,14 @@ namespace MrRobot
         /// </summary>
         void Control_Mysqld()
         {
-            if (Process.GetProcessesByName("mysqld").Length > 0)
+            string ProcessName = "mysqld_robot";
+            if (Process.GetProcessesByName(ProcessName).Length > 0)
                 return;
 
-            global.LogWrite("Запуск процесса `mysqld`...");
-            var mysqld = Process.Start(Path.GetFullPath("mysql\\server\\bin\\mysqld.exe"));
-            global.LogWrite($"Процесс `mysqld` запущен. ID: {mysqld.Id}");
+            global.LogWrite($"Запуск процесса `{ProcessName}`...");
+            var mysqld = Process.Start(Path.GetFullPath($"mysql\\server\\bin\\{ProcessName}.exe"));
+            global.LogWrite($"Процесс `{ProcessName}` запущен. ID: {mysqld.Id}");
             //Environment.Exit(0);
-        }
-
-
-
-
-        void InnoSetup()
-        {
-            File.Copy("c:\\Work\\mr_robot_script.tmp",
-                      "c:\\Work\\mr_robot_script.iss", true);
-            InnoDirs("c:\\Work\\MrRobot");
-        }
-        void InnoDirs(string path, string directory = "")
-        {
-            InnoFiles(path, directory);
-            var dirs = new DirectoryInfo(path).GetDirectories();
-            foreach (var dir in dirs)
-                InnoDirs($"{path}\\{dir.Name}", $"{directory}\\{dir.Name}");
-        }
-        void InnoFiles(string path, string dir)
-        {
-            var files = Directory.GetFiles(path, "*", SearchOption.TopDirectoryOnly);
-            if (files.Length == 0)
-                return;
-            
-            var write = new StreamWriter("c:\\Work\\mr_robot_script.iss", true);
-            foreach (var file in files)
-                write.WriteLine($"Source: \"{file}\"; DestDir: \"{{app}}{dir}\"; Flags: ignoreversion");
-            write.Close();
         }
     }
 
