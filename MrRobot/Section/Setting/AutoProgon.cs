@@ -147,8 +147,7 @@ namespace MrRobot.Section
                         $"WHERE`cdiId`IN({cdiIds})" +
                          $" AND`patternLength`={PARAM.PatternLength}" +
                          $" AND`scatterPercent`={PARAM.ScatterPercent}" +
-                         $" AND`foundRepeatMin`<={PARAM.FoundRepeatMin} " +
-                          " AND`candleNolAvoid`";
+                         $" AND`foundRepeatMin`<={PARAM.FoundRepeatMin}";
             string[] pfIds = mysql.Ids(sql).Split(',');
 
 

@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace MrRobot.Section.History
+namespace MrRobot.Section
 {
     public partial class History : UserControl
     {

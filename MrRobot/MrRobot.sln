@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrRobot", "MrRobot.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotAPI", "..\RobotAPI\RobotAPI.csproj", "{7FA98DEC-92C8-465A-BEB0-E982A7C847F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Version001", "..\..\_robots\Version001\Version001.csproj", "{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,18 @@ Global
 		{7FA98DEC-92C8-465A-BEB0-E982A7C847F5}.Release|x64.Build.0 = Release|Any CPU
 		{7FA98DEC-92C8-465A-BEB0-E982A7C847F5}.Release|x86.ActiveCfg = Release|Any CPU
 		{7FA98DEC-92C8-465A-BEB0-E982A7C847F5}.Release|x86.Build.0 = Release|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Debug|x64.Build.0 = Debug|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Debug|x86.Build.0 = Debug|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Release|x64.ActiveCfg = Release|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Release|x64.Build.0 = Release|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Release|x86.ActiveCfg = Release|Any CPU
+		{6E12D9D5-131E-4A5F-93F9-D23FCC03C8DF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

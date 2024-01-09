@@ -14,7 +14,6 @@ using CefSharp.Wpf;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
-using MrRobot.Section.Trade;
 
 namespace MrRobot
 {
@@ -203,6 +202,9 @@ namespace MrRobot
         /// </summary>
         void Control_Mysqld()
         {
+            if (Process.GetProcessesByName("mysqld").Length > 0)
+                return;
+
             string ProcessName = "mysqld_robot";
             if (Process.GetProcessesByName(ProcessName).Length > 0)
                 return;

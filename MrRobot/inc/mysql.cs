@@ -4,6 +4,8 @@ using static System.Console;
 
 using MySqlConnector;
 using MrRobot.Entity;
+using System.Data.Common;
+using MrRobot.Section;
 
 namespace MrRobot.inc
 {
@@ -27,8 +29,6 @@ namespace MrRobot.inc
 
         public mysql(string sql, bool isRes = false)
         {
-            global.LogWrite(sql);
-
             try
             {
                 dur = new Dur();
@@ -414,26 +414,36 @@ namespace MrRobot.inc
         /// <summary>
         /// Загрузка свечей и формирование массивов для поиска паттернов
         /// </summary>
-        public static void PatternSearchMass(string sql, ulong Exp, int[] Unix, double[] Price, int[] WickTop, int[] Body, int[] WickBtm)
+        public static void PatternSearchMass(string sql, PatternSearchParam PARAM, int[] Unix, double[] Price, int[] WickTop, int[] Body, int[] WickBtm, int[] Full)
         {
             new mysql(sql, true);
 
-            int i = 0;
+            int i = -1;
             while (res.Read())
             {
-                Unix[i] = res.GetInt32(0);
-
-                double high = res.GetDouble(1),
-                       open = res.GetDouble(2),
-                       low = res.GetDouble(4);
-
-                Price[i] = res.GetDouble(3); // close
-
-                WickTop[i] = Convert.ToInt32((open > Price[i] ? high - open : high - Price[i]) * Exp);
-                Body[i] = Convert.ToInt32((Price[i] - open) * Exp);
-                WickBtm[i] = Convert.ToInt32((open < Price[i] ? open - low : Price[i] - low) * Exp);
-
                 i++;
+
+                Unix[i] = res.GetInt32("unix");
+                Price[i] = res.GetDouble("close");
+
+                double high = res.GetDouble("high"),
+                       open = res.GetDouble("open"),
+                       low = res.GetDouble("low");
+
+                if(high == low)
+                {
+                    PARAM.CandleNolCount++;
+                    continue;
+                }
+
+                int WT = Convert.ToInt32((open > Price[i] ? high - open : high - Price[i]) * PARAM.Exp),
+                    BD = Convert.ToInt32((Price[i] - open) * PARAM.Exp),
+                    WB = Convert.ToInt32((open < Price[i] ? open - low : Price[i] - low) * PARAM.Exp);
+
+                Full[i] = WT + Math.Abs(BD) + WB;
+                WickTop[i] = (int)Math.Round(WT / (double)Full[i] * 100);
+                Body[i] = (int)Math.Round(BD / (double)Full[i] * 100);
+                WickBtm[i] = 100 - Math.Abs(Body[i]) - WickTop[i];
             }
 
             Finish(sql);

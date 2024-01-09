@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static System.Console;
 
 using static RobotAPI.Robot;
 using MrRobot.Entity;
 using MrRobot.inc;
-using System.Threading.Tasks;
 
-namespace MrRobot.Section.Trade
+namespace MrRobot.Section
 {
     public partial class Trade : UserControl
     {

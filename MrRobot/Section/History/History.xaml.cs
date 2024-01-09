@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Entity;
 
-namespace MrRobot.Section.History
+namespace MrRobot.Section
 {
     /// <summary>
     /// Логика взаимодействия для History.xaml

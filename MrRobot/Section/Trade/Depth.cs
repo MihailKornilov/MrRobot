@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using MrRobot.Entity;
 using MrRobot.inc;
 
-namespace MrRobot.Section.Trade
+namespace MrRobot.Section
 {
     public static class Depth
     {

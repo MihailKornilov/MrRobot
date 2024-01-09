@@ -3,14 +3,8 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		
 		xmlns:Section="clr-namespace:MrRobot.Section"
-		xmlns:History="clr-namespace:MrRobot.Section.History"
-		xmlns:Pattern="clr-namespace:MrRobot.Section.Pattern"
-        xmlns:Trade="clr-namespace:MrRobot.Section.Trade"
-
 		mc:Ignorable="d"
-		
 		Name="MW"
 		Title="Mr.Robot v0.0.1"
 		Width="1366"    MinWidth="1175"
@@ -100,11 +94,11 @@
 				</StackPanel>
 			</Grid>
 
-            <History:History	 Grid.Column="1" x:Name="History"	Visibility="Collapsed"/>
+            <Section:History	 Grid.Column="1" x:Name="History"	Visibility="Collapsed"/>
             <Section:Converter	 Grid.Column="1" x:Name="Converter"	Visibility="Collapsed"/>
-            <Pattern:Pattern	 Grid.Column="1" x:Name="Pattern"	Visibility="Collapsed"/>
+            <Section:Pattern	 Grid.Column="1" x:Name="Pattern"	Visibility="Collapsed"/>
             <Section:Tester		 Grid.Column="1" x:Name="Tester"	Visibility="Collapsed"/>
-            <Trade:Trade		 Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
+            <Section:Trade		 Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
             <Section:Setting	 Grid.Column="1" x:Name="Setting"	Visibility="Collapsed"/>
 
         </Grid>

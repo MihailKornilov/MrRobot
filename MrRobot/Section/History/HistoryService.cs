@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Entity;
 
-namespace MrRobot.Section.History
+namespace MrRobot.Section
 {
     public partial class History : UserControl
     {

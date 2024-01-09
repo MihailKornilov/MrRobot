@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Entity;
 
-namespace MrRobot.Section.Trade
+namespace MrRobot.Section
 {
     /// <summary>
     /// Логика взаимодействия для Trade.xaml

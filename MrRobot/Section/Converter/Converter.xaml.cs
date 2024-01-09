@@ -114,6 +114,9 @@ namespace MrRobot.Section
         /// </summary>
         async void ConvertGo(object sender, RoutedEventArgs e)
         {
+            if (SourceListBox.SelectedIndex < 0)
+                return;
+
             int[] CheckedTF = ConvertCheckedTF();
             if (CheckedTF.Length == 0)
                 return;

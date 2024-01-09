@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
-using MrRobot.Section.Pattern;
+using MrRobot.Section;
 
 namespace MrRobot.Entity
 {
@@ -142,7 +142,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Визуальное отображение найденного паттерна (маленький график)
         /// </summary>
-        public void PatternFound(PatternUnit item)
+        public void PatternFound(PatternFoundUnit item)
         {
             var read = new StreamReader(PageTmp);
             var write = new StreamWriter(PHtml);
@@ -222,7 +222,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Показ найденного паттерна на графике
         /// </summary>
-        public void PatternChartVisualShow(PatternUnit item, int UnixIndex = 0)
+        public void PatternChartVisualShow(PatternFoundUnit item, int UnixIndex = 0)
         {
             var read = new StreamReader(PageTmp);
             var write = new StreamWriter(PHtml);
@@ -254,7 +254,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Выделение цветом найденного паттерна
         /// </summary>
-        private string PatternVisualShowColor(CandleUnit unit, PatternUnit item, ref int PatternLength)
+        private string PatternVisualShowColor(CandleUnit unit, PatternFoundUnit item, ref int PatternLength)
         {
             if(item.PatternLength == PatternLength)
             {
@@ -282,7 +282,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Список свечей для графика
         /// </summary>
-        private string PatternVisualShowData(PatternUnit item, int unix)
+        private string PatternVisualShowData(PatternFoundUnit item, int unix)
         {
             string sql = $"SELECT*" +
                          $"FROM`{TableName}`" +

@@ -3,7 +3,7 @@
 using MrRobot.inc;
 using MrRobot.Entity;
 
-namespace MrRobot.Section.Pattern
+namespace MrRobot.Section
 {
     /// <summary>
     /// Логика взаимодействия для PatternCode.xaml
@@ -14,12 +14,12 @@ namespace MrRobot.Section.Pattern
         {
             InitializeComponent();
 
-            var Unit = global.MW.Pattern.PatternListBox.SelectedItem as PatternUnit;
+            var Unit = global.MW.Pattern.PatternListBox.SelectedItem as PatternFoundUnit;
             CodeCreate(Unit);
             PatternOnlyCreate(Unit);
         }
 
-        void CodeCreate(PatternUnit Unit)
+        void CodeCreate(PatternFoundUnit Unit)
         {
             var CDI = Candle.InfoUnit(Unit.CdiId);
 
@@ -59,7 +59,7 @@ namespace MrRobot.Section.Pattern
             PatternCodeBox.Focus();
         }
 
-        void PatternOnlyCreate(PatternUnit Unit)
+        void PatternOnlyCreate(PatternFoundUnit Unit)
         {
             var CDI = Candle.InfoUnit(Unit.CdiId);
             string content = Unit.Candle.Replace('\n', ';');

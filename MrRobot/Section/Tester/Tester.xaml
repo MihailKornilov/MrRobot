@@ -127,7 +127,7 @@
 
             <!-- Список доступных инструментов -->
             <StackPanel Grid.Column="0">
-                <Label Content="Инструменты:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
+                <Label Content="Свечные данные:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
                 <ListBox Name="InstrumentListBox"
                          Width="240"
                          Height="130"
@@ -139,7 +139,7 @@
 
             <!-- Список доступных роботов -->
             <StackPanel Name="RobotPanel" Grid.Column="1">
-                <Label Content="Роботы:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
+                <Label Content="Робот:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
                 <WrapPanel Margin="10,5,0,0">
                     <ComboBox Name="RobotsListBox"
                               Width="170"

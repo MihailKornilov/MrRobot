@@ -158,7 +158,7 @@ namespace MrRobot.Section
         /// </summary>
         private void PanelVisible()
         {
-            bool hide = RobotsListBox.SelectedIndex == -1;
+            bool hide = RobotsListBox.SelectedIndex <= 0;
             BalancePanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
             VisualPanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
             ProcessPanel.Visibility = hide || !Visualization ? Visibility.Hidden : Visibility.Visible;
