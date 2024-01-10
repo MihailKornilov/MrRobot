@@ -76,7 +76,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="255"/>
                     <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="265"/>
                     <ColumnDefinition Width="220"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
@@ -111,29 +111,42 @@
 
                         <StackPanel Name="SetupPanel">
                             <Label Content="Настройка поиска:" Margin="10,10,0,0" Style="{StaticResource LabelMedium}"/>
-                            <WrapPanel Margin="10,15,0,0">
+                            <WrapPanel Margin="20,5,0,0">
                                 <Label Content="Длина паттерна:" Width="105" Style="{StaticResource LabelMain}"/>
-                                <TextBox Name="PatternCandlesCount"
+                                <TextBox Name="PatternLengthBox"
                                          Width="30"
                                          Height="18"
-                                         HorizontalContentAlignment="Right"
-                                         TextChanged="CandlesCountChanged"/>
+                                         IsReadOnly="True"
+                                         HorizontalContentAlignment="Right"/>
+                                <Slider Name="LengthSlider"
+                                        Width="90"
+                                        Margin="5,1,0,0"
+                                        Minimum="1"
+                                        Maximum="7"
+                                        IsSnapToTickEnabled="True"
+                                        ValueChanged="LengthSliderChanged"/>
                             </WrapPanel>
 
-                            <WrapPanel Margin="10,4,0,0">
-                                <Label Content="Разброс:"
+                            <WrapPanel Margin="20,4,0,0">
+                                <Label Content="Точность в %:"
                                        Width="105"
                                        Height="18"
                                        Style="{StaticResource LabelMain}"/>
-                                <TextBox Name="PatternScatterPrc"
-                                         HorizontalContentAlignment="Right"
+                                <TextBox Name="PrecisionPercentBox"
                                          Width="30"
                                          Height="18"
-                                         TextChanged="ScatterPrcChanged"/>
-                                <Label Content="%" Margin="5,0,0,0" Style="{StaticResource LabelDark}"/>
+                                         IsReadOnly="True"
+                                         HorizontalContentAlignment="Right"/>
+                                <Slider Name="PrecisionPercentSlider"
+                                        Width="90"
+                                        Margin="5,1,0,0"
+                                        Minimum="70"
+                                        Maximum="100"
+                                        IsSnapToTickEnabled="True"
+                                        ValueChanged="PrecisionPercentChanged"/>
                             </WrapPanel>
 
-                            <WrapPanel Margin="10,5,0,0">
+                            <WrapPanel Margin="20,5,0,0">
                                 <Label Content="Исключать менее"
                                        Width="105"
                                        Height="18"
@@ -145,24 +158,20 @@
                                      TextChanged="FoundRepeatMinChanged"/>
                                 <Label Content="повторов" Height="18" Margin="5,0,0,0" Width="70" Style="{StaticResource LabelMain}"/>
                             </WrapPanel>
+                        </StackPanel>
 
+                        <StackPanel Name="SearchPanel" Margin="10,15,10,0">
                             <Button Name="SearchGoButton"
-                                Content="Начать поиск"
-                                Margin="10,20,10,0"
-                                Height="25"
-                                Cursor="Hand"
-                                Click="PatternSearchGo"/>
-                            <ProgressBar Name="PatternProgressBar" Height="25" Margin="10,20,10,0" Visibility="Collapsed"/>
-                            <TextBlock Name="ProcessFoundCount"
-                                       Margin="10,3,10,0"
-                                       FontSize="14"
-                                       FontWeight="Medium"
-                                       Foreground="#777"/>
+                                    Content="Начать поиск"
+                                    Height="25"
+                                    Cursor="Hand"
+                                    Click="PatternSearchGo"/>
+                            <ProgressBar Name="PatternProgressBar" Height="25" Visibility="Collapsed"/>
                         </StackPanel>
 
                         <StackPanel Name="ResultPanel" Visibility="Collapsed">
-                            <Label Content="Результат поиска:" Margin="10,10,0,0" Style="{StaticResource LabelMedium}"/>
-                            <WrapPanel Margin="10,15,0,0">
+                            <Label Content="Результат:" Margin="10,10,0,0" Style="{StaticResource LabelMedium}"/>
+                            <WrapPanel Margin="20,5,0,0">
                                 <Label Content="Совпадения:" Style="{StaticResource LabelMain}"/>
                                 <TextBlock Name="CandlesDuplicate" Width="50" Text="0" FontWeight="Bold" Padding="0,2,0,0"/>
                                 <Label Content="Всего итераций:" Style="{StaticResource LabelMain}"/>
@@ -170,32 +179,26 @@
                                 <Label Content="Заняло времени:" Style="{StaticResource LabelMain}"/>
                                 <TextBlock Name="IterationsTime" Width="50" Text="00:00" Padding="0,2,0,0"/>
                             </WrapPanel>
-                            <Button Name="SearchNewButton"
-                                Content="Новый поиск"
-                                Margin="10"
-                                Width="100"
-                                Height="25"
-                                Cursor="Hand"
-                                Click="SearchNew"/>
                         </StackPanel>
+
                     </StackPanel>
                 </Grid>
 
                 <!-- Список найденных паттернов -->
                 <StackPanel Grid.Column="3"
-                            Name="PatternFoundListPanel"
+                            Name="FoundPanel"
                             Visibility="Hidden">
                     <WrapPanel Margin="10,10,0,0">
                         <Label Content="№" FontSize="11" Padding="0" Margin="20,0,0,0" Foreground="#888"/>
                         <Label Content="Паттерн" FontSize="11" Padding="0" Margin="9,0,0,0" Foreground="#888"/>
                         <Label Content="Совпадения" FontSize="11" Padding="0" Margin="39,0,0,0" Foreground="#888"/>
                     </WrapPanel>
-                    <ListBox Name="PatternListBox"
+                    <ListBox Name="FoundListBox"
                              Width="210"
                              Height="167"
                              HorizontalAlignment="Left"
                              Margin="10,2,0,0"
-                             SelectionChanged="PatternListChanged"
+                             SelectionChanged="FoundListChanged"
                              ItemTemplate="{StaticResource PatternListTmp}"/>
                 </StackPanel>
 

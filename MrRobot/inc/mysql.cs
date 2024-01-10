@@ -414,39 +414,39 @@ namespace MrRobot.inc
         /// <summary>
         /// Загрузка свечей и формирование массивов для поиска паттернов
         /// </summary>
-        public static void PatternSearchMass(string sql, PatternSearchParam PARAM, int[] Unix, double[] Price, int[] WickTop, int[] Body, int[] WickBtm, int[] Full)
+        public static List<PatternUnit> PatternSearchMass(string sql, PatternSearchParam PARAM)
         {
             new mysql(sql, true);
 
-            int i = -1;
+            var PatternList = new List<PatternUnit>();
+            var CandleList = new List<PatternCandleUnit>();
+
             while (res.Read())
             {
-                i++;
-
-                Unix[i] = res.GetInt32("unix");
-                Price[i] = res.GetDouble("close");
-
-                double high = res.GetDouble("high"),
-                       open = res.GetDouble("open"),
-                       low = res.GetDouble("low");
-
-                if(high == low)
+                var candle = new PatternCandleUnit
                 {
-                    PARAM.CandleNolCount++;
-                    continue;
-                }
+                    Unix = res.GetInt32("unix"),
+                    High = res.GetDouble("high"),
+                    Open = res.GetDouble("open"),
+                    Close = res.GetDouble("close"),
+                    Low = res.GetDouble("low")
+                };
 
-                int WT = Convert.ToInt32((open > Price[i] ? high - open : high - Price[i]) * PARAM.Exp),
-                    BD = Convert.ToInt32((Price[i] - open) * PARAM.Exp),
-                    WB = Convert.ToInt32((open < Price[i] ? open - low : Price[i] - low) * PARAM.Exp);
+                candle.IsNol = candle.High == candle.Low;
 
-                Full[i] = WT + Math.Abs(BD) + WB;
-                WickTop[i] = (int)Math.Round(WT / (double)Full[i] * 100);
-                Body[i] = (int)Math.Round(BD / (double)Full[i] * 100);
-                WickBtm[i] = 100 - Math.Abs(Body[i]) - WickTop[i];
+                CandleList.Add(candle);
+
+                if (CandleList.Count > PARAM.PatternLength)
+                    CandleList.RemoveRange(0, 1);
+
+                var patt = new PatternUnit();
+                if (patt.Calc(CandleList, PARAM.PatternLength, PARAM.Exp))
+                    PatternList.Add(patt);
             }
 
             Finish(sql);
+
+            return PatternList;
         }
     }
 }

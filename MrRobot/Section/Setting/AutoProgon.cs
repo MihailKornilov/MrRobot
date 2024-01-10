@@ -146,7 +146,7 @@ namespace MrRobot.Section
                          "FROM`_pattern_search`" +
                         $"WHERE`cdiId`IN({cdiIds})" +
                          $" AND`patternLength`={PARAM.PatternLength}" +
-                         $" AND`scatterPercent`={PARAM.ScatterPercent}" +
+                         $" AND`scatterPercent`={PARAM.PrecisionPercent}" +
                          $" AND`foundRepeatMin`<={PARAM.FoundRepeatMin}";
             string[] pfIds = mysql.Ids(sql).Split(',');
 
@@ -175,8 +175,8 @@ namespace MrRobot.Section
             //ButtonClick(global.MW.MainMenuButton_3);
 
             // Установка настроек
-            global.MW.Pattern.PatternCandlesCount.Text = PARAM.PatternLength;
-            global.MW.Pattern.PatternScatterPrc.Text = PARAM.ScatterPercent;
+            global.MW.Pattern.PatternLengthBox.Text = PARAM.PatternLength;
+            global.MW.Pattern.PrecisionPercentBox.Text = PARAM.PrecisionPercent;
             global.MW.Pattern.FoundRepeatMin.Text = PARAM.FoundRepeatMin;
 
             PARAM.Index = 0;
@@ -201,9 +201,6 @@ namespace MrRobot.Section
             int id = PARAM.ConvertedIds[index];
             PARAM.Index++;
             global.MW.Pattern.SourceListBox.SelectedItem = Candle.InfoUnit(id);
-
-            // Нажатие на кнопку "Новый поиск"
-            ButtonClick(global.MW.Pattern.SearchNewButton);
 
             // Нажатие на кнопку "Запуск поиска паттернов"
             ButtonClick(global.MW.Pattern.SearchGoButton);
@@ -341,7 +338,7 @@ namespace MrRobot.Section
         public int SymbolIndex { get; set; }
         public string ConvertTF { get; set; }       // Список таймфреймов черех запятую
         public string PatternLength { get; set; }   // Длина паттерна
-        public string ScatterPercent { get; set; }  // Разброс в процентах
+        public string PrecisionPercent { get; set; }  // Разброс в процентах
         public string FoundRepeatMin { get; set; }  // Исключать менее N нахождений
         public int Index { get; set; }              // Индекс для Конвертера, Тестера
         public int[] ConvertedIds { get; set; }     // ID сконвертированных свечных данных

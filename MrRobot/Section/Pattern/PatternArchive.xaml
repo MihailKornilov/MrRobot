@@ -20,7 +20,7 @@
                 </WrapPanel>
                 <Label Content="{Binding CandlesCount}" Padding="0" Width="130"/>
                 <Label Content="{Binding PatternLength}" Width="90" Padding="0,0,45,0" HorizontalContentAlignment="Center"/>
-                <Label Content="{Binding ScatterPercent}" Width="70" Padding="0,0,25,0" HorizontalContentAlignment="Center"/>
+                <Label Content="{Binding PrecisionPercent}" Width="70" Padding="0,0,25,0" HorizontalContentAlignment="Center"/>
                 <Label Content="{Binding FoundCount}" Width="100" Padding="0,0,21,0" HorizontalContentAlignment="Right"/>
                 <Label Content="{Binding Duration}" Width="100" Padding="0" HorizontalContentAlignment="Right"/>
             </WrapPanel>
@@ -43,7 +43,7 @@
                     <Label Content="/" Padding="2,0" Foreground="#CCC"/>
                     <Label Content="{Binding LossCount}" Padding="0" Foreground="#c22"/>
                 </StackPanel>
-                <Label Content="{Binding Procent}" Width="75" Padding="0" Foreground="#BBB"/>
+                <Label Content="{Binding ProfitPercent}" Width="75" Padding="0" Foreground="#BBB"/>
             </WrapPanel>
         </DataTemplate>
 
@@ -168,7 +168,7 @@
                                 <Label Content="  Длина" Style="{StaticResource PatternListHead1}"/>
                                 <Label Content="паттерна" Style="{StaticResource PatternListHead2}"/>
                             </StackPanel>
-                            <Label Content="Разбос %" Width="70" Style="{StaticResource PatternListHead}"/>
+                            <Label Content="Точность %" Width="70" Style="{StaticResource PatternListHead}"/>
                             <StackPanel Width="120">
                                 <Label Content="Кол-во" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead1}"/>
                                 <Label Content="совпадений" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead2}"/>

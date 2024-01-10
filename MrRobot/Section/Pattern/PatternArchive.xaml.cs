@@ -59,7 +59,7 @@ namespace MrRobot.Section
                     TimeFrame = CDI.TimeFrame,
                     CandlesCount = Candle.CountTxt(CDI.RowsCount),
                     PatternLength = Convert.ToInt32(row["patternLength"]),
-                    ScatterPercent = Convert.ToInt32(row["scatterPercent"]),
+                    PrecisionPercent = Convert.ToInt32(row["scatterPercent"]),
                     FoundRepeatMin = Convert.ToInt32(row["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(row["foundCount"]),
                     Duration = row["duration"]
@@ -140,7 +140,7 @@ namespace MrRobot.Section
             var param = new PatternSearchParam()
             {
                 PatternLength = Item.PatternLength,
-                ScatterPercent = Item.ScatterPercent,
+                PrecisionPercent = Item.PrecisionPercent,
                 FoundRepeatMin = Item.FoundRepeatMin,
                 CdiId = CDI.Id,
                 TimeFrame = CDI.TimeFrame,
@@ -150,7 +150,11 @@ namespace MrRobot.Section
 
             global.MW.Pattern.ArchiveGo();
             global.MW.Pattern.SourceListBox.SelectedItem = CDI;
+            global.MW.Pattern.LengthSlider.Value = Item.PatternLength;
+            global.MW.Pattern.PrecisionPercentSlider.Value = Item.PrecisionPercent;
+            global.MW.Pattern.FoundRepeatMin.Text = Item.FoundRepeatMin.ToString();
             global.MW.Pattern.PatternSearchExist(param);
+            global.MW.Pattern.SearchStatistic(param);
         }
 
         int ProfitPrc = 50;         // Минимальный процент прибыльности в запросе
@@ -231,13 +235,13 @@ namespace MrRobot.Section
                     TimeFrame = CDI.TimeFrame,
                     CandlesCount = Candle.CountTxt(CDI.RowsCount),
                     PatternLength = Convert.ToInt32(SSass["patternLength"]),
-                    ScatterPercent = Convert.ToInt32(SSass["scatterPercent"]),
+                    PrecisionPercent = Convert.ToInt32(SSass["scatterPercent"]),
                     FoundRepeatMin = Convert.ToInt32(SSass["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(SSass["foundCount"]),
                     Repeat = Convert.ToInt32(row["repeat"]),
                     ProfitCount = Convert.ToInt32(row["profitCount"]),
                     LossCount = Convert.ToInt32(row["lossCount"]),
-                    Procent = Convert.ToInt32(row["procent"])
+                    ProfitPercent = Convert.ToInt32(row["procent"])
                 });
             }
 

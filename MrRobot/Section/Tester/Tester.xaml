@@ -125,7 +125,7 @@
                 <ColumnDefinition Width="330"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Список доступных инструментов -->
+            <!-- Список доступных свечных паттернов -->
             <StackPanel Grid.Column="0">
                 <Label Content="Свечные данные:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
                 <ListBox Name="InstrumentListBox"
