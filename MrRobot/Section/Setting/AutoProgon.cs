@@ -13,11 +13,11 @@ namespace MrRobot.Section
     public static class AutoProgon
     {
         public static bool Active { get; private set; }
-        private static AutoProgonParam PARAM { get; set; }
+        static AutoProgonParam PARAM { get; set; }
 
         public static void Go(AutoProgonParam param)
         {
-            //global.MW.Setting.AutoProgonButton.IsEnabled = false;
+            global.MW.Setting.AutoProgonButton.IsEnabled = false;
 
             // Установка параметров в History
             global.MW.History.InstrumentFindBox.Text = "";
@@ -35,22 +35,30 @@ namespace MrRobot.Section
             SymbolChange();
         }
 
-        private static void ButtonClick(Button but)
+        static void ButtonClick(Button but)
         {
             var args = new RoutedEventArgs(Button.ClickEvent);
             but.RaiseEvent(args);
         }
 
         /// <summary>
+        /// Переход на выбранную страницу
+        /// </summary>
+        static void SectionGo(int num)
+        {
+            global.MW.MainMenuListBox.SelectedIndex = num - 1;
+        }
+
+        /// <summary>
         /// Смена на очередную валютную пару
         /// </summary>
-        private static void SymbolChange()
+        static void SymbolChange()
         {
             if (PARAM.SymbolIndex >= PARAM.SymbolMass.Length)
             {
                 Active = false;
                 FoundCandle = null;
-                //global.MW.Setting.AutoProgonButton.IsEnabled = true;
+                global.MW.Setting.AutoProgonButton.IsEnabled = true;
                 WriteLine("------------------- AutoProgon FINISHED: " + PARAM.dur.Second());
                 return;
             }
@@ -65,10 +73,10 @@ namespace MrRobot.Section
         /// <summary>
         /// Скачивание исторических данных
         /// </summary>
-        private static void HistoryDownload()
+        static void HistoryDownload()
         {
             // Переход на страницу 1:"Скачивание исторических данных"
-            //ButtonClick(global.MW.MainMenuButton_1);
+            SectionGo(1);
 
             // Если свечные данные были скачаны ранее, переход на Конвертацию
             var unit = Candle.UnitTF(PARAM.Symbol);
@@ -94,7 +102,7 @@ namespace MrRobot.Section
                 return;
 
             // Переход на страницу 2:"Конвертер"
-            //ButtonClick(global.MW.MainMenuButton_2);
+            SectionGo(2);
 
             // Выбор скачанной истории TF=1
             global.MW.Converter.SourceListBox.SelectedItem = Candle.InfoUnit(cdiId);
@@ -146,8 +154,7 @@ namespace MrRobot.Section
                          "FROM`_pattern_search`" +
                         $"WHERE`cdiId`IN({cdiIds})" +
                          $" AND`patternLength`={PARAM.PatternLength}" +
-                         $" AND`scatterPercent`={PARAM.PrecisionPercent}" +
-                         $" AND`foundRepeatMin`<={PARAM.FoundRepeatMin}";
+                         $" AND`scatterPercent`={PARAM.PrecisionPercent}";
             string[] pfIds = mysql.Ids(sql).Split(',');
 
 
@@ -172,7 +179,7 @@ namespace MrRobot.Section
             }
 
             // Переход на страницу 3:"Поиск паттернов"
-            //ButtonClick(global.MW.MainMenuButton_3);
+            SectionGo(3);
 
             // Установка настроек
             global.MW.Pattern.PatternLengthBox.Text = PARAM.PatternLength;
@@ -215,8 +222,10 @@ namespace MrRobot.Section
         /// </summary>
         static void RobotSetup()
         {
+            SymbolChange();
+
             // Переход на страницу 4:"Tester"
-            //ButtonClick(global.MW.MainMenuButton_4);
+            SectionGo(4);
 
             // Идентификаторы свечных данных текущего Symbol
             string cdiIds = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);

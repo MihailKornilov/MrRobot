@@ -55,6 +55,8 @@ namespace MrRobot.inc
             cmd = null;
             res = null;
 
+            return;
+
             long Unix = format.UnixNow_MilliSec();
             if (Unix - UnixLast > 1000)
                 WriteLine();
