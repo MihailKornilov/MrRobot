@@ -62,24 +62,17 @@ namespace MrRobot.Section
             DBdateBegin.Text = item.DateBegin;
             DBdateEnd.Text = item.DateEnd;
 
-            SearchBrowserShow(item);
-        }
-
-
-        /// <summary>
-        /// Показ графика
-        /// </summary>
-        void SearchBrowserShow(CandleDataInfoUnit item)
-        {
+            // Вывод графика
             PatternChartHead.Update(item);
-
             if (global.IsAutoProgon)
+            {
+                SearchBrowser.Address = new Chart().PageHtml;
                 return;
-            if (SearchResultCheck())
-                return;
-
+            }
+            SearchResultCheck();
             SearchBrowser.Address = new Chart("Pattern", item.Table).PageHtml;
         }
+
 
         /// <summary>
         /// Изменение параметра Длина паттерна (сохранение позиции)
@@ -112,12 +105,12 @@ namespace MrRobot.Section
             SearchResultCheck((sender as TextBox).IsFocused);
         }
 
-        bool SearchResultCheck(bool isCheck = true)
+        void SearchResultCheck(bool isCheck = true)
         {
             if (!global.IsInited(3))
-                return false;
+                return;
             if (!isCheck)
-                return false;
+                return;
 
             var CDI = SourceListBox.SelectedItem as CandleDataInfoUnit;
             var param = new PatternSearchParam
@@ -133,9 +126,6 @@ namespace MrRobot.Section
             };
 
             PatternSearchExist(param);
-            SearchStatistic(param);
-
-            return param.FoundCount > 0;
         }
 
 
@@ -166,7 +156,9 @@ namespace MrRobot.Section
                 FoundList = new List<PatternFoundUnit>()
             };
 
-            SearchStatistic(param);
+            if (PatternSearchExist(param))
+                return;
+
             PatternProgressBar.Value = 0;
             var progress = new Progress<int>(v => {
                 PatternProgressBar.Value = v;
@@ -176,13 +168,14 @@ namespace MrRobot.Section
             param.Duration = dur.Minutes();
 
             PattentSearchResult(param);
-            PatternFoundBaseInsert(param);
+            if (!PatternFoundBaseInsert(param))
+                return;
             SearchStatistic(param);
         }
         /// <summary>
         /// Проверка поиска: если был, то берётся из базы
         /// </summary>
-        public void PatternSearchExist(PatternSearchParam param)
+        public bool PatternSearchExist(PatternSearchParam param)
         {
             string sql = "SELECT*" +
                          "FROM`_pattern_search`" +
@@ -193,7 +186,10 @@ namespace MrRobot.Section
             var row = mysql.QueryOne(sql);
 
             if (row.Count == 0)
-                return;
+            {
+                SearchStatistic(param);
+                return false;
+            }
 
             param.FoundCount = Convert.ToInt32(row["foundCount"]);
             param.Iterations = Convert.ToUInt64(row["iterations"]);
@@ -201,8 +197,9 @@ namespace MrRobot.Section
 
             if (param.FoundCount == 0)
             {
+                SearchStatistic(param);
                 AutoProgon.PatternSearch();
-                return;
+                return true;
             }
 
             int SearchId = Convert.ToInt32(row["id"]);
@@ -243,7 +240,9 @@ namespace MrRobot.Section
                 });
             }
 
+            SearchStatistic(param);
             AutoProgon.PatternSearch();
+            return true;
         }
         /// <summary>
         /// Показ краткой статистики найденного паттерна
@@ -388,7 +387,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Внесение найденных паттернов в базу
         /// </summary>
-        void PatternFoundBaseInsert(PatternSearchParam param)
+        bool PatternFoundBaseInsert(PatternSearchParam param)
         {
             string sql = "INSERT INTO`_pattern_search`(" +
                             "`cdiId`," +
@@ -414,10 +413,7 @@ namespace MrRobot.Section
             long SearchId = mysql.Query(sql);
 
             if (param.FoundCount == 0)
-            {
-                AutoProgon.PatternSearch();
-                return;
-            }
+                return !AutoProgon.PatternSearch();
 
             var insert = new List<string>();
             for (int i = 0; i < param.FoundCount; i++)
@@ -448,7 +444,7 @@ namespace MrRobot.Section
 
             global.MW.Pattern.PatternArchive.SearchList();
 
-            AutoProgon.PatternSearch();
+            return !AutoProgon.PatternSearch();
         }
 
         #endregion

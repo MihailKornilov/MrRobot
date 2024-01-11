@@ -182,8 +182,8 @@ namespace MrRobot.Section
             SectionGo(3);
 
             // Установка настроек
-            global.MW.Pattern.PatternLengthBox.Text = PARAM.PatternLength;
-            global.MW.Pattern.PrecisionPercentBox.Text = PARAM.PrecisionPercent;
+            global.MW.Pattern.LengthSlider.Value = Convert.ToInt32(PARAM.PatternLength);
+            global.MW.Pattern.PrecisionPercentSlider.Value = Convert.ToInt32(PARAM.PrecisionPercent);
             global.MW.Pattern.FoundRepeatMin.Text = PARAM.FoundRepeatMin;
 
             PARAM.Index = 0;
@@ -223,6 +223,7 @@ namespace MrRobot.Section
         static void RobotSetup()
         {
             SymbolChange();
+            return;
 
             // Переход на страницу 4:"Tester"
             SectionGo(4);

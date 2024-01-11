@@ -154,7 +154,6 @@ namespace MrRobot.Section
             global.MW.Pattern.PrecisionPercentSlider.Value = Item.PrecisionPercent;
             global.MW.Pattern.FoundRepeatMin.Text = Item.FoundRepeatMin.ToString();
             global.MW.Pattern.PatternSearchExist(param);
-            global.MW.Pattern.SearchStatistic(param);
         }
 
         int ProfitPrc = 50;         // Минимальный процент прибыльности в запросе
