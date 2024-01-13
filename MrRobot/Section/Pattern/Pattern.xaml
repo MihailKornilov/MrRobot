@@ -111,11 +111,11 @@
 
                         <StackPanel Name="SetupPanel">
                             <Label Content="Настройка поиска:" Margin="10,10,0,0" Style="{StaticResource LabelMedium}"/>
-                            <WrapPanel Margin="20,5,0,0">
+                            <WrapPanel Margin="20,7,0,0">
                                 <Label Content="Длина паттерна:" Width="105" Style="{StaticResource LabelMain}"/>
                                 <TextBox Name="PatternLengthBox"
                                          Width="30"
-                                         Height="18"
+                                         Height="20"
                                          IsReadOnly="True"
                                          HorizontalContentAlignment="Right"/>
                                 <Slider Name="LengthSlider"
@@ -127,14 +127,13 @@
                                         ValueChanged="LengthSliderChanged"/>
                             </WrapPanel>
 
-                            <WrapPanel Margin="20,4,0,0">
+                            <WrapPanel Margin="20,5,0,0">
                                 <Label Content="Точность в %:"
                                        Width="105"
-                                       Height="18"
                                        Style="{StaticResource LabelMain}"/>
                                 <TextBox Name="PrecisionPercentBox"
                                          Width="30"
-                                         Height="18"
+                                         Height="20"
                                          IsReadOnly="True"
                                          HorizontalContentAlignment="Right"/>
                                 <Slider Name="PrecisionPercentSlider"
@@ -149,29 +148,47 @@
                             <WrapPanel Margin="20,5,0,0">
                                 <Label Content="Исключать менее"
                                        Width="105"
-                                       Height="18"
                                        Style="{StaticResource LabelMain}"/>
                                 <TextBox Name="FoundRepeatMin"
-                                     HorizontalContentAlignment="Right"
-                                     Width="30"
-                                     Height="18"
-                                     TextChanged="FoundRepeatMinChanged"/>
-                                <Label Content="повторов" Height="18" Margin="5,0,0,0" Width="70" Style="{StaticResource LabelMain}"/>
+                                         HorizontalContentAlignment="Right"
+                                         Width="30"
+                                         Height="20"
+                                         TextChanged="FoundRepeatMinChanged"/>
+                                <Label Content="повторов" Margin="5,0,0,0" Width="70" Style="{StaticResource LabelMain}"/>
                             </WrapPanel>
                         </StackPanel>
 
-                        <StackPanel Name="SearchPanel" Margin="10,15,10,0">
+                        <!-- Кнопка запуска и прогресс-бар -->
+                        <StackPanel Name="SearchPanel" Margin="10,20,10,0">
                             <Button Name="SearchGoButton"
                                     Content="Начать поиск"
                                     Height="25"
-                                    Cursor="Hand"
                                     Click="PatternSearchGo"/>
-                            <ProgressBar Name="PatternProgressBar" Height="25" Visibility="Collapsed"/>
+                            <WrapPanel Name="ProgressPanel" Visibility="Collapsed">
+                                <WrapPanel>
+                                    <ProgressBar Name="SearchProgress" Width="188" Height="25"/>
+                                    <Button Name="SearchCancelButton"
+                                            Content="Отмена"
+                                            Height="25"
+                                            Width="50"
+                                            Margin="5,0,0,0"
+                                            Click="SearchCancel"/>
+                                    <Label Name="ProgressPrc"
+                                           Content="50%"
+                                           Padding="0"
+                                           Margin="75,-21,0,0"
+                                           Width="40"
+                                           Foreground="#555"
+                                           HorizontalContentAlignment="Center"/>
+                                </WrapPanel>
+                                <TextBlock Name="ProсessInfo" Foreground="#888" Margin="0,5,0,0"/>
+                            </WrapPanel>
                         </StackPanel>
 
+                        <!-- Результаты поиска -->
                         <StackPanel Name="ResultPanel" Visibility="Collapsed">
-                            <Label Content="Результат:" Margin="10,10,0,0" Style="{StaticResource LabelMedium}"/>
-                            <WrapPanel Margin="20,5,0,0">
+                            <Label Content="Результат:" Margin="10,7,0,0" Style="{StaticResource LabelMedium}"/>
+                            <WrapPanel Margin="20,3,0,0">
                                 <Label Content="Совпадения:" Style="{StaticResource LabelMain}"/>
                                 <TextBlock Name="CandlesDuplicate" Width="50" Text="0" FontWeight="Bold" Padding="0,2,0,0"/>
                                 <Label Content="Всего итераций:" Style="{StaticResource LabelMain}"/>
@@ -240,7 +257,7 @@
                                     Margin="0,6,5,0"
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Right"
-                                    Visibility="Visible">
+                                    Visibility="Hidden">
                             <Button Name="ButtonFoundBack"
                                     Content="Назад"
                                     Height="20"

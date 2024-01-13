@@ -416,8 +416,14 @@ namespace MrRobot.inc
         /// <summary>
         /// Загрузка свечей и формирование массивов для поиска паттернов
         /// </summary>
-        public static List<PatternUnit> PatternSearchMass(string sql, PatternSearchParam PARAM)
+        public static List<PatternUnit> PatternSearchMass(string sql, PatternSearchParam PARAM, int count)
         {
+            PARAM.ProсessInfo = "Загрузка свечных данных...";
+            PARAM.PBar.Report(0);
+
+            var bar = new ProBar(count);
+            int i = 0;
+
             new mysql(sql, true);
 
             var PatternList = new List<PatternUnit>();
@@ -425,6 +431,9 @@ namespace MrRobot.inc
 
             while (res.Read())
             {
+                if (bar.isUpd(i++))
+                    PARAM.PBar.Report(bar.Value);
+
                 var candle = new PatternCandleUnit
                 {
                     Unix = res.GetInt32("unix"),
@@ -447,6 +456,8 @@ namespace MrRobot.inc
             }
 
             Finish(sql);
+
+            PARAM.ProсessInfo = "";
 
             return PatternList;
         }

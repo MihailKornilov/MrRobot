@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Controls;
 using System.Diagnostics;
 using System.Globalization;
@@ -52,11 +53,34 @@ namespace MrRobot
             InitializeComponent();
             MainMenuCreate();
 
-            // Очистка нижней строки приложения
-            MW.MouseLeftButtonDown += error.Clear;
+
+            // Разрешение экрана
+            //Rect scr = SystemParameters.WorkArea;
+            //WriteLine("scr.Width = " + scr.Width);
+            //WriteLine("scr.Height = " + scr.Height);
+
+            MW.Width = position.Val("MainWindow.Width", 1366);
+            MW.Height = position.Val("MainWindow.Height", 800);
+            MW.Left = position.Val("MainWindow.Left", 100);
+            MW.Top = position.Val("MainWindow.Top", 100);
+
+
+            
             MW.Loaded += Trade.InstrumentSet;
+            MW.MouseLeftButtonDown += error.Clear;      // Очистка нижней строки приложения
             MW.SizeChanged += Tester.RobotLogWidthSet;
             MW.SizeChanged += Depth.SizeChanged;
+
+            Loaded += (s, e) =>
+            {
+                int index = position.MainMenu();
+                if (index == 0)
+                    MainMenuListBox.SelectedIndex = 0;
+
+                var hwnd = new WindowInteropHelper(this).Handle;
+                HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
+            };
+
 
             global.Inited();
             global.LogWrite($"Загружено за {dur.Second()} сек.");
@@ -103,6 +127,8 @@ namespace MrRobot
         /// </summary>
         void MainMenuSet()
         {
+            WriteLine("MainMenuSet");
+
             int index = position.MainMenu();
             string[] section = MainMenuSectionName();
             UserControl sect;
@@ -187,11 +213,11 @@ namespace MrRobot
             AppDomain.CurrentDomain.FirstChanceException += FirstChanceExceptionEventHandler;
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionEventHandler;
         }
-        private static void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
+        static void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
         {
             global.LogWrite($"Необработанное исключение: {e.ExceptionObject}", "error.txt");
         }
-        private static void FirstChanceExceptionEventHandler(object sender, FirstChanceExceptionEventArgs e)
+        static void FirstChanceExceptionEventHandler(object sender, FirstChanceExceptionEventArgs e)
         {
             global.LogWrite($"Обработанное исключение: {e.Exception}", "error.txt");
         }
@@ -213,6 +239,33 @@ namespace MrRobot
             var mysqld = Process.Start(Path.GetFullPath($"mysql\\server\\bin\\{ProcessName}.exe"));
             global.LogWrite($"Процесс `{ProcessName}` запущен. ID: {mysqld.Id}");
             //Environment.Exit(0);
+        }
+
+
+
+
+
+
+        IntPtr MouseHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            const int WM_ENTERSIZEMOVE = 0x0231;
+            const int WM_EXITSIZEMOVE = 0x0232;
+
+            // Левая кнопка мыши была нажата в области заголовка или изменения размера окна
+            if (msg == WM_ENTERSIZEMOVE)
+            {
+            }
+
+            // Левая кнопка мыши была отпущена в области заголовка или изменения размера окна
+            if (msg == WM_EXITSIZEMOVE)
+            {
+                position.Set("MainWindow.Width",  (int)MW.Width);
+                position.Set("MainWindow.Height", (int)MW.Height);
+                position.Set("MainWindow.Left",   (int)MW.Left);
+                position.Set("MainWindow.Top",    (int)MW.Top);
+            }
+
+            return IntPtr.Zero;
         }
     }
 

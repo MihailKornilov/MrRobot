@@ -112,7 +112,7 @@
                                     Cursor="Hand"
                                     Click="InstrumentUpdateGo"/>
                             <WrapPanel Name="InstrumentUpdateBarPanel" Margin="30,10,0,0" Visibility="Collapsed">
-                                <ProgressBar Name="InstrumentUpdateBar" Width="79" Height="21" Value="50"/>
+                                <ProgressBar Name="InstrumentUpdateBar" Width="79" Height="21"/>
                                 <Label Name="InstrumentUpdateBarText"
                                        Padding="0"
                                        Width="40"

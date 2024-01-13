@@ -7,9 +7,8 @@
 		mc:Ignorable="d"
 		Name="MW"
 		Title="Mr.Robot v0.0.1"
-		Width="1366"    MinWidth="1175"
-		Height="800"    MinHeight="800"
-		Left="550"      Top="100"
+		MinWidth="1175"
+		MinHeight="800"
 		Background="#FFF">
 
 	<Window.Resources>

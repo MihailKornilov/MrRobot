@@ -151,17 +151,17 @@ namespace MrRobot.inc
     /// </summary>
     public class ProBar
     {
-        private int All;            // Общее количество
-        private bool IsMore100;     // Флаг: общее количество больше 100
-        private double Sotka;       // Сотая часть от общей суммы
-        private double Area;        // Участок, при завершении которого обновляется процент ПрогрессБара
-        private double Percent;     // Значение в процентах, которое будет передаваться в Value
-        private double PercentStep; // Значение, на которое увеличивается процент при следующем шаге
+        int All;            // Общее количество
+        bool IsMore100;     // Флаг: общее количество больше 100
+        double Sotka;       // Сотая часть от общей суммы
+        double Area;        // Участок, при завершении которого обновляется процент ПрогрессБара
+        double Percent;     // Значение в процентах, которое будет передаваться в Value
+        double PercentStep; // Значение, на которое увеличивается процент при следующем шаге
         public int Value { get; private set; }  // Значение в процентах, которое будет выводиться в Прогресс-бар
 
-        private Dur dur;
-        private long MilliSecondPass;
-        private long MilliSecondLeft;
+        Dur dur;
+        long MilliSecondPass;
+        long MilliSecondLeft;
         public string TimePass { get; private set; }
         public string TimeLeft { get; private set; }
 
@@ -182,7 +182,7 @@ namespace MrRobot.inc
         /// <summary>
         /// Инициализация при общем количестве больше 100
         /// </summary>
-        private void InitMore100()
+        void InitMore100()
         {
             if (!IsMore100)
                 return;
@@ -194,7 +194,7 @@ namespace MrRobot.inc
         /// <summary>
         /// Инициализация при общем количестве меньше 100
         /// </summary>
-        private void InitLess100()
+        void InitLess100()
         {
             if (IsMore100)
                 return;
@@ -207,7 +207,7 @@ namespace MrRobot.inc
         /// <summary>
         /// Подсчёт прошедшего и оставшегося времени
         /// </summary>
-        private void TimeCalc(int count)
+        void TimeCalc(int count)
         {
             if (count == 0)
                 return;

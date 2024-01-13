@@ -26,47 +26,9 @@ namespace MrRobot.Section
                 return;
 
             SearchList();
-            SearchStat();
             ProfitList();
 
             PAinited = true;
-        }
-
-        /// <summary>
-        /// Список успешных поисков
-        /// </summary>
-        public void SearchList()
-        {
-            string sql = "SELECT*" +
-                         "FROM`_pattern_search`" +
-                         "WHERE`foundCount`" +
-                         "ORDER BY`id`DESC";
-            var Spisok = mysql.QueryList(sql);
-
-            if (Spisok.Count == 0)
-                return;
-
-            var ArchiveList = new List<PatternFoundUnit>();
-            foreach (Dictionary<string, string> row in Spisok)
-            {
-                var CDI = Candle.InfoUnit(row["cdiId"]);
-                ArchiveList.Add(new PatternFoundUnit
-                {
-                    Id = Convert.ToInt32(row["id"]),
-                    CdiId = Convert.ToInt32(row["cdiId"]),
-                    Dtime = format.DateOne(row["dtimeAdd"]),
-                    Symbol = CDI.Name,
-                    TimeFrame = CDI.TimeFrame,
-                    CandlesCount = Candle.CountTxt(CDI.RowsCount),
-                    PatternLength = Convert.ToInt32(row["patternLength"]),
-                    PrecisionPercent = Convert.ToInt32(row["scatterPercent"]),
-                    FoundRepeatMin = Convert.ToInt32(row["foundRepeatMin"]),
-                    FoundCount = Convert.ToInt32(row["foundCount"]),
-                    Duration = row["duration"]
-                });
-            }
-
-            ArchiveData.ItemsSource = ArchiveList;
         }
 
         /// <summary>
@@ -127,6 +89,45 @@ namespace MrRobot.Section
                   "WHERE!`profitCount`" +
                     "AND!`lossCount`";
             PatternNotTested.Content = mysql.Count(sql).ToString();
+        }
+
+        /// <summary>
+        /// Список успешных поисков
+        /// </summary>
+        public void SearchList()
+        {
+            SearchStat();
+
+            string sql = "SELECT*" +
+                         "FROM`_pattern_search`" +
+                         "WHERE`foundCount`" +
+                         "ORDER BY`id`DESC";
+            var Spisok = mysql.QueryList(sql);
+
+            if (Spisok.Count == 0)
+                return;
+
+            var ArchiveList = new List<PatternFoundUnit>();
+            foreach (Dictionary<string, string> row in Spisok)
+            {
+                var CDI = Candle.InfoUnit(row["cdiId"]);
+                ArchiveList.Add(new PatternFoundUnit
+                {
+                    Id = Convert.ToInt32(row["id"]),
+                    CdiId = Convert.ToInt32(row["cdiId"]),
+                    Dtime = format.DateOne(row["dtimeAdd"]),
+                    Symbol = CDI.Name,
+                    TimeFrame = CDI.TimeFrame,
+                    CandlesCount = Candle.CountTxt(CDI.RowsCount),
+                    PatternLength = Convert.ToInt32(row["patternLength"]),
+                    PrecisionPercent = Convert.ToInt32(row["scatterPercent"]),
+                    FoundRepeatMin = Convert.ToInt32(row["foundRepeatMin"]),
+                    FoundCount = Convert.ToInt32(row["foundCount"]),
+                    Duration = row["duration"]
+                });
+            }
+
+            ArchiveData.ItemsSource = ArchiveList;
         }
 
         /// <summary>
