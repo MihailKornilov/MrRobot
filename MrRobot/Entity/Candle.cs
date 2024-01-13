@@ -138,6 +138,9 @@ namespace MrRobot.Entity
                 list.Add(v.Id);
             }
 
+            if (list.Count == 0)
+                return "0";
+
             return string.Join(",", list.ToArray());
         }
 
@@ -554,6 +557,17 @@ namespace MrRobot.Entity
     /// </summary>
     public class CandleUnit
     {
+        public CandleUnit() { }
+        public CandleUnit(CandleUnit src, int tf)
+        {
+            Unix   = src.Unix;
+            High   = src.High;
+            Open   = src.Open;
+            Close  = src.Close;
+            Low    = src.Low;
+            Volume = src.Volume;
+            TimeFrame = tf;
+        }
         public int TimeFrame { get; set; } = 1; // Таймфрейм свечи
         public ulong Exp { get; set; }          // Количество нулей после запятой в 10-й степени
 

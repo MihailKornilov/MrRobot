@@ -198,8 +198,7 @@ namespace MrRobot.Section
                 if (src.Unix == Candle.UnixTF(src.Unix, PARAM.TimeFrame))
                     break;
             }
-            var dst = SourceData[iBegin++];
-            dst.TimeFrame = PARAM.TimeFrame;
+            var dst = new CandleUnit(SourceData[iBegin++], PARAM.TimeFrame);
 
             var insert = new List<string>();
             for (int i = iBegin; i < SourceData.Count; i++)
@@ -213,8 +212,7 @@ namespace MrRobot.Section
                 {
                     insert.Add(dst.Insert);
                     Candle.DataInsert(TableName, insert, 500);
-                    dst = src;
-                    dst.TimeFrame = PARAM.TimeFrame;
+                    dst = new CandleUnit(src, PARAM.TimeFrame);
                 }
 
                 if (!SubBar.isUpd(i))
