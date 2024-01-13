@@ -69,6 +69,23 @@ namespace MrRobot.inc
         }
 
 
+        /// <summary>
+        /// Получение названия таблицы из запроса
+        /// </summary>
+        static string TableName(string sql)
+        {
+            bool isFrom = false;
+            foreach (string str in sql.ToLower().Split('`'))
+            {
+                if (isFrom)
+                    return str;
+                if(str.Contains("from"))
+                    isFrom = true;
+            }
+            return "";
+        }
+
+
 
 
         /// <summary>
@@ -391,6 +408,9 @@ namespace MrRobot.inc
             if(ConvertCandles_Cache.ContainsKey(hash))
                 return ConvertCandles_Cache[hash];
 
+            string table = TableName(sql);
+            var CDI = Candle.InfoUnitOnTable(table);
+
             new mysql(sql, true);
 
             var Data = new List<CandleUnit>();
@@ -402,7 +422,8 @@ namespace MrRobot.inc
                     Open = res.GetDouble("open"),
                     Close = res.GetDouble("close"),
                     Low = res.GetDouble("low"),
-                    Volume = res.GetDouble("vol")
+                    Volume = res.GetDouble("vol"),
+                    Exp = CDI.Exp
                 });
 
             ConvertCandles_Cache[hash] = Data;
@@ -426,32 +447,28 @@ namespace MrRobot.inc
 
             new mysql(sql, true);
 
-            var PatternList = new List<PatternUnit>();
             var CandleList = new List<PatternCandleUnit>();
+            var PatternList = new List<PatternUnit>();
 
             while (res.Read())
             {
                 if (bar.isUpd(i++))
                     PARAM.PBar.Report(bar.Value);
 
-                var candle = new PatternCandleUnit
+                CandleList.Add(new PatternCandleUnit
                 {
-                    Unix = res.GetInt32("unix"),
-                    High = res.GetDouble("high"),
-                    Open = res.GetDouble("open"),
-                    Close = res.GetDouble("close"),
-                    Low = res.GetDouble("low")
-                };
-
-                candle.IsNol = candle.High == candle.Low;
-
-                CandleList.Add(candle);
+                    Unix  = res.GetInt32("unix"),
+                    High  = res.GetDecimal("high"),
+                    Open  = res.GetDecimal("open"),
+                    Close = res.GetDecimal("close"),
+                    Low   = res.GetDecimal("low")
+                });
 
                 if (CandleList.Count > PARAM.PatternLength)
                     CandleList.RemoveRange(0, 1);
 
                 var patt = new PatternUnit();
-                if (patt.Calc(CandleList, PARAM.PatternLength, PARAM.Exp))
+                if (patt.Calc(CandleList, PARAM))
                     PatternList.Add(patt);
             }
 

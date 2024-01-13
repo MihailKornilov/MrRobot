@@ -51,7 +51,6 @@ namespace MrRobot
                 Candle.ListCreate();
 
             InitializeComponent();
-            MainMenuCreate();
 
 
             // Разрешение экрана
@@ -59,23 +58,21 @@ namespace MrRobot
             //WriteLine("scr.Width = " + scr.Width);
             //WriteLine("scr.Height = " + scr.Height);
 
-            MW.Width = position.Val("MainWindow.Width", 1366);
-            MW.Height = position.Val("MainWindow.Height", 800);
-            MW.Left = position.Val("MainWindow.Left", 100);
-            MW.Top = position.Val("MainWindow.Top", 100);
+            Width  = position.Val("MainWindow.Width",  1366);
+            Height = position.Val("MainWindow.Height", 800);
+            Left   = position.Val("MainWindow.Left",   100);
+            Top    = position.Val("MainWindow.Top",    100);
 
 
             
-            MW.Loaded += Trade.InstrumentSet;
-            MW.MouseLeftButtonDown += error.Clear;      // Очистка нижней строки приложения
-            MW.SizeChanged += Tester.RobotLogWidthSet;
-            MW.SizeChanged += Depth.SizeChanged;
+            MouseLeftButtonDown += error.Clear;      // Очистка нижней строки приложения
+            SizeChanged += Tester.RobotLogWidthSet;
+            SizeChanged += Depth.SizeChanged;
 
             Loaded += (s, e) =>
             {
-                int index = position.MainMenu();
-                if (index == 0)
-                    MainMenuListBox.SelectedIndex = 0;
+                MainMenuCreate();
+                Trade.InstrumentSet();
 
                 var hwnd = new WindowInteropHelper(this).Handle;
                 HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
@@ -127,8 +124,6 @@ namespace MrRobot
         /// </summary>
         void MainMenuSet()
         {
-            WriteLine("MainMenuSet");
-
             int index = position.MainMenu();
             string[] section = MainMenuSectionName();
             UserControl sect;
@@ -259,10 +254,10 @@ namespace MrRobot
             // Левая кнопка мыши была отпущена в области заголовка или изменения размера окна
             if (msg == WM_EXITSIZEMOVE)
             {
-                position.Set("MainWindow.Width",  (int)MW.Width);
-                position.Set("MainWindow.Height", (int)MW.Height);
-                position.Set("MainWindow.Left",   (int)MW.Left);
-                position.Set("MainWindow.Top",    (int)MW.Top);
+                position.Set("MainWindow.Width",  (int)Width);
+                position.Set("MainWindow.Height", (int)Height);
+                position.Set("MainWindow.Left",   (int)Left);
+                position.Set("MainWindow.Top",    (int)Top);
             }
 
             return IntPtr.Zero;

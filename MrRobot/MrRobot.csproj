@@ -166,6 +166,9 @@
     <Compile Include="Section\Pattern\PatternCode.xaml.cs">
       <DependentUpon>PatternCode.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Section\Pattern\PatternInfo.xaml.cs">
+      <DependentUpon>PatternInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Section\SectionUpd.cs" />
     <Compile Include="Section\Setting\AutoProgon.cs" />
     <Compile Include="Section\Setting\Setting.xaml.cs">
@@ -228,6 +231,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Section\Pattern\PatternInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Section\Setting\Setting.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -259,6 +266,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="!\Update.txt" />
     <Content Include="Browser\Converter\Chart.tmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -266,9 +274,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Browser\Pattern\Chart.tmp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Browser\Pattern\PatternChartVisualShow.tmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Browser\Pattern\PatternFound.tmp">
@@ -464,6 +469,7 @@
     <None Include="!\mysql\server\my.ini" />
     <None Include="!\mysql\server\share\english\errmsg.sys" />
     <None Include="!\mysql\server\share\russian\errmsg.sys" />
+    <None Include="Browser\Pattern\PatternVisual.tmp" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

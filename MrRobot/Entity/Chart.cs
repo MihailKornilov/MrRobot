@@ -5,6 +5,7 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Section;
+using System.Linq;
 
 namespace MrRobot.Entity
 {
@@ -36,15 +37,15 @@ namespace MrRobot.Entity
 
 
         // Путь к скомпилированному html-файлу с графиком
-        private string PHtml;
+        string _PageHtml;
         public string PageHtml
         {
             get
             {
                 PageDefault();
-                return PHtml;
+                return _PageHtml;
             }
-            private set { PHtml = value; }
+            private set { _PageHtml = value; }
         }
 
 
@@ -98,14 +99,14 @@ namespace MrRobot.Entity
         /// <summary>
         /// Создание страницы графика по умолчанию из шаблона
         /// </summary>
-        private void PageDefault()
+        void PageDefault()
         {
             if (PageName != "Chart")
                 return;
 
             //Чтение файла шаблона и сразу запись в файл HTML
             var read = new StreamReader(PageTmp);
-            var write = new StreamWriter(PHtml);
+            var write = new StreamWriter(_PageHtml);
 
             int Limit = 10000;
             string sql = "SELECT*" +
@@ -139,76 +140,58 @@ namespace MrRobot.Entity
 
 
 
+
+        // Вставка в начало и в конец двух скрытых свечей для центрирования паттерна
+        void PatternSourceEmpty(List<string> mass, int unix, int secondTF, double price)
+        {
+            for (int i = 0; i < 2; i++)
+                mass.Add("\n{" +
+                        $"time:{unix + secondTF * i}," +
+                         "color:'#222'," +
+                        $"high:{price}," +
+                        $"open:{price}," +
+                        $"close:{price}," +
+                        $"low:{price}" +
+                   "}");
+        }
         /// <summary>
         /// Визуальное отображение найденного паттерна (маленький график)
         /// </summary>
-        public void PatternFound(PatternFoundUnit item)
+        public void PatternSource(PatternFoundUnit unit)
         {
             var read = new StreamReader(PageTmp);
-            var write = new StreamWriter(PHtml);
+            var write = new StreamWriter(_PageHtml);
+
+            var CDI = Candle.InfoUnit(unit.CdiId);
+            string sql = "SELECT*" +
+                        $"FROM`{CDI.Table}`" +
+                        $"WHERE`unix`>={unit.UnixList[0]} " +
+                         "ORDER BY`unix`" +
+                        $"LIMIT {unit.PatternLength}";
+            var candles = mysql.ConvertCandles(sql);
 
             var mass = new List<string>();
-            double open = item.Price;
-            int unix = item.Unix;
-            int rangeBegin = format.TimeZone(unix - item.TimeFrame * 60 * 2);
-            int rangeEnd = format.TimeZone(rangeBegin + item.TimeFrame * 60 * (item.PatternLength + 3));
+            int unix = format.TimeZone(unit.UnixList[0]);
+            int secondTF = unit.TimeFrame * 60;
+            int rangeBegin = unix - secondTF * 2;
+            int rangeEnd = unix + secondTF * unit.PatternLength;
 
-            // Вставка в начало двух скрытых свечей для центрирования паттерна
-            for (int i = 2; i > 0; i--)
-                mass.Add("\n{" +
-                        $"time:{format.TimeZone(unix - item.TimeFrame * 60 * i)}," +
-                         "color:'#222'," + 
-                        $"high:{open}," +
-                        $"open:{open}," +
-                        $"close:{open}," +
-                        $"low:{open}" +
-                   "}");
+            PatternSourceEmpty(mass, rangeBegin, secondTF, candles[0].Open);
 
-            ulong exp = format.Exp(item.NolCount);
+            for (int i = 0;  i < candles.Count; i++)
+                mass.Add(candles[i].CandleToChart());
 
-            string[] split = item.Candle.Split('\n');
-            for (int i = 0;  i < split.Length; i++)
-            {
-                string[] cndl = split[i].Split(' ');
-                double close = open + Convert.ToDouble(cndl[1]) / exp;
-                double high = Convert.ToDouble(cndl[0]) / exp;
-                high = open > close ? open + high : close + high;
-                double low = Convert.ToDouble(cndl[2]) / exp;
-                low = open > close ? close - low : open - low;
+            PatternSourceEmpty(mass, rangeEnd, secondTF, candles.Last().Close);
 
-                mass.Add("\n{" +
-                            $"time:{format.TimeZone(unix)}," +
-                            $"high:{high}," +
-                            $"open:{open}," +
-                            $"close:{close}," +
-                            $"low:{low}" +
-                       "}");
-                unix += item.TimeFrame * 60;
-                open = close;
-            }
-
-            // Вставка в конец двух скрытых свечей для центрирования паттерна
-            for (int i = 0; i < 2; i++)
-                mass.Add("\n{" +
-                        $"time:{format.TimeZone(unix + item.TimeFrame * 60 * i)}," +
-                         "color:'#222'," +
-                        $"high:{open}," +
-                        $"open:{open}," +
-                        $"close:{open}," +
-                        $"low:{open}" +
-                   "}");
-
-
+            rangeEnd += secondTF;
             string candlesData = "[" + string.Join(",", mass.ToArray()) + "]";
-
-            string nolCount = item.NolCount.ToString();
-            string tickSize = format.E((double)1/(double)exp);
+            string nolCount = unit.NolCount.ToString();
 
             string line;
             while ((line = read.ReadLine()) != null)
             {
                 line = line.Replace("TITLE", Title);
-                line = line.Replace("TICK_SIZE", tickSize);
+                line = line.Replace("TICK_SIZE", CDI.TickSize.ToString());
                 line = line.Replace("NOL_COUNT", nolCount);
                 line = line.Replace("CANDLES_DATA", candlesData);
                 line = line.Replace("RANGE_BEGIN", rangeBegin.ToString());
@@ -222,14 +205,14 @@ namespace MrRobot.Entity
         /// <summary>
         /// Показ найденного паттерна на графике
         /// </summary>
-        public void PatternChartVisualShow(PatternFoundUnit item, int UnixIndex = 0)
+        public void PatternVisual(PatternFoundUnit item, int UnixIndex = 0)
         {
             var read = new StreamReader(PageTmp);
-            var write = new StreamWriter(PHtml);
+            var write = new StreamWriter(_PageHtml);
 
             string line;
             int unix = item.UnixList[UnixIndex];
-            string candlesData = PatternVisualShowData(item, unix);
+            string candlesData = PatternVisualData(item, unix);
             int rangeBegin = format.TimeZone(unix) - item.TimeFrame * 60 * 30;
             int rangeEnd = rangeBegin + item.TimeFrame * 60 * 70;
 
@@ -252,37 +235,9 @@ namespace MrRobot.Entity
         }
 
         /// <summary>
-        /// Выделение цветом найденного паттерна
-        /// </summary>
-        private string PatternVisualShowColor(CandleUnit unit, PatternFoundUnit item, ref int PatternLength)
-        {
-            if(item.PatternLength == PatternLength)
-            {
-                bool found = false;
-                foreach(int ux in item.UnixList)
-                    if(ux == unit.Unix)
-                    {
-                        found = true;
-                        break;
-                    }
-               
-                if(!found)
-                    return "";
-            }
-
-            if (PatternLength-- == 0)
-            {
-                PatternLength = item.PatternLength;
-                return "";
-            }
-
-            return "color:'#" + (unit.Close > unit.Open ? "60CE5E" : "FF324D") + "',";//56B854    F6465D
-        }
-
-        /// <summary>
         /// Список свечей для графика
         /// </summary>
-        private string PatternVisualShowData(PatternFoundUnit item, int unix)
+        string PatternVisualData(PatternFoundUnit item, int unix)
         {
             string sql = $"SELECT*" +
                          $"FROM`{TableName}`" +
@@ -291,20 +246,16 @@ namespace MrRobot.Entity
                          $"LIMIT 3000";
 
             var mass = new List<string>();
-            int PatternLength = item.PatternLength;
-            foreach (CandleUnit unit in mysql.ConvertCandles(sql))
+            int len = 0;
+            foreach (CandleUnit cndl in mysql.ConvertCandles(sql))
             {
-                mass.Add("\n{" +
-                            $"time:{format.TimeZone(unit.Unix)}," +
-                            PatternVisualShowColor(unit, item, ref PatternLength) + 
-                            $"high:{unit.High}," +
-                            $"open:{unit.Open}," +
-                            $"close:{unit.Close}," +
-                            $"low:{unit.Low}" +
-                       "}");
+                if (cndl.Unix == unix)
+                    len = item.PatternLength;
+
+                mass.Add(cndl.CandleToChart(len-- > 0));
             }
 
-            return "[" + string.Join(",", mass.ToArray()) + "]";
+            return "[" + string.Join(",\n", mass.ToArray()) + "]";
         }
 
 
@@ -315,8 +266,8 @@ namespace MrRobot.Entity
         /// </summary>
         public void TesterGraficInit()
         {
-            StreamReader read = new StreamReader(PageTmp);
-            StreamWriter write = new StreamWriter(PHtml);
+            var read = new StreamReader(PageTmp);
+            var write = new StreamWriter(_PageHtml);
                 
             string tickSize = CdiUnit.TickSize.ToString();
             string nolCount = CdiUnit.NolCount.ToString();
@@ -352,7 +303,7 @@ namespace MrRobot.Entity
             }
 
             var read = new StreamReader(PageTmp);
-            var write = new StreamWriter(PHtml);
+            var write = new StreamWriter(_PageHtml);
 
             string CANDLES_DATA = "[\n" + string.Join(",\n", Candles.ToArray()) + "]";
             string VOLUMES_DATA = "[\n" + string.Join(",\n", Volumes.ToArray()) + "]";

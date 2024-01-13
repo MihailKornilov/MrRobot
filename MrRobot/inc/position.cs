@@ -101,6 +101,9 @@ namespace MrRobot.inc
 			if (val > 0)
 				Set(key, val);
 
+			if (val == 0)
+				val = 1;
+
 			return Val(key, val);
 		}
 	}

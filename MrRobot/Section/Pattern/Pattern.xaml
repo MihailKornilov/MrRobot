@@ -8,7 +8,7 @@
              xmlns:Section="clr-namespace:MrRobot.Section"
              mc:Ignorable="d" 
              Background="#CCC"
-             d:DesignWidth="1300"
+             d:DesignWidth="1400"
              d:DesignHeight="750">
 
     <UserControl.Resources>
@@ -25,8 +25,8 @@
         <DataTemplate x:Key="PatternListTmp">
             <StackPanel Orientation="Horizontal" Cursor="Hand">
                 <Label Content="{Binding Num}"    Width="35" Padding="0,0,10,0" FontSize="11" FontWeight="Medium" Foreground="#999" HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Candle}" Width="95" Padding="0" FontSize="11"/>
-                <Label Content="{Binding Repeat}"  Width="45" Padding="0" FontSize="11" FontWeight="Bold" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Cndl}"   Width="95" Padding="0" FontSize="11"/>
+                <Label Content="{Binding Repeat}" Width="45" Padding="0" FontSize="11" FontWeight="Bold" HorizontalContentAlignment="Right"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
@@ -226,18 +226,25 @@
                             Width="200"
                             HorizontalAlignment="Left"
                             Visibility="Hidden">
-                    <TextBlock Text="Получить код"
-                               FontSize="11"
-                               TextDecorations="Underline"
-                               Padding="0,4,2,3"
-                               HorizontalAlignment="Right"
-                               Style="{StaticResource TBLink}"
-                               MouseLeftButtonDown="FoundCodeGet"/>
+                    <WrapPanel Margin="0,4">
+                        <TextBlock Text="Инфо"
+                                   FontSize="11"
+                                   TextDecorations="Underline"
+                                   Style="{StaticResource TBLink}"
+                                   MouseLeftButtonDown="FoundInfoShow"/>
+                        <TextBlock Text="Получить код"
+                                   Margin="102,0,0,0"
+                                   FontSize="11"
+                                   TextDecorations="Underline"
+                                   Style="{StaticResource TBLink}"
+                                   MouseLeftButtonDown="FoundCodeGet"/>
+                    </WrapPanel>
                     <wpf:ChromiumWebBrowser Name="FoundBrowser"
                                             Width="200"
                                             Height="167"
                                             HorizontalAlignment="Left"/>
                 </StackPanel>
+
             </Grid>
 
             <!-- ОТОБРАЖЕНИЕ НАЙДЕННЫХ ПАТТЕРНОВ НА ГРАФИКЕ -->

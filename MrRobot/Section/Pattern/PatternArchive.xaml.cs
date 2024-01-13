@@ -209,7 +209,7 @@ namespace MrRobot.Section
             sql = "SELECT" +
                     "`id`," +
                     "`searchId`," +
-                    "`repeat`," +
+                    "`repeatCount`," +
                     "`profitCount`," +
                     "`lossCount`," +
                    $"ROUND({PrcStr})`procent`" +
@@ -238,7 +238,7 @@ namespace MrRobot.Section
                     PrecisionPercent = Convert.ToInt32(SSass["scatterPercent"]),
                     FoundRepeatMin = Convert.ToInt32(SSass["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(SSass["foundCount"]),
-                    Repeat = Convert.ToInt32(row["repeat"]),
+                    Repeat = Convert.ToInt32(row["repeatCount"]),
                     ProfitCount = Convert.ToInt32(row["profitCount"]),
                     LossCount = Convert.ToInt32(row["lossCount"]),
                     ProfitPercent = Convert.ToInt32(row["procent"])

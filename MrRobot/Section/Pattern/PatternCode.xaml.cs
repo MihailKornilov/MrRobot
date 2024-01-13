@@ -47,7 +47,7 @@ namespace MrRobot.Section
             code += $"if (CANDLES.Count < {Unit.PatternLength})\n" +
                      "    return;\n\n";
 
-            string[] cndl = Unit.Candle.Split('\n');
+            string[] cndl = Unit.Cndl.Split('\n');
             for(int i = 0; i < Unit.PatternLength; i++)
             {
                 string[] spl = cndl[Unit.PatternLength - i - 1].Split(' ');
@@ -62,7 +62,7 @@ namespace MrRobot.Section
         void PatternOnlyCreate(PatternFoundUnit Unit)
         {
             var CDI = Candle.InfoUnit(Unit.CdiId);
-            string content = Unit.Candle.Replace('\n', ';');
+            string content = Unit.Cndl.Replace('\n', ';');
             PatternOnly.Text = $"new PatternLook(\"{CDI.Symbol}\", {CDI.TimeFrame}, \"{content}\")";
         }
     }

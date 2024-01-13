@@ -155,7 +155,6 @@ namespace MrRobot.Section
         /// <summary>
         /// Установка инструмента после полной загрузки приложения
         /// </summary>
-        public void InstrumentSet(object sender, RoutedEventArgs e) => InstrumentSet();
         public void InstrumentSet()
         {
             if (position.MainMenu() != 5)

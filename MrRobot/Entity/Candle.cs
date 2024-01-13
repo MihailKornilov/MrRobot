@@ -519,6 +519,7 @@ namespace MrRobot.Entity
 
         public double TickSize { get; set; }    // Шаг цены
         public int NolCount { get; set; }       // Количество нулей после запятой
+        public ulong Exp { get { return format.Exp(NolCount); } }
     }
 
     /// <summary>
@@ -554,6 +555,7 @@ namespace MrRobot.Entity
     public class CandleUnit
     {
         public int TimeFrame { get; set; } = 1; // Таймфрейм свечи
+        public ulong Exp { get; set; }          // Количество нулей после запятой в 10-й степени
 
         public int Unix { get; set; }           // Время свечи в формате Unix согласно Таймфрейму
         public string DateTime { get { return format.DTimeFromUnix(Unix); } }
@@ -615,8 +617,6 @@ namespace MrRobot.Entity
             return true;
         }
 
-        // Количество нулей после запятой в 10-й степени
-        public ulong Exp { get; set; }
 
         // Размер верхнего хвоста свечи в пунктах
         public int WickTop
@@ -635,11 +635,17 @@ namespace MrRobot.Entity
         }
 
 
+
+        public string Color
+        {
+            get { return Close > Open ? "60CE5E" : "FF324D"; }
+        }
         // Обновление первой свечи в графике
-        public string CandleToChart()
+        public string CandleToChart(bool withColor = false)
         {
             return "{" +
                 $"time:{format.TimeZone(Unix)}," +
+                (withColor ? $"color:'#{Color}'," : "") +
                 $"high:{High}," +
                 $"open:{Open}," +
                 $"close:{Close}," +

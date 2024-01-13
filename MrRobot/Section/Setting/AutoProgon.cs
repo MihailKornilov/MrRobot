@@ -279,7 +279,7 @@ namespace MrRobot.Section
 
             // Загрузка списка паттернов, которые не прошли тест
             string sql = "SELECT" +
-                            "`id`,`candle`" +
+                            "`id`,`structure`" +
                          "FROM`_pattern_found`" +
                         $"WHERE`searchId`={PARAM.FoundId} " +
                             "AND`minutesList`IS NULL " +
@@ -295,7 +295,7 @@ namespace MrRobot.Section
 
             global.MW.Tester.RobotsListBox.SelectedIndex = -1;
             PARAM.FoundSpisokId = pfsItem["id"];
-            FoundCandle = pfsItem["candle"];
+            FoundCandle = pfsItem["structure"];
             global.MW.Tester.RobotsListBox.SelectedIndex = 1;
 
             // Нажатие на кнопку "Запуск тестера без визуализации"
