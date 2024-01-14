@@ -555,8 +555,8 @@ namespace MrRobot.Section
     /// </summary>
     public class PatternUnit
     {
-        decimal _PriceMax;
-        decimal PriceMax
+        double _PriceMax;
+        double PriceMax
         {
             get { return _PriceMax; }
             set
@@ -565,8 +565,8 @@ namespace MrRobot.Section
                     _PriceMax = value;
             }
         }
-        decimal _PriceMin;
-        decimal PriceMin
+        double _PriceMin;
+        double PriceMin
         {
             get { return _PriceMin; }
             set
@@ -576,18 +576,18 @@ namespace MrRobot.Section
             }
         }
         public int Size { get; set; }   // Размер паттерна в пунктах
-        public List<PatternCandleUnit> CandleList { get; set; } // Состав паттерна из свечей
+        public List<CandleUnit> CandleList { get; set; } // Состав паттерна из свечей
         /// <summary>
-        /// Расчёт всех размеров
+        /// Создание паттерна
         /// </summary>
-        public bool Calc(List<PatternCandleUnit> list, PatternSearchParam param)
+        public bool Create(List<CandleUnit> list, PatternSearchParam param)
         {
             if(list.Count < param.PatternLength)
                 return false;
 
             foreach (var cndl in list)
             {
-                if (cndl.IsNol)
+                if (cndl.High == cndl.Low)
                     return false;
 
                 PriceMax = cndl.High;
@@ -596,9 +596,9 @@ namespace MrRobot.Section
 
             Size = (int)Math.Round((PriceMax - PriceMin) * param.Exp);
 
-            CandleList = new List<PatternCandleUnit>();
+            CandleList = new List<CandleUnit>();
             foreach(var cndl in list)
-                CandleList.Add(new PatternCandleUnit(cndl, PriceMax, PriceMin));
+                CandleList.Add(new CandleUnit(cndl, PriceMax, PriceMin));
 
             return true;
         }
@@ -614,7 +614,7 @@ namespace MrRobot.Section
                 var src = CandleList[k];
                 var dst = PU.CandleList[k];
 
-                if (src.IsBodyGreen != dst.IsBodyGreen)
+                if (src.IsGreen != dst.IsGreen)
                     return false;
                 if (src.SpaceTopInt != dst.SpaceTopInt)
                     return false;
@@ -640,79 +640,6 @@ namespace MrRobot.Section
                 arr[k] = CandleList[k].Struct();
 
             return string.Join(";", arr);
-        }
-    }
-    /// <summary>
-    /// Инфррмация об одной свече паттерна
-    /// </summary>
-    public class PatternCandleUnit
-    {
-        public PatternCandleUnit() { }
-        public PatternCandleUnit(PatternCandleUnit src, decimal PriceMax, decimal PriceMin)
-        {
-            Unix  = src.Unix;
-            High  = src.High;
-            Open  = src.Open;
-            Close = src.Close;
-            Low   = src.Low;
-            IsBodyGreen = Close >= Open;
-            Calc(PriceMax, PriceMin);
-        }
-
-        public bool IsNol { get { return High == Low; } }     // Нулевая свеча
-
-        public int Unix { get; set; }        // Unix-время
-        public decimal High { get; set; }    // Максимальная цена
-        public decimal Open { get; set; }    // Цена открытия
-        public decimal Close { get; set; }   // Цена закрытия
-        public decimal Low { get; set; }     // Минимальная цена
-
-
-        void Calc(decimal PriceMax, decimal PriceMin)
-        {
-            // Размер паттерна в пунктах
-            decimal Size = (PriceMax - PriceMin) / 100;
-
-            // Значения в процентах относительно размера паттерна
-            SpaceTop = (PriceMax - High) / Size;
-            WickTop  = (High - (IsBodyGreen ? Close : Open)) / Size;
-            Body     = (Close - Open) / Size;
-            WickBtm  = ((IsBodyGreen ? Open : Close) - Low) / Size;
-            SpaceBtm = (Low - PriceMin) / Size;
-
-            SpaceTopInt = (int)SpaceTop;
-            WickTopInt  = (int)WickTop;
-            BodyInt     = (int)Body;
-            WickBtmInt  = (int)WickBtm;
-            SpaceBtmInt = (int)SpaceBtm;
-        }
-
-
-        // Размеры в процентах с точностью до 0.01
-        public bool IsBodyGreen { get; set; }   // Зелёная свеча или нет
-        public decimal SpaceTop { get; set; }   // Верхнее пустое поле 
-        public decimal WickTop  { get; set; }   // Верхний хвост
-        public decimal Body     { get; set; }   // Тело
-        public decimal WickBtm  { get; set; }   // Нижний хвост
-        public decimal SpaceBtm { get; set; }   // Нижнее пустое поле
-
-
-        // Размеры в округлённых процентах
-        public int SpaceTopInt { get; set; }
-        public int WickTopInt { get; set; }
-        public int BodyInt { get; set; }
-        public int WickBtmInt { get; set; }
-        public int SpaceBtmInt { get; set; }
-
-
-        // Структура свечи с учётом пустот сверху и снизу
-        public string Struct()
-        {
-            return SpaceTopInt + " " +
-                   WickTopInt  + " " +
-                   BodyInt     + " " +
-                   WickBtmInt  + " " +
-                   SpaceBtmInt;
         }
     }
 

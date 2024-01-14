@@ -6,6 +6,7 @@ using static System.Console;
 
 using Newtonsoft.Json;
 using MrRobot.inc;
+using MySqlConnector;
 
 namespace MrRobot.Entity
 {
@@ -472,25 +473,11 @@ namespace MrRobot.Entity
 
             WriteLine($"{url}   {list.Count}   {dur.Second()}");
 
-            var Instr = Instrument.UnitOnSymbol(symbol);
-
             for (int k = 0; k < list.Count; k++)
             {
-                int unix = Convert.ToInt32(list[k][0].ToString().Substring(0, 10));
-
-                if (unix < start)
-                    continue;
-
-                TF1List.Add(new CandleUnit
-                {
-                    Unix = unix,
-                    High = list[k][2],
-                    Open = list[k][1],
-                    Close = list[k][4],
-                    Low = list[k][3],
-                    Volume = list[k][5],
-                    Exp = Instr.Exp
-                });
+                var cndl = new CandleUnit(list[k]);
+                if (cndl.Unix >= start)
+                    TF1List.Add(cndl);
             }
 
             return TF1List;
@@ -558,6 +545,26 @@ namespace MrRobot.Entity
     public class CandleUnit
     {
         public CandleUnit() { }
+        // Свечные данные из биржи ByBit
+        public CandleUnit(dynamic v)
+        {
+            Unix   = Convert.ToInt32(v[0].ToString().Substring(0, 10));
+            High   = v[2];
+            Open   = v[1];
+            Close  = v[4];
+            Low    = v[3];
+            Volume = v[5];
+        }
+        // Свечные данные из базы данных
+        public CandleUnit(MySqlDataReader res)
+        {
+            Unix   = res.GetInt32("unix");
+            High   = res.GetDouble("high");
+            Open   = res.GetDouble("open");
+            Close  = res.GetDouble("close");
+            Low    = res.GetDouble("low");
+            Volume = res.GetDouble("vol");
+        }
         public CandleUnit(CandleUnit src, int tf)
         {
             Unix   = src.Unix;
@@ -568,8 +575,15 @@ namespace MrRobot.Entity
             Volume = src.Volume;
             TimeFrame = tf;
         }
-        public int TimeFrame { get; set; } = 1; // Таймфрейм свечи
-        public ulong Exp { get; set; }          // Количество нулей после запятой в 10-й степени
+        public CandleUnit(CandleUnit src, double PriceMax, double PriceMin)
+        {
+            Unix = src.Unix;
+            High = src.High;
+            Open = src.Open;
+            Close = src.Close;
+            Low = src.Low;
+            PatternCalc(PriceMax, PriceMin);
+        }
 
         public int Unix { get; set; }           // Время свечи в формате Unix согласно Таймфрейму
         public string DateTime { get { return format.DTimeFromUnix(Unix); } }
@@ -578,6 +592,10 @@ namespace MrRobot.Entity
         public double Close { get; set; }       // Цена закрытия
         public double Low { get; set; }         // Минимальная цена
         public double Volume { get; set; }      // Объём
+
+
+        public int TimeFrame { get; set; } = 1; // Таймфрейм свечи
+        public ulong Exp { get; set; }          // Количество нулей после запятой в 10-й степени
 
 
         // Обновление свечи (для динамического графика)
@@ -612,7 +630,6 @@ namespace MrRobot.Entity
             Low = Close;
             Volume = volume;
         }
-
         // Обновление свечи согласно таймфрейму
         public bool Upd(CandleUnit src)
         {
@@ -632,34 +649,36 @@ namespace MrRobot.Entity
         }
 
 
-        // Размер верхнего хвоста свечи в пунктах
-        public int WickTop
-        {
-            get { return Convert.ToInt32((Close > Open ? High - Close : High - Open) * Exp); }
-        }
-        // Размер тела свечи
-        public int Body
-        {
-            get { return Convert.ToInt32((Close - Open) * Exp); }
-        }
-        // Размер нижнего хвоста свечи
-        public int WickBtm
-        {
-            get { return Convert.ToInt32((Close > Open ? Open - Low : Close - Low) * Exp); }
-        }
+        // Зелёная свеча или нет
+        public bool IsGreen { get { return Close >= Open; } }
+
+        // Размеры в процентах с точностью до 0.01
+        public double SpaceTop { get; set; }   // Верхнее пустое поле 
+        public double WickTop  { get; set; }   // Верхний хвост
+        public double Body     { get; set; }   // Тело
+        public double WickBtm  { get; set; }   // Нижний хвост
+        public double SpaceBtm { get; set; }   // Нижнее пустое поле
 
 
 
-        public string Color
-        {
-            get { return Close > Open ? "60CE5E" : "FF324D"; }
-        }
+        // Размеры в округлённых процентах
+        public int SpaceTopInt { get; set; }
+        public int WickTopInt  { get; set; }
+        public int BodyInt     { get; set; }
+        public int WickBtmInt  { get; set; }
+        public int SpaceBtmInt { get; set; }
+
+
+        // Внесение в базу одной свечи
+        public string Insert { get { return $"({Unix},{High},{Open},{Close},{Low},{Volume})"; } }
+
+
         // Обновление первой свечи в графике
         public string CandleToChart(bool withColor = false)
         {
             return "{" +
                 $"time:{format.TimeZone(Unix)}," +
-                (withColor ? $"color:'#{Color}'," : "") +
+   (withColor ? $"color:'#{(IsGreen ? "60CE5E" : "FF324D")}'," : "") +
                 $"high:{High}," +
                 $"open:{Open}," +
                 $"close:{Close}," +
@@ -677,8 +696,34 @@ namespace MrRobot.Entity
             "}";
         }
 
+        // Присвоение процентных соотношений свечи относительно размера паттерна
+        void PatternCalc(double PriceMax, double PriceMin)
+        {
+            // Размер паттерна в пунктах
+            double Size = (PriceMax - PriceMin) / 100;
 
-        // Внесение в базу одной свечи
-        public string Insert { get { return $"({Unix},{High},{Open},{Close},{Low},{Volume})"; } }
+            // Значения в процентах относительно размера паттерна
+            SpaceTop = (PriceMax - High) / Size;
+            WickTop  = (High - (IsGreen ? Close : Open)) / Size;
+            Body     = (Close - Open) / Size;
+            WickBtm  = ((IsGreen ? Open : Close) - Low) / Size;
+            SpaceBtm = (Low - PriceMin) / Size;
+
+            SpaceTopInt = (int)SpaceTop;
+            WickTopInt  = (int)WickTop;
+            BodyInt     = (int)Body;
+            WickBtmInt  = (int)WickBtm;
+            SpaceBtmInt = (int)SpaceBtm;
+        }
+
+        // Структура свечи с учётом пустот сверху и снизу в округлённых процентах
+        public string Struct()
+        {
+            return SpaceTopInt + " " +
+                   WickTopInt + " " +
+                   BodyInt + " " +
+                   WickBtmInt + " " +
+                   SpaceBtmInt;
+        }
     }
 }

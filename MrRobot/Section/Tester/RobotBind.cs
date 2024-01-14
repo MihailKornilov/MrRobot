@@ -89,7 +89,7 @@ namespace MrRobot.Section
             string sql = "SELECT*" +
                         $"FROM`{INSTRUMENT.Table}`" +
                          "ORDER BY`unix`";
-            CANDLES_DATA = mysql.CandlesData(sql, INSTRUMENT.Exp);
+            CANDLES_DATA = mysql.CandlesData(sql);
             CANDLES_TF1 = null;
         }
 

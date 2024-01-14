@@ -247,7 +247,7 @@ namespace MrRobot.Entity
 
             var mass = new List<string>();
             int len = 0;
-            foreach (CandleUnit cndl in mysql.ConvertCandles(sql))
+            foreach (var cndl in mysql.ConvertCandles(sql))
             {
                 if (cndl.Unix == unix)
                     len = item.PatternLength;

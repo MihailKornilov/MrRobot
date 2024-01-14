@@ -56,7 +56,7 @@ namespace MrRobot.Section
             // Ассоциативный массив инструментов по Symbol
             var mass = Instrument.SymbolUnitAss();
 
-            WebClient wc = new WebClient();
+            var wc = new WebClient();
             string json = wc.DownloadString("https://api.bybit.com/v5/market/instruments-info?category=spot");
             dynamic array = JsonConvert.DeserializeObject(json);
             var list = array.result.list;
@@ -165,7 +165,7 @@ namespace MrRobot.Section
         {
             string start = "1577826000";    //2020-01-01 - начало истории для всех инструментов
 
-            WebClient wc = new WebClient();
+            var wc = new WebClient();
 
             // Сначала получение списка по неделям
             string str = $"https://api.bybit.com/v5/market/kline?category=spot&symbol={unit.Symbol}&interval=W&start={start}000&limit=1000";

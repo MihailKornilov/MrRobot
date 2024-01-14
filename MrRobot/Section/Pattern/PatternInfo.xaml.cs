@@ -43,9 +43,7 @@ namespace MrRobot.Section
                          "ORDER BY`unix`" +
                         $"LIMIT {found.PatternLength}";
             foreach(var cndl in mysql.ConvertCandles(sql))
-                send += 
-                    $"High: {cndl.High}   Open: {cndl.Open}   Close: {cndl.Close}   Low: {cndl.Low}\n" +
-                    $"Top: {cndl.WickTop}   Body: {cndl.Body}   Btm: {cndl.WickBtm}\n";
+                send += $"High: {cndl.High}   Open: {cndl.Open}   Close: {cndl.Close}   Low: {cndl.Low}\n";
 
             return send;
         }

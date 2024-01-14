@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using static System.Console;
 
 using MySqlConnector;
+
 using MrRobot.Entity;
-using System.Data.Common;
 using MrRobot.Section;
 
 namespace MrRobot.inc
@@ -342,16 +342,7 @@ namespace MrRobot.inc
             var VolumesData = new List<string>();
             while (res.Read())
             {
-                var cndl = new CandleUnit
-                {
-                    Unix = res.GetInt32("unix"),
-                    High = res.GetDouble("high"),
-                    Open = res.GetDouble("open"),
-                    Close = res.GetDouble("close"),
-                    Low = res.GetDouble("low"),
-                    Volume = res.GetDouble("vol")
-                };
-
+                var cndl = new CandleUnit(res);
                 CandlesData.Add(cndl.CandleToChart());
                 VolumesData.Add(cndl.VolumeToChart());
             }
@@ -369,22 +360,13 @@ namespace MrRobot.inc
         /// <summary>
         /// Получение данных о свечах для Робота
         /// </summary>
-        public static List<object> CandlesData(string sql, ulong Exp = 0)
+        public static List<object> CandlesData(string sql)
         {
             new mysql(sql, true);
 
             var Data = new List<object>();
             while (res.Read())
-                Data.Add(new CandleUnit
-                {
-                    Unix = res.GetInt32("unix"),
-                    High = res.GetDouble("high"),
-                    Open = res.GetDouble("open"),
-                    Close = res.GetDouble("close"),
-                    Low = res.GetDouble("low"),
-                    Volume = res.GetDouble("vol"),
-                    Exp = Exp
-                });
+                Data.Add(new CandleUnit(res));
 
             Finish(sql);
 
@@ -408,23 +390,14 @@ namespace MrRobot.inc
             if(ConvertCandles_Cache.ContainsKey(hash))
                 return ConvertCandles_Cache[hash];
 
-            string table = TableName(sql);
-            var CDI = Candle.InfoUnitOnTable(table);
+            //string table = TableName(sql);
+            //var CDI = Candle.InfoUnitOnTable(table);
 
             new mysql(sql, true);
 
             var Data = new List<CandleUnit>();
             while (res.Read())
-                Data.Add(new CandleUnit
-                {
-                    Unix = res.GetInt32("unix"),
-                    High = res.GetDouble("high"),
-                    Open = res.GetDouble("open"),
-                    Close = res.GetDouble("close"),
-                    Low = res.GetDouble("low"),
-                    Volume = res.GetDouble("vol"),
-                    Exp = CDI.Exp
-                });
+                Data.Add(new CandleUnit(res));
 
             ConvertCandles_Cache[hash] = Data;
             Finish(sql);
@@ -447,7 +420,7 @@ namespace MrRobot.inc
 
             new mysql(sql, true);
 
-            var CandleList = new List<PatternCandleUnit>();
+            var CandleList = new List<CandleUnit>();
             var PatternList = new List<PatternUnit>();
 
             while (res.Read())
@@ -455,20 +428,13 @@ namespace MrRobot.inc
                 if (bar.isUpd(i++))
                     PARAM.PBar.Report(bar.Value);
 
-                CandleList.Add(new PatternCandleUnit
-                {
-                    Unix  = res.GetInt32("unix"),
-                    High  = res.GetDecimal("high"),
-                    Open  = res.GetDecimal("open"),
-                    Close = res.GetDecimal("close"),
-                    Low   = res.GetDecimal("low")
-                });
+                CandleList.Add(new CandleUnit(res));
 
                 if (CandleList.Count > PARAM.PatternLength)
                     CandleList.RemoveRange(0, 1);
 
                 var patt = new PatternUnit();
-                if (patt.Calc(CandleList, PARAM))
+                if (patt.Create(CandleList, PARAM))
                     PatternList.Add(patt);
             }
 

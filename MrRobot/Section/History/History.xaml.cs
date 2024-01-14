@@ -219,23 +219,13 @@ namespace MrRobot.Section
                 int Unix = 0;
                 for (int k = list.Count - 2; k >= 0; k--)
                 {
-                    Unix = Convert.ToInt32(list[k][0].ToString().Substring(0, 10));
+                    var unit = new CandleUnit(list[k]);
+                    Unix = unit.Unix;
                     if (Unix > PARAM.UnixFinish)
                     {
                         isFinish = true;
                         break;
                     }
-
-                    var unit = new CandleUnit
-                    {
-                        Unix = Unix,
-                        High = list[k][2],
-                        Open = list[k][1],
-                        Close = list[k][4],
-                        Low = list[k][3],
-                        Volume = list[k][5]
-                    };
-
                     insert.Add(unit.Insert);
                 }
 
@@ -255,7 +245,7 @@ namespace MrRobot.Section
             if (PARAM.TimeFrame != 1)
                 return;
 
-            WebClient wc = new WebClient();
+            var wc = new WebClient();
             string url = "https://api.bybit.com/v5/market/kline?category=spot" +
                         "&symbol=" + PARAM.Symbol +
                         "&interval=1" +
@@ -339,8 +329,6 @@ namespace MrRobot.Section
             ChartHead.Update(item);
             var chart = new Chart("History", item.Table);
             HistoryBrowser.Address = chart.PageHtml;
-            WriteLine(chart.PageHtml);
-
             BrowserGrid.Visibility = Visibility.Visible;
         }
 
