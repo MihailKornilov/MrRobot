@@ -200,8 +200,9 @@ namespace MrRobot.Section
                             "&interval=" + PARAM.TimeFrame +
                             "&start=" + PARAM.UnixStart + "000" +
                             "&limit=1000";
-                WriteLine(url);
                 string json = wc.DownloadString(url);
+
+                WriteLine($"{url}   {format.DTimeFromUnix(PARAM.UnixStart)}");
 
                 PARAM.Bar.isUpd(barIndex++);
                 Progress.Report(PARAM.Bar.Value);
@@ -323,7 +324,7 @@ namespace MrRobot.Section
             var item = (sender as ListBox).SelectedItem as CandleDataInfoUnit;
             if (item == null)
                 return;
-            if (Candle.InfoUnit(item.Id) == null)
+            if (Candle.Unit(item.Id) == null)
                 return;
 
             ChartHead.Update(item);

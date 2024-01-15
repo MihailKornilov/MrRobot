@@ -90,7 +90,7 @@ namespace MrRobot.Entity
             Section = section;
             Table = tableName;
             PageName = "Chart"; // Название страницы для .html и .tmp по умолчанию
-            CdiUnit = Candle.InfoUnitOnTable(TableName);
+            CdiUnit = Candle.UnitOnTable(TableName);
             Title = Section + ": " + CdiUnit.Name;
         }
 
@@ -162,13 +162,13 @@ namespace MrRobot.Entity
             var read = new StreamReader(PageTmp);
             var write = new StreamWriter(_PageHtml);
 
-            var CDI = Candle.InfoUnit(unit.CdiId);
+            var CDI = Candle.Unit(unit.CdiId);
             string sql = "SELECT*" +
                         $"FROM`{CDI.Table}`" +
                         $"WHERE`unix`>={unit.UnixList[0]} " +
                          "ORDER BY`unix`" +
                         $"LIMIT {unit.PatternLength}";
-            var candles = mysql.ConvertCandles(sql);
+            var candles = mysql.CandlesDataCache(sql);
 
             var mass = new List<string>();
             int unix = format.TimeZone(unit.UnixList[0]);
@@ -247,7 +247,7 @@ namespace MrRobot.Entity
 
             var mass = new List<string>();
             int len = 0;
-            foreach (var cndl in mysql.ConvertCandles(sql))
+            foreach (var cndl in mysql.CandlesDataCache(sql))
             {
                 if (cndl.Unix == unix)
                     len = item.PatternLength;

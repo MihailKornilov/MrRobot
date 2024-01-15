@@ -21,7 +21,7 @@ namespace MrRobot.Section
 
         void CodeCreate(PatternFoundUnit Unit)
         {
-            var CDI = Candle.InfoUnit(Unit.CdiId);
+            var CDI = Candle.Unit(Unit.CdiId);
 
             string TF = format.TF(Unit.TimeFrame);
             string code = "";
@@ -61,7 +61,7 @@ namespace MrRobot.Section
 
         void PatternOnlyCreate(PatternFoundUnit Unit)
         {
-            var CDI = Candle.InfoUnit(Unit.CdiId);
+            var CDI = Candle.Unit(Unit.CdiId);
             string content = Unit.Cndl.Replace('\n', ';');
             PatternOnly.Text = $"new PatternLook(\"{CDI.Symbol}\", {CDI.TimeFrame}, \"{content}\")";
         }

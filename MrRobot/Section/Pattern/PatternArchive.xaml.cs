@@ -110,7 +110,7 @@ namespace MrRobot.Section
             var ArchiveList = new List<PatternFoundUnit>();
             foreach (Dictionary<string, string> row in Spisok)
             {
-                var CDI = Candle.InfoUnit(row["cdiId"]);
+                var CDI = Candle.Unit(row["cdiId"]);
                 ArchiveList.Add(new PatternFoundUnit
                 {
                     Id = Convert.ToInt32(row["id"]),
@@ -137,7 +137,7 @@ namespace MrRobot.Section
         {
             var LBI = sender as ListBoxItem;
             var Item = LBI.Content as PatternFoundUnit;
-            var CDI = Candle.InfoUnit(Item.CdiId);
+            var CDI = Candle.Unit(Item.CdiId);
             var param = new PatternSearchParam()
             {
                 PatternLength = Item.PatternLength,
@@ -224,7 +224,7 @@ namespace MrRobot.Section
             {
                 int Sid = Convert.ToInt32(row["searchId"]);
                 var SSass = SS[Sid] as Dictionary<string, string>;
-                var CDI = Candle.InfoUnit(SSass["cdiId"]);
+                var CDI = Candle.Unit(SSass["cdiId"]);
 
                 list.Add(new PatternFoundUnit
                 {

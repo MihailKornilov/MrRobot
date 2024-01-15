@@ -293,7 +293,7 @@ namespace MrRobot.Section
 
             int CountSearch = MASS.Count - SPARAM.PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
             var bar = new ProBar(CountSearch);
-            var FNDAss = new Dictionary<string, int>();
+            var FNDass = new Dictionary<string, int>();
             SPARAM.PBar.Report(0);
 
             for (int i = 0; i < CountSearch; i++)
@@ -321,7 +321,7 @@ namespace MrRobot.Section
                     string key = MASS[i].Structure();
                     int UnixN = MASS[n].CandleList[0].Unix;
 
-                    if (!FNDAss.ContainsKey(key))
+                    if (!FNDass.ContainsKey(key))
                     {
                         SPARAM.FoundList.Add(new PatternFoundUnit
                         {
@@ -331,13 +331,14 @@ namespace MrRobot.Section
                         });
 
                         int c = SPARAM.FoundList.Count - 1;
-                        FNDAss.Add(key, c);
+                        FNDass.Add(key, c);
                         continue;
                     }
 
-                    int index = FNDAss[key];
-                    if (!SPARAM.FoundList[index].UnixList.Contains(UnixN))
-                        SPARAM.FoundList[index].UnixList.Add(UnixN);
+                    int index = FNDass[key];
+                    var list = SPARAM.FoundList[index].UnixList;
+                    if (!list.Contains(UnixN))
+                         list.Add(UnixN);
                 }
             }
 
@@ -490,7 +491,7 @@ namespace MrRobot.Section
             ButtonFoundBack.IsEnabled = index > 1;
             ButtonFoundNext.IsEnabled = index < found.Repeat;
 
-            var visual = new Chart("Pattern", Candle.InfoUnit(found.CdiId).Table);
+            var visual = new Chart("Pattern", Candle.Unit(found.CdiId).Table);
             visual.PageName = "PatternVisual";
             visual.PatternVisual(found, index-1);
             SearchBrowser.Address = visual.PageHtml;
@@ -580,11 +581,8 @@ namespace MrRobot.Section
         /// <summary>
         /// Создание паттерна
         /// </summary>
-        public bool Create(List<CandleUnit> list, PatternSearchParam param)
+        public bool Create(List<CandleUnit> list, ulong Exp)
         {
-            if(list.Count < param.PatternLength)
-                return false;
-
             foreach (var cndl in list)
             {
                 if (cndl.High == cndl.Low)
@@ -594,7 +592,7 @@ namespace MrRobot.Section
                 PriceMin = cndl.Low;
             }
 
-            Size = (int)Math.Round((PriceMax - PriceMin) * param.Exp);
+            Size = (int)Math.Round((PriceMax - PriceMin) * Exp);
 
             CandleList = new List<CandleUnit>();
             foreach(var cndl in list)

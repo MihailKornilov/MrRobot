@@ -164,7 +164,7 @@ namespace MrRobot.Section
         {
             // Загрузка из базы исходного минутного таймфрейма
             string sql = $"SELECT*FROM`{PARAM.SourceTable}`";
-            var SourceData = mysql.ConvertCandles(sql);
+            var SourceData = mysql.CandlesDataCache(sql);
 
             PARAM.Bar = new ProBar(CheckedTF.Length * SourceData.Count);
             for (int i = 0; i < CheckedTF.Length; i++)

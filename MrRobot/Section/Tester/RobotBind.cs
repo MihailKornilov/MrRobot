@@ -111,7 +111,7 @@ namespace MrRobot.Section
             if (CANDLES_TF1 != null)
                 return;
 
-            var Item1Tf = Candle.InfoUnit(item.ConvertedFromId);
+            var Item1Tf = Candle.Unit(item.ConvertedFromId);
             if (Item1Tf == null)
                 return;
 

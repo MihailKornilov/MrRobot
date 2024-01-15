@@ -105,7 +105,7 @@ namespace MrRobot.Section
             SectionGo(2);
 
             // Выбор скачанной истории TF=1
-            global.MW.Converter.SourceListBox.SelectedItem = Candle.InfoUnit(cdiId);
+            global.MW.Converter.SourceListBox.SelectedItem = Candle.Unit(cdiId);
 
             // Выбор таймфреймов
             string[] TimeFrame = PARAM.ConvertTF.Split(',');
@@ -207,7 +207,7 @@ namespace MrRobot.Section
             int index = PARAM.Index;
             int id = PARAM.ConvertedIds[index];
             PARAM.Index++;
-            global.MW.Pattern.SourceListBox.SelectedItem = Candle.InfoUnit(id);
+            global.MW.Pattern.SourceListBox.SelectedItem = Candle.Unit(id);
 
             // Нажатие на кнопку "Запуск поиска паттернов"
             ButtonClick(global.MW.Pattern.SearchGoButton);
@@ -271,7 +271,7 @@ namespace MrRobot.Section
                 PARAM.FoundCount = PARAM.FoundCountAss[pair.Key];
 
                 // Установка свечных данных в Тестере
-                var unit = Candle.InfoUnit(pair.Value);
+                var unit = Candle.Unit(pair.Value);
                 global.MW.Tester.InstrumentListBox.SelectedItem = unit;
 
                 PARAM.TF = unit.TF;

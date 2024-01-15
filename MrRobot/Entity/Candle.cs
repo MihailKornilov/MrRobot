@@ -148,7 +148,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Единица информации свечных данных на основании названия таблицы со свечами
         /// </summary>
-        public static CandleDataInfoUnit InfoUnitOnTable(string Table)
+        public static CandleDataInfoUnit UnitOnTable(string Table)
         {
             foreach (var v in CDIlist)
                 if (v.Table == Table)
@@ -159,17 +159,17 @@ namespace MrRobot.Entity
         /// <summary>
         /// Единица информации свечных данных на основании ID
         /// </summary>
-        public static CandleDataInfoUnit InfoUnit(int Id)
+        public static CandleDataInfoUnit Unit(int Id)
         {
             if (IdUnitAss.ContainsKey(Id))
                 return IdUnitAss[Id];
 
             return null;
         }
-        public static CandleDataInfoUnit InfoUnit(string IdString)
+        public static CandleDataInfoUnit Unit(string IdString)
         {
             int Id = Convert.ToInt32(IdString);
-            return InfoUnit(Id);
+            return Unit(Id);
         }
 
         /// <summary>
@@ -191,7 +191,14 @@ namespace MrRobot.Entity
             return null;
         }
 
-
+        /// <summary>
+        /// Свечные данные из базы
+        /// </summary>
+        public static List<CandleUnit> Data(int Id)
+        {
+            string sql = $"SELECT*FROM`{Unit(Id).Table}`";
+            return mysql.CandlesDataCache(sql);
+        }
 
 
         /// <summary>
@@ -246,18 +253,21 @@ namespace MrRobot.Entity
         {
             string TableName = "bybit_" + param.Symbol.ToLower() + "_" + param.TimeFrame;
 
-            string sql = $"DROP TABLE IF EXISTS `{TableName}`";
+            string sql = $"DROP TABLE IF EXISTS`{TableName}`";
+            mysql.Query(sql);
+            
+            sql = $"DELETE FROM`_candle_data_info`WHERE`table`='{TableName}'";
             mysql.Query(sql);
 
-            sql = $"CREATE TABLE `{TableName}` (" +
+            sql = $"CREATE TABLE`{TableName}`(" +
                         "`unix` INT UNSIGNED DEFAULT 0 NOT NULL," +
                        $"`high` DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
                        $"`open` DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
                        $"`close`DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
                        $"`low`  DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
                         "`vol`  DECIMAL(30,8) UNSIGNED DEFAULT 0 NOT NULL," +
-                        "PRIMARY KEY (`unix`)" +
-                  $") ENGINE=MyISAM DEFAULT CHARSET=cp1251;";
+                        "PRIMARY KEY(`unix`)" +
+                  $")ENGINE=MyISAM DEFAULT CHARSET=cp1251";
             mysql.Query(sql);
 
             return TableName;
@@ -301,6 +311,8 @@ namespace MrRobot.Entity
             string TimeFrame = spl[2];
             string Symbol = spl[1].ToUpper();
 
+            if (!mysql.CandleDataCheck(TableName))
+                WriteLine($"Ошибка в последовательности таблицы `{TableName}`.");
 
             // Получение данных об инструменте по его названию
             var Instr = Instrument.UnitOnSymbol(Symbol);
@@ -595,7 +607,6 @@ namespace MrRobot.Entity
 
 
         public int TimeFrame { get; set; } = 1; // Таймфрейм свечи
-        public ulong Exp { get; set; }          // Количество нулей после запятой в 10-й степени
 
 
         // Обновление свечи (для динамического графика)
@@ -650,7 +661,20 @@ namespace MrRobot.Entity
 
 
         // Зелёная свеча или нет
-        public bool IsGreen { get { return Close >= Open; } }
+//        public bool IsGreen { get { return Close >= Open; } }
+        bool _IsGreen;
+        bool _IsGreenSetted;
+        public bool IsGreen
+        {
+            get
+            {
+                if (_IsGreenSetted)
+                    return _IsGreen;
+                _IsGreen = Close >= Open;
+                _IsGreenSetted = true;
+                return _IsGreen;
+            }
+        }
 
         // Размеры в процентах с точностью до 0.01
         public double SpaceTop { get; set; }   // Верхнее пустое поле 
@@ -709,11 +733,17 @@ namespace MrRobot.Entity
             WickBtm  = ((IsGreen ? Open : Close) - Low) / Size;
             SpaceBtm = (Low - PriceMin) / Size;
 
-            SpaceTopInt = (int)SpaceTop;
-            WickTopInt  = (int)WickTop;
-            BodyInt     = (int)Body;
-            WickBtmInt  = (int)WickBtm;
-            SpaceBtmInt = (int)SpaceBtm;
+            SpaceTopInt = (int)Math.Round(SpaceTop);
+            WickTopInt  = (int)Math.Round(WickTop);
+            BodyInt     = (int)Math.Round(Body);
+            WickBtmInt  = (int)Math.Round(WickBtm);
+            SpaceBtmInt = (int)Math.Round(SpaceBtm);
+
+            //SpaceTopInt = (int)SpaceTop;
+            //WickTopInt  = (int)WickTop;
+            //BodyInt     = (int)Body;
+            //WickBtmInt  = (int)WickBtm;
+            //SpaceBtmInt = (int)SpaceBtm;
         }
 
         // Структура свечи с учётом пустот сверху и снизу в округлённых процентах

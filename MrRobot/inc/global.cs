@@ -58,7 +58,15 @@ namespace MrRobot.inc
         /// </summary>
         public static void LogWrite(string txt = "", string fileName = "log.txt")
         {
-            var file = new FileStream(fileName, FileMode.OpenOrCreate);
+            FileStream file;
+            try
+            {
+                file = new FileStream(fileName, FileMode.OpenOrCreate);
+            }
+            catch
+            {
+                return;
+            }
             txt = txt.Length > 0 ? $"{format.DTimeNow()}: {txt}\n" : file.Length == 0 ? "" : "\n";
             byte[] buffer = Encoding.Default.GetBytes(txt);
             file.Seek(0, SeekOrigin.End);

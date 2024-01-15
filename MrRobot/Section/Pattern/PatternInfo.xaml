@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Pattern Info"
-        Width="500"
-        Height="400"
+        Width="700"
+        Height="700"
         Left="700"
         Top="100">
 
@@ -25,7 +25,7 @@
         <StackPanel Grid.Row="1" Background="#FFFFE8">
             <TextBox Name="PatternInfoBox"
                      Margin="10"
-                     Height="300"
+                     Height="600"
                      AcceptsReturn="True"
                      BorderBrush="#E0E0D1"
                      Padding="5,7"

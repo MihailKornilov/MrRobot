@@ -6,6 +6,8 @@ using MySqlConnector;
 
 using MrRobot.Entity;
 using MrRobot.Section;
+using System.Windows.Documents;
+using System.Windows.Markup;
 
 namespace MrRobot.inc
 {
@@ -372,6 +374,32 @@ namespace MrRobot.inc
 
             return Data;
         }
+        /// <summary>
+        /// Проверка свечных данных выбранного таймфрейма, чтобы присутствовала каждая свеча одна за другой
+        /// </summary>
+        public static bool CandleDataCheck(string TableName)
+        {
+            int tf = Convert.ToInt32(TableName.Split('_')[2]);
+            int step = tf * 60;
+
+            string sql = "SELECT`unix`" +
+                        $"FROM`{TableName}`" +
+                         "ORDER BY`unix`";
+            new mysql(sql, true);
+
+            res.Read();
+            int unix = res.GetInt32(0) + step;
+            while (res.Read())
+            {
+                if (unix != res.GetInt32(0))
+                    return false;
+                unix += step;
+            }
+            
+            Finish(sql);
+
+            return true;
+        }
 
 
 
@@ -380,7 +408,7 @@ namespace MrRobot.inc
         /// <summary>
         /// Получение данных о свечах для Конвертера
         /// </summary>
-        public static List<CandleUnit> ConvertCandles(string sql)
+        public static List<CandleUnit> CandlesDataCache(string sql)
         {
             if(ConvertCandles_Cache == null)
                 ConvertCandles_Cache = new Dictionary<int, List<CandleUnit>>();
@@ -432,9 +460,11 @@ namespace MrRobot.inc
 
                 if (CandleList.Count > PARAM.PatternLength)
                     CandleList.RemoveRange(0, 1);
+                if (CandleList.Count != PARAM.PatternLength)
+                    continue;
 
                 var patt = new PatternUnit();
-                if (patt.Create(CandleList, PARAM))
+                if (patt.Create(CandleList, PARAM.Exp))
                     PatternList.Add(patt);
             }
 

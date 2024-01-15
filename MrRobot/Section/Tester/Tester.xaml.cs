@@ -75,7 +75,7 @@ namespace MrRobot.Section
         {
             if (global.IsAutoProgon)
                 return;
-            if (Candle.InfoUnit(item.Id) == null)
+            if (Candle.Unit(item.Id) == null)
                 return;
 
             TesterBrowser.Address = new Chart("Tester", item.Table).PageHtml;
