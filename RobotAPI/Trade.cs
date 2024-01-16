@@ -7,8 +7,7 @@ namespace RobotAPI
 {
     public static partial class Robot
     {
-        public static List<dynamic> TRADE_LIST { get; set; } = new List<dynamic>();   // Список сделкок по инструменту
-        public static bool IS_CANDLE_NEW { get; private set; }  // Появилась новая свеча
+        public static List<dynamic> TRADE_LIST { get; set; }   // Список сделок по инструменту
 
 
         /// <summary>
@@ -17,8 +16,7 @@ namespace RobotAPI
         public static void TRADE_GLOBAL_INIT()
         {
             IS_TESTER = false;
-            IS_CANDLE_NEW = false;
-            CandleGlobalSet(CANDLES[0]);
+            CandleGlobalSet();
             TRADE_LIST = new List<dynamic>();
             new CANDLES_ACTUAL();
         }
@@ -29,8 +27,7 @@ namespace RobotAPI
         // 
         public static void TRADE_GLOBAL_STEP()
         {
-            IS_CANDLE_NEW = CANDLE_NEW.TF(CANDLES[0].TimeFrame);
-            CandleGlobalSet(CANDLES[0]);
+            CandleGlobalSet();
         }
 
 

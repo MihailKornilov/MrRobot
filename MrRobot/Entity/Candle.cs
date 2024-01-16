@@ -579,7 +579,7 @@ namespace MrRobot.Entity
         }
         public CandleUnit(CandleUnit src, int tf)
         {
-            Unix   = src.Unix;
+            Unix   = Candle.UnixTF(src.Unix, tf);
             High   = src.High;
             Open   = src.Open;
             Close  = src.Close;
@@ -597,6 +597,14 @@ namespace MrRobot.Entity
             PatternCalc(PriceMax, PriceMin);
         }
 
+
+        // Клонирование текущей свечи для создания новой с другим таймфреймом
+        public CandleUnit Clone(int tf)
+        {
+            return new CandleUnit(this, tf);
+        }
+
+
         public int Unix { get; set; }           // Время свечи в формате Unix согласно Таймфрейму
         public string DateTime { get { return format.DTimeFromUnix(Unix); } }
         public double High { get; set; }        // Максимальная цена свечи
@@ -607,6 +615,8 @@ namespace MrRobot.Entity
 
 
         public int TimeFrame { get; set; } = 1; // Таймфрейм свечи
+        int UpdCount { get; set; } = 1;         // Количество обновлений свечи единичными таймфреймами
+        public bool IsFull { get { return UpdCount == TimeFrame; } } // Свеча заполнена единичными таймфреймами
 
 
         // Обновление свечи (для динамического графика)
@@ -655,6 +665,8 @@ namespace MrRobot.Entity
                 Low = src.Low;
 
             Volume += src.Volume;
+
+            UpdCount++;
 
             return true;
         }

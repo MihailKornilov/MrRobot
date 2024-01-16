@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="format.cs" />
-    <Compile Include="Candles.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="Log.cs" />

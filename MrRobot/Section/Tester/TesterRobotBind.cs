@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -8,9 +9,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static System.Console;
 
+using CefSharp;
 using MrRobot.inc;
 using MrRobot.Entity;
-using CefSharp;
 using static RobotAPI.Robot;
 
 namespace MrRobot.Section
@@ -36,6 +37,13 @@ namespace MrRobot.Section
 
             if (RobotId == robot.Id)
                 return true;
+
+            if (!File.Exists(robot.Path))
+            {
+                RobotsListBox.SelectedIndex = 0;
+                error.Msg("Отсутствует DLL-файл по указанному пути.");
+                return false;
+            }
 
             Assembly ASML = Assembly.LoadFrom(robot.Path);
             Type type = ASML.GetType(robot.Name);
@@ -96,29 +104,37 @@ namespace MrRobot.Section
         /// <summary>
         /// Загрузка свечных данных таймфрейма 1m
         /// </summary>
-        private void Candles1TFLoad()
+        void CandlesTF1load()
         {
             var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
 
-            CANDLES_TF1_USE = item.ConvertedFromId > 0
-                           && (bool)UseTF1Check.IsChecked
-                           && CANDLES_TF1 != null;
-
-            if (item.ConvertedFromId == 0)
-                return;
             if (!(bool)UseTF1Check.IsChecked)
+                return;
+            if (item.ConvertedFromId == 0)
                 return;
             if (CANDLES_TF1 != null)
                 return;
 
-            var Item1Tf = Candle.Unit(item.ConvertedFromId);
-            if (Item1Tf == null)
+            var tf1 = Candle.Unit(item.ConvertedFromId);
+            if (tf1 == null)
                 return;
 
             string sql = "SELECT*" +
-                        $"FROM`{Item1Tf.Table}`" +
+                        $"FROM`{tf1.Table}`" +
                          "ORDER BY`unix`";
             CANDLES_TF1 = mysql.CandlesData(sql);
+        }
+        void CandlesTF1use()
+        {
+            CANDLES_TF1_USE = false;
+            
+            var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
+            if (item.ConvertedFromId == 0)
+                return;
+            if (!(bool)UseTF1Check.IsChecked)
+                return;
+
+            CANDLES_TF1_USE = CANDLES_TF1 != null;
         }
 
 
@@ -135,7 +151,8 @@ namespace MrRobot.Section
 
             InstrumentSet();
             CandlesDataLoad();
-            Candles1TFLoad();
+            CandlesTF1load();
+            CandlesTF1use();
             BalanceUpdate();
 
             TESTER_GLOBAL_INIT();
@@ -224,7 +241,7 @@ namespace MrRobot.Section
             if (!Visualization)
                 return;
 
-            if (FINISH_TEST)
+            if (TESTER_FINISHED)
                 return;
 
             if (AutoGoStatus())
@@ -281,7 +298,7 @@ namespace MrRobot.Section
         {
             CandleAddButton.Visibility = go ? Visibility.Hidden : Visibility.Visible;
             AutoGoButton.Content = go ? "Стоп" : "Старт";
-            AUTO_TEST = go;
+            TESTER_AUTO = go;
 
             if(go)
             {
@@ -311,7 +328,7 @@ namespace MrRobot.Section
                 return;
 
             // Остановка авто-теста со стороны робота
-            if (!AUTO_TEST && AutoGoStatus())
+            if (!TESTER_AUTO && AutoGoStatus())
             {
                 AutoGoStop();
                 BalanceUpdate();
@@ -344,7 +361,7 @@ namespace MrRobot.Section
  
             RobotLine();
 
-            if (!FINISH_TEST)
+            if (!TESTER_FINISHED)
                 return;
 
             AutoGoStop();
@@ -359,11 +376,11 @@ namespace MrRobot.Section
 
         #region NO VISUAL
 
-        private bool IsNoVisualProcess; // Флаг процесса тестирования без визуализации
+        bool IsNoVisualProcess; // Флаг процесса тестирования без визуализации
         /// <summary>
         /// Блокировка полей настроек перед запуском теста
         /// </summary>
-        private void NoVisualLock(string ButtonContent = "", int ButtonWidth = 0)
+        void NoVisualLock(string ButtonContent = "", int ButtonWidth = 0)
         {
             bool unlock = ButtonWidth > 0;
             NoVisualButton.Content = unlock ? ButtonContent : "Остановить";
@@ -378,12 +395,12 @@ namespace MrRobot.Section
         /// <summary>
         /// Тестирование без визуализации - нажатие на кнопку
         /// </summary>
-        private async void NoVisualStart(object sender, RoutedEventArgs e)
+        async void NoVisualStart(object sender, RoutedEventArgs e)
         {
             string ButtonContent = NoVisualButton.Content.ToString();
             int ButtonWidth = (int)NoVisualButton.Width;
 
-            if (!FINISH_TEST && IsNoVisualProcess)
+            if (!TESTER_FINISHED && IsNoVisualProcess)
             {
                 NoVisualLock(ButtonContent, ButtonWidth);
                 return;
@@ -411,7 +428,7 @@ namespace MrRobot.Section
 
             AutoProgon.RobotResult(res.ToString());
         }
-        private void NoVisualProcess(IProgress<int> Progress)
+        void NoVisualProcess(IProgress<int> Progress)
         {
             var bar = new ProBar(INSTRUMENT.RowsCount);
 
@@ -436,7 +453,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Вывод информации в лог Тестера
         /// </summary>
-        private void RobotLog()
+        void RobotLog()
         {
             var list = LOG_LIST();
 
@@ -457,7 +474,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Рисование линии покупки/продажи на графике
         /// </summary>
-        private void RobotLine()
+        void RobotLine()
         {
             string[] line = LineGet();
 
@@ -481,7 +498,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Вывод исполненных SPOT ордеров
         /// </summary>
-        private void OrderExecutedView()
+        void OrderExecutedView()
         {
             OrderExecuted.ItemsSource = null;
 

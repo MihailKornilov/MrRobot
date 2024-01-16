@@ -1,8 +1,8 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Windows;
+using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.Win32;
 
 using MrRobot.inc;
@@ -35,8 +35,8 @@ namespace MrRobot.Entity
             foreach (Dictionary<string, string> v in mass)
                 RobotList.Add(new RobotUnit
                 {
-                    Num = num++.ToString() + ".",
                     Id = Convert.ToInt32(v["id"]),
+                    Num = $"{num++}.",
                     Name = v["name"],
                     Path = v["path"]
                 });
@@ -110,43 +110,53 @@ namespace MrRobot.Entity
             //    return;
             //}
 
-            BaseInsert(dialog.FileName, Name);
-            ListCreate();
+            int RobotId = BaseInsert(dialog.FileName, Name);
+            if (RobotId == 0)
+                return;
+
+            ListCreate(true);
             global.MW.Tester.RobotsListBox.ItemsSource = ListBox();
+            global.MW.Tester.RobotsListBox.SelectedItem = Unit(RobotId);
             global.MW.Trade.RobotsListBox.ItemsSource = ListBox();
         }
 
         /// <summary>
         /// Проверка наличия робота в базе. Если нет, то внесение.
         /// </summary>
-        static void BaseInsert(string path, string name)
+        static int BaseInsert(string path, string name)
         {
-            string sql = "SELECT " +
-                            "COUNT(*)" +
-                          "FROM`_robot`" +
-                         $"WHERE`name`='{name}'";
-            int count = Convert.ToInt32(mysql.QueryString(sql));
-            if (count > 0)
+            string sql = "SELECT COUNT(*)" +
+                         "FROM`_robot`" +
+                        $"WHERE`name`='{name}'";
+            if (mysql.Count(sql) > 0)
             {
-                error.Msg("Данный робот уже присутствует в списке.");
-                return;
+                error.Msg($"Робот '{name}' уже присутствует в списке.");
+                return 0;
             }
 
             path = path.Replace('\\', '/');
             sql = $"INSERT INTO`_robot`(`name`,`path`)VALUES('{name}','{path}')";
-            mysql.Query(sql);
+            return mysql.Query(sql);
+        }
+
+        static RobotUnit Unit(int Id)
+        {
+            foreach(var unit in RobotList)
+                if(unit.Id == Id)
+                    return unit;
+            return null;
         }
     }
 
 
     public class RobotUnit
     {
+        public int Id { get; set; }
         public string Num { get; set; }     // Порядковый номер для отображения в списке
         // Ширина порядкового номера по условию
         public int NumWidth {
             get { return Id == 0 ? 0 : 23; }
         }
-        public int Id { get; set; }
         public string Name { get; set; }    // Имя, а также название сборки и класса
         // Цвет названия по условию
         public string NameColor {

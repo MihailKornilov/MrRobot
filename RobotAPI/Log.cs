@@ -8,7 +8,7 @@ namespace RobotAPI
         /// <summary>
         /// Отображение сообщений от Робота в логе Тестера
         /// </summary>
-        private static List<LogUnit> LogList = new List<LogUnit>();
+        static List<LogUnit> LogList = new List<LogUnit>();
         public static void LOG(string Text)
         {
             LogList.Add(new LogUnit(Text));
@@ -19,7 +19,7 @@ namespace RobotAPI
             LogClear();
             return tmpList;
         }
-        private static void LogClear()
+        static void LogClear()
         {
             LogList = new List<LogUnit>();
         }
@@ -34,24 +34,13 @@ namespace RobotAPI
         public LogUnit(string txt)
         {
             Text = txt;
+            DTime = DateTime.Now.ToString();
+            CandleTime = Robot.DATE_TIME;
         }
 
-        // Текущая дата и время (момент, в который выводится запись)
-        private string _DTime;
-        public string DTime
-        {
-            get { return _DTime; }
-            set { _DTime = DateTime.Now.ToString(); }
-        }
+        public string Text { get; set; }                // Содержание лога
+        public string DTime { get; private set; }       // Текущая дата и время (момент, в который выводится запись)
+        public string CandleTime { get; private set; }  // Дата и время свечи графика
 
-        // Дата и время со свечи графика
-        public string _CandleTime;
-        public string CandleTime
-        {
-            get { return _CandleTime; }
-            set { _CandleTime = Robot.DATE_TIME; }
-        }
-
-        public string Text { get; set; }
     }
 }

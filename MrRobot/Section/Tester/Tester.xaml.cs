@@ -27,6 +27,7 @@ namespace MrRobot.Section
             InstrumentListBox.SelectedIndex = position.Val("4_InstrumentListBox_SelectedIndex", 0);
 
             RobotsListBox.ItemsSource = Robots.ListBox();
+            RobotsListBox.SelectedIndex = 0;
             RobotAddButton.Click += Robots.Load;
 
             Visualization = position.Val("4_VisualCheck.IsChecked", true);
@@ -52,7 +53,7 @@ namespace MrRobot.Section
 
             position.Set("4_InstrumentListBox_SelectedIndex", box.SelectedIndex);
             RobotPanel.Visibility = box.SelectedIndex == -1 ? Visibility.Hidden : Visibility.Visible;
-            RobotsListBox.SelectedIndex = -1;
+            RobotsListBox.SelectedIndex = 0;
 
             if (box.SelectedIndex == -1)
                 return;

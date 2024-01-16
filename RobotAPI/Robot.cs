@@ -25,6 +25,20 @@ namespace RobotAPI
         static bool IS_TESTER { get; set; }                     // Робот запущен с тестера
 
 
+        /// <summary>
+        /// Установка глобальных значений свечи
+        /// </summary>
+        static void CandleGlobalSet()
+        {
+            UNIX = CANDLES[0].Unix;
+            PRICE = CANDLES[0].Close;
+            HIGH = CANDLES[0].High;
+            OPEN = CANDLES[0].Open;
+            CLOSE = CANDLES[0].Close;
+            LOW = CANDLES[0].Low;
+            VOLUME = CANDLES[0].Volume;
+        }
+
 
         /// <summary>
         /// Класс с информацией о появлении новой свечи по каждому таймфрейму

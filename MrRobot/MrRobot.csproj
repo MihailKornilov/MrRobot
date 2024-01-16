@@ -174,12 +174,12 @@
     <Compile Include="Section\Setting\Setting.xaml.cs">
       <DependentUpon>Setting.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Section\Tester\RobotBind.cs" />
+    <Compile Include="Section\Tester\TesterRobotBind.cs" />
     <Compile Include="Section\Tester\Tester.xaml.cs">
       <DependentUpon>Tester.xaml</DependentUpon>
     </Compile>
     <Compile Include="Section\Trade\Depth.cs" />
-    <Compile Include="Section\Trade\RobotBind.cs" />
+    <Compile Include="Section\Trade\TradeRobotBind.cs" />
     <Compile Include="Section\Trade\Trade.xaml.cs">
       <DependentUpon>Trade.xaml</DependentUpon>
     </Compile>
