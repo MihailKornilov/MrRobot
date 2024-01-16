@@ -18,7 +18,7 @@
                     <Label Content="{Binding Symbol}" Padding="0" FontWeight="Medium"/>
                     <Label Content="{Binding TF}" Width="30" Padding="0" Margin="5,0,0,0" Foreground="#777"/>
                 </WrapPanel>
-                <Label Content="{Binding CandlesCount}" Padding="0" Width="130"/>
+                <Label Content="{Binding CandlesCountStr}" Padding="0" Width="130"/>
                 <Label Content="{Binding PatternLength}" Width="90" Padding="0,0,45,0" HorizontalContentAlignment="Center"/>
                 <Label Content="{Binding PrecisionPercent}" Width="70" Padding="0,0,25,0" HorizontalContentAlignment="Center"/>
                 <Label Content="{Binding FoundCount}" Width="100" Padding="0,0,21,0" HorizontalContentAlignment="Right"/>
@@ -35,7 +35,7 @@
                     <Label Content="{Binding Symbol}" Padding="0" FontWeight="Medium"/>
                     <Label Content="{Binding TF}" Width="30" Padding="0" Margin="5,0,0,0" Foreground="#777"/>
                 </WrapPanel>
-                <Label Content="{Binding CandlesCount}" Padding="0" Width="130"/>
+                <Label Content="{Binding CandlesCountStr}" Padding="0" Width="130"/>
                 <Label Content="{Binding PatternLength}" Width="90" Padding="0,0,45,0" HorizontalContentAlignment="Center"/>
                 <Label Content="{Binding Repeat}" Width="100" Padding="0,0,55,0" HorizontalContentAlignment="Center" FontWeight="Medium"/>
                 <StackPanel Width="85" Orientation="Horizontal">

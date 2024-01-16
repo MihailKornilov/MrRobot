@@ -25,7 +25,7 @@
         <DataTemplate x:Key="PatternListTmp">
             <StackPanel Orientation="Horizontal" Cursor="Hand">
                 <Label Content="{Binding Num}"    Width="35" Padding="0,0,10,0" FontSize="11" FontWeight="Medium" Foreground="#999" HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Cndl}"   Width="95" Padding="0" FontSize="11"/>
+                <Label Content="{Binding Struct}" Width="95" Padding="0" FontSize="11"/>
                 <Label Content="{Binding Repeat}" Width="45" Padding="0" FontSize="11" FontWeight="Bold" HorizontalContentAlignment="Right"/>
             </StackPanel>
         </DataTemplate>

@@ -20,24 +20,22 @@ namespace MrRobot.Section
 
         void InfoShow()
         {
-            var found = global.MW.Pattern.FoundListBox.SelectedItem as PatternFoundUnit;
+            var found = global.MW.Pattern.FoundListBox.SelectedItem as PatternUnit;
             var CDI = Candle.Unit(found.CdiId);
 
             PatternInfoBox.Text =
                 $"{CDI.Name} {CDI.TF} " +
-                $"Struct:\n{found.Structure.Replace(';', '\n')}\n" +
+                $"Struct:\n{found.Struct}\n" +
                  "\n" +
                 $"{FoundList(found)}\n";
         }
 
 
 
-        List<PatternUnit> PatternList(PatternFoundUnit found)
+        List<PatternUnit> PatternList(PatternUnit found)
         {
-            ulong Exp = Candle.Unit(found.CdiId).Exp;
             var CandleList = new List<CandleUnit>();
             var PatternList = new List<PatternUnit>();
-            int PatternLen = found.PatternLength; // длина паттерна
             foreach (var cndl in Candle.Data(found.CdiId))
             {
                 if (CandleList.Count == 0 && !found.UnixList.Contains(cndl.Unix))
@@ -45,18 +43,15 @@ namespace MrRobot.Section
 
                 CandleList.Add(cndl);
 
-                if (CandleList.Count < PatternLen)
+                if (CandleList.Count < found.PatternLength)
                     continue;
 
-                var patt = new PatternUnit();
-                patt.Create(CandleList, Exp);
-                PatternList.Add(patt);
-
-                CandleList = new List<CandleUnit>();
+                PatternList.Add(new PatternUnit(CandleList, found.CdiId));
+                CandleList.Clear();
             }
             return PatternList;
         }
-        string FoundList(PatternFoundUnit found)
+        string FoundList(PatternUnit found)
         {
             var CDI = Candle.Unit(found.CdiId);
             string send = "";

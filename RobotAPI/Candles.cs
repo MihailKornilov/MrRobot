@@ -10,14 +10,13 @@ namespace RobotAPI
         /// </summary>
         static void CandleGlobalSet(dynamic candle)
         {
-            PRICE = candle.Close;
-            HIGH = candle.High;
-            OPEN = candle.Open;
-            CLOSE = candle.Close;
-            LOW = candle.Low;
+            UNIX   = candle.Unix;
+            PRICE  = candle.Close;
+            HIGH   = candle.High;
+            OPEN   = candle.Open;
+            CLOSE  = candle.Close;
+            LOW    = candle.Low;
             VOLUME = candle.Volume;
-            UNIX_TIME = candle.Unix;
-            DATE_TIME = candle.DateTime;
         }
 
         /// <summary>
@@ -103,14 +102,13 @@ namespace RobotAPI
         /// </summary>
         static void CandleClear()
         {
-            PRICE = 0;
-            HIGH = 0;
-            OPEN = 0;
-            CLOSE = 0;
-            LOW = 0;
+            UNIX   = 0;
+            PRICE  = 0;
+            HIGH   = 0;
+            OPEN   = 0;
+            CLOSE  = 0;
+            LOW    = 0;
             VOLUME = 0;
-            UNIX_TIME = 0;
-            DATE_TIME = "";
 
             CANDLES = new List<dynamic>();
 

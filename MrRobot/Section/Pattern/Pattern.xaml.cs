@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,8 +9,6 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
-using System.Diagnostics;
-using System.Security.Cryptography;
 
 namespace MrRobot.Section
 {
@@ -121,11 +119,7 @@ namespace MrRobot.Section
                 CdiId = CDI.Id,
                 PatternLength = (int)LengthSlider.Value,
                 PrecisionPercent = (int)PrecisionPercentSlider.Value,
-                FoundRepeatMin = Convert.ToInt32(FoundRepeatMin.Text),
-
-                TimeFrame = CDI.TimeFrame,
-                NolCount = CDI.NolCount,
-                Exp = format.Exp(CDI.NolCount)
+                FoundRepeatMin = Convert.ToInt32(FoundRepeatMin.Text)
             };
 
             PatternSearchExist(param);
@@ -152,18 +146,12 @@ namespace MrRobot.Section
                 FoundRepeatMin = Convert.ToInt16(FoundRepeatMin.Text),
 
                 CdiId = CDI.Id,
-                Table = CDI.Table,
-                NolCount = CDI.NolCount,
-                Exp = format.Exp(CDI.NolCount),
-                TimeFrame = CDI.TimeFrame,
 
                 PBar = new Progress<int>(v => {
                     SearchProgress.Value = v;
                     ProgressPrc.Content = v + "%";
                     ProсessInfo.Text = SPARAM.ProсessInfo;
-                }),
-
-                FoundList = new List<PatternFoundUnit>()
+                })
             };
 
             if (PatternSearchExist(SPARAM))
@@ -171,112 +159,11 @@ namespace MrRobot.Section
 
             await Task.Run(() => SearchProcess());
 
-            PattentSearchResult();
             PatternFoundBaseInsert();
-        }
-        /// <summary>
-        /// Проверка поиска: если был, то берётся из базы
-        /// </summary>
-        public bool PatternSearchExist(PatternSearchParam param)
-        {
-            string sql = "SELECT*" +
-                         "FROM`_pattern_search`" +
-                        $"WHERE`cdiId`={param.CdiId}" +
-                         $" AND`patternLength`={param.PatternLength}" +
-                         $" AND`scatterPercent`={param.PrecisionPercent} " +
-                        $"LIMIT 1";
-            var row = mysql.QueryOne(sql);
+            global.MW.Pattern.PatternArchive.SearchList();
+            if (!AutoProgon.PatternSearch())
+                PatternSearchExist(SPARAM);
 
-            if (row.Count == 0)
-            {
-                SearchStatistic(param);
-                return false;
-            }
-
-            param.FoundCount = Convert.ToInt32(row["foundCount"]);
-            param.Iterations = Convert.ToUInt64(row["iterations"]);
-            param.Duration = row["duration"];
-
-            if (param.FoundCount == 0)
-            {
-                SearchStatistic(param);
-                AutoProgon.PatternSearch();
-                return true;
-            }
-
-            int SearchId = Convert.ToInt32(row["id"]);
-            sql = "SELECT*" +
-                  "FROM`_pattern_found`" +
-                 $"WHERE`searchId`={SearchId} " +
-                 $"  AND`repeatCount`>={param.FoundRepeatMin} " +
-                  "ORDER BY`repeatCount`DESC";
-            var Spisok = mysql.QueryList(sql);
-
-            param.FoundCount = Spisok.Count;
-            param.FoundList = new List<PatternFoundUnit>();
-            for (int i = 0; i < Spisok.Count; i++)
-            {
-                var item = Spisok[i] as Dictionary<string, string>;
-
-                if (param.FoundId == Convert.ToInt32(item["id"]))
-                    param.FoundIndex = i;
-
-                string[] UnixListString = item["unixList"].Split(',');
-                var UnixList = new List<int>();
-                for (int n = 0; n < UnixListString.Length; n++)
-                    UnixList.Add(Convert.ToInt32(UnixListString[n]));
-
-                param.FoundList.Add(new PatternFoundUnit
-                {
-                    Num = i + 1,
-                    SearchId = Convert.ToInt32(item["searchId"]),
-                    CdiId = param.CdiId,
-                    Size = Convert.ToInt32(item["size"]),
-                    Structure = item["structure"],
-                    Repeat = Convert.ToInt32(item["repeatCount"]),
-                    UnixList = UnixList,
-                    TimeFrame = param.TimeFrame,
-                    PatternLength = param.PatternLength,
-                    NolCount = param.NolCount
-                });
-            }
-
-            SearchStatistic(param);
-            AutoProgon.PatternSearch();
-            return true;
-        }
-        /// <summary>
-        /// Показ краткой статистики найденного паттерна
-        /// </summary>
-        public void SearchStatistic(PatternSearchParam param)
-        {
-            bool isSearchNew = param.Duration == null;
-            SourceListBox.IsEnabled = !param.IsProcess;
-            SetupPanel.IsEnabled = !param.IsProcess;
-            SearchPanel.Visibility        = isSearchNew ? Visibility.Visible : Visibility.Collapsed;
-            SearchGoButton.Visibility     = param.IsProcess ? Visibility.Collapsed : Visibility.Visible;
-            ProgressPanel.Visibility      = param.IsProcess ? Visibility.Visible : Visibility.Collapsed;
-            ResultPanel.Visibility        = isSearchNew ? Visibility.Collapsed : Visibility.Visible;
-
-            Visibility foundVis = param.FoundCount == 0 ? Visibility.Hidden : Visibility.Visible;
-            FoundPanel.Visibility = foundVis;
-            FoundBrowserPanel.Visibility = foundVis;
-            FoundButtonsPanel.Visibility = foundVis;
-
-            FoundListBox.ItemsSource = param.FoundCount > 0 ? param.FoundList : null;
-            if(param.FoundCount > 0)
-            {
-                FoundListBox.SelectedIndex = param.FoundIndex;
-                var item = FoundListBox.SelectedItem;
-                FoundListBox.ScrollIntoView(item);
-            }
-
-            if (isSearchNew)
-                return;
-
-            CandlesDuplicate.Text = format.Num(param.FoundCount);
-            IterationsCount.Text = format.Num(param.Iterations);
-            IterationsTime.Text = param.Duration;
         }
         /// <summary>
         /// Поиск свечных паттернов без разброса в процентах
@@ -293,7 +180,7 @@ namespace MrRobot.Section
 
             int CountSearch = MASS.Count - SPARAM.PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
             var bar = new ProBar(CountSearch);
-            var FNDass = new Dictionary<string, int>();
+            var FNDass = new Dictionary<int, int>();
             SPARAM.PBar.Report(0);
 
             for (int i = 0; i < CountSearch; i++)
@@ -318,33 +205,128 @@ namespace MrRobot.Section
                     if (!MASS[i].Compare(MASS[n]))
                         continue;
 
-                    string key = MASS[i].Structure();
+                    int UnixI = MASS[i].CandleList[0].Unix;
                     int UnixN = MASS[n].CandleList[0].Unix;
 
-                    if (!FNDass.ContainsKey(key))
+                    if (FNDass.ContainsKey(UnixI))
                     {
-                        SPARAM.FoundList.Add(new PatternFoundUnit
-                        {
-                            Size = MASS[i].Size,
-                            Structure = key,
-                            UnixList = new List<int> { MASS[i].CandleList[0].Unix, UnixN }
-                        });
-
-                        int c = SPARAM.FoundList.Count - 1;
-                        FNDass.Add(key, c);
+                        int index = FNDass[UnixI];
+                        var list = SPARAM.FoundList[index].UnixList;
+                        if (!list.Contains(UnixN))
+                             list.Add(UnixN);
                         continue;
                     }
 
-                    int index = FNDass[key];
-                    var list = SPARAM.FoundList[index].UnixList;
-                    if (!list.Contains(UnixN))
-                         list.Add(UnixN);
+                    MASS[i].UnixList = new List<int> { UnixI, UnixN };
+                    SPARAM.FoundList.Add(MASS[i]);
+
+                    int c = SPARAM.FoundList.Count - 1;
+                    FNDass.Add(UnixI, c);
                 }
             }
 
             SPARAM.IsProcess = false;
             SPARAM.PBar.Report(100);
             SPARAM.Duration = dur.Minutes();
+        }
+        /// <summary>
+        /// Проверка поиска: если был, то берётся из базы
+        /// </summary>
+        public bool PatternSearchExist(PatternSearchParam param)
+        {
+            string sql = "SELECT*" +
+                         "FROM`_pattern_search`" +
+                        $"WHERE`cdiId`={param.CdiId}" +
+                         $" AND`patternLength`={param.PatternLength}" +
+                         $" AND`scatterPercent`={param.PrecisionPercent} " +
+                        $"LIMIT 1";
+            var row = mysql.QueryOne(sql);
+
+            if (row.Count == 0)
+            {
+                SearchStatistic(param);
+                return false;
+            }
+
+            param.Iterations = Convert.ToUInt64(row["iterations"]);
+            param.Duration = row["duration"];
+
+            if (row["foundCount"] == "0")
+            {
+                SearchStatistic(param);
+                AutoProgon.PatternSearch();
+                return true;
+            }
+
+            int SearchId = Convert.ToInt32(row["id"]);
+            sql = "SELECT*" +
+                  "FROM`_pattern_found`" +
+                 $"WHERE`searchId`={SearchId} " +
+                 $"  AND`repeatCount`>={param.FoundRepeatMin} " +
+                  "ORDER BY`repeatCount`DESC";
+            var Found = mysql.QueryList(sql);
+
+            param.FoundList.Clear();
+            for (int i = 0; i < Found.Count; i++)
+            {
+                var patt = Found[i] as Dictionary<string, string>;
+
+                if (param.FoundId == Convert.ToInt32(patt["id"]))
+                    param.FoundIndex = i;
+
+                string[] UnixListString = patt["unixList"].Split(',');
+                var UnixList = new List<int>();
+                for (int n = 0; n < UnixListString.Length; n++)
+                    UnixList.Add(Convert.ToInt32(UnixListString[n]));
+
+                param.FoundList.Add(new PatternUnit
+                {
+                    Num = i + 1,
+                    SearchId = Convert.ToInt32(patt["searchId"]),
+                    CdiId = param.CdiId,
+                    Size = Convert.ToInt32(patt["size"]),
+                    Struct = patt["structure"],
+                    UnixList = UnixList,
+                    PatternLength = param.PatternLength
+                });
+            }
+
+            FoundListBox.ItemsSource = param.FoundList;
+            FoundListBox.SelectedIndex = param.FoundIndex;
+            var item = FoundListBox.SelectedItem;
+            FoundListBox.ScrollIntoView(item);
+
+            SearchStatistic(param);
+            AutoProgon.PatternSearch();
+            return true;
+        }
+        /// <summary>
+        /// Показ краткой статистики найденного паттерна
+        /// </summary>
+        public void SearchStatistic(PatternSearchParam param)
+        {
+            bool isSearchNew = param.Duration == null;
+            SourceListBox.IsEnabled = !param.IsProcess;
+            SetupPanel.IsEnabled = !param.IsProcess;
+            SearchPanel.Visibility        = isSearchNew ? Visibility.Visible : Visibility.Collapsed;
+            SearchGoButton.Visibility     = param.IsProcess ? Visibility.Collapsed : Visibility.Visible;
+            ProgressPanel.Visibility      = param.IsProcess ? Visibility.Visible : Visibility.Collapsed;
+            ResultPanel.Visibility        = isSearchNew ? Visibility.Collapsed : Visibility.Visible;
+
+            Visibility foundVis = param.FoundCount == 0 ? Visibility.Hidden : Visibility.Visible;
+            FoundPanel.Visibility = foundVis;
+            FoundBrowserPanel.Visibility = foundVis;
+            FoundButtonsPanel.Visibility = foundVis;
+
+            if (param.FoundCount == 0)
+                FoundListBox.ItemsSource = null;
+
+            if (isSearchNew)
+                return;
+
+            CandlesDuplicate.Text = format.Num(param.FoundCount);
+            IterationsCount.Text = format.Num(param.Iterations);
+            IterationsTime.Text = param.Duration;
         }
         /// <summary>
         /// Нажатие на кнопку `Отмена`
@@ -355,43 +337,39 @@ namespace MrRobot.Section
         }
 
         /// <summary>
-        /// Возврат результата после выполнения поиска паттернов
+        /// Подготовка найденных паттернов перед внесением в базу
         /// </summary>
-        void PattentSearchResult()
+        bool PattentFoundPrepare()
         {
+            // Поиск был отменён
             if (SPARAM.Duration == null)
-                return;
-
-            // Сортировка найденных паттернов по количеству по убыванию
-            var FoundListTmp = from pf in SPARAM.FoundList orderby pf.Repeat descending select pf;
-
-            SPARAM.FoundList = new List<PatternFoundUnit>();
-            foreach (var item in FoundListTmp)
             {
-                item.Repeat = item.UnixList.Count;
-                if (item.Repeat < SPARAM.FoundRepeatMin)
-                    continue;
-
-                item.Num = ++SPARAM.FoundCount;
-                item.CdiId = SPARAM.CdiId;
-                item.PatternLength = SPARAM.PatternLength;
-                item.NolCount = SPARAM.NolCount;
-                item.TimeFrame = SPARAM.TimeFrame;
-                item.UnixList.Sort();
-                SPARAM.FoundList.Add(item);
+                SearchStatistic(SPARAM);
+                return false;
             }
+
+            if (SPARAM.FoundCount == 0)
+                return true;
+
+            var FoundListSorted = SPARAM.FoundList.OrderByDescending(x => x.Repeat).ToList();
+            SPARAM.FoundList.Clear();
+            foreach (var patt in FoundListSorted)
+            {
+                if (patt.Repeat < SPARAM.FoundRepeatMin)
+                    break;
+                patt.UnixList.Sort();
+                SPARAM.FoundList.Add(patt);
+            }
+
+            return true;
         }
         /// <summary>
         /// Внесение найденных паттернов в базу
         /// </summary>
         void PatternFoundBaseInsert()
         {
-            // Поиск был отменён
-            if (SPARAM.Duration == null)
-            {
-                SearchStatistic(SPARAM);
+            if (!PattentFoundPrepare())
                 return;
-            }
 
             string sql = "INSERT INTO`_pattern_search`(" +
                             "`cdiId`," +
@@ -416,40 +394,28 @@ namespace MrRobot.Section
                          ")";
             int SearchId = mysql.Query(sql);
 
-            if (SPARAM.FoundCount > 0)
+            if (SPARAM.FoundCount == 0)
+                return;
+
+            var insert = new List<string>();
+            for (int i = 0; i < SPARAM.FoundCount; i++)
             {
-                var insert = new List<string>();
-                for (int i = 0; i < SPARAM.FoundCount; i++)
-                {
-                    var item = SPARAM.FoundList[i];
-                    insert.Add("(" +
-                                    $"{SearchId}," +
-                                    $"{item.Size}," +
-                                    $"'{item.Structure}'," +
-                                    $"{item.Repeat}," +
-                                    $"'{string.Join(",", item.UnixList.ToArray())}'" +
-                                ")");
+                insert.Add(SPARAM.FoundList[i].Insert(SearchId));
 
-                    if (insert.Count < 500 && i < SPARAM.FoundCount - 1)
-                        continue;
+                if (insert.Count < 500 && i < SPARAM.FoundCount - 1)
+                    continue;
 
-                    sql = "INSERT INTO`_pattern_found`(" +
-                            "`searchId`," +
-                            "`size`," +
-                            "`structure`," +
-                            "`repeatCount`," +
-                            "`unixList`" +
-                          ")VALUES" + string.Join(",", insert.ToArray());
-                    mysql.Query(sql);
+                sql = "INSERT INTO`_pattern_found`(" +
+                        "`searchId`," +
+                        "`size`," +
+                        "`structure`," +
+                        "`repeatCount`," +
+                        "`unixList`" +
+                        ")VALUES" + string.Join(",", insert.ToArray());
+                mysql.Query(sql);
 
-                    insert = new List<string>();
-                }
+                insert.Clear();
             }
-
-            global.MW.Pattern.PatternArchive.SearchList();
-
-            if(!AutoProgon.PatternSearch())
-                SearchStatistic(SPARAM);
         }
 
         #endregion
@@ -463,7 +429,7 @@ namespace MrRobot.Section
             if (FoundListBox.SelectedIndex == -1)
                 return;
 
-            var found = FoundListBox.SelectedItem as PatternFoundUnit;
+            var found = FoundListBox.SelectedItem as PatternUnit;
             var chart = new Chart("Pattern");
             chart.PageName = "PatternFound";
             chart.PatternSource(found);
@@ -480,7 +446,7 @@ namespace MrRobot.Section
         void PatternFoundStep(int step = 0)
         {
             int index = step == 0 ? 1 : Convert.ToInt32(FoundStep.Text);
-            var found = FoundListBox.SelectedItem as PatternFoundUnit;
+            var found = FoundListBox.SelectedItem as PatternUnit;
 
             if (step < 0 && index <= 1
              || step > 0 && index >= found.Repeat)
@@ -536,14 +502,16 @@ namespace MrRobot.Section
 
 
         public int CdiId { get; set; }          // ID исторических данных
-        public string Table { get; set; }       // Таблица со свечами
-        public int NolCount { get; set; }       // Количество нулей после запятой
-        public ulong Exp { get; set; }          //
-        public int TimeFrame { get; set; }      // Таймфрейм таблицы со свечами
+        public string Table { get { return Candle.Unit(CdiId).Table; } }       // Таблица со свечами
+        // Количество нулей после запятой
+        public int NolCount { get { return Candle.Unit(CdiId).NolCount; } }
+        public ulong Exp { get { return Candle.Unit(CdiId).Exp; } }
+        // Таймфрейм таблицы со свечами
+        public int TimeFrame { get { return Candle.Unit(CdiId).TimeFrame; } }
 
 
-        public int FoundCount { get; set; }     // Количество найденных паттернов
-        public List<PatternFoundUnit> FoundList { get; set; }   // Список с данными найденных паттернов
+        public int FoundCount { get { return FoundList.Count; } }// Количество найденных паттернов
+        public List<PatternUnit> FoundList { get; set; } = new List<PatternUnit>();  // Список с данными найденных паттернов
         public ulong Iterations { get; set; }   // Количество итераций
         public string Duration { get; set; }    // Время выполнения
 
@@ -556,6 +524,29 @@ namespace MrRobot.Section
     /// </summary>
     public class PatternUnit
     {
+        // ---=== ФОРМИРОВАНИЕ ПАТТЕРНА ===---
+        public PatternUnit() { }
+        public PatternUnit(List<CandleUnit> list, int cdiId)
+        {
+            foreach (var cndl in list)
+            {
+                if (cndl.High == cndl.Low)
+                    return;
+
+                PriceMax = cndl.High;
+                PriceMin = cndl.Low;
+            }
+
+            CdiId = cdiId;
+            Size = (int)Math.Round((PriceMax - PriceMin) * Exp);
+
+            CandleList = new List<CandleUnit>();
+            foreach (var cndl in list)
+                CandleList.Add(new CandleUnit(cndl, PriceMax, PriceMin));
+
+            PatternLength = CandleList.Count;
+        }
+
         double _PriceMax;
         double PriceMax
         {
@@ -578,31 +569,7 @@ namespace MrRobot.Section
         }
         public int Size { get; set; }   // Размер паттерна в пунктах
         public List<CandleUnit> CandleList { get; set; } // Состав паттерна из свечей
-        /// <summary>
-        /// Создание паттерна
-        /// </summary>
-        public bool Create(List<CandleUnit> list, ulong Exp)
-        {
-            foreach (var cndl in list)
-            {
-                if (cndl.High == cndl.Low)
-                    return false;
-
-                PriceMax = cndl.High;
-                PriceMin = cndl.Low;
-            }
-
-            Size = (int)Math.Round((PriceMax - PriceMin) * Exp);
-
-            CandleList = new List<CandleUnit>();
-            foreach(var cndl in list)
-                CandleList.Add(new CandleUnit(cndl, PriceMax, PriceMin));
-
-            return true;
-        }
-        /// <summary>
-        /// Сравнение паттернов
-        /// </summary>
+        // Сравнение паттернов
         public bool Compare(PatternUnit PU)
         {
             //            int Prc = 100 - SPARAM.PrecisionPercent;
@@ -627,63 +594,77 @@ namespace MrRobot.Section
             }
             return true;
         }
-        /// <summary>
-        /// Содержание паттерна: свечи с учётом пустот сверху и снизу
-        /// </summary>
-        public string Structure()
+        // Содержание паттерна: свечи с учётом пустот сверху и снизу
+        void StructFromCandle()
         {
             string[] arr = new string[CandleList.Count];
 
             for (int k = 0; k < CandleList.Count; k++)
                 arr[k] = CandleList[k].Struct();
 
-            return string.Join(";", arr);
+            _Struct = string.Join("\n", arr);
         }
-    }
 
-    /// <summary>
-    /// Единица найденного паттерна
-    /// </summary>
-    public class PatternFoundUnit
-    {
+
+
+
+        // ---=== НАЙДЕННЫЕ ПАТТЕРНЫ ===---
         public int Id { get; set; }
         public string IdStr { get { return "#" + Id; } }
         public int Num { get; set; }            // Порядковый номер
-        public int Size { get; set; }           // Высота паттерна в пунктах
-        public string Structure { get; set; }   // Список свечей в процентах целыми числами
-        public int Repeat { get; set; }         // Количество повторений паттерна на графике
-        public List<int> UnixList { get; set; } // Времена найденных паттернов в формате UNIX
-        public int NolCount { get; set; }       // Количество нулей после запятой
+        // Количество повторений паттерна на графике
+        public int Repeat { get { return UnixList.Count; } }
+        // Времена найденных паттернов в формате UNIX
+        public List<int> UnixList { get; set; } = new List<int>();
 
 
-        string _Cndl;
-        public string Cndl
+        string _Struct;
+        public string Struct {
+            get
+            {
+                if (_Struct == null)
+                    StructFromCandle();
+                return _Struct;
+            }
+            set { _Struct = value.Replace(';', '\n'); }
+        }
+        // Строка внесения паттерна в базу
+        public string Insert(int SearchId)
+        {
+            return "(" +
+                $"{SearchId}," +
+                $"{Size}," +
+                $"'{Struct.Replace('\n', ';')}'," +
+                $"{Repeat}," +
+                $"'{string.Join(",", UnixList.ToArray())}'" +
+            ")";
+        }
+
+
+
+
+        // ---=== ИНФОРМАЦИЯ О СВЕЧНЫХ ДАННЫХ ===---
+        public int CdiId { get; set; }          // ID свечных данных из `_candle_data_info`
+        // Название инструмента
+        public string Symbol { get { return Candle.Unit(CdiId).Name; } }
+        // Таймфрейм
+        public int TimeFrame { get { return Candle.Unit(CdiId).TimeFrame; } }
+        // Таймфрейм в виде 10m
+        public string TF { get { return format.TF(TimeFrame); } }
+        // Количество нулей после запятой
+        public int NolCount { get { return Candle.Unit(CdiId).NolCount; } }
+        public ulong Exp { get { return Candle.Unit(CdiId).Exp; } }
+        // Количество свечей в графике
+        public string CandlesCountStr
         {
             get
             {
-                if (_Cndl != null)
-                    return _Cndl;
-
-                string[] pattern = Structure.Split(';');
-                string[] cndl = new string[pattern.Length];
-                for(int i = 0; i < pattern.Length; i++)
-                {
-                    string[] spl = pattern[i].Split(' ');
-                    cndl[i] = $"{spl[1]} {spl[2]} {spl[3]}";
-                }
-
-                _Cndl = string.Join("\n", cndl.ToArray());
-                return _Cndl;
+                int count = Candle.Unit(CdiId).RowsCount;
+                return Candle.CountTxt(count);
             }
         }
 
 
-        // Информация об свечных данных
-        public int CdiId { get; set; }          // ID свечных данных из `_candle_data_info`
-        public string Symbol { get; set; }      // Название инструмента
-        public int TimeFrame { get; set; }      // Таймфрейм
-        public string TF { get { return format.TF(TimeFrame); } }      // Таймфрейм в виде 10m
-        public string CandlesCount { get; set; }// Количество свечей в графике
 
 
         // Данные о настройках
@@ -692,11 +673,15 @@ namespace MrRobot.Section
         public int FoundRepeatMin { get; set; } // Исключать менее N нахождений
 
 
+
+
         // Результат поиска
         public int SearchId { get; set; }       // ID поиска из `_pattern_search`
         public string Dtime { get; set; }       // Дата и время поиска
         public int FoundCount { get; set; }     // Количество найденных паттернов
         public string Duration { get; set; }    // Время выполнения
+
+
 
 
         // Результат теста

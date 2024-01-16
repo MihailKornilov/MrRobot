@@ -157,7 +157,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Визуальное отображение найденного паттерна (маленький график)
         /// </summary>
-        public void PatternSource(PatternFoundUnit unit)
+        public void PatternSource(PatternUnit unit)
         {
             var read = new StreamReader(PageTmp);
             var write = new StreamWriter(_PageHtml);
@@ -205,7 +205,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Показ найденного паттерна на графике
         /// </summary>
-        public void PatternVisual(PatternFoundUnit item, int UnixIndex = 0)
+        public void PatternVisual(PatternUnit item, int UnixIndex = 0)
         {
             var read = new StreamReader(PageTmp);
             var write = new StreamWriter(_PageHtml);
@@ -237,7 +237,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Список свечей для графика
         /// </summary>
-        string PatternVisualData(PatternFoundUnit item, int unix)
+        string PatternVisualData(PatternUnit item, int unix)
         {
             string sql = $"SELECT*" +
                          $"FROM`{TableName}`" +

@@ -107,25 +107,19 @@ namespace MrRobot.Section
             if (Spisok.Count == 0)
                 return;
 
-            var ArchiveList = new List<PatternFoundUnit>();
+            var ArchiveList = new List<PatternUnit>();
             foreach (Dictionary<string, string> row in Spisok)
-            {
-                var CDI = Candle.Unit(row["cdiId"]);
-                ArchiveList.Add(new PatternFoundUnit
+                ArchiveList.Add(new PatternUnit
                 {
                     Id = Convert.ToInt32(row["id"]),
                     CdiId = Convert.ToInt32(row["cdiId"]),
                     Dtime = format.DateOne(row["dtimeAdd"]),
-                    Symbol = CDI.Name,
-                    TimeFrame = CDI.TimeFrame,
-                    CandlesCount = Candle.CountTxt(CDI.RowsCount),
                     PatternLength = Convert.ToInt32(row["patternLength"]),
                     PrecisionPercent = Convert.ToInt32(row["scatterPercent"]),
                     FoundRepeatMin = Convert.ToInt32(row["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(row["foundCount"]),
                     Duration = row["duration"]
                 });
-            }
 
             ArchiveData.ItemsSource = ArchiveList;
         }
@@ -136,16 +130,14 @@ namespace MrRobot.Section
         void ArchiveUnitClick(object sender, MouseButtonEventArgs e)
         {
             var LBI = sender as ListBoxItem;
-            var Item = LBI.Content as PatternFoundUnit;
+            var Item = LBI.Content as PatternUnit;
             var CDI = Candle.Unit(Item.CdiId);
             var param = new PatternSearchParam()
             {
+                CdiId = CDI.Id,
                 PatternLength = Item.PatternLength,
                 PrecisionPercent = Item.PrecisionPercent,
                 FoundRepeatMin = Item.FoundRepeatMin,
-                CdiId = CDI.Id,
-                TimeFrame = CDI.TimeFrame,
-                NolCount = CDI.NolCount,
                 FoundId = Item.Repeat > 0 ? Item.Id : 0
             };
 
@@ -219,26 +211,22 @@ namespace MrRobot.Section
                  $"ORDER BY`{ProfitOrder}`DESC";
             var PFS = mysql.QueryList(sql);
 
-            var list = new List<PatternFoundUnit>();
+            var list = new List<PatternUnit>();
             foreach (Dictionary<string, string> row in PFS)
             {
                 int Sid = Convert.ToInt32(row["searchId"]);
                 var SSass = SS[Sid] as Dictionary<string, string>;
                 var CDI = Candle.Unit(SSass["cdiId"]);
 
-                list.Add(new PatternFoundUnit
+                list.Add(new PatternUnit
                 {
                     Id = Convert.ToInt32(row["id"]),
                     CdiId = CDI.Id,
                     Dtime = format.DateOne(SSass["dtimeAdd"]),
-                    Symbol = CDI.Name,
-                    TimeFrame = CDI.TimeFrame,
-                    CandlesCount = Candle.CountTxt(CDI.RowsCount),
                     PatternLength = Convert.ToInt32(SSass["patternLength"]),
                     PrecisionPercent = Convert.ToInt32(SSass["scatterPercent"]),
                     FoundRepeatMin = Convert.ToInt32(SSass["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(SSass["foundCount"]),
-                    Repeat = Convert.ToInt32(row["repeatCount"]),
                     ProfitCount = Convert.ToInt32(row["profitCount"]),
                     LossCount = Convert.ToInt32(row["lossCount"]),
                     ProfitPercent = Convert.ToInt32(row["procent"])

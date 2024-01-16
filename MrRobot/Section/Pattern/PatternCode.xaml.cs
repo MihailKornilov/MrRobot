@@ -14,12 +14,12 @@ namespace MrRobot.Section
         {
             InitializeComponent();
 
-            var Unit = global.MW.Pattern.FoundListBox.SelectedItem as PatternFoundUnit;
+            var Unit = global.MW.Pattern.FoundListBox.SelectedItem as PatternUnit;
             CodeCreate(Unit);
             PatternOnlyCreate(Unit);
         }
 
-        void CodeCreate(PatternFoundUnit Unit)
+        void CodeCreate(PatternUnit Unit)
         {
             var CDI = Candle.Unit(Unit.CdiId);
 
@@ -47,7 +47,7 @@ namespace MrRobot.Section
             code += $"if (CANDLES.Count < {Unit.PatternLength})\n" +
                      "    return;\n\n";
 
-            string[] cndl = Unit.Cndl.Split('\n');
+            string[] cndl = Unit.Struct.Split('\n');
             for(int i = 0; i < Unit.PatternLength; i++)
             {
                 string[] spl = cndl[Unit.PatternLength - i - 1].Split(' ');
@@ -59,11 +59,10 @@ namespace MrRobot.Section
             PatternCodeBox.Focus();
         }
 
-        void PatternOnlyCreate(PatternFoundUnit Unit)
+        void PatternOnlyCreate(PatternUnit Unit)
         {
             var CDI = Candle.Unit(Unit.CdiId);
-            string content = Unit.Cndl.Replace('\n', ';');
-            PatternOnly.Text = $"new PatternLook(\"{CDI.Symbol}\", {CDI.TimeFrame}, \"{content}\")";
+            PatternOnly.Text = $"new PatternLook(\"{CDI.Symbol}\", {CDI.TimeFrame}, \"{Unit.Struct}\")";
         }
     }
 }

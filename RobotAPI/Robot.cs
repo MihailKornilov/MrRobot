@@ -7,14 +7,14 @@ namespace RobotAPI
 {
     public static partial class Robot
     {
-        public static double PRICE { get; private set; }
-        public static double HIGH { get; private set; }
-        public static double OPEN { get; private set; }
-        public static double CLOSE { get; private set; }
-        public static double LOW { get; private set; }
+        public static double PRICE  { get; private set; }
+        public static double HIGH   { get; private set; }
+        public static double OPEN   { get; private set; }
+        public static double CLOSE  { get; private set; }
+        public static double LOW    { get; private set; }
         public static double VOLUME { get; private set; }
-        public static int UNIX_TIME { get; private set; }
-        public static string DATE_TIME { get; private set; }
+        public static int UNIX      { get; private set; }
+        public static string DATE_TIME { get { return format.DTimeFromUnix(UNIX); } }
 
 
         public static dynamic INSTRUMENT { get; set; }          // Текущий инструмент

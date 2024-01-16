@@ -5,6 +5,16 @@ namespace RobotAPI
     public static class format
     {
         /// <summary>
+        /// Получение даты и времени в формате `12.05.2022 12:44:00` по местному времени
+        /// </summary>
+        public static string DTimeFromUnix(int unix)
+        {
+            var dt = new DateTime(1970, 1, 1);
+            dt = dt.AddSeconds(unix).ToLocalTime();
+            return dt.ToString();
+        }
+
+        /// <summary>
         /// Откидывание лишних нулей справа в дробных числах
         /// </summary>
         public static string NolDrop(string num)

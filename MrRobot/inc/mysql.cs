@@ -463,8 +463,8 @@ namespace MrRobot.inc
                 if (CandleList.Count != PARAM.PatternLength)
                     continue;
 
-                var patt = new PatternUnit();
-                if (patt.Create(CandleList, PARAM.Exp))
+                var patt = new PatternUnit(CandleList, PARAM.CdiId);
+                if(patt.Size > 0)
                     PatternList.Add(patt);
             }
 
