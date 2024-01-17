@@ -43,7 +43,7 @@ namespace MrRobot.Section
 
                 CandleList.Add(cndl);
 
-                if (CandleList.Count < found.PatternLength)
+                if (CandleList.Count < found.Length)
                     continue;
 
                 PatternList.Add(new PatternUnit(CandleList, found.CdiId));

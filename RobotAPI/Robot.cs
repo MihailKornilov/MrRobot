@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using static System.Console;
 
 namespace RobotAPI
@@ -104,6 +106,74 @@ namespace RobotAPI
 
                 string tfs = string.Join(",", list.ToArray());
                 WriteLine(format.TimeNow() + "  " + tfs);
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Класс с данными о найденных паттернах
+        /// </summary>
+        public class PATTERN
+        {
+            static List<object> All;    // Весь список найденных паттернов
+            public static int Count { get { return All.Count; } }   // Общее количество найденных паттернов
+
+            public PATTERN(List<object> all)
+            {
+                All = all;
+                PatternSrc = null;
+            }
+
+            // Список паттернов по инструменту [и таймфрейму]
+            public static List<object> ListSymbol(string symbol, int tf = 0)
+            {
+                var send = new List<object>();
+
+                foreach(dynamic item in All)
+                {
+                    if (item.Symbol != symbol)
+                        continue;
+                    if(tf > 0 && tf != item.TimeFrame)
+                        continue;
+
+                    send.Add(item);
+                }
+
+                return send;
+            }
+
+
+
+
+            static dynamic PatternSrc { get; set; }
+            static List<dynamic> CandleList { get; set; }
+            // Установка исходного паттерна, по которому будет производиться поиск
+            public static void Source(dynamic patt)
+            {
+                PatternSrc = patt;
+                CandleList = new List<dynamic>();
+            }
+            // Поиск паттерна
+            public static bool Found()
+            {
+                if (!IS_CANDLE_FULL)
+                    return false;
+
+                CandleList.Add(CANDLES[0]);
+
+                if (CandleList.Count < PatternSrc.Length)
+                    return false;
+
+                if (CandleList.Count > PatternSrc.Length)
+                    CandleList.RemoveRange(0, 1);
+
+                var dst = PatternSrc.Create(CandleList, PatternSrc.CdiId);
+                if (dst.Size == 0)
+                    return false;
+
+                return PatternSrc.Compare(dst);
             }
         }
     }

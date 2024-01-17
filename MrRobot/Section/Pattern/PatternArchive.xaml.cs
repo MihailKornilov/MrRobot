@@ -113,12 +113,12 @@ namespace MrRobot.Section
                 {
                     Id = Convert.ToInt32(row["id"]),
                     CdiId = Convert.ToInt32(row["cdiId"]),
-                    Dtime = format.DateOne(row["dtimeAdd"]),
-                    PatternLength = Convert.ToInt32(row["patternLength"]),
+                    Length = Convert.ToInt32(row["patternLength"]),
                     PrecisionPercent = Convert.ToInt32(row["scatterPercent"]),
                     FoundRepeatMin = Convert.ToInt32(row["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(row["foundCount"]),
-                    Duration = row["duration"]
+                    Duration = row["duration"],
+                    Dtime = format.DateOne(row["dtimeAdd"])
                 });
 
             ArchiveData.ItemsSource = ArchiveList;
@@ -135,7 +135,7 @@ namespace MrRobot.Section
             var param = new PatternSearchParam()
             {
                 CdiId = CDI.Id,
-                PatternLength = Item.PatternLength,
+                PatternLength = Item.Length,
                 PrecisionPercent = Item.PrecisionPercent,
                 FoundRepeatMin = Item.FoundRepeatMin,
                 FoundId = Item.Repeat > 0 ? Item.Id : 0
@@ -143,7 +143,7 @@ namespace MrRobot.Section
 
             global.MW.Pattern.ArchiveGo();
             global.MW.Pattern.SourceListBox.SelectedItem = CDI;
-            global.MW.Pattern.LengthSlider.Value = Item.PatternLength;
+            global.MW.Pattern.LengthSlider.Value = Item.Length;
             global.MW.Pattern.PrecisionPercentSlider.Value = Item.PrecisionPercent;
             global.MW.Pattern.FoundRepeatMin.Text = Item.FoundRepeatMin.ToString();
             global.MW.Pattern.PatternSearchExist(param);
@@ -201,6 +201,7 @@ namespace MrRobot.Section
             sql = "SELECT" +
                     "`id`," +
                     "`searchId`," +
+                    "`structure`," +
                     "`repeatCount`," +
                     "`profitCount`," +
                     "`lossCount`," +
@@ -222,8 +223,8 @@ namespace MrRobot.Section
                 {
                     Id = Convert.ToInt32(row["id"]),
                     CdiId = CDI.Id,
+                    StructDB = row["structure"],
                     Dtime = format.DateOne(SSass["dtimeAdd"]),
-                    PatternLength = Convert.ToInt32(SSass["patternLength"]),
                     PrecisionPercent = Convert.ToInt32(SSass["scatterPercent"]),
                     FoundRepeatMin = Convert.ToInt32(SSass["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(SSass["foundCount"]),

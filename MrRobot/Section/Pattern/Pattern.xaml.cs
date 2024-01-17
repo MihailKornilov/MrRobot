@@ -141,11 +141,10 @@ namespace MrRobot.Section
             {
                 IsProcess = true,
 
+                CdiId = CDI.Id,
                 PatternLength = (int)LengthSlider.Value,
                 PrecisionPercent = (int)PrecisionPercentSlider.Value,
                 FoundRepeatMin = Convert.ToInt16(FoundRepeatMin.Text),
-
-                CdiId = CDI.Id,
 
                 PBar = new Progress<int>(v => {
                     SearchProgress.Value = v;
@@ -163,7 +162,6 @@ namespace MrRobot.Section
             global.MW.Pattern.PatternArchive.SearchList();
             if (!AutoProgon.PatternSearch())
                 PatternSearchExist(SPARAM);
-
         }
         /// <summary>
         /// Поиск свечных паттернов без разброса в процентах
@@ -171,16 +169,17 @@ namespace MrRobot.Section
         void SearchProcess()
         {
             var dur = new Dur();
+            var CDI = Candle.Unit(SPARAM.CdiId);
 
-            string sql = $"SELECT COUNT(*)FROM`{SPARAM.Table}`";
+            string sql = $"SELECT COUNT(*)FROM`{CDI.Table}`";
             int count = mysql.Count(sql);
 
-            sql = $"SELECT*FROM`{SPARAM.Table}`";
+            sql = $"SELECT*FROM`{CDI.Table}`";
             var MASS = mysql.PatternSearchMass(sql, SPARAM, count);
 
             int CountSearch = MASS.Count - SPARAM.PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
             var bar = new ProBar(CountSearch);
-            var FNDass = new Dictionary<int, int>();
+            var FNDass = new Dictionary<string, int>();
             SPARAM.PBar.Report(0);
 
             for (int i = 0; i < CountSearch; i++)
@@ -205,23 +204,23 @@ namespace MrRobot.Section
                     if (!MASS[i].Compare(MASS[n]))
                         continue;
 
-                    int UnixI = MASS[i].CandleList[0].Unix;
+                    string key = MASS[i].StructDB;
                     int UnixN = MASS[n].CandleList[0].Unix;
 
-                    if (FNDass.ContainsKey(UnixI))
+                    if (FNDass.ContainsKey(key))
                     {
-                        int index = FNDass[UnixI];
+                        int index = FNDass[key];
                         var list = SPARAM.FoundList[index].UnixList;
                         if (!list.Contains(UnixN))
                              list.Add(UnixN);
                         continue;
                     }
 
-                    MASS[i].UnixList = new List<int> { UnixI, UnixN };
+                    MASS[i].UnixList = new List<int> { MASS[i].CandleList[0].Unix, UnixN };
                     SPARAM.FoundList.Add(MASS[i]);
 
                     int c = SPARAM.FoundList.Count - 1;
-                    FNDass.Add(UnixI, c);
+                    FNDass.Add(key, c);
                 }
             }
 
@@ -259,40 +258,10 @@ namespace MrRobot.Section
             }
 
             int SearchId = Convert.ToInt32(row["id"]);
-            sql = "SELECT*" +
-                  "FROM`_pattern_found`" +
-                 $"WHERE`searchId`={SearchId} " +
-                 $"  AND`repeatCount`>={param.FoundRepeatMin} " +
-                  "ORDER BY`repeatCount`DESC";
-            var Found = mysql.QueryList(sql);
 
-            param.FoundList.Clear();
-            for (int i = 0; i < Found.Count; i++)
-            {
-                var patt = Found[i] as Dictionary<string, string>;
-
-                if (param.FoundId == Convert.ToInt32(patt["id"]))
-                    param.FoundIndex = i;
-
-                string[] UnixListString = patt["unixList"].Split(',');
-                var UnixList = new List<int>();
-                for (int n = 0; n < UnixListString.Length; n++)
-                    UnixList.Add(Convert.ToInt32(UnixListString[n]));
-
-                param.FoundList.Add(new PatternUnit
-                {
-                    Num = i + 1,
-                    SearchId = Convert.ToInt32(patt["searchId"]),
-                    CdiId = param.CdiId,
-                    Size = Convert.ToInt32(patt["size"]),
-                    Struct = patt["structure"],
-                    UnixList = UnixList,
-                    PatternLength = param.PatternLength
-                });
-            }
-
+            param.FoundList = Patterns.List(SearchId);
             FoundListBox.ItemsSource = param.FoundList;
-            FoundListBox.SelectedIndex = param.FoundIndex;
+            FoundListBox.SelectedIndex = Patterns.Index(SearchId, param.FoundId);
             var item = FoundListBox.SelectedItem;
             FoundListBox.ScrollIntoView(item);
 
@@ -416,6 +385,8 @@ namespace MrRobot.Section
 
                 insert.Clear();
             }
+
+            Patterns.ListCreate(true);
         }
 
         #endregion
@@ -491,23 +462,17 @@ namespace MrRobot.Section
     /// </summary>
     public class PatternSearchParam
     {
-        public bool IsProcess { get; set; }     // Происходит процесс поиска паттернов
-        public IProgress<int> PBar { get; set; }// Прогресс-бар
-        public string ProсessInfo { get; set; } // Информация о процессе поиска
-        public bool Cancelled { get; set; }     // Процесс поиска был отменён
-
+        public int CdiId { get; set; }          // ID свечных данных
         public int PatternLength { get; set; }  // Длина паттерна - количество свечей в паттерне
         public int PrecisionPercent { get; set; }// Точность в процентах
         public int FoundRepeatMin { get; set; } // Исключать менее N нахождений
 
 
-        public int CdiId { get; set; }          // ID исторических данных
-        public string Table { get { return Candle.Unit(CdiId).Table; } }       // Таблица со свечами
-        // Количество нулей после запятой
-        public int NolCount { get { return Candle.Unit(CdiId).NolCount; } }
-        public ulong Exp { get { return Candle.Unit(CdiId).Exp; } }
-        // Таймфрейм таблицы со свечами
-        public int TimeFrame { get { return Candle.Unit(CdiId).TimeFrame; } }
+
+        public bool IsProcess { get; set; }     // Происходит процесс поиска паттернов
+        public IProgress<int> PBar { get; set; }// Прогресс-бар
+        public string ProсessInfo { get; set; } // Информация о процессе поиска
+
 
 
         public int FoundCount { get { return FoundList.Count; } }// Количество найденных паттернов
@@ -515,178 +480,9 @@ namespace MrRobot.Section
         public ulong Iterations { get; set; }   // Количество итераций
         public string Duration { get; set; }    // Время выполнения
 
+
+
         public int FoundId { get; set; }        // ID паттерна при выборе из прибыльных
         public int FoundIndex { get; set; }     // Индекс паттерна при показе из прибыльных
-    }
-
-    /// <summary>
-    /// Единица паттерна
-    /// </summary>
-    public class PatternUnit
-    {
-        // ---=== ФОРМИРОВАНИЕ ПАТТЕРНА ===---
-        public PatternUnit() { }
-        public PatternUnit(List<CandleUnit> list, int cdiId)
-        {
-            foreach (var cndl in list)
-            {
-                if (cndl.High == cndl.Low)
-                    return;
-
-                PriceMax = cndl.High;
-                PriceMin = cndl.Low;
-            }
-
-            CdiId = cdiId;
-            Size = (int)Math.Round((PriceMax - PriceMin) * Exp);
-
-            CandleList = new List<CandleUnit>();
-            foreach (var cndl in list)
-                CandleList.Add(new CandleUnit(cndl, PriceMax, PriceMin));
-
-            PatternLength = CandleList.Count;
-        }
-
-        double _PriceMax;
-        double PriceMax
-        {
-            get { return _PriceMax; }
-            set
-            {
-                if(_PriceMax < value)
-                    _PriceMax = value;
-            }
-        }
-        double _PriceMin;
-        double PriceMin
-        {
-            get { return _PriceMin; }
-            set
-            {
-                if (_PriceMin == 0 || _PriceMin > value)
-                    _PriceMin = value;
-            }
-        }
-        public int Size { get; set; }   // Размер паттерна в пунктах
-        public List<CandleUnit> CandleList { get; set; } // Состав паттерна из свечей
-        // Сравнение паттернов
-        public bool Compare(PatternUnit PU)
-        {
-            //            int Prc = 100 - SPARAM.PrecisionPercent;
-
-            for (int k = 0; k < CandleList.Count; k++)
-            {
-                var src = CandleList[k];
-                var dst = PU.CandleList[k];
-
-                if (src.IsGreen != dst.IsGreen)
-                    return false;
-                if (src.SpaceTopInt != dst.SpaceTopInt)
-                    return false;
-                if (src.WickTopInt  != dst.WickTopInt)
-                    return false;
-                if (src.BodyInt     != dst.BodyInt)
-                    return false;
-                if (src.WickBtmInt  != dst.WickBtmInt)
-                    return false;
-                if (src.SpaceBtmInt != dst.SpaceBtmInt)
-                    return false;
-            }
-            return true;
-        }
-        // Содержание паттерна: свечи с учётом пустот сверху и снизу
-        void StructFromCandle()
-        {
-            string[] arr = new string[CandleList.Count];
-
-            for (int k = 0; k < CandleList.Count; k++)
-                arr[k] = CandleList[k].Struct();
-
-            _Struct = string.Join("\n", arr);
-        }
-
-
-
-
-        // ---=== НАЙДЕННЫЕ ПАТТЕРНЫ ===---
-        public int Id { get; set; }
-        public string IdStr { get { return "#" + Id; } }
-        public int Num { get; set; }            // Порядковый номер
-        // Количество повторений паттерна на графике
-        public int Repeat { get { return UnixList.Count; } }
-        // Времена найденных паттернов в формате UNIX
-        public List<int> UnixList { get; set; } = new List<int>();
-
-
-        string _Struct;
-        public string Struct {
-            get
-            {
-                if (_Struct == null)
-                    StructFromCandle();
-                return _Struct;
-            }
-            set { _Struct = value.Replace(';', '\n'); }
-        }
-        // Строка внесения паттерна в базу
-        public string Insert(int SearchId)
-        {
-            return "(" +
-                $"{SearchId}," +
-                $"{Size}," +
-                $"'{Struct.Replace('\n', ';')}'," +
-                $"{Repeat}," +
-                $"'{string.Join(",", UnixList.ToArray())}'" +
-            ")";
-        }
-
-
-
-
-        // ---=== ИНФОРМАЦИЯ О СВЕЧНЫХ ДАННЫХ ===---
-        public int CdiId { get; set; }          // ID свечных данных из `_candle_data_info`
-        // Название инструмента
-        public string Symbol { get { return Candle.Unit(CdiId).Name; } }
-        // Таймфрейм
-        public int TimeFrame { get { return Candle.Unit(CdiId).TimeFrame; } }
-        // Таймфрейм в виде 10m
-        public string TF { get { return format.TF(TimeFrame); } }
-        // Количество нулей после запятой
-        public int NolCount { get { return Candle.Unit(CdiId).NolCount; } }
-        public ulong Exp { get { return Candle.Unit(CdiId).Exp; } }
-        // Количество свечей в графике
-        public string CandlesCountStr
-        {
-            get
-            {
-                int count = Candle.Unit(CdiId).RowsCount;
-                return Candle.CountTxt(count);
-            }
-        }
-
-
-
-
-        // Данные о настройках
-        public int PatternLength { get; set; }  // Длина паттерна
-        public int PrecisionPercent { get; set; } // Точность в процентах
-        public int FoundRepeatMin { get; set; } // Исключать менее N нахождений
-
-
-
-
-        // Результат поиска
-        public int SearchId { get; set; }       // ID поиска из `_pattern_search`
-        public string Dtime { get; set; }       // Дата и время поиска
-        public int FoundCount { get; set; }     // Количество найденных паттернов
-        public string Duration { get; set; }    // Время выполнения
-
-
-
-
-        // Результат теста
-        public int ProfitCount { get; set; }    // Количество прибыльных результатов
-        public int LossCount { get; set; }      // Количество убыточных результатов
-        public int ProfitPercent { get; set; }        // Процент прибыльности
     }
 }

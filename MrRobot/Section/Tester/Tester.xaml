@@ -35,8 +35,8 @@
         <!-- Шаблон для Робот-Лога -->
         <DataTemplate x:Key="TesterLogTmp">
             <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding DTime}" Width="130" Padding="0" Foreground="#AAA"/>
-                <Label Content="{Binding CandleTime}" Width="100" Padding="0" Foreground="#770"/>
+                <Label Content="{Binding DTime}" Width="120" Padding="0" Foreground="#AAA"/>
+                <Label Content="{Binding CandleTime}" Width="120" Padding="0" Foreground="#770"/>
                 <Label Content="{Binding Text}" Width="1000" Padding="0"/>
             </StackPanel>
         </DataTemplate>

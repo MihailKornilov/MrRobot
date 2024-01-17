@@ -63,7 +63,7 @@ namespace MrRobot.Section
         const double BaseBalance = 0;
         const double QuoteBalance = 100;
         int CandleId;
-        bool CandlesLoadNeed;
+        bool CandlesLoadNeed { get; set; }
         void InstrumentSet()
         {
             var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
@@ -139,7 +139,7 @@ namespace MrRobot.Section
 
 
         bool Visualization;             // Флаг включенной визуализации
-        private void GlobalInit(bool isElemChange = false)
+        void GlobalInit(bool isElemChange = false)
         {
             PanelVisible();
             AutoGoStop();
@@ -155,6 +155,8 @@ namespace MrRobot.Section
             CandlesTF1use();
             BalanceUpdate();
 
+            new PATTERN(Patterns.All());
+
             TESTER_GLOBAL_INIT();
 
             object[] args = {
@@ -163,8 +165,15 @@ namespace MrRobot.Section
                 }
             };
             Init.Invoke(ObjInstance, args);
-
             RobotLog();
+
+            if (TESTER_FINISHED)
+            {
+                Finish?.Invoke(ObjInstance, new object[] { });
+                RobotLog();
+                return;
+            }
+
             OrderExecutedView();
 
             TesterChartInit();
@@ -173,14 +182,14 @@ namespace MrRobot.Section
         /// <summary>
         /// Скрытие/отображение панелей
         /// </summary>
-        private void PanelVisible()
+        void PanelVisible()
         {
             bool hide = RobotsListBox.SelectedIndex <= 0;
             BalancePanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
             VisualPanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
             ProcessPanel.Visibility = hide || !Visualization ? Visibility.Hidden : Visibility.Visible;
         }
-        private void TesterChartInit()
+        void TesterChartInit()
         {
             var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
 
@@ -201,7 +210,7 @@ namespace MrRobot.Section
             chart.TesterGraficInit();
             TesterBrowser.Address = chart.PageHtml;
         }
-        private void BalanceUpdate()
+        void BalanceUpdate()
         {
             BaseBalanceSum.Content  = format.Coin(INSTRUMENT.BaseBalance);
             QuoteBalanceSum.Content = format.Coin(INSTRUMENT.QuoteBalance);
@@ -318,11 +327,11 @@ namespace MrRobot.Section
         /// <summary>
         /// Добавление очередной свечи в график - нажатие на кнопку
         /// </summary>
-        private void CandleAdd(object sender, RoutedEventArgs e) => TesterRobotStep();
+        void CandleAdd(object sender, RoutedEventArgs e) => TesterRobotStep();
         /// <summary>
         /// Очередной шаг: добавление новой свечи
         /// </summary>
-        private void TesterRobotStep()
+        void TesterRobotStep()
         {
             if (!TESTER_GLOBAL_STEP())
                 return;
@@ -409,16 +418,9 @@ namespace MrRobot.Section
             NoVisualLock();
             GlobalInit();
 
-            var dur = new Dur();
             var progress = new Progress<int>(v => { TesterBar.Value = v; });
             await Task.Run(() => NoVisualProcess(progress));
-
-            object[] args = {
-                new string[] {
-                    dur.Second()
-                }
-            };
-            object res = Finish.Invoke(ObjInstance, args);
+            object res = Finish.Invoke(ObjInstance, new object[] { });
 
             BalanceUpdate();
             RobotLog();

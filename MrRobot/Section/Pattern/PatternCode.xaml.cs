@@ -44,13 +44,13 @@ namespace MrRobot.Section
                      "    return;\n" +
                      "}\n";
 
-            code += $"if (CANDLES.Count < {Unit.PatternLength})\n" +
+            code += $"if (CANDLES.Count < {Unit.Length})\n" +
                      "    return;\n\n";
 
             string[] cndl = Unit.Struct.Split('\n');
-            for(int i = 0; i < Unit.PatternLength; i++)
+            for(int i = 0; i < Unit.Length; i++)
             {
-                string[] spl = cndl[Unit.PatternLength - i - 1].Split(' ');
+                string[] spl = cndl[Unit.Length - i - 1].Split(' ');
                 code += $"if (CANDLES[{i}].WickTop != {spl[0]} || CANDLES[{i}].Body != {spl[1]} || CANDLES[{i}].WickBtm != {spl[2]})\n" +
                          "    return;\n";
             }
@@ -62,7 +62,7 @@ namespace MrRobot.Section
         void PatternOnlyCreate(PatternUnit Unit)
         {
             var CDI = Candle.Unit(Unit.CdiId);
-            PatternOnly.Text = $"new PatternLook(\"{CDI.Symbol}\", {CDI.TimeFrame}, \"{Unit.Struct}\")";
+            PatternOnly.Text = $"new PatternLook(\"{CDI.Symbol}\", {CDI.TimeFrame}, \"{Unit.StructDB}\")";
         }
     }
 }

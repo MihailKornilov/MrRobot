@@ -10,7 +10,7 @@ namespace RobotAPI
         public static bool IS_CANDLE_FULL { get; private set; }     // Свеча сформирована (всегда, если используется таймфрейм 1m)
 
         public static bool TESTER_AUTO { get; set; }                // Флаг запуска/остановки автоматического тестирования
-        public static bool TESTER_FINISHED { get; private set; }    // Флаг завершения тестирования (когда закончились свечи)
+        public static bool TESTER_FINISHED { get; set; }            // Флаг завершения тестирования (когда закончились свечи)
 
 
 

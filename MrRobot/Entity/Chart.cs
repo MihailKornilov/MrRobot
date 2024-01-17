@@ -167,14 +167,14 @@ namespace MrRobot.Entity
                         $"FROM`{CDI.Table}`" +
                         $"WHERE`unix`>={unit.UnixList[0]} " +
                          "ORDER BY`unix`" +
-                        $"LIMIT {unit.PatternLength}";
+                        $"LIMIT {unit.Length}";
             var candles = mysql.CandlesDataCache(sql);
 
             var mass = new List<string>();
             int unix = format.TimeZone(unit.UnixList[0]);
             int secondTF = unit.TimeFrame * 60;
             int rangeBegin = unix - secondTF * 2;
-            int rangeEnd = unix + secondTF * unit.PatternLength;
+            int rangeEnd = unix + secondTF * unit.Length;
 
             PatternSourceEmpty(mass, rangeBegin, secondTF, candles[0].Open);
 
@@ -250,7 +250,7 @@ namespace MrRobot.Entity
             foreach (var cndl in mysql.CandlesDataCache(sql))
             {
                 if (cndl.Unix == unix)
-                    len = item.PatternLength;
+                    len = item.Length;
 
                 mass.Add(cndl.CandleToChart(len-- > 0));
             }
