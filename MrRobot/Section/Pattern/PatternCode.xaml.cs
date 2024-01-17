@@ -23,11 +23,10 @@ namespace MrRobot.Section
         {
             var CDI = Candle.Unit(Unit.CdiId);
 
-            string TF = format.TF(Unit.TimeFrame);
             string code = "";
 
             code += $"// Инструмент: {CDI.Name}\n" +
-                    $"// Таймфрейм: {TF}\n" +
+                    $"// Таймфрейм: {CDI.TF}\n" +
                     $"// ID поиска: {Unit.SearchId}\n" +
                     $"// Номер паттерна: {Unit.Num}\n" +
                     $"// Совпадения: {Unit.Repeat}\n\n";
@@ -38,9 +37,9 @@ namespace MrRobot.Section
                      "    return;\n" +
                      "}\n";
 
-            code += $"if (INSTRUMENT.TimeFrame != {Unit.TimeFrame})\n" +
+            code += $"if (INSTRUMENT.TimeFrame != {CDI.TimeFrame})\n" +
                      "{\n" +
-                    $"    PRINT(\"Неверный таймфрейм инструмента. Должен быть {TF}.\");\n" +
+                    $"    PRINT(\"Неверный таймфрейм инструмента. Должен быть {CDI.TF}.\");\n" +
                      "    return;\n" +
                      "}\n";
 

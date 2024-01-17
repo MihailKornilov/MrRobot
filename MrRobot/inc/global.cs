@@ -93,6 +93,10 @@ namespace MrRobot.inc
         {
             SW.Stop();
             TimeSpan ts = SW.Elapsed;
+
+            if(ts.Hours > 0)
+                return string.Format("{0}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+
             return string.Format("{0:00}:{1:00}", ts.Minutes, ts.Seconds);
         }
         public string Second()
@@ -159,7 +163,7 @@ namespace MrRobot.inc
     /// </summary>
     public class ProBar
     {
-        int All;            // Общее количество
+        long All { get; set; }// Общее количество
         bool IsMore100;     // Флаг: общее количество больше 100
         double Sotka;       // Сотая часть от общей суммы
         double Area;        // Участок, при завершении которого обновляется процент ПрогрессБара
@@ -168,12 +172,30 @@ namespace MrRobot.inc
         public int Value { get; private set; }  // Значение в процентах, которое будет выводиться в Прогресс-бар
 
         Dur dur;
-        long MilliSecondPass;
-        long MilliSecondLeft;
-        public string TimePass { get; private set; }
-        public string TimeLeft { get; private set; }
+        double MilliSecondPass;
+        double MilliSecondLeft;
+        public string TimePass {
+            get
+            {
+                var pass = TimeSpan.FromMilliseconds(MilliSecondPass);
+                if (pass.Hours > 0)
+                    return string.Format("{0}:{1:00}:{2:00}", pass.Hours, pass.Minutes, pass.Seconds);
 
-        public ProBar(int all)
+                return string.Format("{0:00}:{1:00}", pass.Minutes, pass.Seconds);
+            }
+        }
+        public string TimeLeft {
+            get
+            {
+                var left = TimeSpan.FromMilliseconds(MilliSecondLeft);
+                if (left.Hours > 0)
+                    return string.Format("{0}:{1:00}:{2:00}", left.Hours, left.Minutes, left.Seconds);
+
+                return string.Format("{0:00}:{1:00}", left.Minutes, left.Seconds);
+            }
+        }
+
+        public ProBar(long all)
         {
             All = all;
             IsMore100 = all > 100;
@@ -183,8 +205,6 @@ namespace MrRobot.inc
             dur = new Dur();
             MilliSecondPass = 0;
             MilliSecondLeft = 0;
-            TimePass = "";
-            TimeLeft = "";
         }
 
         /// <summary>
@@ -213,27 +233,9 @@ namespace MrRobot.inc
         }
 
         /// <summary>
-        /// Подсчёт прошедшего и оставшегося времени
-        /// </summary>
-        void TimeCalc(int count)
-        {
-            if (count == 0)
-                return;
-
-            MilliSecondPass = dur.ElapsedMS();
-            MilliSecondLeft = MilliSecondPass / count * All - MilliSecondPass;
-
-            var pass = TimeSpan.FromMilliseconds(MilliSecondPass);
-            TimePass = string.Format("{0:00}:{1:00}", pass.Minutes, pass.Seconds);
-
-            var left = TimeSpan.FromMilliseconds(MilliSecondLeft);
-            TimeLeft = string.Format("{0:00}:{1:00}", left.Minutes, left.Seconds);
-        }
-
-        /// <summary>
         /// Проверка, обновлять ли Прогресс-бар (при All > 100)
         /// </summary>
-        public bool isUpd(int count)
+        public bool isUpd(long count)
         {
             if (count < Area)
                 return false;
@@ -242,7 +244,8 @@ namespace MrRobot.inc
             Value = Convert.ToInt32(Percent);
             Percent += 1;
 
-            TimeCalc(count);
+            MilliSecondPass = dur.ElapsedMS();
+            MilliSecondLeft = MilliSecondPass / count * All - MilliSecondPass;
 
             return true;
         }

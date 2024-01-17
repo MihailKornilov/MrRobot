@@ -155,7 +155,7 @@ namespace MrRobot.Section
             CandlesTF1use();
             BalanceUpdate();
 
-            new PATTERN(Patterns.All());
+            new PATTERN(Patterns.ListAll());
 
             TESTER_GLOBAL_INIT();
 

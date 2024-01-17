@@ -127,15 +127,17 @@ namespace RobotAPI
             }
 
             // Список паттернов по инструменту [и таймфрейму]
-            public static List<object> ListSymbol(string symbol, int tf = 0)
+            public static List<object> ListSymbolNoTested(string symbol, int tf = 0)
             {
                 var send = new List<object>();
 
-                foreach(dynamic item in All)
+                foreach (dynamic item in All)
                 {
                     if (item.Symbol != symbol)
                         continue;
-                    if(tf > 0 && tf != item.TimeFrame)
+                    if (tf > 0 && tf != item.TimeFrame)
+                        continue;
+                    if (item.IsTested)
                         continue;
 
                     send.Add(item);
@@ -174,6 +176,12 @@ namespace RobotAPI
                     return false;
 
                 return PatternSrc.Compare(dst);
+            }
+            public static void Save(int profit, int loss)
+            {
+                PatternSrc.ProfitCount = profit;
+                PatternSrc.LossCount = loss;
+                PatternSrc.TesterSave();
             }
         }
     }

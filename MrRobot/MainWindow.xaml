@@ -28,7 +28,7 @@
 			</Button>
 		</DataTemplate>
 
-		<Style TargetType="ListBoxItem">
+		<Style x:Key="MMenuItemStyle" TargetType="ListBoxItem">
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="ListBoxItem">
@@ -58,7 +58,6 @@
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
-			<Setter Property="Cursor" Value="Hand"/>
 		</Style>
 
 	</Window.Resources>
@@ -89,7 +88,8 @@
 							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
 							 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              SelectionChanged="MainMenuChanged"
-							 ItemTemplate="{StaticResource MainMenuItemTmp}"/>
+							 ItemTemplate="{StaticResource MainMenuItemTmp}"
+                             ItemContainerStyle="{StaticResource MMenuItemStyle}"/>
 				</StackPanel>
 			</Grid>
 

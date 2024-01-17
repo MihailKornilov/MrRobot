@@ -168,7 +168,7 @@ namespace MrRobot.Section
             await Task.Run(() => DownloadProcess(DownloadParam, progress));
             DownloadElemEnable();
 
-            Candle.ListCreate(true);
+            new Candle();
             Instrument.DataCountPlus(Iitem.Id);
             SectionUpd.All();
 

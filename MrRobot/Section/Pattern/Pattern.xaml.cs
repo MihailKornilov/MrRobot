@@ -178,9 +178,13 @@ namespace MrRobot.Section
             var MASS = mysql.PatternSearchMass(sql, SPARAM, count);
 
             int CountSearch = MASS.Count - SPARAM.PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
-            var bar = new ProBar(CountSearch);
             var FNDass = new Dictionary<string, int>();
             SPARAM.PBar.Report(0);
+
+            long CS = 0;
+            for (int i = 1; i < CountSearch + 1; i++)
+                CS += i;
+            var bar = new ProBar(CS);
 
             for (int i = 0; i < CountSearch; i++)
             {
@@ -188,9 +192,9 @@ namespace MrRobot.Section
                     return;
 
                 // Установка значения для Прогресс-бара
-                if (bar.isUpd(i))
+                if (bar.isUpd(SPARAM.Iterations))
                 {
-                    SPARAM.ProсessInfo = $"Прошло времени: {bar.TimePass}";
+                    SPARAM.ProсessInfo = $"Прошло времени: {bar.TimePass}    Осталось: {bar.TimeLeft}";
                     int c = SPARAM.FoundList.Count;
                     if (c > 0)
                         SPARAM.ProсessInfo += $"\nНайдено {c} совпадени{format.End(c, "е", "я", "й")}";
@@ -247,7 +251,7 @@ namespace MrRobot.Section
                 return false;
             }
 
-            param.Iterations = Convert.ToUInt64(row["iterations"]);
+            param.Iterations = Convert.ToInt64(row["iterations"]);
             param.Duration = row["duration"];
 
             if (row["foundCount"] == "0")
@@ -386,7 +390,7 @@ namespace MrRobot.Section
                 insert.Clear();
             }
 
-            Patterns.ListCreate(true);
+            new Patterns();
         }
 
         #endregion
@@ -477,7 +481,7 @@ namespace MrRobot.Section
 
         public int FoundCount { get { return FoundList.Count; } }// Количество найденных паттернов
         public List<PatternUnit> FoundList { get; set; } = new List<PatternUnit>();  // Список с данными найденных паттернов
-        public ulong Iterations { get; set; }   // Количество итераций
+        public long Iterations { get; set; }    // Количество итераций
         public string Duration { get; set; }    // Время выполнения
 
 

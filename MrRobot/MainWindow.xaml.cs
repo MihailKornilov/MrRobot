@@ -47,8 +47,10 @@ namespace MrRobot
             Cef.Initialize(Settings);
 
 
-            if (Instrument.Count > 0)
-                Candle.ListCreate();
+            new Instrument();
+            new Candle();
+            new Patterns();
+            new Robots();
 
             InitializeComponent();
 

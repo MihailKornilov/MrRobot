@@ -9,18 +9,20 @@ using MrRobot.inc;
 
 namespace MrRobot.Entity
 {
-    public static class Robots
+    public class Robots
     {
+        public Robots()
+        {
+            ListCreate();
+        }
+
         static List<RobotUnit> RobotList;
 
         /// <summary>
         /// Создание списка роботов для выбора
         /// </summary>
-        static void ListCreate(bool upd = false)
+        static void ListCreate()
         {
-            if (!upd && RobotList != null && RobotList.Count > 0)
-                return;
-
             RobotList = new List<RobotUnit>
             {
                 new RobotUnit { Name = "Не выбран" }
@@ -44,7 +46,6 @@ namespace MrRobot.Entity
 
         public static List<RobotUnit> ListBox()
         {
-            ListCreate();
             return RobotList;
         }
 
@@ -114,7 +115,7 @@ namespace MrRobot.Entity
             if (RobotId == 0)
                 return;
 
-            ListCreate(true);
+            new Robots();
             global.MW.Tester.RobotsListBox.ItemsSource = ListBox();
             global.MW.Tester.RobotsListBox.SelectedItem = Unit(RobotId);
             global.MW.Trade.RobotsListBox.ItemsSource = ListBox();

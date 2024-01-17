@@ -65,7 +65,7 @@ namespace MrRobot.Entity
 
 
         public string Title;            // Заголовок страницы
-        private CandleDataInfoUnit CdiUnit;  // Информация об инструменте и таблице выводимого графика
+        CandleDataInfoUnit CdiUnit { get; set; }  // Информация об инструменте и таблице выводимого графика
 
         /// <summary>
         /// Конструктор для пустой страницы
@@ -118,9 +118,6 @@ namespace MrRobot.Entity
             string candlesData = "[\n" + QueryList[0] + "]";
             string volumeData = "[\n" + QueryList[1] + "]";
 
-            string tickSize = CdiUnit.TickSize.ToString();
-            string nolCount = CdiUnit.NolCount.ToString();
-
             string line;
             while ((line = read.ReadLine()) != null)
             {
@@ -129,8 +126,8 @@ namespace MrRobot.Entity
                 line = line.Replace("CANDLES_DATA", candlesData);
                 line = line.Replace("VOLUME_DATA", volumeData);
 
-                line = line.Replace("TICK_SIZE", tickSize);
-                line = line.Replace("NOL_COUNT", nolCount);
+                line = line.Replace("TICK_SIZE", CdiUnit.TickSize.ToString());
+                line = line.Replace("NOL_COUNT", CdiUnit.NolCount.ToString());
                 write.WriteLine(line);
             }
             read.Close();
@@ -172,7 +169,7 @@ namespace MrRobot.Entity
 
             var mass = new List<string>();
             int unix = format.TimeZone(unit.UnixList[0]);
-            int secondTF = unit.TimeFrame * 60;
+            int secondTF = CDI.TimeFrame * 60;
             int rangeBegin = unix - secondTF * 2;
             int rangeEnd = unix + secondTF * unit.Length;
 
@@ -185,14 +182,13 @@ namespace MrRobot.Entity
 
             rangeEnd += secondTF;
             string candlesData = "[" + string.Join(",", mass.ToArray()) + "]";
-            string nolCount = unit.NolCount.ToString();
 
             string line;
             while ((line = read.ReadLine()) != null)
             {
                 line = line.Replace("TITLE", Title);
                 line = line.Replace("TICK_SIZE", CDI.TickSize.ToString());
-                line = line.Replace("NOL_COUNT", nolCount);
+                line = line.Replace("NOL_COUNT", CDI.NolCount.ToString());
                 line = line.Replace("CANDLES_DATA", candlesData);
                 line = line.Replace("RANGE_BEGIN", rangeBegin.ToString());
                 line = line.Replace("RANGE_END", rangeEnd.ToString());
@@ -210,21 +206,18 @@ namespace MrRobot.Entity
             var read = new StreamReader(PageTmp);
             var write = new StreamWriter(_PageHtml);
 
-            string line;
+            var CDI = Candle.Unit(item.CdiId);
             int unix = item.UnixList[UnixIndex];
             string candlesData = PatternVisualData(item, unix);
-            int rangeBegin = format.TimeZone(unix) - item.TimeFrame * 60 * 30;
-            int rangeEnd = rangeBegin + item.TimeFrame * 60 * 70;
-
-            string nolCount = item.NolCount.ToString();
-            double exp = format.Exp(item.NolCount);
-            string tickSize = format.E((double)1 / exp);
+            int rangeBegin = format.TimeZone(unix) - CDI.TimeFrame * 60 * 30;
+            int rangeEnd = rangeBegin + CDI.TimeFrame * 60 * 70;
+            string line;
 
             while ((line = read.ReadLine()) != null)
             {
                 line = line.Replace("TITLE", Title);
-                line = line.Replace("TICK_SIZE", tickSize);
-                line = line.Replace("NOL_COUNT", nolCount);
+                line = line.Replace("TICK_SIZE", CDI.TickSize.ToString());
+                line = line.Replace("NOL_COUNT", CDI.NolCount.ToString());
                 line = line.Replace("CANDLES_DATA", candlesData);
                 line = line.Replace("RANGE_BEGIN", rangeBegin.ToString());
                 line = line.Replace("RANGE_END", rangeEnd.ToString());
@@ -239,9 +232,10 @@ namespace MrRobot.Entity
         /// </summary>
         string PatternVisualData(PatternUnit item, int unix)
         {
+            var CDI = Candle.Unit(item.CdiId);
             string sql = $"SELECT*" +
                          $"FROM`{TableName}`" +
-                         $"WHERE`unix`>{unix - item.TimeFrame * 60 * 1000} " +
+                         $"WHERE`unix`>{unix - CDI.TimeFrame * 60 * 1000} " +
                          $"ORDER BY`unix`" +
                          $"LIMIT 3000";
 

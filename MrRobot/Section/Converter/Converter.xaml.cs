@@ -147,7 +147,7 @@ namespace MrRobot.Section
             });
             await Task.Run(() => ConvertProcess(ConvertParam, CheckedTF, progress));
 
-            Candle.ListCreate(true);
+            new Candle();
             Instrument.DataCountPlus(SourceUnit.InstrumentId, CheckedTF.Length);
             SectionUpd.All();
 

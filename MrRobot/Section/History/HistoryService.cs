@@ -32,7 +32,7 @@ namespace MrRobot.Section
 
             InstrumentUpdateButton.Visibility = Visibility.Visible;
             InstrumentUpdateBarPanel.Visibility = Visibility.Collapsed;
-            Instrument.ListCreate(true);
+            new Instrument();
         }
         private void InstrumentUpdateProcess(IProgress<int> Progress)
         {

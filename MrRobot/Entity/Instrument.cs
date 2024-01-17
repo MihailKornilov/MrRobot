@@ -5,19 +5,17 @@ using MrRobot.inc;
 
 namespace MrRobot.Entity
 {
-    public static class Instrument
+    public class Instrument
     {
+        public Instrument()
+        {
+            ListCreate();
+        }
         private static List<InstrumentUnit> InstrumentList { get; set; }
         /// <summary>
         /// Количество доступных инструментов
         /// </summary>
-        public static int Count {
-            get
-            {
-                ListCreate();
-                return InstrumentList.Count;
-            }
-        }
+        public static int Count { get { return InstrumentList.Count; } }
         /// <summary>
         /// Ассоциативный массив ID и данных об инструменте (для быстрого поиска)
         /// </summary>
@@ -26,11 +24,8 @@ namespace MrRobot.Entity
         /// <summary>
         /// Загрузка списка инструментов из базы
         /// </summary>
-        public static void ListCreate(bool Update = false)
+        public static void ListCreate()
         {
-            if (!Update && InstrumentList != null && InstrumentList.Count > 0)
-                return;
-
             string sql = "SELECT" +
                             "`instrumentId`," +
                             "COUNT(`id`)" +

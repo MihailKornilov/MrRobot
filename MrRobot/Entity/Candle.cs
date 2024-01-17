@@ -10,8 +10,12 @@ using MySqlConnector;
 
 namespace MrRobot.Entity
 {
-    public static class Candle
+    public class Candle
     {
+        public Candle()
+        {
+            ListCreate();
+        }
         /// <summary>
         /// Список доступных скачанных свечных данных
         /// </summary>
@@ -25,11 +29,8 @@ namespace MrRobot.Entity
         /// <summary>
         /// Загрузка из базы списка свечных данных
         /// </summary>
-        public static void ListCreate(bool upd = false)
+        public static void ListCreate()
         {
-            if (!upd && CDIlist != null && CDIlist.Count > 0)
-                return;
-
             CDIlist = new List<CandleDataInfoUnit>();
             IdUnitAss = new Dictionary<int, CandleDataInfoUnit>();
 
@@ -430,7 +431,7 @@ namespace MrRobot.Entity
                 mysql.Query(sql);
             }
 
-            ListCreate(true);
+            new Candle();
         }
 
         /// <summary>
