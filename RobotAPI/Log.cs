@@ -36,6 +36,8 @@ namespace RobotAPI
             Text = txt;
             DTime = DateTime.Now.ToString();
             CandleTime = Robot.UNIX == 0 ? "Init" : Robot.DATE_TIME;
+            if (Robot.TESTER_FINISHED)
+                CandleTime = "Finish";
         }
 
         public string Text { get; set; }                // Содержание лога

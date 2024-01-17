@@ -37,7 +37,6 @@
                        Foreground="Red"
                        FontWeight="Bold"
                        FontFamily="Comic Sans Ms"
-                       Cursor="Hand"
                        Content="X"
                        MouseLeftButtonDown="ConvertedX"/>
             </StackPanel>

@@ -180,6 +180,7 @@ namespace MrRobot
         {
             var but = sender as Button;
             MainMenuListBox.SelectedIndex = but.TabIndex - 1;
+            Pattern.ArchiveGo(true);
         }
         void MainMenuChanged(object sender, SelectionChangedEventArgs e)
         {

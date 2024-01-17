@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using MrRobot.inc;
 using CefSharp.DevTools.CSS;
+using System.Collections;
 
 namespace MrRobot.Entity
 {
@@ -56,7 +57,22 @@ namespace MrRobot.Entity
                 return PSL[id];
             return null;
         }
+        /// <summary>
+        /// Удаление поиска
+        /// </summary>
+        public static void SUnitDel(int id)
+        {
+            if (!PSL.ContainsKey(id))
+                return;
 
+            string sql = $"DELETE FROM`_pattern_found`WHERE`searchId`={id}";
+            mysql.Query(sql);
+
+            sql = $"DELETE FROM`_pattern_search`WHERE`id`={id}";
+            mysql.Query(sql);
+
+            new Patterns();
+        }
 
 
 
@@ -120,13 +136,18 @@ namespace MrRobot.Entity
             {
                 if (!unit.IsTested)
                     continue;
+                if (unit.ProfitPercent == 0)
+                    continue;
                 if (unit.ProfitPercent < prc)
                     continue;
 
                 list.Add(unit);
             }
 
-            return list;
+            if (order == "id")
+                return list;
+
+            return list.OrderByDescending(x => x.ProfitPercent).ToList();
         }
         /// <summary>
         /// Индекс конкретного паттерна для указания в списке
@@ -145,6 +166,27 @@ namespace MrRobot.Entity
             }
 
             return index;
+        }
+        /// <summary>
+        /// Количество паттернов, которые не прошли тест в указанных свечных данных
+        /// </summary>
+        public static int NoTestedCount(int cdiId)
+        {
+            int count = 0;
+
+            foreach(PatternUnit unit in PatternList)
+            {
+                if (unit.CdiId != cdiId)
+                    continue;
+                if (unit.ProfitCount > 0)
+                    continue;
+                if (unit.LossCount > 0)
+                    continue;
+
+                count++;
+            }
+
+            return count;
         }
     }
 
@@ -170,7 +212,7 @@ namespace MrRobot.Entity
         public string Duration { get; set; }    // Время выполнения
         public string Dtime { get; set; }       // Дата и время поиска
 
-        public int TestedCount { get; set; }     // Количество паттернов, которые прошли тест
+        public int TestedCount { get; set; }    // Количество паттернов, которые прошли тест
 
 
 

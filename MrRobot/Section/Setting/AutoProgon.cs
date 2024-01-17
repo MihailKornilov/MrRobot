@@ -52,22 +52,26 @@ namespace MrRobot.Section
         /// <summary>
         /// Смена на очередную валютную пару
         /// </summary>
-        static void SymbolChange()
+        static bool SymbolChange(bool IsChange = true)
         {
+            if(!IsChange)
+                return false;
+ 
             if (PARAM.SymbolIndex >= PARAM.SymbolMass.Length)
             {
                 Active = false;
-                FoundCandle = null;
                 global.MW.Setting.AutoProgonButton.IsEnabled = true;
                 WriteLine("------------------- AutoProgon FINISHED: " + PARAM.dur.Second());
-                return;
+                return true;
             }
+
 
             int i = PARAM.SymbolIndex;
             PARAM.Symbol = PARAM.SymbolMass[i];
             PARAM.SymbolIndex++;
 
             HistoryDownload();
+            return true;
         }
 
         /// <summary>
@@ -92,6 +96,8 @@ namespace MrRobot.Section
             // Запуск скачивания - нажатие на кнопку
             ButtonClick(global.MW.History.DownloadGoButton);
         }
+
+
 
         /// <summary>
         /// Конвертация в выбранные таймфреймы
@@ -138,6 +144,8 @@ namespace MrRobot.Section
             ButtonClick(global.MW.Converter.ConvertGoButton);
         }
 
+
+
         /// <summary>
         /// Установка настроек для поиска паттернов
         /// </summary>
@@ -160,12 +168,12 @@ namespace MrRobot.Section
 
             // Выбор IDs, по которым не было поиска паттернов
             var idsNoSearch = new List<string>();
-            foreach(string id in cdiIds.Split(','))
-                if(!pfIds.Contains(id))
+            foreach (string id in cdiIds.Split(','))
+                if (!pfIds.Contains(id))
                     idsNoSearch.Add(id);
 
             // Если поиск был по всем таймфреймам, переход на Тестер
-            if(idsNoSearch.Count == 0)
+            if (idsNoSearch.Count == 0)
             {
                 RobotSetup();
                 return;
@@ -216,127 +224,48 @@ namespace MrRobot.Section
         }
 
 
-        public static string FoundCandle = "";   // Текущие найденные свечи (паттерн) для передачи роботу
+
+
         /// <summary>
         /// Тестирование паттерна роботом
         /// </summary>
         static void RobotSetup()
         {
-            SymbolChange();
-            return;
-
             // Переход на страницу 4:"Tester"
             SectionGo(4);
 
             // Идентификаторы свечных данных текущего Symbol
             string cdiIds = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);
 
-            // Идентификаторы, которые не проходили тест
-            string sql = "SELECT" +
-                            "`id`,`cdiId`" +
-                         "FROM`_pattern_search`" +
-                        $"WHERE`cdiId`IN({cdiIds})" +
-                           "AND`foundCount`" +
-                           "AND`foundCount`>`testedCount`";
-            PARAM.FoundNoTested = mysql.StringAss(sql);
-
-            if (PARAM.FoundNoTested.Count == 0)
-            {
-                SymbolChange();
+            if(SymbolChange(cdiIds == "0"))
                 return;
-            }
 
-            string keys = string.Join(",", PARAM.FoundNoTested.Keys.ToArray());
-            sql = "SELECT" +
-                     "`id`,`foundCount`" +
-                  "FROM`_pattern_search`" +
-                 $"WHERE`id`IN({keys})";
-            PARAM.FoundCountAss = mysql.StringAss(sql);
+            PARAM.ConvertedIds = Array.ConvertAll(cdiIds.Split(','), x => int.Parse(x));
+            PARAM.Index = 0;
+
             RobotTest();
         }
 
-        static void RobotTest()
+        public static void RobotTest()
         {
-            if (PARAM.FoundNoTested.Count == 0)
-            {
-                SymbolChange();
+            if (!Active)
                 return;
-            }
-
-            KeyValuePair<string, string> pair = PARAM.FoundNoTested.First();
-
-            if (PARAM.FoundId != pair.Key)
-            {
-                PARAM.FoundId = pair.Key;
-                PARAM.FoundCount = PARAM.FoundCountAss[pair.Key];
-
-                // Установка свечных данных в Тестере
-                var unit = Candle.Unit(pair.Value);
-                global.MW.Tester.InstrumentListBox.SelectedItem = unit;
-
-                PARAM.TF = unit.TF;
-            }
-
-            // Загрузка списка паттернов, которые не прошли тест
-            string sql = "SELECT" +
-                            "`id`,`structure`" +
-                         "FROM`_pattern_found`" +
-                        $"WHERE`searchId`={PARAM.FoundId} " +
-                            "AND`minutesList`IS NULL " +
-                         "ORDER BY`id`" +
-                         "LIMIT 1";
-            var pfsItem = mysql.QueryOne(sql);
-            if (pfsItem.Count == 0)
-            {
-                PARAM.FoundNoTested.Remove(PARAM.FoundId);
-                RobotTest();
+            if (SymbolChange(PARAM.Index >= PARAM.ConvertedIds.Length))
                 return;
-            }
 
-            global.MW.Tester.RobotsListBox.SelectedIndex = -1;
-            PARAM.FoundSpisokId = pfsItem["id"];
-            FoundCandle = pfsItem["structure"];
+
+            // Установка свечных данных в Тестере
+            int index = PARAM.Index;
+            int id = PARAM.ConvertedIds[index];
+
+            if(Patterns.NoTestedCount(id) == 1)
+                PARAM.Index++;
+
+            global.MW.Tester.InstrumentListBox.SelectedItem = Candle.Unit(id);
             global.MW.Tester.RobotsListBox.SelectedIndex = 1;
 
             // Нажатие на кнопку "Запуск тестера без визуализации"
             ButtonClick(global.MW.Tester.NoVisualButton);
-        }
-        /// <summary>
-        /// Сохранение результатов тестера
-        /// </summary>
-        public static void RobotResult(string res)
-        {
-            if (!Active)
-                return;
-
-            string[] spl = res.Split(';');
-            int profit = Convert.ToInt32(spl[0]);
-            int loss = Convert.ToInt32(spl[1]);
-            string sql = "UPDATE`_pattern_found`" +
-                        $"SET`profitCount`={profit}," +
-                           $"`lossCount`={loss}," +
-                           $"`minutesList`='{spl[2]}'" +
-                        $"WHERE`id`={PARAM.FoundSpisokId}";
-            mysql.Query(sql);
-
-            // Обновление количества паттернов, которые прошли тест
-            sql = "SELECT COUNT(*)" +
-                  "FROM`_pattern_found`" +
-                 $"WHERE`searchId`={PARAM.FoundId} " +
-                    "AND`minutesList`IS NOT NULL";
-            int TestedCount = mysql.Count(sql);
-
-            sql = "UPDATE`_pattern_search`" +
-                 $"SET`testedCount`={TestedCount} " +
-                 $"WHERE`id`={PARAM.FoundId}";
-            mysql.Query(sql);
-
-            WriteLine(PARAM.Symbol + " " + PARAM.TF + ": " +
-                      "Тест " + TestedCount + " из " + PARAM.FoundCount + ": " +
-                      (profit + loss) + " (" + profit + "/" + loss + ")");
-            WriteLine();
-
-            RobotTest();
         }
     }
 
@@ -346,17 +275,11 @@ namespace MrRobot.Section
         public string Symbol { get; set; }
         public string[] SymbolMass { get; set; }
         public int SymbolIndex { get; set; }
-        public string ConvertTF { get; set; }       // Список таймфреймов черех запятую
+        public string ConvertTF { get; set; }       // Список таймфреймов через запятую
         public string PatternLength { get; set; }   // Длина паттерна
-        public string PrecisionPercent { get; set; }  // Разброс в процентах
+        public string PrecisionPercent { get; set; }// Точность в процентах
         public string FoundRepeatMin { get; set; }  // Исключать менее N нахождений
         public int Index { get; set; }              // Индекс для Конвертера, Тестера
         public int[] ConvertedIds { get; set; }     // ID сконвертированных свечных данных
-        public string TF { get; set; }
-        public string FoundId { get; set; }         // ID из `_pattern_search`
-        public string FoundCount { get; set; }
-        public Dictionary<string, string> FoundCountAss { get; set; }
-        public string FoundSpisokId { get; set; }   // ID из `_pattern_found`
-        public Dictionary<string, string> FoundNoTested { get; set; }
     }
 }

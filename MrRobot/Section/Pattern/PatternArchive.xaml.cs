@@ -26,7 +26,6 @@ namespace MrRobot.Section
                 return;
 
             SearchList();
-            ArchivePatternList.ItemsSource = Patterns.ProfitList();
 
             PAinited = true;
         }
@@ -98,6 +97,7 @@ namespace MrRobot.Section
         {
             SearchStat();
             ArchiveData.ItemsSource = Patterns.SearchListAll();
+            ArchivePatternList.ItemsSource = Patterns.ProfitList();
         }
 
         int ProfitPrc = 50;         // Минимальный процент прибыльности в запросе
@@ -128,28 +128,55 @@ namespace MrRobot.Section
 
 
         /// <summary>
-        /// Нажатие на поиск или на паттерн
+        /// Нажатие на поиск
         /// </summary>
-        void ArchiveUnitClick(object sender, MouseButtonEventArgs e)
+        void SearchUnitClick(object sender, MouseButtonEventArgs e)
+        {
+            var LBI = sender as ListBoxItem;
+            var Item = LBI.Content as SearchUnit;
+            UnitClickGo(Item, new PatternSearchParam(), Item.PatternLength);
+        }
+        /// <summary>
+        /// Нажатие на паттерн
+        /// </summary>
+        void PatternUnitClick(object sender, MouseButtonEventArgs e)
         {
             var LBI = sender as ListBoxItem;
             var Item = LBI.Content as PatternUnit;
+            var param = new PatternSearchParam();
+            param.FoundId = Item.Repeat > 0 ? Item.Id : 0;
+            UnitClickGo(Item, param, Item.Length);
+        }
+        void UnitClickGo(dynamic Item, PatternSearchParam param, int len)
+        {
             var CDI = Candle.Unit(Item.CdiId);
-            var param = new PatternSearchParam()
-            {
-                CdiId = CDI.Id,
-                PatternLength = Item.Length,
-                PrecisionPercent = Item.PrecisionPercent,
-                FoundRepeatMin = Item.FoundRepeatMin,
-                FoundId = Item.Repeat > 0 ? Item.Id : 0
-            };
+
+            param.CdiId = CDI.Id;
+            param.PatternLength = len;
+            param.PrecisionPercent = Item.PrecisionPercent;
+            param.FoundRepeatMin = Item.FoundRepeatMin;
 
             global.MW.Pattern.ArchiveGo();
             global.MW.Pattern.SourceListBox.SelectedItem = CDI;
-            global.MW.Pattern.LengthSlider.Value = Item.Length;
+            global.MW.Pattern.LengthSlider.Value = len;
             global.MW.Pattern.PrecisionPercentSlider.Value = Item.PrecisionPercent;
             global.MW.Pattern.FoundRepeatMin.Text = Item.FoundRepeatMin.ToString();
             global.MW.Pattern.PatternSearchExist(param);
+        }
+
+        /// <summary>
+        /// Удаление поиска
+        /// </summary>
+        void SearchX(object sender, MouseButtonEventArgs e)
+        {
+            int index = global.MW.Pattern.SourceListBox.SelectedIndex;
+            global.MW.Pattern.SourceListBox.SelectedIndex = -1;
+
+            var label = sender as Label;
+            Patterns.SUnitDel(label.TabIndex);
+            SearchList();
+
+            global.MW.Pattern.SourceListBox.SelectedIndex = index;
         }
     }
 }

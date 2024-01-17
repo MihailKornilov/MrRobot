@@ -22,7 +22,18 @@
                 <Label Content="{Binding PatternLength}" Width="90" Padding="0,0,45,0" HorizontalContentAlignment="Center"/>
                 <Label Content="{Binding PrecisionPercent}" Width="70" Padding="0,0,25,0" HorizontalContentAlignment="Center"/>
                 <Label Content="{Binding FoundCount}" Width="100" Padding="0,0,21,0" HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Duration}" Width="100" Padding="0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Duration}" Width="80" Padding="0" HorizontalContentAlignment="Right"/>
+                <Label Content="X"
+                       TabIndex="{Binding Id}"
+                       Width="20"
+                       Margin="10,0,0,0"
+                       Padding="0"
+                       Foreground="#D44"
+                       Opacity=".7"
+                       FontWeight="Medium"
+                       FontFamily="Comic Sans Ms"
+                       HorizontalContentAlignment="Center"
+                       MouseLeftButtonDown="SearchX"/>
             </WrapPanel>
         </DataTemplate>
 
@@ -160,7 +171,7 @@
                 <TabItem.Content>
                     <StackPanel>
                         <!-- Заголовок истории поиска  -->
-                        <WrapPanel Background="#EEE" Width="800" Height="33" Margin="3,3,1,0" HorizontalAlignment="Left">
+                        <WrapPanel Background="#EEE" Width="810" Height="33" Margin="3,3,1,0" HorizontalAlignment="Left">
                             <Label Content="ID поиска" Width="55" HorizontalContentAlignment="Right" Margin="0,0,12,0" Style="{StaticResource PatternListHead}"/>
                             <Label Content="Дата" Width="100" Style="{StaticResource PatternListHead}"/>
                             <Label Content="Инструмент" Width="250" Style="{StaticResource PatternListHead}"/>
@@ -173,7 +184,7 @@
                                 <Label Content="Кол-во" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead1}"/>
                                 <Label Content="совпадений" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead2}"/>
                             </StackPanel>
-                            <StackPanel Width="82">
+                            <StackPanel Width="62">
                                 <Label Content="Время" HorizontalContentAlignment="Right" Margin="0" Style="{StaticResource PatternListHead1}"/>
                                 <Label Content="выполнения" HorizontalContentAlignment="Right" Margin="0" Style="{StaticResource PatternListHead2}"/>
                             </StackPanel>
@@ -188,7 +199,7 @@
                                  ItemTemplate="{StaticResource ArchiveSearchTmp}">
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                                    <EventSetter Event="MouseDoubleClick" Handler="ArchiveUnitClick"/>
+                                    <EventSetter Event="MouseDoubleClick" Handler="SearchUnitClick"/>
                                 </Style>
                             </ListBox.ItemContainerStyle>
                         </ListBox>
@@ -230,7 +241,7 @@
                                  ItemTemplate="{StaticResource ArchivePatternTmp}">
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                                    <EventSetter Event="MouseDoubleClick" Handler="ArchiveUnitClick"/>
+                                    <EventSetter Event="MouseDoubleClick" Handler="PatternUnitClick"/>
                                 </Style>
                             </ListBox.ItemContainerStyle>
                         </ListBox>

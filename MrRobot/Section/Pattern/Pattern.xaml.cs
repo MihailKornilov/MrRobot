@@ -443,9 +443,16 @@ namespace MrRobot.Section
         /// Нажатие на кнопку для показа истории поисков
         /// </summary>
         void ArchiveGo(object sender, RoutedEventArgs e) => ArchiveGo();
-        public void ArchiveGo()
+        public void ArchiveGo(bool fromMM = false)
         {
+            if (position.MainMenu() != 3)
+                return;
+
             bool isSearch = PatternSearchGrid.Visibility == Visibility.Visible;
+
+            if (fromMM && isSearch)
+                return;
+
             HeadArchive.Text = "Поиск паттернов" + (isSearch ? ": история" : "");
             ButtonArchive.Content = isSearch ? "<<< назад" : "История поисков";
             PatternSearchGrid.Visibility = isSearch ? Visibility.Collapsed : Visibility.Visible;

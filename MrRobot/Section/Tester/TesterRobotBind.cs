@@ -159,12 +159,7 @@ namespace MrRobot.Section
 
             TESTER_GLOBAL_INIT();
 
-            object[] args = {
-                new string[] {
-                    AutoProgon.FoundCandle
-                }
-            };
-            Init.Invoke(ObjInstance, args);
+            Init.Invoke(ObjInstance, new object[] { new string[]{} });
             RobotLog();
 
             if (TESTER_FINISHED)
@@ -385,7 +380,7 @@ namespace MrRobot.Section
 
         #region NO VISUAL
 
-        bool IsNoVisualProcess; // Флаг процесса тестирования без визуализации
+        bool IsNoVisualProcess { get; set; } // Флаг процесса тестирования без визуализации
         /// <summary>
         /// Блокировка полей настроек перед запуском теста
         /// </summary>
@@ -417,6 +412,12 @@ namespace MrRobot.Section
 
             NoVisualLock();
             GlobalInit();
+            if (TESTER_FINISHED)
+            {
+                NoVisualLock(ButtonContent, ButtonWidth);
+                return;
+            }
+
 
             var progress = new Progress<int>(v => { TesterBar.Value = v; });
             await Task.Run(() => NoVisualProcess(progress));
@@ -428,7 +429,7 @@ namespace MrRobot.Section
 
             NoVisualLock(ButtonContent, ButtonWidth);
 
-            AutoProgon.RobotResult(res.ToString());
+            AutoProgon.RobotTest();
         }
         void NoVisualProcess(IProgress<int> Progress)
         {

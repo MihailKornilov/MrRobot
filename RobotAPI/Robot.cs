@@ -123,21 +123,37 @@ namespace RobotAPI
             public PATTERN(List<object> all)
             {
                 All = all;
-                PatternSrc = null;
+                SRC = null;
+                Symbol = INSTRUMENT.Name;
+                TimeFrame = INSTRUMENT.TimeFrame;
+                TF = INSTRUMENT.TF;
+                Length = 0;
+                PrecisionPercent = 0;
             }
 
+
+            public static string Symbol { get; private set; }
+            public static int TimeFrame { get; private set; }
+            public static string TF { get; private set; }
+            public static int Length { get; set; }
+            public static int PrecisionPercent { get; set; }
+
             // Список паттернов по инструменту [и таймфрейму]
-            public static List<object> ListSymbolNoTested(string symbol, int tf = 0)
+            public static List<object> NoTestedList()
             {
                 var send = new List<object>();
 
                 foreach (dynamic item in All)
                 {
-                    if (item.Symbol != symbol)
-                        continue;
-                    if (tf > 0 && tf != item.TimeFrame)
-                        continue;
                     if (item.IsTested)
+                        continue;
+                    if (Symbol != null && item.Symbol != Symbol)
+                        continue;
+                    if (TimeFrame > 0 && TimeFrame != item.TimeFrame)
+                        continue;
+                    if (Length > 0 && Length != item.Length)
+                        continue;
+                    if (PrecisionPercent > 0 && PrecisionPercent != item.PrecisionPercent)
                         continue;
 
                     send.Add(item);
@@ -148,13 +164,14 @@ namespace RobotAPI
 
 
 
-
-            static dynamic PatternSrc { get; set; }
+            // Исходный паттерн, по которому будет производиться поиск
+            static dynamic SRC { get; set; }
+            // Свечи, из которых будут формироваться паттерны для сравнения
             static List<dynamic> CandleList { get; set; }
-            // Установка исходного паттерна, по которому будет производиться поиск
+            // Установка исходного паттерна
             public static void Source(dynamic patt)
             {
-                PatternSrc = patt;
+                SRC = patt;
                 CandleList = new List<dynamic>();
             }
             // Поиск паттерна
@@ -165,23 +182,24 @@ namespace RobotAPI
 
                 CandleList.Add(CANDLES[0]);
 
-                if (CandleList.Count < PatternSrc.Length)
+                if (CandleList.Count < SRC.Length)
                     return false;
 
-                if (CandleList.Count > PatternSrc.Length)
+                if (CandleList.Count > SRC.Length)
                     CandleList.RemoveRange(0, 1);
 
-                var dst = PatternSrc.Create(CandleList, PatternSrc.CdiId);
+                var dst = SRC.Create(CandleList, SRC.CdiId);
                 if (dst.Size == 0)
                     return false;
 
-                return PatternSrc.Compare(dst);
+                return SRC.Compare(dst);
             }
+            // Сохранение результатов поиска в базу
             public static void Save(int profit, int loss)
             {
-                PatternSrc.ProfitCount = profit;
-                PatternSrc.LossCount = loss;
-                PatternSrc.TesterSave();
+                SRC.ProfitCount = profit;
+                SRC.LossCount = loss;
+                SRC.TesterSave();
             }
         }
     }

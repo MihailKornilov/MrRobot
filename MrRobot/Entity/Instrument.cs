@@ -195,9 +195,10 @@ namespace MrRobot.Entity
         public double BaseCommiss { get; set; } // Сумма комиссий исполненных ордеров базовой монеты
         public double QuoteCommiss { get; set; }// Сумма комиссий исполненных ордеров базовой котировочной монеты
 
-        public ulong Exp { get; set; }          // Cтепень числа 10. Получение из NolCount
-        public int TimeFrame { get; set; }      // Таймфрейм указывается, если выбор из свечных данных
         public string Table { get; set; }       // Имя таблицы со свечами
         public int RowsCount { get; set; }      // Количество свечей в графике (в таблице)
+        public int TimeFrame { get; set; }      // Таймфрейм указывается, если выбор из свечных данных
+        public string TF { get { return format.TF(TimeFrame); } } // Таймфрейм 10m
+        public ulong Exp { get; set; }          // Cтепень числа 10. Получение из NolCount
     }
 }
