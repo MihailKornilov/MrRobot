@@ -415,11 +415,12 @@ namespace MrRobot.Section
             if (TESTER_FINISHED)
             {
                 NoVisualLock(ButtonContent, ButtonWidth);
+                AutoProgon.RobotTest();
                 return;
             }
 
 
-            var progress = new Progress<int>(v => { TesterBar.Value = v; });
+            var progress = new Progress<decimal>(v => { TesterBar.Value = (double)v; });
             await Task.Run(() => NoVisualProcess(progress));
             object res = Finish.Invoke(ObjInstance, new object[] { });
 
@@ -431,7 +432,7 @@ namespace MrRobot.Section
 
             AutoProgon.RobotTest();
         }
-        void NoVisualProcess(IProgress<int> Progress)
+        void NoVisualProcess(IProgress<decimal> Progress)
         {
             var bar = new ProBar(INSTRUMENT.RowsCount);
 

@@ -8,7 +8,7 @@
 		Name="MW"
 		Title="Mr.Robot v0.0.1"
 		MinWidth="1175"
-		MinHeight="800"
+		MinHeight="700"
 		Background="#FFF">
 
 	<Window.Resources>

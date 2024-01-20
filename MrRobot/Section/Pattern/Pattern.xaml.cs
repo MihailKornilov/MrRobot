@@ -35,7 +35,7 @@ namespace MrRobot.Section
             FoundRepeatMin.Text = position.Val("3_FoundRepeatMin", "0");
 
             global.Inited(3);
-            SearchResultCheck();
+            //SearchResultCheck();
         }
 
 
@@ -146,8 +146,8 @@ namespace MrRobot.Section
                 PrecisionPercent = (int)PrecisionPercentSlider.Value,
                 FoundRepeatMin = Convert.ToInt16(FoundRepeatMin.Text),
 
-                PBar = new Progress<int>(v => {
-                    SearchProgress.Value = v;
+                PBar = new Progress<decimal>(v => {
+                    SearchProgress.Value = (double)v;
                     ProgressPrc.Content = v + "%";
                     ProсessInfo.Text = SPARAM.ProсessInfo;
                 })
@@ -158,7 +158,9 @@ namespace MrRobot.Section
 
             await Task.Run(() => SearchProcess());
 
-            PatternFoundBaseInsert();
+            if (!PatternFoundBaseInsert())
+                return;
+
             global.MW.Pattern.PatternArchive.SearchList();
             if (!AutoProgon.PatternSearch())
                 PatternSearchExist(SPARAM);
@@ -179,12 +181,14 @@ namespace MrRobot.Section
 
             int CountSearch = MASS.Count - SPARAM.PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
             var FNDass = new Dictionary<string, int>();
-            SPARAM.PBar.Report(0);
 
-            long CS = 0;
+            // Предварительный подсчёт общего количества итераций
+            long Iterations = 0;
             for (int i = 1; i < CountSearch + 1; i++)
-                CS += i;
-            var bar = new ProBar(CS);
+                Iterations += i;
+
+            var bar = new ProBar(Iterations, 1000);
+            SPARAM.PBar.Report(0);
 
             for (int i = 0; i < CountSearch; i++)
             {
@@ -279,12 +283,12 @@ namespace MrRobot.Section
         public void SearchStatistic(PatternSearchParam param)
         {
             bool isSearchNew = param.Duration == null;
-            SourceListBox.IsEnabled = !param.IsProcess;
-            SetupPanel.IsEnabled = !param.IsProcess;
-            SearchPanel.Visibility        = isSearchNew ? Visibility.Visible : Visibility.Collapsed;
-            SearchGoButton.Visibility     = param.IsProcess ? Visibility.Collapsed : Visibility.Visible;
-            ProgressPanel.Visibility      = param.IsProcess ? Visibility.Visible : Visibility.Collapsed;
-            ResultPanel.Visibility        = isSearchNew ? Visibility.Collapsed : Visibility.Visible;
+            SourceListBox.IsEnabled   = !param.IsProcess;
+            SetupPanel.IsEnabled      = !param.IsProcess;
+            SearchPanel.Visibility    = isSearchNew ? Visibility.Visible : Visibility.Collapsed;
+            SearchGoButton.Visibility = param.IsProcess ? Visibility.Collapsed : Visibility.Visible;
+            ProgressPanel.Visibility  = param.IsProcess ? Visibility.Visible : Visibility.Collapsed;
+            ResultPanel.Visibility    = isSearchNew ? Visibility.Collapsed : Visibility.Visible;
 
             Visibility foundVis = param.FoundCount == 0 ? Visibility.Hidden : Visibility.Visible;
             FoundPanel.Visibility = foundVis;
@@ -317,6 +321,7 @@ namespace MrRobot.Section
             // Поиск был отменён
             if (SPARAM.Duration == null)
             {
+                SPARAM.FoundList.Clear();
                 SearchStatistic(SPARAM);
                 return false;
             }
@@ -339,10 +344,10 @@ namespace MrRobot.Section
         /// <summary>
         /// Внесение найденных паттернов в базу
         /// </summary>
-        void PatternFoundBaseInsert()
+        bool PatternFoundBaseInsert()
         {
             if (!PattentFoundPrepare())
-                return;
+                return false;
 
             string sql = "INSERT INTO`_pattern_search`(" +
                             "`cdiId`," +
@@ -368,7 +373,7 @@ namespace MrRobot.Section
             int SearchId = mysql.Query(sql);
 
             if (SPARAM.FoundCount == 0)
-                return;
+                return true;
 
             var insert = new List<string>();
             for (int i = 0; i < SPARAM.FoundCount; i++)
@@ -391,6 +396,8 @@ namespace MrRobot.Section
             }
 
             new Patterns();
+
+            return true;
         }
 
         #endregion
@@ -481,7 +488,7 @@ namespace MrRobot.Section
 
 
         public bool IsProcess { get; set; }     // Происходит процесс поиска паттернов
-        public IProgress<int> PBar { get; set; }// Прогресс-бар
+        public IProgress<decimal> PBar { get; set; }// Прогресс-бар
         public string ProсessInfo { get; set; } // Информация о процессе поиска
 
 

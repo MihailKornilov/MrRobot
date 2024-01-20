@@ -307,6 +307,20 @@ namespace MrRobot.inc
         }
 
         /// <summary>
+        /// Количество знаков после запятой для округления
+        /// </summary>
+        public static int Round(double v)
+        {
+            double d = 100 / v % 1;
+            if(d == 0)
+                return 0;
+
+            int c = d.ToString().Length - 2;
+            
+            return c == 1 ? 1 : 2;
+        }
+
+        /// <summary>
         /// Формирование окончаний в словах
         /// </summary>
         public static string End(int count, string o1, string o2, string o5="")

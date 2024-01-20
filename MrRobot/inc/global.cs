@@ -113,9 +113,10 @@ namespace MrRobot.inc
             WriteLine(msg + Second());
         }
 
-        public int Elapsed()
+        public int TotalSeconds()
         {
-            return Convert.ToInt32(SW.ElapsedMilliseconds / 1000);
+            int sec = (int)(SW.ElapsedMilliseconds / 1000);
+            return sec;
         }
         public long ElapsedMS()
         {
@@ -163,17 +164,17 @@ namespace MrRobot.inc
     /// </summary>
     public class ProBar
     {
-        long All { get; set; }// Общее количество
-        bool IsMore100;     // Флаг: общее количество больше 100
-        double Sotka;       // Сотая часть от общей суммы
-        double Area;        // Участок, при завершении которого обновляется процент ПрогрессБара
-        double Percent;     // Значение в процентах, которое будет передаваться в Value
-        double PercentStep; // Значение, на которое увеличивается процент при следующем шаге
-        public int Value { get; private set; }  // Значение в процентах, которое будет выводиться в Прогресс-бар
+        double All { get; set; }        // Общее количество
+        double StepCount { get; set; }  // Количество шагов, в каждый из которых будут обновляться данные прогресс-бара
+        double Sotka { get; set; }      // Сотая часть от общей суммы
+        double Area;            // Участок, при завершении которого обновляется процент ПрогрессБара
+        decimal Percent;         // Значение в процентах, которое будет передаваться в Value
+        decimal PercentStep;     // Значение, на которое увеличивается процент при следующем шаге
+        public decimal Value { get; private set; }  // Значение в процентах, которое будет выводиться в Прогресс-бар
 
-        Dur dur;
-        double MilliSecondPass;
-        double MilliSecondLeft;
+        Dur dur = new Dur();
+        double MilliSecondPass { get; set; }
+        double MilliSecondLeft { get; set; }
         public string TimePass {
             get
             {
@@ -181,7 +182,7 @@ namespace MrRobot.inc
                 if (pass.Hours > 0)
                     return string.Format("{0}:{1:00}:{2:00}", pass.Hours, pass.Minutes, pass.Seconds);
 
-                return string.Format("{0:00}:{1:00}", pass.Minutes, pass.Seconds);
+                return string.Format("{0}:{1:00}", pass.Minutes, pass.Seconds);
             }
         }
         public string TimeLeft {
@@ -191,73 +192,49 @@ namespace MrRobot.inc
                 if (left.Hours > 0)
                     return string.Format("{0}:{1:00}:{2:00}", left.Hours, left.Minutes, left.Seconds);
 
-                return string.Format("{0:00}:{1:00}", left.Minutes, left.Seconds);
+                return string.Format("{0}:{1:00}", left.Minutes, left.Seconds);
             }
         }
 
-        public ProBar(long all)
+        public ProBar(double all, double stepCount = 100)
         {
+            if (all == 0)
+                all = 1;
+            if (stepCount > all)
+                stepCount = all;
             All = all;
-            IsMore100 = all > 100;
-            InitMore100();
-            InitLess100();
-
-            dur = new Dur();
-            MilliSecondPass = 0;
-            MilliSecondLeft = 0;
-        }
-
-        /// <summary>
-        /// Инициализация при общем количестве больше 100
-        /// </summary>
-        void InitMore100()
-        {
-            if (!IsMore100)
-                return;
-
-            Sotka = (double)All / 100;
+            StepCount = stepCount;
+            Sotka = All / StepCount;
             Area = Sotka;
-            Percent = 1;
-        }
-        /// <summary>
-        /// Инициализация при общем количестве меньше 100
-        /// </summary>
-        void InitLess100()
-        {
-            if (IsMore100)
-                return;
-
-            Sotka = 100 / (double)All;
-            Percent = Sotka;
-            PercentStep = Sotka;
+            PercentStep = 100 / (decimal)StepCount;
         }
 
         /// <summary>
-        /// Проверка, обновлять ли Прогресс-бар (при All > 100)
+        /// Проверка, обновлять ли Прогресс-бар (при All >= StepCount)
         /// </summary>
         public bool isUpd(long count)
         {
+            if (count == 0)
+                return false;
             if (count < Area)
                 return false;
 
             Area += Sotka;
-            Value = Convert.ToInt32(Percent);
-            Percent += 1;
+            Value = Math.Round(Percent, format.Round(StepCount));
+            Percent += PercentStep;
 
             MilliSecondPass = dur.ElapsedMS();
             MilliSecondLeft = MilliSecondPass / count * All - MilliSecondPass;
 
             return true;
         }
-        /// <summary>
-        /// Отправка значения Прогресс-бару (при All < 100)
-        /// </summary>
-        public int Val()
+
+        public void Val(long count, IProgress<decimal> Progress)
         {
-            double ceil = Math.Ceiling(Percent);
-            Value = Convert.ToInt32(ceil);
-            Percent += PercentStep;
-            return Value;
+            if (!isUpd(count))
+                return;
+
+            Progress.Report(Value);
         }
     }
 }

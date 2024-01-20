@@ -453,8 +453,10 @@ namespace MrRobot.inc
 
             while (res.Read())
             {
-                if (bar.isUpd(i++))
-                    PARAM.PBar.Report(bar.Value);
+                if (!PARAM.IsProcess)
+                    break;
+
+                bar.Val(i++, PARAM.PBar);
 
                 CandleList.Add(new CandleUnit(res));
 

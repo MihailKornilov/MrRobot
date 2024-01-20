@@ -347,7 +347,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Проверка соответствия скачанных данных с заголовками
         /// </summary>
-        public static void DataControl(string tableLike = "bybit_", IProgress<int> prgs = null)
+        public static void DataControl(string tableLike = "bybit_", IProgress<decimal> prgs = null)
         {
             string sql = $"SHOW TABLES LIKE '{tableLike}%'";
             string[] mass = mysql.QueryColOne(sql);
@@ -547,7 +547,7 @@ namespace MrRobot.Entity
  
         // Для Converter
         public string SourceTable { get; set; }
-        public int ProgressMainValue { get; set; }  // Значение, которое будет отображаться Main-прогресс-бар
+        public double ProgressMainValue { get; set; }// Значение, которое будет отображаться Main-прогресс-бар
         public int TfNum { get; set; }              // Номер конвертации, если было выбрано несколько таймфреймов
         public int[] ConvertedIds { get; set; }     // ID сконвертированных свечных данных
     }

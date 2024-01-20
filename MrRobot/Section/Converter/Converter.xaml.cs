@@ -137,9 +137,9 @@ namespace MrRobot.Section
 
             ProgressMain.Value = 0;
             ProgressSub.Value = 0;
-            var progress = new Progress<int>(v => {
+            var progress = new Progress<decimal>(v => {
                 ProgressMain.Value = ConvertParam.ProgressMainValue;
-                ProgressSub.Value = v;
+                ProgressSub.Value = (double)v;
 
                 // Снятие галочки с очередного сконвертированного таймфрейма
                 if (v == 100)
@@ -160,7 +160,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Процесс концертации в фоновом режиме
         /// </summary>
-        void ConvertProcess(CandleDataParam PARAM, int[] CheckedTF, IProgress<int> Progress)
+        void ConvertProcess(CandleDataParam PARAM, int[] CheckedTF, IProgress<decimal> Progress)
         {
             // Загрузка из базы исходного минутного таймфрейма
             string sql = $"SELECT*FROM`{PARAM.SourceTable}`";
@@ -183,7 +183,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Процесс конвертации в выбранные таймфреймы
         /// </summary>
-        void ConvertProcessTF(CandleDataParam PARAM, List<CandleUnit> SourceData, IProgress<int> Progress)
+        void ConvertProcessTF(CandleDataParam PARAM, List<CandleUnit> SourceData, IProgress<decimal> Progress)
         {
             var SubBar = new ProBar(SourceData.Count);
             Progress.Report(0);
@@ -219,7 +219,7 @@ namespace MrRobot.Section
                     continue;
 
                 PARAM.Bar.isUpd(PARAM.TfNum * SourceData.Count + i);
-                PARAM.ProgressMainValue = PARAM.Bar.Value;
+                PARAM.ProgressMainValue = (double)PARAM.Bar.Value;
                 Progress.Report(SubBar.Value);
             }
 

@@ -36,16 +36,23 @@ namespace MrRobot.Section
             InstrumentFindBox.Text = position.Val("1_InstrumentFindBox_Text");
             InstrumentListBoxFill();
             InstrumentListBox.SelectedIndex = position.Val("1_InstrumentListBox_SelectedIndex", 0);
-
-            InstrumentCount.Text = Instrument.Count + " инструмент" + format.End(Instrument.Count, "", "а", "ов");
+            InstrumentCountWrite();
 
             global.Inited(1);
+        }
+        
+        /// <summary>
+        /// Вывод количества инструментов в заголовке
+        /// </summary>
+        void InstrumentCountWrite()
+        {
+            InstrumentCount.Text = Instrument.Count + " инструмент" + format.End(Instrument.Count, "", "а", "ов");
         }
 
         /// <summary>
         /// Быстрый поиск по инструментам ByBit
         /// </summary>
-        private void FindBoxChanged(object sender, TextChangedEventArgs e)
+        void FindBoxChanged(object sender, TextChangedEventArgs e)
         {
             position.Set("1_InstrumentFindBox_Text", InstrumentFindBox.Text);
             InstrumentListBoxFill();
@@ -67,7 +74,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Выбран инструмент в списке
         /// </summary>
-        private void InstrumentListChanged(object sender, SelectionChangedEventArgs e)
+        void InstrumentListChanged(object sender, SelectionChangedEventArgs e)
         {
             var box = sender as ListBox;
 
@@ -107,7 +114,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Ссылка на страницу инструмента сайта ByBit
         /// </summary>
-        private void InstrumentNamePage(object sender, MouseButtonEventArgs e)
+        void InstrumentNamePage(object sender, MouseButtonEventArgs e)
         {
             var block = sender as TextBlock;
             if (block == null)
@@ -122,7 +129,7 @@ namespace MrRobot.Section
 
         #region Download Process
 
-        private CandleDataParam DownloadParam;
+        CandleDataParam DownloadParam;
 
         /// <summary>
         /// Установка UNIX-даты окончания загрузки
@@ -140,7 +147,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Старт загрузки истории
         /// </summary>
-        private async void DownloadGo(object sender, RoutedEventArgs e)
+        async void DownloadGo(object sender, RoutedEventArgs e)
         {
             var Iitem = InstrumentListBox.SelectedItem as InstrumentUnit;
 
@@ -158,8 +165,8 @@ namespace MrRobot.Section
             };
 
             DownloadElemDisable();
-            var progress = new Progress<int>(v => {
-                DownloadProgressBar.Value = v;
+            var progress = new Progress<decimal>(v => {
+                DownloadProgressBar.Value = (double)v;
                 ProcessText.Text = $"{format.DayFromUnix(DownloadParam.UnixStart)}: " +
                                    $"загружено свечей: {DownloadParam.CC}" +
                                    $"   ({v}%)" +
@@ -167,6 +174,9 @@ namespace MrRobot.Section
             });
             await Task.Run(() => DownloadProcess(DownloadParam, progress));
             DownloadElemEnable();
+
+            if (DownloadParam.Id == 0)
+                return;
 
             new Candle();
             Instrument.DataCountPlus(Iitem.Id);
@@ -178,14 +188,15 @@ namespace MrRobot.Section
         /// <summary>
         /// Процесс скачивания исторических данных в фоновом режиме
         /// </summary>
-        private void DownloadProcess(CandleDataParam PARAM, IProgress<int> Progress)
+        void DownloadProcess(CandleDataParam PARAM, IProgress<decimal> Progress)
         {
             PARAM.Table = Candle.DataTableCreate(PARAM);
 
             DownloadCheck12(PARAM);
 
             var wc = new WebClient();
-            PARAM.Bar = new ProBar((PARAM.UnixFinish - PARAM.UnixStart) / PARAM.TimeFrame / 60 / 1000);
+            PARAM.Bar = new ProBar((PARAM.UnixFinish - PARAM.UnixStart) / PARAM.TimeFrame / 60 / 1000, 1000);
+            Progress.Report(0);
             int barIndex = 0;
             var insert = new List<string>();
             bool isFinish = false;
@@ -241,7 +252,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Проверка на первую половину суток для минутного таймфрейма (если время загрузки начинается после 16:00)
         /// </summary>
-        private void DownloadCheck12(CandleDataParam PARAM)
+        void DownloadCheck12(CandleDataParam PARAM)
         {
             if (PARAM.TimeFrame != 1)
                 return;
@@ -269,7 +280,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Блокировка элементов настроек скачивания данных при начале загрузки
         /// </summary>
-        private void DownloadElemDisable()
+        void DownloadElemDisable()
         {
             InstrumentListPanel.IsEnabled = false;
             DownloadProgressBar.Value = 0;
@@ -281,7 +292,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Разблокировка элементов настроек скачивания данных при начале загрузки
         /// </summary>
-        private void DownloadElemEnable()
+        void DownloadElemEnable()
         {
             InstrumentListPanel.IsEnabled = true;
             SetupPanel.IsEnabled = true;
@@ -291,7 +302,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Отмена процесса загрузки
         /// </summary>
-        private void DownloadCancel(object sender, RoutedEventArgs e)
+        void DownloadCancel(object sender, RoutedEventArgs e)
         {
             DownloadParam.IsProcess = false;
         }

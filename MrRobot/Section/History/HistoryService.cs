@@ -16,25 +16,26 @@ namespace MrRobot.Section
         /// <summary>
         /// Обновление валютных пар для ByBit
         /// </summary>
-        private async void InstrumentUpdateGo(object sender, RoutedEventArgs e)
+        async void InstrumentUpdateGo(object sender, RoutedEventArgs e)
         {
             InstrumentUpdateButton.Visibility = Visibility.Collapsed;
             InstrumentUpdateBar.Value = 0;
             InstrumentUpdateBarText.Content = "";
             InstrumentUpdateBarPanel.Visibility = Visibility.Visible;
 
-            var progress = new Progress<int>(v => {
-                InstrumentUpdateBar.Value = v;
+            var progress = new Progress<decimal>(v => {
+                InstrumentUpdateBar.Value = (double)v;
                 InstrumentUpdateBarText.Content = v + "%";
             });
             await Task.Run(() => InstrumentUpdateProcess(progress));
-            await Task.Run(() => Candle.DataControl(prgs: progress));
+            new Instrument();
+            InstrumentCountWrite();
 
+            await Task.Run(() => Candle.DataControl(prgs: progress));
             InstrumentUpdateButton.Visibility = Visibility.Visible;
             InstrumentUpdateBarPanel.Visibility = Visibility.Collapsed;
-            new Instrument();
         }
-        private void InstrumentUpdateProcess(IProgress<int> Progress)
+        void InstrumentUpdateProcess(IProgress<decimal> Progress)
         {
             /*
             "symbol":"BTCUSDT",
@@ -80,7 +81,7 @@ namespace MrRobot.Section
                     InstrumentValueCheck(unit, "minOrderQty", unit.MinOrderQty, lsf.minOrderQty);
                     InstrumentValueCheck(unit, "tickSize", unit.TickSize, v.priceFilter.tickSize);
                     InstrumentValueCheck(unit, "status", unit.Status, v.status == "Trading" ? "1" : "0");
-                    //Thread.Sleep(1);
+                    InstrumentHistoryBeginUpdate(unit);
                     continue;
                 }
 
@@ -121,7 +122,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Проверка и обновление изменённых параметров в инструменте
         /// </summary>
-        private void InstrumentValueCheck(InstrumentUnit unit, string param, dynamic oldV, dynamic newV)
+        void InstrumentValueCheck(InstrumentUnit unit, string param, dynamic oldV, dynamic newV)
         {
             string oldS = format.E(oldV);
             string newS = format.E(newV);
@@ -140,7 +141,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Внесение лога изменения в инструменте
         /// </summary>
-        private void InstrumentLogInsert(InstrumentUnit unit, string about, string oldV, string newV)
+        void InstrumentLogInsert(InstrumentUnit unit, string about, string oldV, string newV)
         {
             string sql = "INSERT INTO `_instrument_log`(" +
                             "`marketId`," +
@@ -161,8 +162,11 @@ namespace MrRobot.Section
         /// <summary>
         /// Обновление начала истории по каждому инструменту ByBit
         /// </summary>
-        private void InstrumentHistoryBeginUpdate(InstrumentUnit unit)
+        void InstrumentHistoryBeginUpdate(InstrumentUnit unit)
         {
+            if (!unit.HistoryBegin.Contains("0001"))
+                return;
+
             string start = "1577826000";    //2020-01-01 - начало истории для всех инструментов
 
             var wc = new WebClient();
@@ -201,7 +205,7 @@ namespace MrRobot.Section
 
             // Затем список по 1 мин. для максимально точного получения начала истории
             last = arr.result.list[count - 1][0];
-            str = $"https://api.bybit.com/v5/market/kline?category=spot&symbol={unit.Symbol}&interval=1&start={last}&limit=20";
+            str = $"https://api.bybit.com/v5/market/kline?category=spot&symbol={unit.Symbol}&interval=1&start={last}&limit=1000";
             json = wc.DownloadString(str);
             arr = JsonConvert.DeserializeObject(json);
 

@@ -258,7 +258,7 @@ namespace MrRobot.Section
             int index = PARAM.Index;
             int id = PARAM.ConvertedIds[index];
 
-            if(Patterns.NoTestedCount(id) == 1)
+            if(Patterns.NoTestedCount(id) < 2)
                 PARAM.Index++;
 
             global.MW.Tester.InstrumentListBox.SelectedItem = Candle.Unit(id);
