@@ -177,6 +177,8 @@ namespace RobotAPI
             // Поиск паттерна
             public static bool Found()
             {
+                if (SRC == null)
+                    return false;
                 if (!IS_CANDLE_FULL)
                     return false;
 

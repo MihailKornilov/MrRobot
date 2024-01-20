@@ -149,7 +149,7 @@ namespace MrRobot.Section
         }
         void UnitClickGo(dynamic Item, PatternSearchParam param, int len)
         {
-            var CDI = Candle.Unit(Item.CdiId);
+            var CDI = Candle.Unit((int)Item.CdiId);
 
             param.CdiId = CDI.Id;
             param.PatternLength = len;

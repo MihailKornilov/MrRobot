@@ -3,8 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 
 using MrRobot.inc;
-using CefSharp.DevTools.CSS;
-using System.Collections;
 
 namespace MrRobot.Entity
 {
@@ -72,6 +70,14 @@ namespace MrRobot.Entity
             mysql.Query(sql);
 
             new Patterns();
+        }
+        public static bool IsSearch(int CdiId, int PatternLength, int PrecisionPercent)
+        {
+            foreach(var S in SearchList)
+                if(S.CdiId == CdiId)
+                    return S.PatternLength == PatternLength && S.PrecisionPercent == PrecisionPercent;
+
+            return false;
         }
 
 

@@ -182,7 +182,7 @@ namespace MrRobot.Section
             Instrument.DataCountPlus(Iitem.Id);
             SectionUpd.All();
 
-            AutoProgon.Converter(DownloadParam.Id);
+            AutoProgon.Converter();
         }
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace MrRobot.Section
         /// </summary>
         private void DowloadedListChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = (sender as ListBox).SelectedItem as CandleDataInfoUnit;
+            var item = (sender as ListBox).SelectedItem as CDIunit;
             if (item == null)
                 return;
             if (Candle.Unit(item.Id) == null)

@@ -58,7 +58,7 @@ namespace MrRobot.Section
             if (box.SelectedIndex == -1)
                 return;
 
-            var item = box.SelectedItem as CandleDataInfoUnit;
+            var item = box.SelectedItem as CDIunit;
 
             // Прокручивание списка, пока не появится в представлении
             InstrumentListBox.ScrollIntoView(item);
@@ -72,7 +72,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Показ графика
         /// </summary>
-        private void TesterBrowserShow(CandleDataInfoUnit item)
+        private void TesterBrowserShow(CDIunit item)
         {
             if (global.IsAutoProgon)
                 return;

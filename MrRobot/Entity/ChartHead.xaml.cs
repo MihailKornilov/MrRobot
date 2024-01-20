@@ -14,7 +14,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Обновление всех полей заголовка
         /// </summary>
-        public void Update(CandleDataInfoUnit item)
+        public void Update(CDIunit item)
         {
             HeadSymbol.Text = item.Name;
             HeadTimeFrame.Text = item.TF;

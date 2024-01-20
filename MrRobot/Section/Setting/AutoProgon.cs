@@ -83,10 +83,9 @@ namespace MrRobot.Section
             SectionGo(1);
 
             // Если свечные данные были скачаны ранее, переход на Конвертацию
-            var unit = Candle.UnitTF(PARAM.Symbol);
-            if (unit != null)
+            if(Candle.IsTFexist(PARAM.Symbol))
             {
-                Converter(unit.Id);
+                Converter();
                 return;
             }
 
@@ -102,7 +101,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Конвертация в выбранные таймфреймы
         /// </summary>
-        public static void Converter(int cdiId)
+        public static void Converter()
         {
             if (!Active)
                 return;
@@ -111,30 +110,23 @@ namespace MrRobot.Section
             SectionGo(2);
 
             // Выбор скачанной истории TF=1
-            global.MW.Converter.SourceListBox.SelectedItem = Candle.Unit(cdiId);
+            global.MW.Converter.SourceListBox.SelectedItem = Candle.UnitOnSymbol(PARAM.Symbol);
 
             // Выбор таймфреймов
-            string[] TimeFrame = PARAM.ConvertTF.Split(',');
-            PARAM.ConvertedIds = new int[TimeFrame.Length];
-            PARAM.Index = 0;
-            foreach (string tf in TimeFrame)
+            int[] TimeFrame = Array.ConvertAll(PARAM.ConvertTF.Split(','), x => int.Parse(x));
+            bool ConvertGo = false;
+            foreach (int tf in TimeFrame)
             {
                 // Если свечные данные уже сконвертированы с таким таймфреймом, то сохранение ID
-                var unit = Candle.UnitTF(PARAM.Symbol, tf);
-                if (unit != null)
-                {
-                    int index = PARAM.Index;
-                    PARAM.ConvertedIds[index] = unit.Id;
-                    PARAM.Index++;
+                if(Candle.IsTFexist(PARAM.Symbol, tf))
                     continue;
-                }
 
-                var check = global.MW.Converter.FindName("CheckTF" + tf) as CheckBox;
-                check.IsChecked = true;
+                (global.MW.Converter.FindName($"CheckTF{tf}") as CheckBox).IsChecked = true;
+                ConvertGo = true;
             }
 
             // Если все таймфреймы были сконвертированы ранее, переход на Поиск паттернов
-            if (PARAM.Index >= PARAM.ConvertedIds.Length)
+            if (!ConvertGo)
             {
                 PatternSearchSetup();
                 return;
@@ -155,36 +147,27 @@ namespace MrRobot.Section
                 return;
 
             // Список ID свечных данных, по которым нужно производить поиск паттернов
-            string cdiIds = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);
-
-            // Список ID свечных данных, по которым уже был поиск паттернов
-            string sql = "SELECT`cdiId`" +
-                         "FROM`_pattern_search`" +
-                        $"WHERE`cdiId`IN({cdiIds})" +
-                         $" AND`patternLength`={PARAM.PatternLength}" +
-                         $" AND`scatterPercent`={PARAM.PrecisionPercent}";
-            string[] pfIds = mysql.Ids(sql).Split(',');
-
+            int[] CDIids = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);
 
             // Выбор IDs, по которым не было поиска паттернов
-            var idsNoSearch = new List<string>();
-            foreach (string id in cdiIds.Split(','))
-                if (!pfIds.Contains(id))
-                    idsNoSearch.Add(id);
+            var ids = new List<int>();
+            foreach (int id in CDIids)
+            {
+                int PatternLength = Convert.ToInt32(PARAM.PatternLength);
+                int PrecisionPercent = Convert.ToInt32(PARAM.PrecisionPercent);
+
+                if (!Patterns.IsSearch(id, PatternLength, PrecisionPercent))
+                    ids.Add(id);
+            }
 
             // Если поиск был по всем таймфреймам, переход на Тестер
-            if (idsNoSearch.Count == 0)
+            if (ids.Count == 0)
             {
                 RobotSetup();
                 return;
             }
 
-            PARAM.ConvertedIds = new int[idsNoSearch.Count];
-            for (int i = 0; i < idsNoSearch.Count; i++)
-            {
-                string id = idsNoSearch[i];
-                PARAM.ConvertedIds[i] = Convert.ToInt32(id);
-            }
+            PARAM.ConvertedIds = ids.ToArray();
 
             // Переход на страницу 3:"Поиск паттернов"
             SectionGo(3);
@@ -235,13 +218,19 @@ namespace MrRobot.Section
             SectionGo(4);
 
             // Идентификаторы свечных данных текущего Symbol
-            string cdiIds = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);
+            int[] CDIids = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);
 
-            if(SymbolChange(cdiIds == "0"))
+            var ids = new List<int>();
+            foreach (int id in CDIids)
+                if (Patterns.NoTestedCount(id) > 0)
+                    ids.Add(id);
+
+            if (SymbolChange(ids.Count == 0))
                 return;
 
-            PARAM.ConvertedIds = Array.ConvertAll(cdiIds.Split(','), x => int.Parse(x));
+            PARAM.ConvertedIds = ids.ToArray();
             PARAM.Index = 0;
+            PARAM.IdLast = -1;
 
             RobotTest();
         }
@@ -253,16 +242,23 @@ namespace MrRobot.Section
             if (SymbolChange(PARAM.Index >= PARAM.ConvertedIds.Length))
                 return;
 
-
             // Установка свечных данных в Тестере
             int index = PARAM.Index;
             int id = PARAM.ConvertedIds[index];
 
-            if(Patterns.NoTestedCount(id) < 2)
+            if (Patterns.NoTestedCount(id) < 2)
                 PARAM.Index++;
 
-            global.MW.Tester.InstrumentListBox.SelectedItem = Candle.Unit(id);
-            global.MW.Tester.RobotsListBox.SelectedIndex = 1;
+            if (PARAM.IdLast != id)
+            {
+                global.MW.Tester.InstrumentListBox.SelectedIndex = -1;
+                global.MW.Tester.InstrumentListBox.SelectedItem = Candle.Unit(id);
+                global.MW.Tester.RobotsListBox.SelectedIndex = 1;
+                PARAM.IdLast = id;
+                return;
+            }
+
+            global.MW.Tester.GlobalInit();
         }
 
         public static void RobotStart()
@@ -287,5 +283,6 @@ namespace MrRobot.Section
         public string FoundRepeatMin { get; set; }  // Исключать менее N нахождений
         public int Index { get; set; }              // Индекс для Конвертера, Тестера
         public int[] ConvertedIds { get; set; }     // ID сконвертированных свечных данных
+        public int IdLast { get; set; }
     }
 }

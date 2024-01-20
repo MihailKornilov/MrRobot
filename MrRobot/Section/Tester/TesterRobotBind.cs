@@ -67,7 +67,7 @@ namespace MrRobot.Section
 
         void InstrumentSet()
         {
-            var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
+            var item = InstrumentListBox.SelectedItem as CDIunit;
             INSTRUMENT = Instrument.Unit(item.InstrumentId);
             INSTRUMENT.TimeFrame = item.TimeFrame;
             INSTRUMENT.RowsCount = item.RowsCount;
@@ -138,7 +138,7 @@ namespace MrRobot.Section
         {
             CANDLES_TF1_USE = false;
             
-            var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
+            var item = InstrumentListBox.SelectedItem as CDIunit;
             if (item.ConvertedFromId == 0)
                 return;
             if (!(bool)UseTF1Check.IsChecked)
@@ -148,7 +148,7 @@ namespace MrRobot.Section
         }
 
 
-        async void GlobalInit()
+        public async void GlobalInit()
         {
             PanelVisible();
             AutoGoStop();
@@ -175,17 +175,7 @@ namespace MrRobot.Section
 
             Init.Invoke(ObjInstance, new object[] { new string[]{} });
             RobotLog();
-
-            if (TESTER_FINISHED)
-            {
-                Finish?.Invoke(ObjInstance, new object[] { });
-                RobotLog();
-                AutoProgon.RobotStart();
-                return;
-            }
-
             OrderExecutedView();
-
             TesterChartInit();
             TesterBar.Value = 0;
 
@@ -203,7 +193,7 @@ namespace MrRobot.Section
         }
         void TesterChartInit()
         {
-            var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
+            var item = InstrumentListBox.SelectedItem as CDIunit;
 
             if (!Visualization)
             {
@@ -428,13 +418,6 @@ namespace MrRobot.Section
             }
 
             NoVisualLock();
-            if (TESTER_FINISHED)
-            {
-                NoVisualLock(ButtonContent, ButtonWidth);
-                AutoProgon.RobotTest();
-                return;
-            }
-
 
             var progress = new Progress<decimal>(v => { TesterBar.Value = (double)v; });
             await Task.Run(() => NoVisualProcess(progress));

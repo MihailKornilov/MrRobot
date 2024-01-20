@@ -48,7 +48,7 @@ namespace MrRobot.Section
             if(box == null)
                 return;
 
-            var item = box.SelectedItem as CandleDataInfoUnit;
+            var item = box.SelectedItem as CDIunit;
             if(item == null)
                 return;
 
@@ -113,7 +113,7 @@ namespace MrRobot.Section
             if (!isCheck)
                 return;
 
-            var CDI = SourceListBox.SelectedItem as CandleDataInfoUnit;
+            var CDI = SourceListBox.SelectedItem as CDIunit;
             var param = new PatternSearchParam
             {
                 CdiId = CDI.Id,
@@ -136,7 +136,7 @@ namespace MrRobot.Section
         /// </summary>
         async void PatternSearchGo(object sender, RoutedEventArgs e)
         {
-            var CDI = SourceListBox.SelectedItem as CandleDataInfoUnit;
+            var CDI = SourceListBox.SelectedItem as CDIunit;
             SPARAM = new PatternSearchParam()
             {
                 IsProcess = true,

@@ -19,11 +19,11 @@ namespace MrRobot.Entity
         /// <summary>
         /// Список доступных скачанных свечных данных
         /// </summary>
-        private static List<CandleDataInfoUnit> CDIlist { get; set; }
+        private static List<CDIunit> CDIlist { get; set; }
         /// <summary>
         /// Ассоциативный массив ID и свечных данных (для быстрого поиска)
         /// </summary>
-        private static Dictionary<int, CandleDataInfoUnit> IdUnitAss { get; set; }
+        private static Dictionary<int, CDIunit> IdUnitAss { get; set; }
 
 
         /// <summary>
@@ -31,8 +31,8 @@ namespace MrRobot.Entity
         /// </summary>
         public static void ListCreate()
         {
-            CDIlist = new List<CandleDataInfoUnit>();
-            IdUnitAss = new Dictionary<int, CandleDataInfoUnit>();
+            CDIlist = new List<CDIunit>();
+            IdUnitAss = new Dictionary<int, CDIunit>();
 
             string sql = "SELECT*" +
                          "FROM`_candle_data_info`" +
@@ -45,7 +45,7 @@ namespace MrRobot.Entity
                 string[] spl = v["name"].Split('/');
                 string begin = v["begin"].Substring(0, 10);
                 string end = v["end"].Substring(0, 10);
-                var Unit = new CandleDataInfoUnit
+                var Unit = new CDIunit
                 {
                     Id = Convert.ToInt32(v["id"]),
                     Market = format.MarketName(marketId),
@@ -71,7 +71,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Получение всего списка свечных данных
         /// </summary>
-        public static List<CandleDataInfoUnit> ListAll()
+        public static List<CDIunit> ListAll()
         {
             return CDIlist;
         }
@@ -79,9 +79,9 @@ namespace MrRobot.Entity
         /// <summary>
         /// Получение списка свечных данных с таймфреймом 1m с учётом поиска
         /// </summary>
-        public static List<CandleDataInfoUnit> List1m(string txt = "")
+        public static List<CDIunit> List1m(string txt = "")
         {
-            var send = new List<CandleDataInfoUnit>();
+            var send = new List<CDIunit>();
             var num = 0;
             foreach (var v in CDIlist)
             {
@@ -103,9 +103,9 @@ namespace MrRobot.Entity
         /// </summary>
         // iid - ID инструмента
         // TF1Enable - включать таймфрейм 1
-        public static List<CandleDataInfoUnit> ListOnIID(int iid, bool TF1Enable = true)
+        public static List<CDIunit> ListOnIID(int iid, bool TF1Enable = true)
         {
-            var send = new List<CandleDataInfoUnit>();
+            var send = new List<CDIunit>();
 
             foreach (var v in CDIlist)
             {
@@ -125,71 +125,59 @@ namespace MrRobot.Entity
         /// </summary>
         // name - Name инструмента в виде USDT/BTC
         // TFs - таймфреймы, будет получение
-        public static string IdsOnSymbol(string name, string TFs)
+        public static int[] IdsOnSymbol(string name, string TFs)
         {
             var list = new List<int>();
-            string[] ids = TFs.Split(',');
+            int[] ids = Array.ConvertAll(TFs.Split(','), x => int.Parse(x));
             
             foreach (var v in CDIlist)
-            {
-                if (v.Name != name)
-                    continue;
-                if (!ids.Contains(v.TimeFrame.ToString()))
-                    continue;
+                if (v.Name == name)
+                    if (ids.Contains(v.TimeFrame))
+                        list.Add(v.Id);
 
-                list.Add(v.Id);
-            }
-
-            if (list.Count == 0)
-                return "0";
-
-            return string.Join(",", list.ToArray());
-        }
-
-        /// <summary>
-        /// Единица информации свечных данных на основании названия таблицы со свечами
-        /// </summary>
-        public static CandleDataInfoUnit UnitOnTable(string Table)
-        {
-            foreach (var v in CDIlist)
-                if (v.Table == Table)
-                    return v;
-            return null;
+            return list.ToArray();
         }
 
         /// <summary>
         /// Единица информации свечных данных на основании ID
         /// </summary>
-        public static CandleDataInfoUnit Unit(int Id)
+        public static CDIunit Unit(int Id)
         {
             if (IdUnitAss.ContainsKey(Id))
                 return IdUnitAss[Id];
 
             return null;
         }
-        public static CandleDataInfoUnit Unit(string IdString)
+
+        /// <summary>
+        /// Единица информации свечных данных на основании названия таблицы со свечами
+        /// </summary>
+        public static CDIunit UnitOnTable(string Table)
         {
-            int Id = Convert.ToInt32(IdString);
-            return Unit(Id);
+            foreach (var v in CDIlist)
+                if (v.Table == Table)
+                    return v;
+            return null;
+        }
+        /// <summary>
+        /// Свечные данные по Инструменту
+        /// </summary>
+        public static CDIunit UnitOnSymbol(string name, int tf = 1)
+        {
+            foreach (var cdi in CDIlist)
+                if(cdi.Name == name)
+                    if (cdi.TimeFrame == tf)
+                        return cdi;
+
+            return null;
         }
 
         /// <summary>
-        /// Единица информации свечных данных на основании Name и указанного таймфрейма
+        /// Существуют ли свечные данные с указанный таймфреймом
         /// </summary>
-        public static CandleDataInfoUnit UnitTF(string name, string tf = "1")
+        public static bool IsTFexist(string name, int tf = 1)
         {
-            int TimeFrame = Convert.ToInt32(tf);
-            foreach (var v in CDIlist)
-            {
-                if(v.Name != name)
-                    continue;
-                if(v.TimeFrame != TimeFrame)
-                    continue;
-
-                return v;
-            }
-
-            return null;
+            return UnitOnSymbol(name, tf) != null;
         }
 
         /// <summary>
@@ -502,7 +490,7 @@ namespace MrRobot.Entity
     /// <summary>
     /// Единица информации свечных данных
     /// </summary>
-    public class CandleDataInfoUnit
+    public class CDIunit
     {
         public int Num { get; set; }            // Порядковый номер
         public int Id { get; set; }             // ID инфо свечных данных из `_candle_data_info`

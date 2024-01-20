@@ -65,7 +65,7 @@ namespace MrRobot.Entity
 
 
         public string Title;            // Заголовок страницы
-        CandleDataInfoUnit CdiUnit { get; set; }  // Информация об инструменте и таблице выводимого графика
+        CDIunit CdiUnit { get; set; }  // Информация об инструменте и таблице выводимого графика
 
         /// <summary>
         /// Конструктор для пустой страницы

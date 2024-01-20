@@ -74,7 +74,7 @@ namespace MrRobot.Section
             if (global.IsAutoProgon)
                 return;
 
-            var item = SourceListBox.SelectedItem as CandleDataInfoUnit;
+            var item = SourceListBox.SelectedItem as CDIunit;
             if (item == null)
                 return;
 
@@ -128,7 +128,7 @@ namespace MrRobot.Section
             ProgressMain.Value = 0;
             ProgressSub.Value = 0;
 
-            var CDI = SourceListBox.SelectedItem as CandleDataInfoUnit;
+            var CDI = SourceListBox.SelectedItem as CDIunit;
             ConvertParam = new CDIparam()
             {
                 Id = CDI.Id,
@@ -249,7 +249,7 @@ namespace MrRobot.Section
         /// </summary>
         public void ResultListCreate()
         {
-            var item = SourceListBox.SelectedItem as CandleDataInfoUnit;
+            var item = SourceListBox.SelectedItem as CDIunit;
             if (item == null)
             {
                 ConverterResultPanel.Visibility = Visibility.Hidden;
@@ -266,7 +266,7 @@ namespace MrRobot.Section
         /// </summary>
         void ConverterResultChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = (sender as ListBox).SelectedItem as CandleDataInfoUnit;
+            var item = (sender as ListBox).SelectedItem as CDIunit;
             if (item == null)
                 return;
 
