@@ -160,8 +160,8 @@
                                 Visibility="Collapsed"
                                 HorizontalAlignment="Right">
                         <WrapPanel Width="260" Margin="0,3">
-                            <ProgressBar Name="ProgressMain" Width="248" Height="10" Margin="8,0,0,0"/>
-                            <ProgressBar Name="ProgressSub" Width="248" Height="10" Margin="8,4,0,0"/>
+                            <ProgressBar Name="ProgressSub" Width="248" Height="10" Margin="8,0,0,0"/>
+                            <ProgressBar Name="ProgressMain" Width="248" Height="10" Margin="8,4,0,0"/>
                         </WrapPanel>
                         <Button Name="ConvertCancelButton"
                                 Content="Отмена"

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using static System.Console;
 
 using MySqlConnector;
 
 using MrRobot.Entity;
 using MrRobot.Section;
-using System.Windows.Documents;
-using System.Windows.Markup;
 
 namespace MrRobot.inc
 {
@@ -28,12 +28,23 @@ namespace MrRobot.inc
         static long UnixLast;       // Время в Unix когда был сделан последний запрос
         static Dur dur;             // Измерение скорости запроса
 
-
-        public mysql(string sql, bool isRes = false)
+        static void Connect(string sql, bool isRes = false)
         {
+            // Ожидание завершения предыдущего запроса
+            //await Task.Run(() => { while (conn != null) Thread.Sleep(200); WriteLine("2.inside"); });
+
+            if(conn != null)
+            {
+                WriteLine("MYSQL wait...");
+                Thread.Sleep(100);
+                Connect(sql, isRes);
+                return;
+            }
+
+            dur = new Dur();
+
             try
             {
-                dur = new Dur();
                 conn = new MySqlConnection(Config);
                 conn.Open();
                 cmd = new MySqlCommand(sql, conn);
@@ -56,8 +67,6 @@ namespace MrRobot.inc
             conn = null;
             cmd = null;
             res = null;
-
-            return;
 
             long Unix = format.UnixNow_MilliSec();
             if (Unix - UnixLast > 1000)
@@ -95,7 +104,7 @@ namespace MrRobot.inc
         /// </summary>
         public static int Query(string sql)
         {
-            new mysql(sql);
+            Connect(sql);
             cmd.ExecuteNonQuery();
             int InsertedId = Convert.ToInt32(cmd.LastInsertedId);
             Finish(sql);
@@ -107,7 +116,7 @@ namespace MrRobot.inc
         /// </summary>
         public static int Count(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             res.Read();
             int count = res.GetInt32(0);
@@ -122,7 +131,7 @@ namespace MrRobot.inc
         /// </summary>
         public static string[] QueryColOne(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             if (!res.HasRows)
                 return new string[0];
@@ -146,7 +155,7 @@ namespace MrRobot.inc
         /// </summary>
         public static string Ids(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             if (!res.HasRows)
             {
@@ -170,7 +179,7 @@ namespace MrRobot.inc
         /// </summary>
         public static List<object> QueryList(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             List<object> mass = new List<object>();
             while (res.Read())
@@ -193,7 +202,7 @@ namespace MrRobot.inc
         /// </summary>
         public static Dictionary<string, string> QueryOne(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var send = new Dictionary<string, string>();
 
@@ -211,7 +220,7 @@ namespace MrRobot.inc
         /// </summary>
         public static string QueryString(string sql)
         {
-            new mysql(sql);
+            Connect(sql);
             string send = cmd.ExecuteScalar()?.ToString();
             Finish(sql);
             return send;
@@ -224,7 +233,7 @@ namespace MrRobot.inc
         /// </summary>
         public static Dictionary<int, int> IntAss(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var send = new Dictionary<int, int>();
 
@@ -247,7 +256,7 @@ namespace MrRobot.inc
         /// </summary>
         public static Dictionary<int, string> IntStringAss(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var send = new Dictionary<int, string>();
 
@@ -269,7 +278,7 @@ namespace MrRobot.inc
         /// </summary>
         public static Dictionary<string, int> StringIntAss(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var send = new Dictionary<string, int>();
 
@@ -292,7 +301,7 @@ namespace MrRobot.inc
         /// </summary>
         public static Dictionary<string, string> StringAss(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var send = new Dictionary<string, string>();
 
@@ -313,7 +322,7 @@ namespace MrRobot.inc
         /// </summary>
         public static Dictionary<int, object> IdRowAss(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var send = new Dictionary<int, object>();
             while (res.Read())
@@ -338,7 +347,7 @@ namespace MrRobot.inc
         /// </summary>
         public static List<string> ChartCandles(string sql)
         {
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var CandlesData = new List<string>();
             var VolumesData = new List<string>();
@@ -362,13 +371,24 @@ namespace MrRobot.inc
         /// <summary>
         /// Получение данных о свечах для Робота
         /// </summary>
-        public static List<object> CandlesData(string sql)
+        public static List<object> CandlesData(string sql, CDIparam param = null)
         {
-            new mysql(sql, true);
+            ProBar bar = null;
+            if (param != null)
+            {
+                var CDI = Candle.Unit(param.Id);
+                bar = new ProBar(CDI.RowsCount);
+            }
 
+            Connect(sql, true);
             var Data = new List<object>();
             while (res.Read())
+            {
                 Data.Add(new CandleUnit(res));
+
+                if (param != null)
+                    bar.Val(Data.Count, param.Progress);
+            }
 
             Finish(sql);
 
@@ -385,7 +405,7 @@ namespace MrRobot.inc
             string sql = "SELECT`unix`" +
                         $"FROM`{TableName}`" +
                          "ORDER BY`unix`";
-            new mysql(sql, true);
+            Connect(sql, true);
 
             res.Read();
             int unix = res.GetInt32(0) + step;
@@ -408,7 +428,7 @@ namespace MrRobot.inc
         /// <summary>
         /// Получение данных о свечах для Конвертера
         /// </summary>
-        public static List<CandleUnit> CandlesDataCache(string sql)
+        public static List<CandleUnit> CandlesDataCache(string sql, CDIparam param = null)
         {
             if(ConvertCandles_Cache == null)
                 ConvertCandles_Cache = new Dictionary<int, List<CandleUnit>>();
@@ -418,16 +438,38 @@ namespace MrRobot.inc
             if(ConvertCandles_Cache.ContainsKey(hash))
                 return ConvertCandles_Cache[hash];
 
-            //string table = TableName(sql);
-            //var CDI = Candle.InfoUnitOnTable(table);
+            ProBar SubBar = null;
+            int i = 0;
+            if (param != null)
+            {
+                var CDI = Candle.Unit(param.Id);
+                SubBar = new ProBar(CDI.RowsCount);
+            }
 
-            new mysql(sql, true);
-
+            Connect(sql, true);
             var Data = new List<CandleUnit>();
+            bool CacheSave = true;
             while (res.Read())
+            {
                 Data.Add(new CandleUnit(res));
 
-            ConvertCandles_Cache[hash] = Data;
+                if (param == null)
+                    continue;
+                if (!param.IsProcess)
+                {
+                    CacheSave = false;
+                    break;
+                }
+                if (!SubBar.Val(i++, param.Progress))
+                    continue;
+
+                param.Bar.isUpd(i);
+                param.ProgressMainValue = (double)param.Bar.Value;
+            }
+
+            if(CacheSave)
+                ConvertCandles_Cache[hash] = Data;
+
             Finish(sql);
 
             return Data;
@@ -446,7 +488,7 @@ namespace MrRobot.inc
             var bar = new ProBar(count);
             int i = 0;
 
-            new mysql(sql, true);
+            Connect(sql, true);
 
             var CandleList = new List<CandleUnit>();
             var PatternList = new List<PatternUnit>();

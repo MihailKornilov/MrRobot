@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using static System.Console;
 
@@ -26,11 +27,18 @@ namespace MrRobot.Section
         MethodInfo Step;
         MethodInfo Finish;
         int RobotId;        // Сохранение ID выбранного робота, чтобы потом не выбирать того же
-        bool RobotApply(bool isElemChange = false)
+        bool Visualization;             // Флаг включенной визуализации
+        /// <summary>
+        /// Установка выбранного инструмента
+        /// </summary>
+        const double BaseBalance = 0;
+        const double QuoteBalance = 100;
+        int CandleId;
+        CDIparam InitParam;     // Для фоновой загрузки свечных данных
+
+        bool RobotApply()
         {
             if (RobotsListBox.SelectedIndex <= 0)
-                return false;
-            if(isElemChange && !(bool)VisualCheck.IsChecked)
                 return false;
 
             var robot = RobotsListBox.SelectedItem as RobotUnit;
@@ -57,13 +65,6 @@ namespace MrRobot.Section
             return true;
         }
 
-        /// <summary>
-        /// Установка выбранного инструмента
-        /// </summary>
-        const double BaseBalance = 0;
-        const double QuoteBalance = 100;
-        int CandleId;
-        bool CandlesLoadNeed { get; set; }
         void InstrumentSet()
         {
             var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
@@ -78,52 +79,61 @@ namespace MrRobot.Section
             INSTRUMENT.QuoteCommiss = 0;
 
             // Если свечные данные не менялись, то загружаться из базы не будут
-            CandlesLoadNeed = CandleId != item.Id;
+            if(CandleId != item.Id)
+            {
+                CANDLES_DATA = null;
+                CANDLES_TF1 = null;
+            }
 
             CandleId = item.Id;
 
             BaseBalanceCoin.Content = INSTRUMENT.BaseCoin;
             QuoteBalanceCoin.Content = INSTRUMENT.QuoteCoin;
         }
-
         /// <summary>
         /// Загрузка свечных данных
         /// </summary>
-        void CandlesDataLoad()
+        async void CandlesDataLoad()
         {
-            if (!CandlesLoadNeed)
+            if (CANDLES_DATA != null && CANDLES_TF1 != null)
                 return;
 
-            string sql = "SELECT*" +
-                        $"FROM`{INSTRUMENT.Table}`" +
-                         "ORDER BY`unix`";
-            CANDLES_DATA = mysql.CandlesData(sql);
-            CANDLES_TF1 = null;
+            InitParam.Id = CandleId;
+            InitParam.IsProcess = true;
+            SetupGrid.IsEnabled = false;
+            CDIdownloadPanel.Visibility = Visibility.Visible;
+            CDIdownload.Text = "";
+
+            if(CANDLES_DATA == null)
+                await Task.Run(() =>
+                {
+                    string sql = "SELECT*" +
+                                $"FROM`{INSTRUMENT.Table}`" +
+                                 "ORDER BY`unix`";
+                    CANDLES_DATA = mysql.CandlesData(sql, InitParam);
+                });
+
+            var CDI = Candle.Unit(CandleId);
+            if (CANDLES_TF1 == null)
+                if ((bool)UseTF1Check.IsChecked)
+                    if (CDI.ConvertedFromId > 0)
+                    {
+                        var TF1 = Candle.Unit(CDI.ConvertedFromId);
+                        InitParam.Id = TF1.Id;
+                        await Task.Run(() =>
+                        {
+                            string sql = "SELECT*" +
+                                        $"FROM`{TF1.Table}`" +
+                                         "ORDER BY`unix`";
+                            CANDLES_TF1 = mysql.CandlesData(sql, InitParam);
+                        });
+                    }
+
+            SetupGrid.IsEnabled = true;
+            CDIdownloadPanel.Visibility = Visibility.Collapsed;
+            InitParam.IsProcess = false;
         }
 
-        /// <summary>
-        /// Загрузка свечных данных таймфрейма 1m
-        /// </summary>
-        void CandlesTF1load()
-        {
-            var item = InstrumentListBox.SelectedItem as CandleDataInfoUnit;
-
-            if (!(bool)UseTF1Check.IsChecked)
-                return;
-            if (item.ConvertedFromId == 0)
-                return;
-            if (CANDLES_TF1 != null)
-                return;
-
-            var tf1 = Candle.Unit(item.ConvertedFromId);
-            if (tf1 == null)
-                return;
-
-            string sql = "SELECT*" +
-                        $"FROM`{tf1.Table}`" +
-                         "ORDER BY`unix`";
-            CANDLES_TF1 = mysql.CandlesData(sql);
-        }
         void CandlesTF1use()
         {
             CANDLES_TF1_USE = false;
@@ -138,23 +148,27 @@ namespace MrRobot.Section
         }
 
 
-        bool Visualization;             // Флаг включенной визуализации
-        void GlobalInit(bool isElemChange = false)
+        async void GlobalInit()
         {
             PanelVisible();
             AutoGoStop();
             RobotLogList.Items.Clear();
             OrderExecuted.ItemsSource = null;
 
-            if (!RobotApply(isElemChange))
+            if (!RobotApply())
                 return;
 
             InstrumentSet();
+
+            InitParam = new CDIparam {
+                IsProcess = false,
+                Progress = new Progress<decimal>(v => { CDIdownload.Text = $"{v}%"; })
+            };
             CandlesDataLoad();
-            CandlesTF1load();
+            await Task.Run(() => { while (InitParam.IsProcess) Thread.Sleep(300); });
+
             CandlesTF1use();
             BalanceUpdate();
-
             new PATTERN(Patterns.ListAll());
 
             TESTER_GLOBAL_INIT();
@@ -166,6 +180,7 @@ namespace MrRobot.Section
             {
                 Finish?.Invoke(ObjInstance, new object[] { });
                 RobotLog();
+                AutoProgon.RobotStart();
                 return;
             }
 
@@ -173,6 +188,8 @@ namespace MrRobot.Section
 
             TesterChartInit();
             TesterBar.Value = 0;
+
+            AutoProgon.RobotStart();
         }
         /// <summary>
         /// Скрытие/отображение панелей
@@ -411,7 +428,6 @@ namespace MrRobot.Section
             }
 
             NoVisualLock();
-            GlobalInit();
             if (TESTER_FINISHED)
             {
                 NoVisualLock(ButtonContent, ButtonWidth);

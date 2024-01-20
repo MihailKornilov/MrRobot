@@ -86,7 +86,7 @@ namespace MrRobot.Section
 
         #region Процесс конвертации
 
-        CandleDataParam ConvertParam;
+        CDIparam ConvertParam;
         /// <summary>
         /// Составление массива с выбранными таймфреймами для конвертации
         /// </summary>
@@ -125,30 +125,31 @@ namespace MrRobot.Section
             ProcessPanel.Visibility = Visibility.Visible;
             TFpanel.IsEnabled = false;
 
-            var SourceUnit = SourceListBox.SelectedItem as CandleDataInfoUnit;
-            ConvertParam = new CandleDataParam()
-            {
-                Id = SourceUnit.Id,
-                SourceTable = SourceUnit.Table,
-                Symbol = SourceUnit.Symbol,
-                NolCount = SourceUnit.NolCount,
-                ConvertedIds = new int[CheckedTF.Length]
-            };
-
             ProgressMain.Value = 0;
             ProgressSub.Value = 0;
-            var progress = new Progress<decimal>(v => {
-                ProgressMain.Value = ConvertParam.ProgressMainValue;
-                ProgressSub.Value = (double)v;
 
-                // Снятие галочки с очередного сконвертированного таймфрейма
-                if (v == 100)
-                    (FindName("CheckTF" + ConvertParam.TimeFrame) as CheckBox).IsChecked = false;
-            });
-            await Task.Run(() => ConvertProcess(ConvertParam, CheckedTF, progress));
+            var CDI = SourceListBox.SelectedItem as CandleDataInfoUnit;
+            ConvertParam = new CDIparam()
+            {
+                Id = CDI.Id,
+                Symbol = CDI.Symbol,
+                NolCount = CDI.NolCount,
+                ConvertedIds = new int[CheckedTF.Length],
+                Progress = new Progress<decimal>(v =>
+                {
+                    ProgressMain.Value = ConvertParam.ProgressMainValue;
+                    ProgressSub.Value = (double)v;
+
+                    // Снятие галочки с очередного сконвертированного таймфрейма
+                    if (v == 100)
+                        (FindName("CheckTF" + ConvertParam.TimeFrame) as CheckBox).IsChecked = false;
+                })
+            };
+
+            await Task.Run(() => ConvertProcess(ConvertParam, CheckedTF));
 
             new Candle();
-            Instrument.DataCountPlus(SourceUnit.InstrumentId, CheckedTF.Length);
+            Instrument.DataCountPlus(CDI.InstrumentId, CheckedTF.Length);
             SectionUpd.All();
 
             ConvertGoButton.Visibility = Visibility.Visible;
@@ -160,33 +161,37 @@ namespace MrRobot.Section
         /// <summary>
         /// Процесс концертации в фоновом режиме
         /// </summary>
-        void ConvertProcess(CandleDataParam PARAM, int[] CheckedTF, IProgress<decimal> Progress)
+        void ConvertProcess(CDIparam PARAM, int[] CheckedTF)
         {
-            // Загрузка из базы исходного минутного таймфрейма
-            string sql = $"SELECT*FROM`{PARAM.SourceTable}`";
-            var SourceData = mysql.CandlesDataCache(sql);
+            var CDI = Candle.Unit(PARAM.Id);
+            PARAM.Bar = new ProBar((CheckedTF.Length + 1) * CDI.RowsCount);
 
-            PARAM.Bar = new ProBar(CheckedTF.Length * SourceData.Count);
+            // Загрузка из базы исходного минутного таймфрейма
+            string sql = $"SELECT*FROM`{CDI.Table}`";
+            var SourceData = mysql.CandlesDataCache(sql, PARAM);
+            if (!PARAM.IsProcess)
+                return;
+
             for (int i = 0; i < CheckedTF.Length; i++)
             {
                 PARAM.TimeFrame = CheckedTF[i];
                 PARAM.TfNum = i;    // Счётчик для Main-прогресс-бара
-                ConvertProcessTF(PARAM, SourceData, Progress);
+                ConvertProcessTF(PARAM, SourceData);
 
                 if (!PARAM.IsProcess)
                     return;
             }
 
             PARAM.ProgressMainValue = 100;
-            Progress.Report(100);
+            PARAM.Progress.Report(100);
         }
         /// <summary>
         /// Процесс конвертации в выбранные таймфреймы
         /// </summary>
-        void ConvertProcessTF(CandleDataParam PARAM, List<CandleUnit> SourceData, IProgress<decimal> Progress)
+        void ConvertProcessTF(CDIparam PARAM, List<CandleUnit> SourceData)
         {
             var SubBar = new ProBar(SourceData.Count);
-            Progress.Report(0);
+            PARAM.Progress.Report(0);
 
             string TableName = Candle.DataTableCreate(PARAM);
 
@@ -201,6 +206,7 @@ namespace MrRobot.Section
             var dst = new CandleUnit(SourceData[iBegin++], PARAM.TimeFrame);
 
             var insert = new List<string>();
+            int MainCount = (PARAM.TfNum + 1) * SourceData.Count;
             for (int i = iBegin; i < SourceData.Count; i++)
             {
                 if (!PARAM.IsProcess)
@@ -215,15 +221,14 @@ namespace MrRobot.Section
                     dst = new CandleUnit(src, PARAM.TimeFrame);
                 }
 
-                if (!SubBar.isUpd(i))
+                if (!SubBar.Val(i, PARAM.Progress))
                     continue;
 
-                PARAM.Bar.isUpd(PARAM.TfNum * SourceData.Count + i);
+                PARAM.Bar.isUpd(MainCount + i);
                 PARAM.ProgressMainValue = (double)PARAM.Bar.Value;
-                Progress.Report(SubBar.Value);
             }
 
-            Progress.Report(100);
+            PARAM.Progress.Report(100);
             Candle.DataInsert(TableName, insert);
             PARAM.ConvertedIds[PARAM.TfNum] = Candle.InfoCreate(TableName, PARAM.Id);
         }

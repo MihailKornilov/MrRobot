@@ -250,7 +250,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Создание таблицы со свечными данными, если не существует
         /// </summary>
-        public static string DataTableCreate(CandleDataParam param)
+        public static string DataTableCreate(CDIparam param)
         {
             string TableName = "bybit_" + param.Symbol.ToLower() + "_" + param.TimeFrame;
 
@@ -528,25 +528,25 @@ namespace MrRobot.Entity
     /// <summary>
     /// Настройки для скачивания или конвертации свечных данных
     /// </summary>
-    public class CandleDataParam
+    public class CDIparam
     {
         public bool IsProcess { get; set; } = true; // Флаг выполнения фонового процесса
         public int Id { get; set; }                 // ID свечных данных
+        public string Table { get; set; }
         public string Symbol { get; set; }
         public int TimeFrame { get; set; }
         public int NolCount { get; set; }
+        public IProgress<decimal> Progress { get; set; }
         public ProBar Bar { get; set; }             // Основная линия Прогресс-бара
 
 
         // Для History
-        public string Table { get; set; }
         public int CC { get; set; }                 // CandlesCount - сколько свечей загружено (в процессе)
         public int UnixStart { get; set; }
         public int UnixFinish { get; set; }
 
  
         // Для Converter
-        public string SourceTable { get; set; }
         public double ProgressMainValue { get; set; }// Значение, которое будет отображаться Main-прогресс-бар
         public int TfNum { get; set; }              // Номер конвертации, если было выбрано несколько таймфреймов
         public int[] ConvertedIds { get; set; }     // ID сконвертированных свечных данных

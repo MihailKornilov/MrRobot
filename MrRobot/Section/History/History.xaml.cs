@@ -129,7 +129,7 @@ namespace MrRobot.Section
 
         #region Download Process
 
-        CandleDataParam DownloadParam;
+        CDIparam DownloadParam;
 
         /// <summary>
         /// Установка UNIX-даты окончания загрузки
@@ -154,7 +154,7 @@ namespace MrRobot.Section
             // Таймфрейм
             var TFitem = SetupTimeFrame.SelectedItem as ComboBoxItem;
 
-            DownloadParam = new CandleDataParam()
+            DownloadParam = new CDIparam()
             {
                 Symbol = Iitem.Symbol,
                 TimeFrame = format.TimeFrame((string)TFitem.Content),
@@ -188,7 +188,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Процесс скачивания исторических данных в фоновом режиме
         /// </summary>
-        void DownloadProcess(CandleDataParam PARAM, IProgress<decimal> Progress)
+        void DownloadProcess(CDIparam PARAM, IProgress<decimal> Progress)
         {
             PARAM.Table = Candle.DataTableCreate(PARAM);
 
@@ -252,7 +252,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Проверка на первую половину суток для минутного таймфрейма (если время загрузки начинается после 16:00)
         /// </summary>
-        void DownloadCheck12(CandleDataParam PARAM)
+        void DownloadCheck12(CDIparam PARAM)
         {
             if (PARAM.TimeFrame != 1)
                 return;

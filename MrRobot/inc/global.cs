@@ -229,12 +229,13 @@ namespace MrRobot.inc
             return true;
         }
 
-        public void Val(long count, IProgress<decimal> Progress)
+        public bool Val(long count, IProgress<decimal> Progress)
         {
             if (!isUpd(count))
-                return;
+                return false;
 
             Progress.Report(Value);
+            return true;
         }
     }
 }

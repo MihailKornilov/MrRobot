@@ -263,8 +263,14 @@ namespace MrRobot.Section
 
             global.MW.Tester.InstrumentListBox.SelectedItem = Candle.Unit(id);
             global.MW.Tester.RobotsListBox.SelectedIndex = 1;
+        }
 
-            // Нажатие на кнопку "Запуск тестера без визуализации"
+        public static void RobotStart()
+        {
+            if (!Active)
+                return;
+
+            // Нажатие на кнопку "Запуск тестера без визуализации" после загрузки всех свечных данных
             ButtonClick(global.MW.Tester.NoVisualButton);
         }
     }

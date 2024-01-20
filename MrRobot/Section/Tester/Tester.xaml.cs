@@ -119,12 +119,12 @@ namespace MrRobot.Section
         /// <summary>
         /// Робот выбран в списке роботов
         /// </summary>
-        private void RobotListChanged(object sender, SelectionChangedEventArgs e) => GlobalInit(true);
+        private void RobotListChanged(object sender, SelectionChangedEventArgs e) => GlobalInit();
 
         /// <summary>
         /// Нажатие на галочку: Использовать таймфрейм 1m
         /// </summary>
-        private void UseTF1Checked(object sender, RoutedEventArgs e) => GlobalInit(true);
+        private void UseTF1Checked(object sender, RoutedEventArgs e) => GlobalInit();
 
         /// <summary>
         /// Нажатие на галочку: Визуализация
@@ -137,7 +137,7 @@ namespace MrRobot.Section
             Visualization = (bool)VisualCheck.IsChecked;
             position.Set("4_VisualCheck.IsChecked", Visualization);
             NoVisualButton.Visibility = Visualization ? Visibility.Hidden : Visibility.Visible;
-            GlobalInit(true);
+            GlobalInit();
         }
     }
 }

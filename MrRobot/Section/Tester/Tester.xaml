@@ -117,7 +117,7 @@
         </StackPanel>
 
         <!-- ПАНЕЛЬ НАСТРОЕК РОБОТА -->
-        <Grid Grid.Row="1" Background="#ECF3F8">
+        <Grid Grid.Row="1" Name="SetupGrid" Background="#ECF3F8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
                 <ColumnDefinition Width="220"/>
@@ -154,6 +154,10 @@
                             Height="25"
                             FontWeight="Bold"
                             HorizontalAlignment="Left"/>
+                </WrapPanel>
+                <WrapPanel Name="CDIdownloadPanel" Margin="10,88,0,0" Visibility="Collapsed">
+                    <TextBlock Text="Загрузка свечей. . . " FontSize="15" Foreground="#772"/>
+                    <TextBlock Name="CDIdownload"           FontSize="15" Foreground="#772"/>
                 </WrapPanel>
             </StackPanel>
 
