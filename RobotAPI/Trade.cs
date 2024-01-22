@@ -57,7 +57,7 @@ namespace RobotAPI
             /// </summary>
             public CANDLES_ACTUAL()
             {
-                MASS = new Dictionary<string, List<dynamic>>();
+                MASS     = new Dictionary<string, List<dynamic>>();
                 MASS_TF1 = new Dictionary<string, List<dynamic>>();
             }
             /// <summary>
@@ -214,8 +214,7 @@ namespace RobotAPI
                             break;
                 }
 
-                var dst = MASS_TF1[symbol][iBegin--];
-                dst.TimeFrame = tf;
+                var dst = MASS_TF1[symbol][iBegin--].Clone(tf);
 
                 for (int i = iBegin; i >= 0; i--)
                 {
@@ -225,8 +224,7 @@ namespace RobotAPI
                         continue;
 
                     MASS[key].Insert(0, dst);
-                    dst = src;
-                    dst.TimeFrame = tf;
+                    dst = src.Clone(tf);
                 }
 
                 MASS[key].Insert(0, dst);

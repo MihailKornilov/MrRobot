@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using static System.Console;
 
 using MrRobot.inc;
 
@@ -304,6 +305,7 @@ namespace MrRobot.Entity
                 if (src[4] != dst.SpaceBtmInt)
                     return false;
             }
+
             return true;
         }
         // Содержание паттерна: свечи с учётом пустот сверху и снизу
@@ -379,6 +381,13 @@ namespace MrRobot.Entity
             ")";
         }
 
+        // Запись в файл о нейденном паттерне
+        public void FoundSave()
+        {
+            string txt = $"Найдено совпадение: {Name} {TF}   id.{Id}   {StructDB}";
+            global.LogWrite(txt, "found.txt");
+        }
+
 
 
 
@@ -399,7 +408,8 @@ namespace MrRobot.Entity
         // ID свечных данных из `_candle_data_info`
         public int CdiId { get { return Patterns.SUnit(SearchId).CdiId; } }
         // Название инструмента
-        public string Symbol { get { return Candle.Unit(CdiId).Name; } }
+        public string Symbol { get { return Candle.Unit(CdiId).Symbol; } }
+        public string Name { get { return Candle.Unit(CdiId).Name; } }
         // Таймфрейм
         public int TimeFrame { get { return Candle.Unit(CdiId).TimeFrame; } }
         // Таймфрейм в виде 10m

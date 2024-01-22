@@ -32,12 +32,12 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             var param = new AutoProgonParam
             {
                 //ConvertTF = "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,30",
-                ConvertTF = "30,25,20,15,10",
+                ConvertTF = "30",//,25,20,15,10",
                 //ConvertTF = "25,30",
                 PatternLength = "3",
                 PrecisionPercent = "100",
                 //FoundRepeatMin = "4",
-                FoundRepeatMin = "10",
+                FoundRepeatMin = "6",
                 SymbolMass = new string[]
                 {
                     //"SOL/USDT",

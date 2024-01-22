@@ -74,7 +74,7 @@ namespace MrRobot
             Loaded += (s, e) =>
             {
                 MainMenuCreate();
-                Trade.InstrumentSet();
+                Trade.InstrumentSelect();
 
                 var hwnd = new WindowInteropHelper(this).Handle;
                 HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
@@ -172,7 +172,7 @@ namespace MrRobot
 
                 case 5:
                     Trade.TradeInit();
-                    Trade.InstrumentSet();
+                    Trade.InstrumentSelect();
                     break;
             }
         }

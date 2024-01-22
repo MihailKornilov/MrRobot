@@ -201,7 +201,7 @@ namespace MrRobot.Section
                     SPARAM.ProсessInfo = $"Прошло времени: {bar.TimePass}    Осталось: {bar.TimeLeft}";
                     int c = SPARAM.FoundList.Count;
                     if (c > 0)
-                        SPARAM.ProсessInfo += $"\nНайдено {c} совпадени{format.End(c, "е", "я", "й")}";
+                        SPARAM.ProсessInfo += $"\nНайдено {c} паттерн{format.End(c, "", "а", "ов")}";
                     SPARAM.PBar.Report(bar.Value);
                 }
 

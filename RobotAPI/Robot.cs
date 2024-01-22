@@ -32,6 +32,11 @@ namespace RobotAPI
         /// </summary>
         static void CandleGlobalSet()
         {
+            if (CANDLES == null)
+                return;
+            if (CANDLES.Count == 0)
+                return;
+
             UNIX = CANDLES[0].Unix;
             PRICE = CANDLES[0].Close;
             HIGH = CANDLES[0].High;
@@ -120,6 +125,37 @@ namespace RobotAPI
             static List<object> All;    // Весь список найденных паттернов
             public static int Count { get { return All.Count; } }   // Общее количество найденных паттернов
 
+
+            public static string Symbol { get; private set; }
+            public static int TimeFrame { get; private set; }
+            public static string TF { get; private set; }
+            public static int Length { get; set; }
+            public static int PrecisionPercent { get; set; }
+
+
+            // Исходный паттерн, по которому будет производиться поиск
+            static dynamic SRC { get; set; }
+            // Свечи, из которых будут формироваться паттерны для сравнения
+            static List<dynamic> CandleList { get; set; }
+            // Установка исходного паттерна
+            public static void Source(dynamic patt)
+            {
+                SRC = patt;
+                Symbol = SRC.Name;
+                TimeFrame = SRC.TimeFrame;
+                TF = SRC.TF;
+                Length = SRC.Length;
+                PrecisionPercent = SRC.PrecisionPercent;
+                CandleList = new List<dynamic>();
+            }
+
+
+
+
+
+
+
+            // ----==== РАЗДЕЛ TESTER ====---- ----------------------------------------
             public PATTERN(List<object> all)
             {
                 All = all;
@@ -130,15 +166,7 @@ namespace RobotAPI
                 Length = 0;
                 PrecisionPercent = 0;
             }
-
-
-            public static string Symbol { get; private set; }
-            public static int TimeFrame { get; private set; }
-            public static string TF { get; private set; }
-            public static int Length { get; set; }
-            public static int PrecisionPercent { get; set; }
-
-            // Список паттернов по инструменту [и таймфрейму]
+            // Список паттернов по инструменту [и таймфрейму], которые ещё не тестировались
             public static List<object> NoTestedList()
             {
                 var send = new List<object>();
@@ -161,21 +189,8 @@ namespace RobotAPI
 
                 return send;
             }
-
-
-
-            // Исходный паттерн, по которому будет производиться поиск
-            static dynamic SRC { get; set; }
-            // Свечи, из которых будут формироваться паттерны для сравнения
-            static List<dynamic> CandleList { get; set; }
-            // Установка исходного паттерна
-            public static void Source(dynamic patt)
-            {
-                SRC = patt;
-                CandleList = new List<dynamic>();
-            }
             // Поиск паттерна
-            public static bool Found()
+            public static bool TesterFound()
             {
                 if (SRC == null)
                     return false;
@@ -197,11 +212,60 @@ namespace RobotAPI
                 return SRC.Compare(dst);
             }
             // Сохранение результатов поиска в базу
-            public static void Save(int profit, int loss)
+            public static void TesterSave(int profit, int loss)
             {
                 SRC.ProfitCount = profit;
                 SRC.LossCount = loss;
                 SRC.TesterSave();
+            }
+
+
+
+
+
+            // ----==== РАЗДЕЛ TRADE ====---- ----------------------------------------
+            public PATTERN(List<object> all, bool isTrade)
+            {
+                All = all;
+                SRC = null;
+                Length = 0;
+                PrecisionPercent = 0;
+            }
+            // Список всех прибыльных паттернов, которые прошли тест
+            public static List<object> ProfitList()
+            {
+                var send = new List<object>();
+
+                foreach (dynamic item in All)
+                {
+                    if (!item.IsTested)
+                        continue;
+                    if (item.ProfitCount <= item.LossCount)
+                        continue;
+
+                    send.Add(item);
+                }
+
+                return send;
+            }
+            // Поиск паттерна
+            public static bool TradeFound(dynamic patt, List<dynamic> list)
+            {
+                Source(patt);
+
+                if (!CANDLE_NEW.TF(TimeFrame))
+                    return false;
+                if (list.Count < Length)
+                    return false;
+
+                for (int i = 0; i < Length; i++)
+                    CandleList.Add(list[i]);
+
+                var dst = SRC.Create(CandleList, SRC.CdiId);
+                if (dst.Size == 0)
+                    return false;
+
+                return SRC.Compare(dst);
             }
         }
     }

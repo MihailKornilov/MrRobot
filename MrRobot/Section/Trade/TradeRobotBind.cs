@@ -8,22 +8,24 @@ using static System.Console;
 using static RobotAPI.Robot;
 using MrRobot.Entity;
 using MrRobot.inc;
+using System.Threading;
 
 namespace MrRobot.Section
 {
     public partial class Trade : UserControl
     {
-        public bool IsTradeRobotInited { get; private set; }
+        public bool IsTradeInited { get; private set; }
         object ObjInstance { get; set; }
         MethodInfo Init;
         MethodInfo Step;
         MethodInfo Finish;
-        private bool RobotApply()
+        bool RobotApply()
         {
-            // Не выбран инструмент
-            if (position.Val("5.InstrumentListBox.Id", 0) == 0)
-                return false;
-            // Не выбран робот
+            // Остановка робота
+            if (IsTradeInited)
+                return IsTradeInited = false;
+
+            // Робот не выбран
             if (RobotsListBox.SelectedIndex <= 0)
                 return false;
 
@@ -39,44 +41,41 @@ namespace MrRobot.Section
             return true;
         }
 
-
+        /// <summary>
+        /// Установка инструмента, если выбран
+        /// </summary>
+        void InstrumentSet()
+        {
+            INSTRUMENT = InstrumentListBox.SelectedItem as InstrumentUnit;
+        }
         /// <summary>
         /// Загрузка списка свечей выбранного инструмента
         /// </summary>
-        void CandlesSet(List<object> list)
+        void CandlesLoad()
         {
-            CANDLES = list;
+            CANDLES = new List<dynamic>();
         }
 
         void GlobalInit()
         {
-            InstrumentSelectBlock.IsEnabled = IsTradeRobotInited;
-            InstrumentCancelLabel.IsEnabled = IsTradeRobotInited;
-            RobotsListBox.IsEnabled = IsTradeRobotInited;
-            RobotButton.Content = IsTradeRobotInited ? "Старт" : "Стоп";
-
-            if (IsTradeRobotInited)
-            {
-                IsTradeRobotInited = false;
-                return;
-            }
+            InstrumentSelectBlock.IsEnabled = IsTradeInited;
+            InstrumentCancelLabel.IsEnabled = IsTradeInited;
+            RobotsListBox.IsEnabled = IsTradeInited;
+            RobotButton.Content = IsTradeInited ? "Старт" : "Стоп";
 
             if (!RobotApply())
                 return;
 
-            INSTRUMENT = InstrumentListBox.SelectedItem as InstrumentUnit;
+            InstrumentSet();
+            CandlesLoad();
             new CANDLE_NEW(format.TFass());
+            new PATTERN(Patterns.ListAll(), true);
+            new TradeChartTime();
 
             TRADE_GLOBAL_INIT();
+            Init.Invoke(ObjInstance, new object[] { new string[] { } });
 
-            object[] args = {
-                new string[] {
-                    ""
-                }
-            };
-            Init.Invoke(ObjInstance, args);
-
-            IsTradeRobotInited = true;
+            IsTradeInited = true;
         }
 
         /// <summary>
@@ -84,7 +83,7 @@ namespace MrRobot.Section
         /// </summary>
         public void Candles_0_upd(CandleUnit cndl)
         {
-            if (!IsTradeRobotInited)
+            if (!IsTradeInited)
                 return;
 
             if (cndl.Unix == CANDLES[0].Unix)
@@ -100,7 +99,7 @@ namespace MrRobot.Section
         /// </summary>
         public void TradeListAdd(DepthUnit unit)
         {
-            if (!IsTradeRobotInited)
+            if (!IsTradeInited)
                 return;
 
             TRADE_LIST.Add(unit);
@@ -111,7 +110,7 @@ namespace MrRobot.Section
         /// </summary>
         public async void CandlesActualUpdate()
         {
-            if (!IsTradeRobotInited)
+            if (!IsTradeInited)
                 return;
 
             await Task.Run(() =>
@@ -129,8 +128,8 @@ namespace MrRobot.Section
                     var list = Candle.WCkline(symbol, start);
                     CANDLES_ACTUAL.Save(symbol, list);
                 }
-                TradeRobotStep();
             });
+            TradeRobotStep();
         }
 
         /// <summary>
@@ -143,5 +142,69 @@ namespace MrRobot.Section
             // Выполнение очередного шага в Роботе
             Step.Invoke(ObjInstance, new object[] { });
         }
+    }
+
+
+    /// <summary>
+    /// Класс, выводящий время в верхнем правом углу графика
+    /// </summary>
+    public class TradeChartTime
+    {
+        static bool IsWorked { get; set; }
+        public TradeChartTime()
+        {
+            if (IsWorked)
+                return;
+
+            IsWorked = true;
+            Start();
+        }
+
+        /// <summary>
+        /// Запуск вывода времени
+        /// </summary>
+        static async void Start()
+        {
+            var prgs = new Progress<string>(v =>
+            {
+                global.MW.Trade.TradeChartTime.Text = v;
+            });
+            await Task.Run(() => Process(prgs));
+        }
+        static void Process(IProgress<string> prgs)
+        {
+            int MinuteLast = -1;
+            int SecondLast = -1;
+            while (IsWorked)
+            {
+                Thread.Sleep(100);
+
+                var now = DateTime.Now;
+                if (SecondLast != now.Second)
+                {
+                    SecondLast = now.Second;
+                    // Печать текущего времени в верхнем правом углу графика раз в секунду
+                    prgs.Report(format.TimeNow());
+                }
+
+                if (now.Second > 0)
+                    continue;
+                if (format.MilliSec() < 100)
+                    continue;
+                if (MinuteLast == now.Minute)
+                    continue;
+
+                MinuteLast = now.Minute;
+
+                global.MW.Trade.CandlesActualUpdate();
+                
+                
+                
+                //CandleFirst.Update(format.UnixNow());
+                //global.MW.Trade.Candles_0_upd(CandleFirst);
+                //ChartUpdate();
+            }
+        }
+
     }
 }

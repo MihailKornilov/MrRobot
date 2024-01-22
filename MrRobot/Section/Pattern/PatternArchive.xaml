@@ -182,7 +182,7 @@
                             <Label Content="Точность %" Width="70" Style="{StaticResource PatternListHead}"/>
                             <StackPanel Width="120">
                                 <Label Content="Кол-во" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead1}"/>
-                                <Label Content="совпадений" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead2}"/>
+                                <Label Content="паттернов" HorizontalContentAlignment="Right" Margin="0,0,40,0" Style="{StaticResource PatternListHead2}"/>
                             </StackPanel>
                             <StackPanel Width="62">
                                 <Label Content="Время" HorizontalContentAlignment="Right" Margin="0" Style="{StaticResource PatternListHead1}"/>

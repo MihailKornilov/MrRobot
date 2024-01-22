@@ -696,6 +696,7 @@ namespace MrRobot.Entity
 
         // Внесение в базу одной свечи
         public string Insert { get { return $"({Unix},{High},{Open},{Close},{Low},{Volume})"; } }
+        public string View { get { return $"{DateTime}   ОТКР {Open}   МАКС {High}   МИН {Low}   ЗАКР {Close}"; } }
 
 
         // Обновление первой свечи в графике

@@ -52,7 +52,6 @@ namespace MrRobot.Section
             Symbol = symbol;
             Init();
             WebSocket();
-            CandleAsyncUpdate();
         }
         /// <summary>
         /// Обнуление стакана, если была выбрана другая валютная пара
@@ -384,52 +383,6 @@ namespace MrRobot.Section
         }
 
         /// <summary>
-        /// Обновление свечи в асинхронном режиме раз в минуту
-        /// </summary>
-        static Task CandleAsyncTask;
-        static async void CandleAsyncUpdate()
-        {
-            var progress = new Progress<string>(v =>
-            {
-                global.MW.Trade.TradeChartTime.Text = v;
-            });
-            CandleAsyncTask = Task.Run(() => CandleAsyncProcess(progress));
-            await CandleAsyncTask;
-        }
-        static void CandleAsyncProcess(IProgress<string> Progress)
-        {
-            int MinuteLast = -1;
-            int SecondLast = -1;
-            while (IsWork)
-            {
-                Thread.Sleep(100);
-
-                var now = DateTime.Now;
-                if (SecondLast != now.Second)
-                {
-                    SecondLast = now.Second;
-                    Progress.Report(format.TimeNow());  // Печать текущего времени в верхнем правом углу графика
-                }
-
-                if (now.Second > 0)
-                    continue;
-                if (format.MilliSec() < 100)
-                    continue;
-                if (MinuteLast == now.Minute)
-                    continue;
-
-                MinuteLast = now.Minute;
-
-                global.MW.Trade.CandlesActualUpdate();
-                CandleFirst.Update(format.UnixNow());
-                global.MW.Trade.Candles_0_upd(CandleFirst);
-                ChartUpdate();
-            }
-
-            CandleAsyncTask = null;
-        }
-
-        /// <summary>
         /// Изменение размера стакана при изменении размера приложения
         /// </summary>
         public static void SizeChanged(object sender, SizeChangedEventArgs e)
@@ -464,9 +417,6 @@ namespace MrRobot.Section
             global.MW.Trade.DepthSellListBox.ItemsSource = null;
             global.MW.Trade.DepthBuyListBox.ItemsSource = null;
             global.MW.Trade.TradeListBox.ItemsSource = null;
-
-            while (CandleAsyncTask != null)
-                Thread.Sleep(100);
         }
     }
 

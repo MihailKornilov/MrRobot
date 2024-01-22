@@ -155,7 +155,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Установка инструмента после полной загрузки приложения
         /// </summary>
-        public void InstrumentSet()
+        public void InstrumentSelect()
         {
             if (position.MainMenu() != 5)
                 return;
@@ -199,8 +199,6 @@ namespace MrRobot.Section
             var CandleList = chart.TradeCandlesActual(item);
             TradeBrowser.Address = chart.PageHtml;
 
-            CandlesSet(CandleList);
-
             Depth.Start(item.Symbol, CandleList);
         }
 
@@ -240,7 +238,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Запуск робота по кнопке
         /// </summary>
-        private void RobotButtonGo(object sender, RoutedEventArgs e) => GlobalInit();
+        void RobotButtonGo(object sender, RoutedEventArgs e) => GlobalInit();
     }
 
 
