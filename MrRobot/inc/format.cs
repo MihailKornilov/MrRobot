@@ -27,6 +27,25 @@ namespace MrRobot.inc
             return Convert.ToInt32(unix + Offset);
         }
         /// <summary>
+        /// Получение даты в формате UNIX
+        /// </summary>
+        /// 
+        /// Входящий вид `date`: 01.03.2023 11:20:00
+        public static int UnixFromDate(string date)
+        {
+            int year = Convert.ToInt32(date.Substring(6, 4));
+            int mon  = Convert.ToInt32(date.Substring(3, 2));
+            int day  = Convert.ToInt32(date.Substring(0, 2));
+
+            int H  = Convert.ToInt32(date.Substring(11, 2));
+            int M  = Convert.ToInt32(date.Substring(14, 2));
+            int S  = Convert.ToInt32(date.Substring(17, 2));
+
+            DateTimeOffset dt = new DateTime(year, mon, day, H, M, S);
+
+            return (int)dt.ToUnixTimeSeconds();
+        }
+        /// <summary>
         /// Получение даты и времени в формате 12.05.2022 12:44
         /// </summary>
         ///

@@ -259,6 +259,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="34"/>
                     <RowDefinition/>
+                    <RowDefinition Height="25"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Height="34" Background="#555">
                     <Grid.ColumnDefinitions>
@@ -299,6 +300,11 @@
                     </StackPanel>
                 </Grid>
                 <wpf:ChromiumWebBrowser Name="SearchBrowser" Grid.Row="1"/>
+
+                <Grid Grid.Row="2" Background="#707070">
+                    <Canvas Name="FoundLinePanel" Height="24" Margin="0,1,0,0" Background="#3a3a3a"/>
+                </Grid>
+
             </Grid>
 
         </Grid>

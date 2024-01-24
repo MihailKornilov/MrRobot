@@ -413,7 +413,7 @@ namespace MrRobot.Section
             WebSocketOldClose();
             PriceUpdate();
 
-            global.MW.Trade.TradeChartTime.Text = "";
+            global.MW.Trade.ChartTime.Text = "";
             global.MW.Trade.DepthSellListBox.ItemsSource = null;
             global.MW.Trade.DepthBuyListBox.ItemsSource = null;
             global.MW.Trade.TradeListBox.ItemsSource = null;

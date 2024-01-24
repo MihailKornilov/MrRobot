@@ -171,8 +171,10 @@ namespace MrRobot.Section
 
             TESTER_GLOBAL_INIT();
 
+            LOGG.Method = RobotLog;
             Init.Invoke(ObjInstance, new object[] { new string[]{} });
-            RobotLog();
+            LOGG.Output();
+
             OrderExecutedView();
             TesterChartInit();
             TesterBar.Value = 0;
@@ -257,7 +259,7 @@ namespace MrRobot.Section
             {
                 AutoGoStop();
                 BalanceUpdate();
-                RobotLog();
+                LOGG.Output();
                 OrderExecutedView();
                 return;
             }
@@ -341,7 +343,7 @@ namespace MrRobot.Section
             {
                 AutoGoStop();
                 BalanceUpdate();
-                RobotLog();
+                LOGG.Output();
                 OrderExecutedView();
                 return;
             }
@@ -364,7 +366,7 @@ namespace MrRobot.Section
             if (!AutoGoStatus())
             {
                 BalanceUpdate();
-                RobotLog();
+                LOGG.Output();
                 OrderExecutedView();
             }
  
@@ -376,7 +378,7 @@ namespace MrRobot.Section
             AutoGoStop();
             Finish?.Invoke(ObjInstance, new object[] { });
             BalanceUpdate();
-            RobotLog();
+            LOGG.Output();
             OrderExecutedView();
         }
 
@@ -409,6 +411,7 @@ namespace MrRobot.Section
             string ButtonContent = NoVisualButton.Content.ToString();
             int ButtonWidth = (int)NoVisualButton.Width;
 
+            // Остановка тестирования
             if (!TESTER_FINISHED && IsNoVisualProcess)
             {
                 NoVisualLock(ButtonContent, ButtonWidth);
@@ -417,12 +420,15 @@ namespace MrRobot.Section
 
             NoVisualLock();
 
+            if(!global.IsAutoProgon)
+                GlobalInit();
+
             var progress = new Progress<decimal>(v => { TesterBar.Value = (double)v; });
             await Task.Run(() => NoVisualProcess(progress));
             object res = Finish.Invoke(ObjInstance, new object[] { });
 
             BalanceUpdate();
-            RobotLog();
+            LOGG.Output();
             OrderExecutedView();
 
             NoVisualLock(ButtonContent, ButtonWidth);
@@ -433,16 +439,11 @@ namespace MrRobot.Section
         {
             var bar = new ProBar(INSTRUMENT.RowsCount);
 
-            while (TESTER_GLOBAL_STEP())
+            while (TESTER_GLOBAL_STEP() && IsNoVisualProcess)
             {
                 // Выполнение очередного шага в Роботе
                 Step.Invoke(ObjInstance, new object[] { });
-
-                if (bar.isUpd(CANDLES.Count))
-                    Progress.Report(bar.Value);
-
-                if (!IsNoVisualProcess)
-                    return;
+                bar.Val(CANDLES.Count, Progress);
             }
             Progress.Report(100);
         }
@@ -454,21 +455,12 @@ namespace MrRobot.Section
         /// <summary>
         /// Вывод информации в лог Тестера
         /// </summary>
-        void RobotLog()
+        void RobotLog(List<RobotAPI.LogUnit> list)
         {
-            var list = LOG_LIST();
-
-            if (list == null)
-                return;
-            if (list.Count == 0)
-                return;
-
-            int count = RobotLogList.Items.Count;
-
             foreach(var unit in list)
-                RobotLogList.Items.Insert(count++, unit);
+                RobotLogList.Items.Add(unit);
 
-            count = list.Count - 1;
+            int count = list.Count - 1;
             RobotLogList.ScrollIntoView(list[count]);
         }
 

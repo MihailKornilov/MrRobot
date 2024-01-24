@@ -21,12 +21,12 @@ namespace RobotAPI
         public static void TESTER_GLOBAL_INIT()
         {
             IS_TESTER = true;
-            LogClear();
             CandleClear();
             OrderClear();
             TESTER_AUTO = false;
             TESTER_FINISHED = false;
             IS_CANDLE_FULL = !CANDLES_TF1_USE;
+            new LOGG();
         }
 
         public static bool TESTER_GLOBAL_STEP()

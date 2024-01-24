@@ -9,6 +9,7 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
+using System.Windows.Shapes;
 
 namespace MrRobot.Section
 {
@@ -112,6 +113,8 @@ namespace MrRobot.Section
                 return;
             if (!isCheck)
                 return;
+
+            FoundLinePanel.Children.Clear();
 
             var CDI = SourceListBox.SelectedItem as CDIunit;
             var param = new PatternSearchParam
@@ -388,15 +391,18 @@ namespace MrRobot.Section
                            $"{SPARAM.FoundCount}," +
                            $"'{SPARAM.Duration}'" +
                          ")";
-            int SearchId = mysql.Query(sql);
+            SPARAM.SearchId = mysql.Query(sql);
 
             if (SPARAM.FoundCount == 0)
+            {
+                new Patterns();
                 return true;
+            }
 
             var insert = new List<string>();
             for (int i = 0; i < SPARAM.FoundCount; i++)
             {
-                insert.Add(SPARAM.FoundList[i].Insert(SearchId));
+                insert.Add(SPARAM.FoundList[i].Insert(SPARAM.SearchId));
 
                 if (insert.Count < 500 && i < SPARAM.FoundCount - 1)
                     continue;
@@ -414,13 +420,41 @@ namespace MrRobot.Section
             }
 
             new Patterns();
-
             return true;
         }
 
         #endregion
 
 
+        /// <summary>
+        /// Расстановка временных линий для визуального отображенмя найденных паттернов
+        /// </summary>
+        void FoundLine(int index = 0)
+        {
+            FoundLinePanel.Children.Clear();
+
+            var found = FoundListBox.SelectedItem as PatternUnit;
+            var CDI = Candle.Unit(found.CdiId);
+            int Width = (int)FoundLinePanel.ActualWidth;
+
+            for(int i = 0; i < found.UnixList.Count; i++)
+            {
+                int unix = found.UnixList[i];
+                double dist = (unix - CDI.UnixBegin) / 60 / CDI.TimeFrame;
+                double X = dist / CDI.RowsCount * Width;
+
+                var line = new Line()
+                {
+                    X1 = X,
+                    Y1 = 0,
+                    X2 = X,
+                    Y2 = 24,
+                    Stroke = format.RGB(i == index ? "#FFFC00" : "#CCCCCC"),
+                    StrokeThickness = i == index ? 1.7 : 0.5 
+                };
+                FoundLinePanel.Children.Add(line);
+            }
+        }
         /// <summary>
         /// Визуальное отображение найденного паттерна
         /// </summary>
@@ -461,6 +495,8 @@ namespace MrRobot.Section
             visual.PageName = "PatternVisual";
             visual.PatternVisual(found, index-1);
             SearchBrowser.Address = visual.PageHtml;
+
+            FoundLine(index-1);
         }
 
 
@@ -527,6 +563,7 @@ namespace MrRobot.Section
 
 
 
+        public int SearchId { get; set; }       // ID произведённого поиска
         public int FoundCount { get { return FoundList.Count; } }// Количество найденных паттернов
         public List<PatternUnit> FoundList { get; set; } = new List<PatternUnit>();  // Список с данными найденных паттернов
         public long Iterations { get; set; }    // Количество итераций

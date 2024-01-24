@@ -54,9 +54,8 @@ namespace MrRobot.Entity
                     Symbol = spl[0] + spl[1],
                     DateBegin = begin,
                     DateEnd = end,
-                    DatePeriod = begin + "-" + end,
+                    UnixBegin = format.UnixFromDate(v["begin"]),
                     TimeFrame = timeFrame,
-                    TF = format.TF(timeFrame),
                     Table = v["table"],
                     RowsCount = Convert.ToInt32(v["rowsCount"]),
                     TickSize = Instr.TickSize,
@@ -500,11 +499,12 @@ namespace MrRobot.Entity
         public string Name { get; set; }        // Название инструмента в виде "BTC/USDT"
         public string Table { get; set; }       // Имя таблицы со свечами
         public int TimeFrame { get; set; }      // Таймфрейм в виде 15
-        public string TF { get; set; }          // Таймфрейм в виде "15m"
+        public string TF { get { return format.TF(TimeFrame); } } // Таймфрейм в виде "15m"
         public int RowsCount { get; set; }      // Количество свечей в графике (в таблице)
         public string DateBegin { get; set; }   // Дата начала графика в формате 12.03.2022
         public string DateEnd { get; set; }     // Дата конца графика в формате 12.03.2022
-        public string DatePeriod { get; set; }  // Диапазон даты от начала до конца всего графика в формате 12.03.2022 - 30.11.2022
+        public string DatePeriod { get { return $"{DateBegin}-{DateEnd}"; } }  // Диапазон даты от начала до конца всего графика в формате 12.03.2022 - 30.11.2022
+        public int UnixBegin { get; set; }      // Время начала графика в формате Unix
         public int ConvertedFromId { get; set; }// ID минутного таймфрейма, с которого была произведена конвертация
 
 

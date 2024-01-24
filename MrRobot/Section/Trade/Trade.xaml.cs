@@ -88,6 +88,17 @@ namespace MrRobot.Section
         }
 
 
+        void MenuChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var TC = sender as TabControl;
+            if (TC.SelectedIndex == 2)
+            {
+                int c = LogList.Items.Count;
+                if (c > 0)
+                    LogList.ScrollIntoView(LogList.Items[c - 1]);
+            }
+        }
+
 
 
         /// <summary>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using static System.Console;
 
 namespace RobotAPI
@@ -121,6 +119,9 @@ namespace RobotAPI
         /// </summary>
         public class PATTERN
         {
+            public delegate void Compare(dynamic src, dynamic dst);
+            public static Compare TradeCompare;
+
             static List<object> All;    // Весь список найденных паттернов
             public static int Count { get { return All.Count; } }   // Общее количество найденных паттернов
 
@@ -256,9 +257,11 @@ namespace RobotAPI
                 for (int i = 0; i < Length; i++)
                     CandleList.Add(list[i]);
 
-                var dst = SRC.Create(CandleList, SRC.CdiId);
+                var dst = SRC.Create(CandleList, SRC.CdiId, PrecisionPercent);
                 if (dst.Size == 0)
                     return false;
+
+                 TradeCompare?.Invoke(SRC, dst);
 
                 return SRC.Compare(dst);
             }

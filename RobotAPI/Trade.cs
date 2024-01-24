@@ -18,13 +18,13 @@ namespace RobotAPI
             IS_TESTER = false;
             CandleGlobalSet();
             TRADE_LIST = new List<dynamic>();
+            new LOGG();
             new CANDLES_ACTUAL();
         }
 
         /// <summary>
         /// Очередной шаг в Реальной торговле
         /// </summary>
-        // 
         public static void TRADE_GLOBAL_STEP()
         {
             CandleGlobalSet();
@@ -228,6 +228,22 @@ namespace RobotAPI
                 }
 
                 MASS[key].Insert(0, dst);
+            }
+
+            /// <summary>
+            /// Инструменты с количеством свечей, на которые сделана подписка
+            /// </summary>
+            public static Dictionary<string, int> MassCount()
+            {
+                var send = new Dictionary<string, int>();
+
+                foreach (var key in MASS_TF1.Keys)
+                    send.Add(key, MASS_TF1[key].Count);
+
+                foreach (var key in MASS.Keys)
+                    send.Add(key, MASS[key].Count);
+
+                return send;
             }
         }
     }

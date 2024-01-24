@@ -9,7 +9,6 @@ using static RobotAPI.Robot;
 using MrRobot.Entity;
 using MrRobot.inc;
 using System.Threading;
-using System.Linq;
 
 namespace MrRobot.Section
 {
@@ -71,11 +70,14 @@ namespace MrRobot.Section
             CandlesLoad();
             new CANDLE_NEW(format.TFass());
             new PATTERN(Patterns.ListAll(), true);
-            new TradeChartTime();
+            new TradeChartTimer();
+            TradeChartTimer.OutMethod += CandlesActualUpdate;
 
             TRADE_GLOBAL_INIT();
+            LOGG.Method = Log;
+            LOGG.Stat = delegate(string txt) { StaticLogBox.Text = txt; };
             Init.Invoke(ObjInstance, new object[] { new string[] { } });
-            Log();
+            LOGG.Output();
 
             IsTradeInited = true;
         }
@@ -142,39 +144,37 @@ namespace MrRobot.Section
 
             // Выполнение очередного шага в Роботе
             Step.Invoke(ObjInstance, new object[] { });
-
-            //Log();
+            LOGG.Output();
         }
 
         /// <summary>
         /// Вывод информации в лог Тестера
         /// </summary>
-        void Log()
+        void Log(List<RobotAPI.LogUnit> list)
         {
-            var list = LOG_LIST();
+            foreach (var row in list)
+                LogList.Items.Add(row);
 
-            if (list == null)
-                return;
-            if (list.Count == 0)
-                return;
-
-            foreach (var unit in list)
-                LogList.Items.Add(unit);
+            while (LogList.Items.Count > 1000)
+                LogList.Items.RemoveAt(0);
 
             int c = LogList.Items.Count - 1;
             LogList.ScrollIntoView(LogList.Items[c]);
         }
-
     }
 
 
     /// <summary>
     /// Класс, выводящий время в верхнем правом углу графика
     /// </summary>
-    public class TradeChartTime
+    public class TradeChartTimer
     {
         static bool IsWorked { get; set; }
-        public TradeChartTime()
+
+        public delegate void Dcall();
+        public static Dcall OutMethod;
+
+        public TradeChartTimer()
         {
             if (IsWorked)
                 return;
@@ -190,7 +190,10 @@ namespace MrRobot.Section
         {
             var prgs = new Progress<string>(v =>
             {
-                global.MW.Trade.TradeChartTime.Text = v;
+                global.MW.Trade.ChartTime.Text = v;
+
+                if (DateTime.Now.Second == 0)
+                    OutMethod?.Invoke();
             });
             await Task.Run(() => Process(prgs));
         }
@@ -219,10 +222,6 @@ namespace MrRobot.Section
 
                 MinuteLast = now.Minute;
 
-                global.MW.Trade.CandlesActualUpdate();
-                
-                
-                
                 //CandleFirst.Update(format.UnixNow());
                 //global.MW.Trade.Candles_0_upd(CandleFirst);
                 //ChartUpdate();

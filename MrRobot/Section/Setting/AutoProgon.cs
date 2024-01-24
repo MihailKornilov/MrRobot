@@ -106,6 +106,10 @@ namespace MrRobot.Section
             if (!Active)
                 return;
 
+            //SymbolChange();
+            //return;
+
+
             // Переход на страницу 2:"Конвертер"
             SectionGo(2);
 
@@ -147,34 +151,19 @@ namespace MrRobot.Section
                 return;
 
             // Список ID свечных данных, по которым нужно производить поиск паттернов
-            int[] CDIids = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);
-
-            // Выбор IDs, по которым не было поиска паттернов
-            var ids = new List<int>();
-            foreach (int id in CDIids)
-            {
-                int PatternLength = Convert.ToInt32(PARAM.PatternLength);
-                int PrecisionPercent = Convert.ToInt32(PARAM.PrecisionPercent);
-
-                if (!Patterns.IsSearch(id, PatternLength, PrecisionPercent))
-                    ids.Add(id);
-            }
+            PARAM.ConvertedIds = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);
 
             // Если поиск был по всем таймфреймам, переход на Тестер
-            if (ids.Count == 0)
-            {
-                RobotSetup();
+            if (RobotSetup(PARAM.ConvertedIds.Length == 0))
                 return;
-            }
 
-            PARAM.ConvertedIds = ids.ToArray();
+            PARAM.ConvertedIds = PARAM.ConvertedIds.Reverse().ToArray();
 
             // Переход на страницу 3:"Поиск паттернов"
             SectionGo(3);
 
             // Установка настроек
             global.MW.Pattern.LengthSlider.Value = Convert.ToInt32(PARAM.PatternLength);
-            global.MW.Pattern.PrecisionPercentSlider.Value = Convert.ToInt32(PARAM.PrecisionPercent);
             global.MW.Pattern.FoundRepeatMin.Text = PARAM.FoundRepeatMin;
 
             PARAM.Index = 0;
@@ -188,32 +177,55 @@ namespace MrRobot.Section
             if (!Active)
                 return false;
 
-            if (PARAM.Index >= PARAM.ConvertedIds.Length)
-            {
-                RobotSetup();
+            if (RobotSetup(PARAM.Index >= PARAM.ConvertedIds.Length))
                 return true;
-            }
 
             // Выбор свечных данных
             int index = PARAM.Index;
-            int id = PARAM.ConvertedIds[index];
-            PARAM.Index++;
-            global.MW.Pattern.SourceListBox.SelectedItem = Candle.Unit(id);
+            int CdiId = PARAM.ConvertedIds[index];
+            global.MW.Pattern.SourceListBox.SelectedItem = Candle.Unit(CdiId);
+
+            if (!PatternSearchAgain(CdiId))
+                PARAM.Index++;
 
             // Нажатие на кнопку "Запуск поиска паттернов"
             ButtonClick(global.MW.Pattern.SearchGoButton);
 
             return true;
         }
+        /// <summary>
+        /// Новый поиск по тем же свечным данным, но процент ниже
+        /// </summary>
+        public static bool PatternSearchAgain(int CdiId)
+        {
+            int PatternLength = Convert.ToInt32(PARAM.PatternLength);
+            int prc = 100;
+            while (true)
+            {
+                var unit = Patterns.SUnitOnParam(CdiId, PatternLength, prc);
+                if (unit == null)
+                    break;
+                if (unit.FoundCount > 0)
+                    return false;
+                if ((prc -= 10) < 50)
+                    return false;
+            }
 
+            global.MW.Pattern.PrecisionPercentSlider.Value = prc;
+
+            return true;
+        }
 
 
 
         /// <summary>
         /// Тестирование паттерна роботом
         /// </summary>
-        static void RobotSetup()
+        static bool RobotSetup(bool IsRS)
         {
+            if (!IsRS)
+                return false;
+
             // Переход на страницу 4:"Tester"
             SectionGo(4);
 
@@ -226,13 +238,15 @@ namespace MrRobot.Section
                     ids.Add(id);
 
             if (SymbolChange(ids.Count == 0))
-                return;
+                return true;
 
             PARAM.ConvertedIds = ids.ToArray();
             PARAM.Index = 0;
             PARAM.IdLast = -1;
 
             RobotTest();
+
+            return true;
         }
 
         public static void RobotTest()
@@ -279,7 +293,6 @@ namespace MrRobot.Section
         public int SymbolIndex { get; set; }
         public string ConvertTF { get; set; }       // Список таймфреймов через запятую
         public string PatternLength { get; set; }   // Длина паттерна
-        public string PrecisionPercent { get; set; }// Точность в процентах
         public string FoundRepeatMin { get; set; }  // Исключать менее N нахождений
         public int Index { get; set; }              // Индекс для Конвертера, Тестера
         public int[] ConvertedIds { get; set; }     // ID сконвертированных свечных данных

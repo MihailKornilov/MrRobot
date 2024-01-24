@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
-using System.Security.Cryptography;
 
 namespace MrRobot.Entity
 {
@@ -19,16 +17,17 @@ namespace MrRobot.Entity
 
 
 
-        static List<SearchUnit> SearchList { get; set; }       // Список поисков
-        static Dictionary<int, SearchUnit> PSL { get; set; }   // Ассоциативный массив поисков
+        static List<SearchUnit> SearchAll { get; set; }       // Список всех поисков
+        static List<SearchUnit> SearchResult { get; set; }    // Список поисков с результатами
+        static Dictionary<int, SearchUnit> PSL { get; set; }  // Ассоциативный массив поисков
         static void SearchListCreate()
         {
-            SearchList = new List<SearchUnit>();
+            SearchAll = new List<SearchUnit>();
+            SearchResult = new List<SearchUnit>();
             PSL = new Dictionary<int, SearchUnit>();
 
             string sql = "SELECT*" +
                          "FROM`_pattern_search`" +
-                         "WHERE`foundCount`" +
                          "ORDER BY`id`DESC";
             foreach (Dictionary<string, string> row in mysql.QueryList(sql))
             {
@@ -44,13 +43,17 @@ namespace MrRobot.Entity
                     Dtime = format.DateOne(row["dtimeAdd"]),
                     TestedCount = Convert.ToInt32(row["testedCount"])
                 };
-                SearchList.Add(unit);
+
+                SearchAll.Add(unit);
                 PSL.Add(unit.Id, unit);
+
+                if (unit.FoundCount > 0)
+                    SearchResult.Add(unit);
             }
         }
         public static List<SearchUnit> SearchListAll()
         {
-            return SearchList;
+            return SearchResult;
         }
         /// <summary>
         /// Данные поиска по ID
@@ -66,7 +69,7 @@ namespace MrRobot.Entity
         /// </summary>
         public static int SUnitIdOnParam(int CdiId, int PatternLength, int PrecisionPercent)
         {
-            foreach (var S in SearchList)
+            foreach (var S in SearchAll)
             {
                 if (S.CdiId != CdiId)
                     continue;
@@ -78,26 +81,15 @@ namespace MrRobot.Entity
                 return S.Id;
             }
 
-            string sql = "SELECT`id`" +
-                         "FROM`_pattern_search`" +
-                        $"WHERE`cdiId`={CdiId} " +
-                          $"AND`patternLength`={PatternLength} " +
-                          $"AND`scatterPercent`={PrecisionPercent} " +
-                         "LIMIT 1";
-            return mysql.Count(sql);
+            return 0;
         }
         /// <summary>
-        /// Удаление поиска
+        /// Получение данных поиска на основании параметров
         /// </summary>
-        public static void SUnitDel(int id)
+        public static SearchUnit SUnitOnParam(int CdiId, int PatternLength, int PrecisionPercent)
         {
-            string sql = $"DELETE FROM`_pattern_found`WHERE`searchId`={id}";
-            mysql.Query(sql);
-
-            sql = $"DELETE FROM`_pattern_search`WHERE`id`={id}";
-            mysql.Query(sql);
-
-            new Patterns();
+            int id = SUnitIdOnParam(CdiId, PatternLength, PrecisionPercent);
+            return SUnit(id);
         }
         /// <summary>
         /// Производился ли поиск по указанным параметрам
@@ -105,6 +97,22 @@ namespace MrRobot.Entity
         public static bool IsSearch(int CdiId, int PatternLength, int PrecisionPercent)
         {
             return SUnitIdOnParam(CdiId, PatternLength, PrecisionPercent) > 0;
+        }
+        /// <summary>
+        /// Удаление поиска
+        /// </summary>
+        public static void SUnitDel(int id)
+        {
+            if (!PSL.ContainsKey(id))
+                return;
+
+            string sql = $"DELETE FROM`_pattern_found`WHERE`searchId`={id}";
+            mysql.Query(sql);
+
+            sql = $"DELETE FROM`_pattern_search`WHERE`id`={id}";
+            mysql.Query(sql);
+
+            new Patterns();
         }
 
 
