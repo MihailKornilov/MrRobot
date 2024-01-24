@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
+using System.Security.Cryptography;
 
 namespace MrRobot.Entity
 {
@@ -50,6 +52,9 @@ namespace MrRobot.Entity
         {
             return SearchList;
         }
+        /// <summary>
+        /// Данные поиска по ID
+        /// </summary>
         public static SearchUnit SUnit(int id)
         {
             if (PSL.ContainsKey(id))
@@ -57,13 +62,35 @@ namespace MrRobot.Entity
             return null;
         }
         /// <summary>
+        /// Получение ID поиска на основании параметров
+        /// </summary>
+        public static int SUnitIdOnParam(int CdiId, int PatternLength, int PrecisionPercent)
+        {
+            foreach (var S in SearchList)
+            {
+                if (S.CdiId != CdiId)
+                    continue;
+                if (S.PatternLength != PatternLength)
+                    continue;
+                if (S.PrecisionPercent != PrecisionPercent)
+                    continue;
+
+                return S.Id;
+            }
+
+            string sql = "SELECT`id`" +
+                         "FROM`_pattern_search`" +
+                        $"WHERE`cdiId`={CdiId} " +
+                          $"AND`patternLength`={PatternLength} " +
+                          $"AND`scatterPercent`={PrecisionPercent} " +
+                         "LIMIT 1";
+            return mysql.Count(sql);
+        }
+        /// <summary>
         /// Удаление поиска
         /// </summary>
         public static void SUnitDel(int id)
         {
-            if (!PSL.ContainsKey(id))
-                return;
-
             string sql = $"DELETE FROM`_pattern_found`WHERE`searchId`={id}";
             mysql.Query(sql);
 
@@ -72,13 +99,12 @@ namespace MrRobot.Entity
 
             new Patterns();
         }
+        /// <summary>
+        /// Производился ли поиск по указанным параметрам
+        /// </summary>
         public static bool IsSearch(int CdiId, int PatternLength, int PrecisionPercent)
         {
-            foreach(var S in SearchList)
-                if(S.CdiId == CdiId)
-                    return S.PatternLength == PatternLength && S.PrecisionPercent == PrecisionPercent;
-
-            return false;
+            return SUnitIdOnParam(CdiId, PatternLength, PrecisionPercent) > 0;
         }
 
 
@@ -182,16 +208,9 @@ namespace MrRobot.Entity
             int count = 0;
 
             foreach(PatternUnit unit in PatternList)
-            {
-                if (unit.CdiId != cdiId)
-                    continue;
-                if (unit.ProfitCount > 0)
-                    continue;
-                if (unit.LossCount > 0)
-                    continue;
-
-                count++;
-            }
+                if (unit.CdiId == cdiId)
+                    if (!unit.IsTested)
+                        count++;
 
             return count;
         }
@@ -249,7 +268,7 @@ namespace MrRobot.Entity
     {
         // ---=== ФОРМИРОВАНИЕ ПАТТЕРНА ===---
         public PatternUnit() { }
-        public PatternUnit(List<CandleUnit> list, int cdiId)
+        public PatternUnit(List<CandleUnit> list, int cdiId, int PrecisionPercent)
         {
             double PriceMax = 0;
             double PriceMin = list[0].Low;
@@ -270,42 +289,56 @@ namespace MrRobot.Entity
 
             CandleList = new List<CandleUnit>();
             foreach (var cndl in list)
-                CandleList.Add(new CandleUnit(cndl, PriceMax, PriceMin));
+                CandleList.Add(new CandleUnit(cndl, PriceMax, PriceMin, PrecisionPercent));
 
             StructFromCandle();
         }
 
         // Создание нового паттерна, используя существующий. Применяется в роботах.
-        public PatternUnit Create(List<dynamic> list, int cdiId)
+        public PatternUnit Create(List<dynamic> list, int cdiId, int PrecisionPercent)
         {
             var newList = new List<CandleUnit>();
             foreach (var cndl in list)
                 newList.Add(cndl);
 
-            return new PatternUnit(newList, cdiId);
+            return new PatternUnit(newList, cdiId, PrecisionPercent);
         }
         public int Size { get; set; }   // Размер паттерна в пунктах
         public List<CandleUnit> CandleList { get; set; } // Состав паттерна из свечей
         // Сравнение паттернов
-        public bool Compare(PatternUnit PU)
+        public bool Compare(PatternUnit PU) => Compare(PU.CandleList);
+        public bool Compare(List<CandleUnit> CL)
         {
             for (int k = 0; k < Length; k++)
             {
                 var src = StructArr[k];
-                var dst = PU.CandleList[k];
+                var dst = CL[k];
 
-                if (src[0] != dst.SpaceTopInt)
+                if (src[2] < dst.BodyMin)
                     return false;
-                if (src[1] != dst.WickTopInt)
+                if (src[2] > dst.BodyMax)
                     return false;
-                if (src[2] != dst.BodyInt)
+
+                if (src[1] < dst.WickTopMin)
                     return false;
-                if (src[3] != dst.WickBtmInt)
+                if (src[1] > dst.WickTopMax)
                     return false;
-                if (src[4] != dst.SpaceBtmInt)
+
+                if (src[3] < dst.WickBtmMin)
+                    return false;
+                if (src[3] > dst.WickBtmMax)
+                    return false;
+
+                if (src[0] < dst.SpaceTopMin)
+                    return false;
+                if (src[0] > dst.SpaceTopMax)
+                    return false;
+
+                if (src[4] < dst.SpaceBtmMin)
+                    return false;
+                if (src[4] > dst.SpaceBtmMax)
                     return false;
             }
-
             return true;
         }
         // Содержание паттерна: свечи с учётом пустот сверху и снизу
@@ -345,12 +378,45 @@ namespace MrRobot.Entity
         public List<int> UnixList { get; set; } = new List<int>();
 
         // Структура паттерна: свечи в процентах
-        public string Struct { get { return StructDB.Replace(';', '\n'); } }
+        public string Struct {
+            get
+            {
+                string[] ST = new string[Length*5];
+                int[] W = new int[Length]; // Ширина столбца для наглядного отображения паттерна
+                var cndl = StructDB.Split(';');
+                for (int i = 0; i < Length; i++)
+                {
+                    var spl = cndl[i].Split(' ');
+                    for (int k = 0; k < 5; k++)
+                    {
+                        ST[i+Length*k] = spl[k];
+                        if (W[i] < spl[k].Length)
+                            W[i] = spl[k].Length;
+                    }
+                }
+
+                string[] send = new string[5];
+                for (int i = 0; i < 5; i++)
+                {
+                    string[] row = new string[Length];
+                    for (int k = 0; k < Length; k++)
+                    {
+                        row[k] = ST[i*Length+k];
+                        while(row[k].Length < 6)
+                            row[k] = " " + row[k];
+                    }
+
+                    send[i] = string.Join("  ", row);
+                }
+
+                return string.Join("\n", send);
+            }
+        }
         public string StructDB { get; set; }
 
         // Структура паттерна в виде массива процентов
         List<int[]> _StructArr;
-        public List<int[]> StructArr
+        List<int[]> StructArr
         {
             get
             {
@@ -361,7 +427,7 @@ namespace MrRobot.Entity
 
                 foreach(var cndl in StructDB.Split(';'))
                 {
-                    int[] prc = Array.ConvertAll(cndl.Split(' '), s => int.Parse(s));
+                    int[] prc = Array.ConvertAll(cndl.Split(' '), s => (int)(double.Parse(s)*100));
                     _StructArr.Add(prc);
                 }
 

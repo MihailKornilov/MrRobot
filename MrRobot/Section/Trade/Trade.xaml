@@ -112,6 +112,13 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <!-- Шаблон для Лога -->
+        <DataTemplate x:Key="LogTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding DTime}" Width="120" Padding="0" Foreground="#AAA"/>
+                <Label Content="{Binding Text}" Padding="0"/>
+            </StackPanel>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
@@ -122,7 +129,6 @@
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="41"/>
-                <RowDefinition Height="230"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
@@ -133,9 +139,10 @@
                 <Separator Background="#C2CBD3" Margin="0"/>
             </StackPanel>
 
-            <!-- ПОДКЛЮЧЕНИЕ И ПАРАМЕТРЫ -->
+            <!-- ПОДКЛЮЧЕНИЕ, ГРАФИК, ЛОГ -->
             <Grid Grid.Row="1">
                 <TabControl BorderBrush="#D3DDE6" Background="#ECF3F8" Margin="-1,5,-1,0" SelectedIndex="1">
+                    <!-- Подключение -->
                     <TabItem>
                         <TabItem.Header>Подключение</TabItem.Header>
                         <TabItem.Content>
@@ -170,14 +177,17 @@
                         </TabItem.Content>
                     </TabItem>
 
+                    <!-- Параметры и график -->
                     <TabItem>
                         <TabItem.Header>Параметры</TabItem.Header>
                         <TabItem.Content>
                             <Grid>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="75"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
 
+                                <!-- Выбор инструмента и робота -->
                                 <StackPanel Grid.Row="0" Margin="8,8,0,0">
                                     <WrapPanel>
                                         <Label Content="Инструмент:"
@@ -213,65 +223,57 @@
                                     </WrapPanel>
                                 </StackPanel>
 
-                            </Grid>
-                        </TabItem.Content>
-                    </TabItem>
+                                <!-- График -->
+                                <Grid Grid.Row="1" Background="#222">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="203"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
 
-                </TabControl>
-            </Grid>
+                                    <Grid Grid.Column="0" Grid.Row="0" Height="34" VerticalAlignment="Top" Background="#555">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
 
-            <!-- ГРАФИК -->
-            <Grid Grid.Row="2" Background="#222">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="220"/>
-                    <ColumnDefinition Width="203"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="34"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+                                        <!-- Заголовок графика -->
+                                        <Entity:ChartHead x:Name="TradeChartHead" Grid.Column="0"/>
 
-                <Grid Grid.Column="0" Grid.Row="0" Height="34" VerticalAlignment="Top" Background="#555">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Заголовок графика -->
-                    <Entity:ChartHead x:Name="TradeChartHead" Grid.Column="0"/>
-                    
-
-                    <!-- Таймер в заголовке графика с правой стороры -->
-                    <StackPanel Grid.Column="1" Height="33" VerticalAlignment="Top" Background="#222">
-                        <TextBlock Name="TradeChartTime"
+                                        <!-- Таймер в заголовке графика с правой стороры -->
+                                        <StackPanel Grid.Column="1" Height="33" VerticalAlignment="Top" Background="#222">
+                                            <TextBlock Name="TradeChartTime"
                                    HorizontalAlignment="Right"
                                    Foreground="#DDD"
                                    Padding="0,7,7,0"
                                    FontSize="15"/>
-                    </StackPanel>
-                </Grid>
-                <wpf:ChromiumWebBrowser Name="TradeBrowser" Grid.Column="0" Grid.Row="1"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <wpf:ChromiumWebBrowser Name="TradeBrowser" Grid.Column="0" Grid.Row="1"/>
 
-                <!-- СТАКАН (книга ордеров) -->
-                <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Background="#555">
-                    <Grid Name="DepthPanel" Background="#222" Margin="1,0,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="24"/>
-                            <RowDefinition/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
+                                    <!-- СТАКАН (книга ордеров) -->
+                                    <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Background="#555">
+                                        <Grid Name="DepthPanel" Background="#222" Margin="1,0,0,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="24"/>
+                                                <RowDefinition/>
+                                                <RowDefinition Height="30"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
 
-                        <!-- Заголовок -->
-                        <WrapPanel Grid.Row="0" Name="HeadPanel">
-                            <Label Name="DepthHeadPrice"  Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="4,5,0,0"/>
-                            <Label Name="DepthHeadQty"    Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
-                            <Label Name="DepthHeadAmount" Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
-                        </WrapPanel>
-                        
-                        <!-- Ask -->
-                        <ListBox Grid.Row="1"
+                                            <!-- Заголовок -->
+                                            <WrapPanel Grid.Row="0" Name="HeadPanel">
+                                                <Label Name="DepthHeadPrice"  Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="4,5,0,0"/>
+                                                <Label Name="DepthHeadQty"    Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
+                                                <Label Name="DepthHeadAmount" Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
+                                            </WrapPanel>
+
+                                            <!-- Ask -->
+                                            <ListBox Grid.Row="1"
                              Name="DepthSellListBox"
                              Width="219"
                              HorizontalAlignment="Left"
@@ -281,19 +283,19 @@
                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
                              ItemTemplate="{StaticResource DepthItemTmp}"/>
 
-                        <!-- Текущая цена -->
-                        <StackPanel Grid.Row="2" Name="PricePanel">
-                            <Separator Background="#555" Margin="0"/>
-                            <TextBlock Name="DepthPrice"
+                                            <!-- Текущая цена -->
+                                            <StackPanel Grid.Row="2" Name="PricePanel">
+                                                <Separator Background="#555" Margin="0"/>
+                                                <TextBlock Name="DepthPrice"
                                        Foreground="#EF454A"
                                        FontSize="15"
                                        FontWeight="Bold"
                                        Margin="5,4"/>
-                            <Separator Background="#555" Margin="0"/>
-                        </StackPanel>
+                                                <Separator Background="#555" Margin="0"/>
+                                            </StackPanel>
 
-                        <!-- Bid -->
-                        <ListBox Grid.Row="3"
+                                            <!-- Bid -->
+                                            <ListBox Grid.Row="3"
                              Name="DepthBuyListBox"
                              Width="219"
                              HorizontalAlignment="Left"
@@ -302,13 +304,13 @@
                              BorderThickness="0"
                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
                              ItemTemplate="{StaticResource DepthItemTmp}"/>
-                    </Grid>
-                </Grid>
+                                        </Grid>
+                                    </Grid>
 
-                <!-- СДЕЛКИ -->
-                <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#888">
-                    <Grid Name="TradePanel" Background="#222" Margin="2,0,1,0">
-                        <ListBox Grid.Row="0"
+                                    <!-- СДЕЛКИ -->
+                                    <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#888">
+                                        <Grid Name="TradePanel" Background="#222" Margin="2,0,1,0">
+                                            <ListBox Grid.Row="0"
                              Name="TradeListBox"
                              Width="200"
                              HorizontalAlignment="Left"
@@ -317,9 +319,26 @@
                              BorderThickness="0"
                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
                              ItemTemplate="{StaticResource TradeItemTmp}"/>
-                    </Grid>
-                </Grid>
+                                        </Grid>
+                                    </Grid>
 
+                                </Grid>
+                            </Grid>
+                        </TabItem.Content>
+                    </TabItem>
+
+                    <!-- Лог -->
+                    <TabItem>
+                        <TabItem.Header>Log</TabItem.Header>
+                        <TabItem.Content>
+                            <ListBox Name="LogList"
+                                     Margin="5"
+                                     ItemTemplate="{StaticResource LogTmp}"/>
+                        </TabItem.Content>
+                    </TabItem>
+
+                    
+                </TabControl>
             </Grid>
 
         </Grid>

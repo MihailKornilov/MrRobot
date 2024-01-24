@@ -69,9 +69,7 @@ namespace MrRobot.Section
         {
             var item = InstrumentListBox.SelectedItem as CDIunit;
             INSTRUMENT = Instrument.Unit(item.InstrumentId);
-            INSTRUMENT.TimeFrame = item.TimeFrame;
-            INSTRUMENT.RowsCount = item.RowsCount;
-            INSTRUMENT.Table = item.Table;
+            INSTRUMENT.CdiId = item.Id;
 
             INSTRUMENT.BaseBalance = BaseBalance;
             INSTRUMENT.QuoteBalance = QuoteBalance;
@@ -228,14 +226,14 @@ namespace MrRobot.Section
         /// <summary>
         /// Запущено или нет автоматическое тестирование
         /// </summary>
-        private bool AutoGoStatus()
+        bool AutoGoStatus()
         {
             return AutoGoTimer != null;
         }
         /// <summary>
         /// Остановка автоматического тестирования
         /// </summary>
-        private void AutoGoStop()
+        void AutoGoStop()
         {
             if (!AutoGoStatus())
                 return;
@@ -247,7 +245,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Запуск автоматического тестирования - нажатие на кнопку
         /// </summary>
-        private void AutoGo(object sender, RoutedEventArgs e)
+        void AutoGo(object sender, RoutedEventArgs e)
         {
             if (!Visualization)
                 return;
@@ -271,8 +269,8 @@ namespace MrRobot.Section
             AutoGoButtonStatus();
             AutoGoSlider.Focus();
         }
-        private void AutoGoTick(object sender, EventArgs e) => TesterRobotStep();
-        private void AutoGoSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        void AutoGoTick(object sender, EventArgs e) => TesterRobotStep();
+        void AutoGoSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             position.Set("4_TesterSlider.Value", AutoGoSlider.Value.ToString());
 
@@ -284,7 +282,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Значения слайдера для изменения скорости движения графика во время тестирования
         /// </summary>
-        private double SliderV()
+        double SliderV()
         {
             Dictionary<double, double> ass = new Dictionary<double, double>();
 
@@ -305,7 +303,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Изменение состояния кнопки запуска теста
         /// </summary>
-        private void AutoGoButtonStatus(bool go = true)
+        void AutoGoButtonStatus(bool go = true)
         {
             CandleAddButton.Visibility = go ? Visibility.Hidden : Visibility.Visible;
             AutoGoButton.Content = go ? "Стоп" : "Старт";

@@ -484,22 +484,26 @@ namespace MrRobot.inc
 
             var CandleList = new List<CandleUnit>();
             var PatternList = new List<PatternUnit>();
+            int PatternLength = PARAM.PatternLength;
 
             while (res.Read())
             {
-                if (!PARAM.IsProcess)
-                    break;
+                if (bar.isUpd(i++))
+                {
+                    if (!PARAM.IsProcess)
+                        break;
 
-                bar.Val(i++, PARAM.PBar);
+                    PARAM.PBar.Report(bar.Value);
+                }
 
                 CandleList.Add(new CandleUnit(res));
 
-                if (CandleList.Count > PARAM.PatternLength)
+                if (CandleList.Count > PatternLength)
                     CandleList.RemoveRange(0, 1);
-                if (CandleList.Count != PARAM.PatternLength)
+                if (CandleList.Count != PatternLength)
                     continue;
 
-                var patt = new PatternUnit(CandleList, PARAM.CdiId);
+                var patt = new PatternUnit(CandleList, PARAM.CdiId, PARAM.PrecisionPercent);
                 if(patt.Size > 0)
                     PatternList.Add(patt);
             }

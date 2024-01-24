@@ -179,7 +179,8 @@ namespace MrRobot.Section
             sql = $"SELECT*FROM`{CDI.Table}`";
             var MASS = mysql.PatternSearchMass(sql, SPARAM, count);
 
-            int CountSearch = MASS.Count - SPARAM.PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
+            int PatternLength = SPARAM.PatternLength;
+            int CountSearch = MASS.Count - PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
             var FNDass = new Dictionary<string, int>();
 
             // Предварительный подсчёт общего количества итераций
@@ -190,48 +191,65 @@ namespace MrRobot.Section
             var bar = new ProBar(Iterations, 1000);
             SPARAM.PBar.Report(0);
 
+            Iterations = 0;
+            int CountSearchN = CountSearch + PatternLength;
+            var FoundList = SPARAM.FoundList;
+            var UnixNlist = new List<int>();
+
             for (int i = 0; i < CountSearch; i++)
             {
-                if (!SPARAM.IsProcess)
-                    return;
-
                 // Установка значения для Прогресс-бара
-                if (bar.isUpd(SPARAM.Iterations))
+                if (bar.isUpd(Iterations))
                 {
+                    if (!SPARAM.IsProcess)
+                        return;
+
                     SPARAM.ProсessInfo = $"Прошло времени: {bar.TimePass}    Осталось: {bar.TimeLeft}";
-                    int c = SPARAM.FoundList.Count;
+                    int c = FoundList.Count;
                     if (c > 0)
-                        SPARAM.ProсessInfo += $"\nНайдено {c} паттерн{format.End(c, "", "а", "ов")}";
+                        SPARAM.ProсessInfo += $"\nНайден{format.End(c, "", "о")} {c} паттерн{format.End(c, "", "а", "ов")}";
                     SPARAM.PBar.Report(bar.Value);
                 }
 
-                for (int n = i + SPARAM.PatternLength; n < CountSearch + SPARAM.PatternLength; n++)
+                var MASSi = MASS[i];
+                int nBegin = i + PatternLength;
+                for (int n = nBegin; n < CountSearchN; n++)
                 {
-                    SPARAM.Iterations++;
-
-                    if (!MASS[i].Compare(MASS[n]))
+                    var MASSnCL = MASS[n].CandleList;
+                    if (!MASSi.Compare(MASSnCL))
                         continue;
 
-                    string key = MASS[i].StructDB;
-                    int UnixN = MASS[n].CandleList[0].Unix;
+                    int UnixI = MASSi.CandleList[0].Unix;
+                    int UnixN = MASSnCL[0].Unix;
 
+                    // Если паттерн был найден ранее, пропуск
+                    if (UnixNlist.Contains(UnixI))
+                        continue;
+                    if (UnixNlist.Contains(UnixN))
+                        continue;
+
+                    UnixNlist.Add(UnixN);
+
+                    string key = MASSi.StructDB;
                     if (FNDass.ContainsKey(key))
                     {
                         int index = FNDass[key];
-                        var list = SPARAM.FoundList[index].UnixList;
+                        var list = FoundList[index].UnixList;
                         if (!list.Contains(UnixN))
                              list.Add(UnixN);
                         continue;
                     }
 
-                    MASS[i].UnixList = new List<int> { MASS[i].CandleList[0].Unix, UnixN };
-                    SPARAM.FoundList.Add(MASS[i]);
+                    MASSi.UnixList = new List<int> { UnixI, UnixN };
+                    FoundList.Add(MASSi);
 
-                    int c = SPARAM.FoundList.Count - 1;
+                    int c = FoundList.Count - 1;
                     FNDass.Add(key, c);
                 }
+                Iterations += CountSearchN - nBegin;
             }
 
+            SPARAM.Iterations = Iterations;
             SPARAM.IsProcess = false;
             SPARAM.PBar.Report(100);
             SPARAM.Duration = dur.Minutes();
@@ -473,6 +491,22 @@ namespace MrRobot.Section
         /// </summary>
         void FoundCodeGet(object sender, MouseButtonEventArgs e) => new PatternCode().Show();
         void FoundInfoShow(object sender, MouseButtonEventArgs e) => new PatternInfo().Show();
+
+        /// <summary>
+        /// Удаление поиска
+        /// </summary>
+        void SearchX(object sender, MouseButtonEventArgs e)
+        {
+            var CDI = SourceListBox.SelectedItem as CDIunit;
+            int PatternLength = (int)LengthSlider.Value;
+            int PrecisionPercent = (int)PrecisionPercentSlider.Value;
+            int SearchId = Patterns.SUnitIdOnParam(CDI.Id, PatternLength, PrecisionPercent);
+
+            SourceListBox.SelectedIndex = -1;
+            Patterns.SUnitDel(SearchId);
+            SourceListBox.SelectedItem = CDI;
+            global.MW.Pattern.PatternArchive.SearchList();
+        }
     }
 
     /// <summary>

@@ -576,14 +576,14 @@ namespace MrRobot.Entity
             Volume = src.Volume;
             TimeFrame = tf;
         }
-        public CandleUnit(CandleUnit src, double PriceMax, double PriceMin)
+        public CandleUnit(CandleUnit src, double PriceMax, double PriceMin, int PrecisionPercent)
         {
             Unix = src.Unix;
             High = src.High;
             Open = src.Open;
             Close = src.Close;
             Low = src.Low;
-            PatternCalc(PriceMax, PriceMin);
+            PatternCalc(PriceMax, PriceMin, PrecisionPercent);
         }
 
 
@@ -677,21 +677,25 @@ namespace MrRobot.Entity
             }
         }
 
-        // Размеры в процентах с точностью до 0.01
-        public double SpaceTop { get; set; }   // Верхнее пустое поле 
-        public double WickTop  { get; set; }   // Верхний хвост
-        public double Body     { get; set; }   // Тело
-        public double WickBtm  { get; set; }   // Нижний хвост
-        public double SpaceBtm { get; set; }   // Нижнее пустое поле
+        // Размеры в процентах умноженные на 100
+        public int SpaceTop { get; set; }   // Верхнее пустое поле 
+        public int WickTop  { get; set; }   // Верхний хвост
+        public int Body     { get; set; }   // Тело
+        public int WickBtm  { get; set; }   // Нижний хвост
+        public int SpaceBtm { get; set; }   // Нижнее пустое поле
 
 
-
-        // Размеры в округлённых процентах
-        public int SpaceTopInt { get; set; }
-        public int WickTopInt  { get; set; }
-        public int BodyInt     { get; set; }
-        public int WickBtmInt  { get; set; }
-        public int SpaceBtmInt { get; set; }
+        // Минимальные и максимальные размеры на основании PrecisionPercent (для сравнения паттернов) 
+        public int SpaceTopMin { get; set; }
+        public int SpaceTopMax { get; set; }
+        public int WickTopMin  { get; set; }
+        public int WickTopMax  { get; set; }
+        public int BodyMin     { get; set; }
+        public int BodyMax     { get; set; }
+        public int WickBtmMin  { get; set; }
+        public int WickBtmMax  { get; set; }
+        public int SpaceBtmMin { get; set; }
+        public int SpaceBtmMax { get; set; }
 
 
         // Внесение в базу одной свечи
@@ -723,39 +727,49 @@ namespace MrRobot.Entity
         }
 
         // Присвоение процентных соотношений свечи относительно размера паттерна
-        void PatternCalc(double PriceMax, double PriceMin)
+        void PatternCalc(double PriceMax, double PriceMin, int PrecisionPercent)
         {
             // Размер паттерна в пунктах
-            double Size = (PriceMax - PriceMin) / 100;
+            double Size = (PriceMax - PriceMin) / 10000;
 
             // Значения в процентах относительно размера паттерна
-            SpaceTop = (PriceMax - High) / Size;
-            WickTop  = (High - (IsGreen ? Close : Open)) / Size;
-            Body     = (Close - Open) / Size;
-            WickBtm  = ((IsGreen ? Open : Close) - Low) / Size;
-            SpaceBtm = (Low - PriceMin) / Size;
+            SpaceTop = (int)Math.Round((PriceMax - High) / Size);
+            WickTop  = (int)Math.Round((High - (IsGreen ? Close : Open)) / Size);
+            Body     = (int)Math.Round((Close - Open) / Size);
+            WickBtm  = (int)Math.Round(((IsGreen ? Open : Close) - Low) / Size);
+            SpaceBtm = (int)Math.Round((Low - PriceMin) / Size);
 
-            SpaceTopInt = (int)Math.Round(SpaceTop);
-            WickTopInt  = (int)Math.Round(WickTop);
-            BodyInt     = (int)Math.Round(Body);
-            WickBtmInt  = (int)Math.Round(WickBtm);
-            SpaceBtmInt = (int)Math.Round(SpaceBtm);
+            // Процент расхождения паттернов
+            double prc = Math.Round((double)(100 - PrecisionPercent + 1) / 200, 3);
 
-            //SpaceTopInt = (int)SpaceTop;
-            //WickTopInt  = (int)WickTop;
-            //BodyInt     = (int)Body;
-            //WickBtmInt  = (int)WickBtm;
-            //SpaceBtmInt = (int)SpaceBtm;
+            int diff = (int)Math.Round(SpaceTop * prc);
+            SpaceTopMin = SpaceTop - diff;
+            SpaceTopMax = SpaceTop + diff;
+
+            diff = (int)Math.Round(WickTop * prc);
+            WickTopMin = WickTop - diff;
+            WickTopMax = WickTop + diff;
+
+            diff = (int)Math.Round(Body * prc) * (IsGreen ? 1 : -1);
+            BodyMin = Body - diff;
+            BodyMax = Body + diff;
+
+            diff = (int)Math.Round(WickBtm * prc);
+            WickBtmMin = WickBtm - diff;
+            WickBtmMax = WickBtm + diff;
+
+            diff = (int)Math.Round(SpaceBtm * prc);
+            SpaceBtmMin = SpaceBtm - diff;
+            SpaceBtmMax = SpaceBtm + diff;
         }
-
-        // Структура свечи с учётом пустот сверху и снизу в округлённых процентах
+        // Структура свечи с учётом пустот сверху и снизу
         public string Struct()
         {
-            return SpaceTopInt + " " +
-                   WickTopInt + " " +
-                   BodyInt + " " +
-                   WickBtmInt + " " +
-                   SpaceBtmInt;
+            return $"{(decimal)SpaceTop/100} " +
+                   $"{(decimal)WickTop /100} " +
+                   $"{(decimal)Body/100} " +
+                   $"{(decimal)WickBtm/100} " +
+                   $"{(decimal)SpaceBtm/100}";
         }
     }
 }

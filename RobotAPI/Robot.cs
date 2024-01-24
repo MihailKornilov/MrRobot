@@ -102,15 +102,14 @@ namespace RobotAPI
             /// <summary>
             /// Показ таймфреймов, у который появилась новая свеча
             /// </summary>
-            public static void Show()
+            public static string Show()
             {
                 var list = new List<string>();
                 foreach (int key in tfAss.Keys)
                     if (tfAss[key])
                         list.Add(key.ToString());
 
-                string tfs = string.Join(",", list.ToArray());
-                WriteLine(format.TimeNow() + "  " + tfs);
+                return string.Join(",", list.ToArray());
             }
         }
 
@@ -126,6 +125,7 @@ namespace RobotAPI
             public static int Count { get { return All.Count; } }   // Общее количество найденных паттернов
 
 
+            public static int CdiId { get; private set; }
             public static string Symbol { get; private set; }
             public static int TimeFrame { get; private set; }
             public static string TF { get; private set; }
@@ -160,6 +160,7 @@ namespace RobotAPI
             {
                 All = all;
                 SRC = null;
+                CdiId = INSTRUMENT.CdiId;
                 Symbol = INSTRUMENT.Name;
                 TimeFrame = INSTRUMENT.TimeFrame;
                 TF = INSTRUMENT.TF;
@@ -173,15 +174,9 @@ namespace RobotAPI
 
                 foreach (dynamic item in All)
                 {
+                    if (item.CdiId != CdiId)
+                        continue;
                     if (item.IsTested)
-                        continue;
-                    if (Symbol != null && item.Symbol != Symbol)
-                        continue;
-                    if (TimeFrame > 0 && TimeFrame != item.TimeFrame)
-                        continue;
-                    if (Length > 0 && Length != item.Length)
-                        continue;
-                    if (PrecisionPercent > 0 && PrecisionPercent != item.PrecisionPercent)
                         continue;
 
                     send.Add(item);
@@ -205,7 +200,7 @@ namespace RobotAPI
                 if (CandleList.Count > SRC.Length)
                     CandleList.RemoveRange(0, 1);
 
-                var dst = SRC.Create(CandleList, SRC.CdiId);
+                var dst = SRC.Create(CandleList, SRC.CdiId, PrecisionPercent);
                 if (dst.Size == 0)
                     return false;
 

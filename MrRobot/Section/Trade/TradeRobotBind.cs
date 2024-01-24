@@ -9,6 +9,7 @@ using static RobotAPI.Robot;
 using MrRobot.Entity;
 using MrRobot.inc;
 using System.Threading;
+using System.Linq;
 
 namespace MrRobot.Section
 {
@@ -74,6 +75,7 @@ namespace MrRobot.Section
 
             TRADE_GLOBAL_INIT();
             Init.Invoke(ObjInstance, new object[] { new string[] { } });
+            Log();
 
             IsTradeInited = true;
         }
@@ -116,7 +118,6 @@ namespace MrRobot.Section
             await Task.Run(() =>
             {
                 CANDLE_NEW.Update();
-                CANDLE_NEW.Show();
 
                 var SymbolList = CANDLES_ACTUAL.SymbolList();
                 if (SymbolList.Count == 0)
@@ -141,7 +142,29 @@ namespace MrRobot.Section
 
             // Выполнение очередного шага в Роботе
             Step.Invoke(ObjInstance, new object[] { });
+
+            //Log();
         }
+
+        /// <summary>
+        /// Вывод информации в лог Тестера
+        /// </summary>
+        void Log()
+        {
+            var list = LOG_LIST();
+
+            if (list == null)
+                return;
+            if (list.Count == 0)
+                return;
+
+            foreach (var unit in list)
+                LogList.Items.Add(unit);
+
+            int c = LogList.Items.Count - 1;
+            LogList.ScrollIntoView(LogList.Items[c]);
+        }
+
     }
 
 
@@ -205,6 +228,5 @@ namespace MrRobot.Section
                 //ChartUpdate();
             }
         }
-
     }
 }

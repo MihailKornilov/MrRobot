@@ -23,10 +23,10 @@
 
         <!-- Шаблон для найденных паттернов -->
         <DataTemplate x:Key="PatternListTmp">
-            <StackPanel Orientation="Horizontal" Cursor="Hand">
-                <Label Content="{Binding Num}"    Width="35" Padding="0,0,10,0" FontSize="11" FontWeight="Medium" Foreground="#999" HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Struct}" Width="95" Padding="0" FontSize="11"/>
-                <Label Content="{Binding Repeat}" Width="45" Padding="0" FontSize="11" FontWeight="Bold" HorizontalContentAlignment="Right"/>
+            <StackPanel Orientation="Horizontal" Margin="0,7">
+                <Label Content="{Binding Num}"    Width="35"  Padding="0,0,10,0" FontSize="12" FontWeight="Medium" Foreground="#999" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Struct}" Width="160" Padding="0"        FontSize="12" FontFamily="Courier New"/>
+                <Label Content="{Binding Repeat}" Width="35"  Padding="0"        FontSize="11" FontWeight="Bold" HorizontalContentAlignment="Right"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
@@ -77,7 +77,7 @@
                     <ColumnDefinition Width="255"/>
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="265"/>
-                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="270"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
@@ -139,8 +139,9 @@
                                 <Slider Name="PrecisionPercentSlider"
                                         Width="90"
                                         Margin="5,1,0,0"
-                                        Minimum="70"
+                                        Minimum="50"
                                         Maximum="100"
+                                        TickFrequency="5"
                                         IsSnapToTickEnabled="True"
                                         ValueChanged="PrecisionPercentChanged"/>
                             </WrapPanel>
@@ -187,7 +188,14 @@
 
                         <!-- Результаты поиска -->
                         <StackPanel Name="ResultPanel" Visibility="Collapsed">
-                            <Label Content="Результат:" Margin="10,7,0,0" Style="{StaticResource LabelMedium}"/>
+                            <WrapPanel>
+                                <Label Content="Результат:" Margin="10,7,0,0" Style="{StaticResource LabelMedium}"/>
+                                <TextBlock Name="TBSearchX"
+                                           Text="удалить поиск"
+                                           Margin="90,9,0,0"
+                                           Style="{StaticResource TBLinkRed}"
+                                           MouseLeftButtonDown="SearchX"/>
+                            </WrapPanel>
                             <WrapPanel Margin="20,3,0,0">
                                 <Label Content="Совпадения:" Style="{StaticResource LabelMain}"/>
                                 <TextBlock Name="CandlesDuplicate" Width="50" Text="0" FontWeight="Bold" Padding="0,2,0,0"/>
@@ -208,10 +216,10 @@
                     <WrapPanel Margin="10,10,0,0">
                         <Label Content="№" FontSize="11" Padding="0" Margin="20,0,0,0" Foreground="#888"/>
                         <Label Content="Паттерн" FontSize="11" Padding="0" Margin="9,0,0,0" Foreground="#888"/>
-                        <Label Content="Совпадения" FontSize="11" Padding="0" Margin="39,0,0,0" Foreground="#888"/>
+                        <Label Content="Совпадения" FontSize="11" Padding="0" Margin="93,0,0,0" Foreground="#888"/>
                     </WrapPanel>
                     <ListBox Name="FoundListBox"
-                             Width="210"
+                             Width="260"
                              Height="167"
                              HorizontalAlignment="Left"
                              Margin="10,2,0,0"
@@ -222,11 +230,11 @@
                 <!-- Мини-график для визуального отображения найденного паттерна -->
                 <StackPanel Grid.Column="4"
                             Name="FoundBrowserPanel"
-                            Margin="10,5,0,0"
+                            Margin="5,5,0,0"
                             Width="200"
                             HorizontalAlignment="Left"
                             Visibility="Hidden">
-                    <WrapPanel Margin="0,4">
+                    <WrapPanel Margin="0,4,0,3">
                         <TextBlock Text="Инфо"
                                    FontSize="11"
                                    TextDecorations="Underline"

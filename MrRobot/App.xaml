@@ -161,6 +161,17 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Ссылка: изменение цвета при наведении (красная) -->
+        <Style x:Key="TBLinkRed" TargetType="TextBlock">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#ECC"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#C77" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
 
 
 

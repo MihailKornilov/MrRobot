@@ -46,7 +46,7 @@ namespace MrRobot.Section
                 if (CandleList.Count < found.Length)
                     continue;
 
-                PatternList.Add(new PatternUnit(CandleList, found.CdiId));
+                PatternList.Add(new PatternUnit(CandleList, found.CdiId, found.PrecisionPercent));
                 CandleList.Clear();
             }
             return PatternList;

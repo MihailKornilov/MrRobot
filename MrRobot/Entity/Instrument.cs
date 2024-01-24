@@ -62,8 +62,6 @@ namespace MrRobot.Entity
                     QuoteCoin = v["quoteCoin"]
                 };
 
-                Unit.Exp = format.Exp(Unit.NolCount);
-
                 InstrumentList.Add(Unit);
                 IdUnitAss.Add(Id, Unit);
             }
@@ -181,6 +179,7 @@ namespace MrRobot.Entity
 
         public double TickSize { get; set; }    // Шаг цены
         public int NolCount { get; set; }       // Количество нулей после запятой. Получение из TickSize
+        public ulong Exp { get { return format.Exp(NolCount); } } // Cтепень числа 10
         public string Status { get; set; }      // Статус инструмента:
                                                 //      "1" - активен
                                                 //      "0" - не активен
@@ -195,10 +194,10 @@ namespace MrRobot.Entity
         public double BaseCommiss { get; set; } // Сумма комиссий исполненных ордеров базовой монеты
         public double QuoteCommiss { get; set; }// Сумма комиссий исполненных ордеров базовой котировочной монеты
 
-        public string Table { get; set; }       // Имя таблицы со свечами
-        public int RowsCount { get; set; }      // Количество свечей в графике (в таблице)
-        public int TimeFrame { get; set; }      // Таймфрейм указывается, если выбор из свечных данных
-        public string TF { get { return format.TF(TimeFrame); } } // Таймфрейм 10m
-        public ulong Exp { get; set; }          // Cтепень числа 10. Получение из NolCount
+        public int CdiId { get; set; }          // ID свечных данных
+        public string Table { get { return Candle.Unit(CdiId).Table; } }        // Имя таблицы со свечами
+        public int RowsCount { get { return Candle.Unit(CdiId).RowsCount; } }   // Количество свечей в графике (в таблице)
+        public int TimeFrame { get { return Candle.Unit(CdiId).TimeFrame; } }   // Таймферйм
+        public string TF { get { return Candle.Unit(CdiId).TF; } } // Таймфрейм 10m
     }
 }
