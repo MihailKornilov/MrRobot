@@ -157,7 +157,7 @@ namespace MrRobot.Section
             param.FoundRepeatMin = Item.FoundRepeatMin;
 
             global.MW.Pattern.ArchiveGo();
-            global.MW.Pattern.SourceListBox.SelectedItem = CDI;
+            CDIpanel.CdiId = CDI.Id;
             global.MW.Pattern.LengthSlider.Value = len;
             global.MW.Pattern.PrecisionPercentSlider.Value = Item.PrecisionPercent;
             global.MW.Pattern.FoundRepeatMin.Text = Item.FoundRepeatMin.ToString();
@@ -169,14 +169,9 @@ namespace MrRobot.Section
         /// </summary>
         void SearchX(object sender, MouseButtonEventArgs e)
         {
-            int index = global.MW.Pattern.SourceListBox.SelectedIndex;
-            global.MW.Pattern.SourceListBox.SelectedIndex = -1;
-
             var label = sender as Label;
             Patterns.SUnitDel(label.TabIndex);
             SearchList();
-
-            global.MW.Pattern.SourceListBox.SelectedIndex = index;
         }
     }
 }

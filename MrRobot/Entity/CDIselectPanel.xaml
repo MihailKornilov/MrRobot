@@ -1,0 +1,112 @@
+﻿<UserControl x:Class="MrRobot.Entity.CDIselectPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignWidth="415"
+             d:DesignHeight="270">
+
+    <UserControl.Resources>
+        <!-- Шаблон для списка свечных данных -->
+        <DataTemplate x:Key="CdiItemTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Width="0"   Content="{Binding Id}"   Padding="0,2"/>
+                <Label Width="100" Content="{Binding Name}" Padding="0,2"/>
+                <Label Width="35"
+                       Content="{Binding TF}"
+                       Padding="0,2,10,0"
+                       FontWeight="Bold"
+                       HorizontalContentAlignment="Right"/>
+                <Label Width="122" Content="{Binding DatePeriod}" Padding="0,2" Foreground="#777"/>
+            </StackPanel>
+        </DataTemplate>
+        <!-- Шаблон для групп свечных данных -->
+        <DataTemplate x:Key="GroupTmp">
+            <WrapPanel>
+                <Label Content="{Binding Name}"
+                       Width="90"
+                       Padding="0"
+                       Foreground="#004481"
+                       FontSize="11"/>
+                <Label Content="{Binding Num}"
+                       Padding="0"
+                       Width="13"
+                       HorizontalContentAlignment="Right"
+                       Foreground="#BBB"
+                       FontWeight="Medium"
+                       FontSize="11"/>
+            </WrapPanel>
+        </DataTemplate>
+        <!-- Стили для единицы группы свечных данных -->
+        <Style x:Key="GroupItemStyle" TargetType="ListViewItem">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="3,0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Name="OpenPanel"
+            Background="#DCEBF8"
+			BorderThickness="1"
+			BorderBrush="#C4D1DD"
+			Padding="4"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+            Visibility="Hidden">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <ListView Name="GroupBox"
+                      Grid.Column="0"
+                      Height="235"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      Margin="0,0,4,0"
+                      ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      ItemTemplate="{StaticResource GroupTmp}"
+                      ItemContainerStyle="{StaticResource GroupItemStyle}"
+                      SelectionChanged="GroupClick"/>
+
+            <StackPanel Grid.Column="1">
+                <TextBox Name="FindBox" FontSize="14" Padding="4,3" TextChanged="FindChanged"/>
+                <Label Name="LabelFound"
+                        Width="100"
+                        Foreground="#999"
+                        Padding="0"
+                        Margin="0,-23,25,0"
+                        FontSize="14"
+                        HorizontalAlignment="right"
+                        HorizontalContentAlignment="Right"/>
+                <Label Name="FoundCancel"
+                        Width="20"
+                        Opacity=".3"
+                        Padding="0"
+                        Margin="0,-23,7,0"
+                        FontSize="14"
+                        Foreground="#A22"
+                        FontWeight="Bold"
+                        FontFamily="Comic Sans Ms"
+                        Content="X"
+                        Cursor="Hand"
+                        HorizontalAlignment="right"
+                        HorizontalContentAlignment="Right"
+                        MouseLeftButtonDown="FoundCancelClick"
+                        Visibility="Hidden"/>
+                <ListBox Name="CDIList"
+                         Width="285"
+                         Height="204"
+                         Margin="0,4,0,0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                         ItemTemplate="{StaticResource CdiItemTmp}"
+                         MouseDoubleClick="CDIselected"/>
+            </StackPanel>
+        </Grid>
+
+    </Border>
+
+</UserControl>

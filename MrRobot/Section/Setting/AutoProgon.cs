@@ -114,7 +114,8 @@ namespace MrRobot.Section
             SectionGo(2);
 
             // Выбор скачанной истории TF=1
-            global.MW.Converter.SourceListBox.SelectedItem = Candle.UnitOnSymbol(PARAM.Symbol);
+            var unit = Candle.UnitOnSymbol(PARAM.Symbol);
+            //global.MW.CDIselectPanel.Id(2, unit.Id);
 
             // Выбор таймфреймов
             int[] TimeFrame = Array.ConvertAll(PARAM.ConvertTF.Split(','), x => int.Parse(x));
@@ -183,7 +184,7 @@ namespace MrRobot.Section
             // Выбор свечных данных
             int index = PARAM.Index;
             int CdiId = PARAM.ConvertedIds[index];
-            global.MW.Pattern.SourceListBox.SelectedItem = Candle.Unit(CdiId);
+            CDIpanel.Page(3).CdiId = CdiId;
 
             if (!PatternSearchAgain(CdiId))
                 PARAM.Index++;

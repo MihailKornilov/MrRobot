@@ -149,6 +149,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Entity\CDIselectPanel.xaml.cs">
+      <DependentUpon>CDIselectPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\CDIselectLink.xaml.cs">
+      <DependentUpon>CDIselectLink.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entity\Patterns.cs" />
     <Compile Include="Section\Converter\Converter.xaml.cs">
       <DependentUpon>Converter.xaml</DependentUpon>
@@ -184,6 +190,14 @@
     <Compile Include="Section\Trade\Trade.xaml.cs">
       <DependentUpon>Trade.xaml</DependentUpon>
     </Compile>
+    <Page Include="Entity\CDIselectPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entity\CDIselectLink.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Entity\ChartHead.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

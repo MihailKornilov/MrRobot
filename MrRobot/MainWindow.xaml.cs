@@ -51,16 +51,16 @@ namespace MrRobot
             new Candle();
             new Patterns();
             new Robots();
+            new CDIpanel();
 
             InitializeComponent();
-
 
             // Разрешение экрана
             //Rect scr = SystemParameters.WorkArea;
             //WriteLine("scr.Width = " + scr.Width);
             //WriteLine("scr.Height = " + scr.Height);
 
-            Width  = position.Val("MainWindow.Width",  1366);
+            Width  = position.Val("MainWindow.Width", 1366);
             Height = position.Val("MainWindow.Height", 800);
             Left   = position.Val("MainWindow.Left",   100);
             Top    = position.Val("MainWindow.Top",    100);
@@ -138,6 +138,8 @@ namespace MrRobot
             sect = FindName(section[index]) as UserControl;
             sect.Visibility = Visibility.Visible;
 
+            CDIpanel.PageChanged();
+
             switch (index)
             {
                 case 1:
@@ -153,7 +155,6 @@ namespace MrRobot
                         SectionUpd.Converter();
 
                     Converter.ConverterInit();
-                    Converter.ConverterFindBox.Focus();
                     break;
 
                 case 3:
@@ -190,7 +191,17 @@ namespace MrRobot
         }
 
 
+        //public static Rect GetAbsolutePlacement(this FrameworkElement element, bool relativeToScreen = false)
+        //{
+        //    var absolutePos = element.PointToScreen(new Point(0, 0));
 
+        //    if (relativeToScreen)
+        //        return new Rect(absolutePos.X, absolutePos.Y, element.ActualWidth, element.ActualHeight);
+
+        //    var posMW = Application.Current.MainWindow.PointToScreen(new Point(0, 0));
+        //    absolutePos = new Point(absolutePos.X - posMW.X, absolutePos.Y - posMW.Y);
+        //    return new Rect(absolutePos.X, absolutePos.Y, element.ActualWidth, element.ActualHeight);
+        //}
 
 
 

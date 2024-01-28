@@ -16,13 +16,33 @@ namespace RobotAPI
         public static int UNIX      { get; private set; }
         public static string DATE_TIME { get { return format.DTimeFromUnix(UNIX); } }
 
+        
+        static bool IS_TESTER { get; set; }                     // Робот запущен с тестера
+
 
         public static dynamic INSTRUMENT { get; set; }          // Текущий инструмент
-        public static List<dynamic> CANDLES { get; set; }       // Текущий список свечей
         public static List<object> ORDERS { get; private set; } // Список ордеров
-    
 
-        static bool IS_TESTER { get; set; }                     // Робот запущен с тестера
+
+
+        static dynamic CANDLE_CURRENT { get; set; }     // Текущая свеча, которая формируется в данный момент из TF1
+        static int CANDLES_INDEX { get; set; }  // Индекс свечных данных
+        public static int CANDLES_COUNT { get { return CANDLES_INDEX + 1; } }
+        public static dynamic CANDLES(int index = 0)
+        {
+            if (CANDLES_TF1_USE && index == 0)
+                return CANDLE_CURRENT;
+
+            int i = CANDLES_INDEX - index;
+
+            if(i < 0)
+                return null;
+            if (CANDLES_DATA == null)
+                return null;
+
+            return CANDLES_DATA[i];
+        }
+
 
 
         /// <summary>
@@ -30,18 +50,16 @@ namespace RobotAPI
         /// </summary>
         static void CandleGlobalSet()
         {
-            if (CANDLES == null)
-                return;
-            if (CANDLES.Count == 0)
+            if (CANDLES() == null)
                 return;
 
-            UNIX = CANDLES[0].Unix;
-            PRICE = CANDLES[0].Close;
-            HIGH = CANDLES[0].High;
-            OPEN = CANDLES[0].Open;
-            CLOSE = CANDLES[0].Close;
-            LOW = CANDLES[0].Low;
-            VOLUME = CANDLES[0].Volume;
+            UNIX   = CANDLES().Unix;
+            PRICE  = CANDLES().Close;
+            HIGH   = CANDLES().High;
+            OPEN   = CANDLES().Open;
+            CLOSE  = CANDLES().Close;
+            LOW    = CANDLES().Low;
+            VOLUME = CANDLES().Volume;
         }
 
 
@@ -110,8 +128,6 @@ namespace RobotAPI
                 return string.Join(",", list.ToArray());
             }
         }
-
-
 
 
         /// <summary>
@@ -193,7 +209,7 @@ namespace RobotAPI
                 if (!IS_CANDLE_FULL)
                     return false;
 
-                CandleList.Add(CANDLES[0]);
+                CandleList.Add(CANDLES());
 
                 if (CandleList.Count < SRC.Length)
                     return false;

@@ -278,23 +278,23 @@
 
                                             <!-- Ask -->
                                             <ListBox Grid.Row="1"
-                             Name="DepthSellListBox"
-                             Width="219"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Bottom"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                             ItemTemplate="{StaticResource DepthItemTmp}"/>
+                                                     Name="DepthSellListBox"
+                                                     Width="219"
+                                                     HorizontalAlignment="Left"
+                                                     VerticalAlignment="Bottom"
+                                                     Background="Transparent"
+                                                     BorderThickness="0"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                     ItemTemplate="{StaticResource DepthItemTmp}"/>
 
                                             <!-- Текущая цена -->
                                             <StackPanel Grid.Row="2" Name="PricePanel">
                                                 <Separator Background="#555" Margin="0"/>
                                                 <TextBlock Name="DepthPrice"
-                                       Foreground="#EF454A"
-                                       FontSize="15"
-                                       FontWeight="Bold"
-                                       Margin="5,4"/>
+                                                           Foreground="#EF454A"
+                                                           FontSize="15"
+                                                           FontWeight="Bold"
+                                                           Margin="5,4"/>
                                                 <Separator Background="#555" Margin="0"/>
                                             </StackPanel>
 

@@ -5,7 +5,8 @@ namespace RobotAPI
     public static partial class Robot
     {
         public static List<dynamic> CANDLES_DATA { get; set; }      // Список свечей выбранного инструмента
-        public static List<dynamic> CANDLES_TF1 { get; set; }       // Список свечей выбранного инструмента: таймфрейма 1m
+        public static List<dynamic> CANDLES_TF1_DATA { get; set; }  // Список свечей выбранного инструмента: таймфрейма 1m
+        static int CANDLES_TF1_INDEX { get; set; }
         public static bool CANDLES_TF1_USE { get; set; }            // Флаг испльзования таймфрейма 1m
         public static bool IS_CANDLE_FULL { get; private set; }     // Свеча сформирована (всегда, если используется таймфрейм 1m)
 
@@ -21,11 +22,16 @@ namespace RobotAPI
         public static void TESTER_GLOBAL_INIT()
         {
             IS_TESTER = true;
+
+            CANDLES_INDEX = -1;
+            CANDLES_TF1_INDEX = 0;
+            CANDLE_CURRENT = null;
+            IS_CANDLE_FULL = !CANDLES_TF1_USE;
+
             CandleClear();
             OrderClear();
             TESTER_AUTO = false;
             TESTER_FINISHED = false;
-            IS_CANDLE_FULL = !CANDLES_TF1_USE;
             new LOGG();
         }
 
@@ -55,11 +61,6 @@ namespace RobotAPI
             CLOSE = 0;
             LOW = 0;
             VOLUME = 0;
-
-            CANDLES = new List<dynamic>();
-
-            // Инициализация графика свечных данных 1m
-            TF1i = 0;
         }
 
         /// <summary>
@@ -70,14 +71,11 @@ namespace RobotAPI
             if (CandleNewTF1())
                 return;
 
-            CANDLES.Insert(0, CANDLES_DATA[TF1i++]);
+            CANDLES_INDEX++;
             CandleGlobalSet();
 
-            TESTER_FINISHED = TF1i >= INSTRUMENT.RowsCount;
+            TESTER_FINISHED = CANDLES_COUNT >= INSTRUMENT.RowsCount;
         }
-
-
-        static int TF1i { get; set; }  // Индекс свечных данных CANDLES_TF1
         /// <summary>
         /// Формирование свечи из минутного таймфрейма
         /// </summary>
@@ -86,15 +84,19 @@ namespace RobotAPI
             if (!CANDLES_TF1_USE)
                 return false;
 
-            dynamic tf1 = CANDLES_TF1[TF1i++];
+            int i = CANDLES_TF1_INDEX++;
+            dynamic tf1 = CANDLES_TF1_DATA[i];
 
-            if (CANDLES.Count == 0 || !CANDLES[0].Upd(tf1))
-                CANDLES.Insert(0, tf1.Clone(INSTRUMENT.TimeFrame));
+            if(CANDLE_CURRENT == null || !CANDLE_CURRENT.Upd(tf1))
+            {
+                CANDLE_CURRENT = tf1.Clone(INSTRUMENT.TimeFrame);
+                CANDLES_INDEX++;
+            }
 
             CandleGlobalSet();
 
-            IS_CANDLE_FULL = CANDLES[0].IsFull;
-            TESTER_FINISHED = TF1i >= CANDLES_TF1.Count;
+            IS_CANDLE_FULL = CANDLE_CURRENT.IsFull;
+            TESTER_FINISHED = CANDLES_TF1_INDEX >= CANDLES_TF1_DATA.Count;
 
             return true;
         }

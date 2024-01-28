@@ -16,6 +16,7 @@ namespace MrRobot.Section
         {
             InitializeComponent();
             TesterInit();
+            CDIpanel.Page(4).TBLink = SelectLink.TBLink;
         }
 
         public void TesterInit()
@@ -36,6 +37,7 @@ namespace MrRobot.Section
             AutoGoSlider.Value = position.Val("4_TesterSlider.Value", 0);
 
             LogMenu.SelectedIndex = position.Val("4_LogMenu_SelectedIndex", 0);
+
 
             global.Inited(4);
         }

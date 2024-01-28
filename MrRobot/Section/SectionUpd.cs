@@ -43,12 +43,6 @@ namespace MrRobot.Section
         {
             if (isUpdateLater(2))
                 return;
-
-            int id = global.MW.Converter.SourceListBox.SelectedIndex;
-            global.MW.Converter.SourceListBox.ItemsSource = null;
-            global.MW.Converter.SourceListBox.ItemsSource = Candle.List1m();
-            global.MW.Converter.SourceListBox.SelectedIndex = id;
-            global.MW.Converter.ResultListCreate();
         }
 
         /// <summary>
@@ -58,9 +52,6 @@ namespace MrRobot.Section
         {
             if (isUpdateLater(3))
                 return;
-
-            global.MW.Pattern.SourceListBox.ItemsSource = null;
-            global.MW.Pattern.SourceListBox.ItemsSource = Candle.ListAll();
         }
 
         /// <summary>

@@ -16,7 +16,8 @@ namespace MrRobot.Section
         public Converter()
         {
             InitializeComponent();
-            ConverterInit();
+            CDIpanel.Page(2).TBLink = SelectLink.TBLink;
+            CDIpageUnit.OutMethod += SourceChanged;
         }
 
         public void ConverterInit()
@@ -24,46 +25,23 @@ namespace MrRobot.Section
             if (global.IsInited(2))
                 return;
 
-            ConverterFindBox.Text = position.Val("2_ConverterFindBox_Text");
-            SourceListBox.ItemsSource = Candle.List1m(ConverterFindBox.Text);
-            SourceListBox.SelectedIndex = position.Val("2_SourceListBox_SelectedIndex", 0);
+            SourceChanged();
 
             global.Inited(2);
         }
 
-        /// <summary>
-        /// Быстрый поиск по исходным инструментам
-        /// </summary>
-        void SourceFind(object sender, TextChangedEventArgs e)
+        bool IsSourceChosen => SourceId > 0;        // Свечные данные выбраны
+        int SourceId => CDIpanel.CdiId;  // ID свечных данных
+        CDIunit SourceUnit => Candle.Unit(SourceId);// Единица свечных данных
+
+
+        public void SourceChanged()
         {
-            TextBox box = sender as TextBox;
-            position.Set("2_ConverterFindBox_Text", box.Text);
-            SourceListBox.ItemsSource = Candle.List1m(box.Text);
-        }
-
-
-        /// <summary>
-        /// Выбран новый исходный таймфрейм
-        /// </summary>
-        void SourceListBoxChanged(object sender, MouseButtonEventArgs e)
-        {
-            var panel = (FrameworkElement)sender as StackPanel;
-            var label = panel.Children[0] as Label;
-
-            int content = Convert.ToInt32(label.Content);
-            int index = SourceListBox.SelectedIndex;
-
-            if (content != index)
+            if (position.MainMenu() != 2)
+                return;
+            if (!IsSourceChosen)
                 return;
 
-            SourceListBoxChanged();
-        }
-        void SourceListBoxChanged(object sender, SelectionChangedEventArgs e) => SourceListBoxChanged();
-        void SourceListBoxChanged()
-        {
-            position.Set("2_SourceListBox_SelectedIndex", SourceListBox.SelectedIndex);
-            SourceListBox.ScrollIntoView(SourceListBox.SelectedItem);
-            ResultListBox.ItemsSource = null;
 
             ResultListCreate();
             ChartBrowserShow();
@@ -74,12 +52,8 @@ namespace MrRobot.Section
             if (global.IsAutoProgon)
                 return;
 
-            var item = SourceListBox.SelectedItem as CDIunit;
-            if (item == null)
-                return;
-
-            ConverterBrowser.Address = new Chart("Converter", item.Table).PageHtml;
-            ConverterChartHead.Update(item);
+            ConverterBrowser.Address = new Chart("Converter", SourceUnit.Table).PageHtml;
+            ConverterChartHead.Update(SourceUnit);
         }
 
 
@@ -114,7 +88,7 @@ namespace MrRobot.Section
         /// </summary>
         async void ConvertGo(object sender, RoutedEventArgs e)
         {
-            if (SourceListBox.SelectedIndex < 0)
+            if (!IsSourceChosen)
                 return;
 
             int[] CheckedTF = ConvertCheckedTF();
@@ -128,12 +102,11 @@ namespace MrRobot.Section
             ProgressMain.Value = 0;
             ProgressSub.Value = 0;
 
-            var CDI = SourceListBox.SelectedItem as CDIunit;
             ConvertParam = new CDIparam()
             {
-                Id = CDI.Id,
-                Symbol = CDI.Symbol,
-                NolCount = CDI.NolCount,
+                Id = SourceUnit.Id,
+                Symbol = SourceUnit.Symbol,
+                NolCount = SourceUnit.NolCount,
                 ConvertedIds = new int[CheckedTF.Length],
                 Progress = new Progress<decimal>(v =>
                 {
@@ -149,12 +122,13 @@ namespace MrRobot.Section
             await Task.Run(() => ConvertProcess(ConvertParam, CheckedTF));
 
             new Candle();
-            Instrument.DataCountPlus(CDI.InstrumentId, CheckedTF.Length);
+            Instrument.DataCountPlus(SourceUnit.InstrumentId, CheckedTF.Length);
             SectionUpd.All();
 
             ConvertGoButton.Visibility = Visibility.Visible;
             ProcessPanel.Visibility = Visibility.Collapsed;
             TFpanel.IsEnabled = true;
+            ResultListCreate();
 
             AutoProgon.PatternSearchSetup();
         }
@@ -249,14 +223,13 @@ namespace MrRobot.Section
         /// </summary>
         public void ResultListCreate()
         {
-            var item = SourceListBox.SelectedItem as CDIunit;
-            if (item == null)
+            if (!IsSourceChosen)
             {
-                ConverterResultPanel.Visibility = Visibility.Hidden;
+                ResultListBox.ItemsSource = null;
                 return;
             }
 
-            var list = Candle.ListOnIID(item.InstrumentId, false);
+            var list = Candle.ListOnIID(SourceUnit.InstrumentId, false);
             ResultListBox.ItemsSource = list;
             ConverterResultPanel.Visibility = list.Count == 0 ? Visibility.Hidden : Visibility.Visible;
         }

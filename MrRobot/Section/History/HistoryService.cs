@@ -164,7 +164,7 @@ namespace MrRobot.Section
         /// </summary>
         void InstrumentHistoryBeginUpdate(InstrumentUnit unit)
         {
-            if (!unit.HistoryBegin.Contains("0001"))
+            if (unit.HistoryBegin != null && !unit.HistoryBegin.Contains("0001"))
                 return;
 
             string start = "1577826000";    //2020-01-01 - начало истории для всех инструментов

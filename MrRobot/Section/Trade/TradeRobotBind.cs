@@ -48,13 +48,6 @@ namespace MrRobot.Section
         {
             INSTRUMENT = InstrumentListBox.SelectedItem as InstrumentUnit;
         }
-        /// <summary>
-        /// Загрузка списка свечей выбранного инструмента
-        /// </summary>
-        void CandlesLoad()
-        {
-            CANDLES = new List<dynamic>();
-        }
 
         void GlobalInit()
         {
@@ -67,7 +60,6 @@ namespace MrRobot.Section
                 return;
 
             InstrumentSet();
-            CandlesLoad();
             new CANDLE_NEW(format.TFass());
             new PATTERN(Patterns.ListAll(), true);
             new TradeChartTimer();
@@ -90,10 +82,10 @@ namespace MrRobot.Section
             if (!IsTradeInited)
                 return;
 
-            if (cndl.Unix == CANDLES[0].Unix)
-                CANDLES[0] = cndl;
-            else
-                CANDLES.Insert(0, cndl);
+            //if (cndl.Unix == CANDLES[0].Unix)
+            //    CANDLES[0] = cndl;
+            //else
+            //    CANDLES.Insert(0, cndl);
 
             TradeRobotStep();
         }

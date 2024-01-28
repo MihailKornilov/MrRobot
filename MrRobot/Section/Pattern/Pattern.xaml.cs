@@ -21,57 +21,52 @@ namespace MrRobot.Section
         public Pattern()
         {
             InitializeComponent();
-            PatternInit();
+            CDIpanel.Page(3).TBLink = SelectLink.TBLink;
+            CDIpageUnit.OutMethod += SourceChanged;
         }
 
         public void PatternInit()
         {
-            if(global.IsInited(3))
+            if (global.IsInited(3))
                 return;
 
-            SourceListBox.ItemsSource = Candle.ListAll();
-            SourceListBox.SelectedIndex = position.Val("3_ChartListBox_SelectedIndex", 0);
+            SourceChanged();
             LengthSlider.Value = position.Val("3_CandlesCountForSearch", 1);
             PrecisionPercentSlider.Value = position.Val("3_ScatterPercent", 100);
             FoundRepeatMin.Text = position.Val("3_FoundRepeatMin", "0");
 
             global.Inited(3);
-            //SearchResultCheck();
         }
+
+
+        bool IsSrcChosen => SrcId > 0;          // Свечные данные выбраны
+        int SrcId => CDIpanel.CdiId; // ID свечных данных
+        CDIunit SrcUnit => Candle.Unit(SrcId);  // Единица свечных данных
 
 
         /// <summary>
         /// Выбор нового графика
         /// </summary>
-        void SourceListChanged(object sender, SelectionChangedEventArgs e)
+        public void SourceChanged()
         {
-            var box = sender as ListBox;
-            if(box == null)
+            if (position.MainMenu() != 3)
+                return;
+            if (!IsSrcChosen)
                 return;
 
-            var item = box.SelectedItem as CDIunit;
-            if(item == null)
-                return;
-
-
-            // Прокручивание списка, пока не появится в представлении
-            SourceListBox.ScrollIntoView(item);
-
-            position.Set("3_ChartListBox_SelectedIndex", box.SelectedIndex);
-
-            DBcandlesCount.Text = format.Num(item.RowsCount);
-            DBtimeframe.Text = item.TF;
-            DBdateBegin.Text = item.DateBegin;
-            DBdateEnd.Text = item.DateEnd;
+            DBcandlesCount.Text = format.Num(SrcUnit.RowsCount);
+            DBtimeframe.Text = SrcUnit.TF;
+            DBdateBegin.Text = SrcUnit.DateBegin;
+            DBdateEnd.Text = SrcUnit.DateEnd;
 
             // Вывод графика
-            PatternChartHead.Update(item);
+            PatternChartHead.Update(SrcUnit);
             if (global.IsAutoProgon)
             {
                 SearchBrowser.Address = new Chart().PageHtml;
                 return;
             }
-            SearchBrowser.Address = new Chart("Pattern", item.Table).PageHtml;
+            SearchBrowser.Address = new Chart("Pattern", SrcUnit.Table).PageHtml;
             SearchResultCheck();
         }
 
@@ -116,10 +111,9 @@ namespace MrRobot.Section
 
             FoundLinePanel.Children.Clear();
 
-            var CDI = SourceListBox.SelectedItem as CDIunit;
             var param = new PatternSearchParam
             {
-                CdiId = CDI.Id,
+                CdiId = SrcId,
                 PatternLength = (int)LengthSlider.Value,
                 PrecisionPercent = (int)PrecisionPercentSlider.Value,
                 FoundRepeatMin = Convert.ToInt32(FoundRepeatMin.Text)
@@ -139,12 +133,11 @@ namespace MrRobot.Section
         /// </summary>
         async void PatternSearchGo(object sender, RoutedEventArgs e)
         {
-            var CDI = SourceListBox.SelectedItem as CDIunit;
             SPARAM = new PatternSearchParam()
             {
                 IsProcess = true,
 
-                CdiId = CDI.Id,
+                CdiId = SrcId,
                 PatternLength = (int)LengthSlider.Value,
                 PrecisionPercent = (int)PrecisionPercentSlider.Value,
                 FoundRepeatMin = Convert.ToInt16(FoundRepeatMin.Text),
@@ -304,7 +297,6 @@ namespace MrRobot.Section
         public void SearchStatistic(PatternSearchParam param)
         {
             bool isSearchNew = param.Duration == null;
-            SourceListBox.IsEnabled   = !param.IsProcess;
             SetupPanel.IsEnabled      = !param.IsProcess;
             SearchPanel.Visibility    = isSearchNew ? Visibility.Visible : Visibility.Collapsed;
             SearchGoButton.Visibility = param.IsProcess ? Visibility.Collapsed : Visibility.Visible;
@@ -509,6 +501,8 @@ namespace MrRobot.Section
             if (position.MainMenu() != 3)
                 return;
 
+            CDIpanel.Hide();
+
             bool isSearch = PatternSearchGrid.Visibility == Visibility.Visible;
 
             if (fromMM && isSearch)
@@ -533,14 +527,11 @@ namespace MrRobot.Section
         /// </summary>
         void SearchX(object sender, MouseButtonEventArgs e)
         {
-            var CDI = SourceListBox.SelectedItem as CDIunit;
             int PatternLength = (int)LengthSlider.Value;
             int PrecisionPercent = (int)PrecisionPercentSlider.Value;
-            int SearchId = Patterns.SUnitIdOnParam(CDI.Id, PatternLength, PrecisionPercent);
+            int SearchId = Patterns.SUnitIdOnParam(SrcId, PatternLength, PrecisionPercent);
 
-            SourceListBox.SelectedIndex = -1;
             Patterns.SUnitDel(SearchId);
-            SourceListBox.SelectedItem = CDI;
             global.MW.Pattern.PatternArchive.SearchList();
         }
     }

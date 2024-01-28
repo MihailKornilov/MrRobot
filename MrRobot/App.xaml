@@ -30,6 +30,10 @@
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
+        <Style TargetType="ListViewItem">
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
         <Style TargetType="CheckBox">
             <Setter Property="BorderBrush" Value="#A8C3D9"/>
         </Style>

@@ -4,6 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:Section="clr-namespace:MrRobot.Section"
+        xmlns:Entity="clr-namespace:MrRobot.Entity"
 		mc:Ignorable="d"
 		Name="MW"
 		Title="Mr.Robot v0.0.1"
@@ -62,8 +63,6 @@
 
 	</Window.Resources>
 	
-	
-	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
@@ -100,6 +99,7 @@
             <Section:Trade		 Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
             <Section:Setting	 Grid.Column="1" x:Name="Setting"	Visibility="Collapsed"/>
 
+            <Entity:CDIselectPanel Grid.Column="1" x:Name="CDIselectPanel"/>
         </Grid>
 		
 		<!-- НИЖНЯЯ СТРОКА ДЛЯ ВЫВОДА КОРОТКИХ СООБЩЕНИЙ -->

@@ -19,11 +19,11 @@ namespace MrRobot.Entity
         /// <summary>
         /// Список доступных скачанных свечных данных
         /// </summary>
-        private static List<CDIunit> CDIlist { get; set; }
+        static List<CDIunit> CDIlist { get; set; }
         /// <summary>
         /// Ассоциативный массив ID и свечных данных (для быстрого поиска)
         /// </summary>
-        private static Dictionary<int, CDIunit> IdUnitAss { get; set; }
+        static Dictionary<int, CDIunit> IdUnitAss { get; set; }
 
 
         /// <summary>
@@ -70,11 +70,42 @@ namespace MrRobot.Entity
         /// <summary>
         /// Получение всего списка свечных данных
         /// </summary>
-        public static List<CDIunit> ListAll()
+        public static List<CDIunit> ListAll(string txt = "")
         {
-            return CDIlist;
+            if(txt.Length == 0)
+                return CDIlist;
+
+            var send = new List<CDIunit>();
+            foreach (var v in CDIlist)
+                if (v.Name.Contains(txt.ToUpper()))
+                    send.Add(v);
+    
+            return send;
+
         }
 
+        /// <summary>
+        /// Получение группы свечных данных
+        /// </summary>
+        public static List<CDIunit> ListGroup(string txt = "")
+        {
+            var ass = new Dictionary<string, int>();
+            var send = new List<CDIunit>();
+            foreach (var v in CDIlist)
+            {
+                if (ass.ContainsKey(v.Name))
+                {
+                    int index = ass[v.Name];
+                    send[index].Num++;
+                    continue;
+                }
+                ass.Add(v.Name, send.Count);
+                v.Num = 1;
+                send.Add(v);
+            }
+
+            return send;
+        }
         /// <summary>
         /// Получение списка свечных данных с таймфреймом 1m с учётом поиска
         /// </summary>

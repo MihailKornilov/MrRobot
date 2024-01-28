@@ -376,7 +376,7 @@ namespace MrRobot.inc
             byte G = Convert.ToByte(str.Substring(2, 2), 16);
             byte B = Convert.ToByte(str.Substring(4, 2), 16);
 
-            return new SolidColorBrush(Color.FromRgb(R, G, B));
+            return new SolidColorBrush(Color.FromArgb(255, R, G, B));
         }
 
 

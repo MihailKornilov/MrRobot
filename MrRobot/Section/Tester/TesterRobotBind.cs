@@ -80,7 +80,7 @@ namespace MrRobot.Section
             if(CandleId != item.Id)
             {
                 CANDLES_DATA = null;
-                CANDLES_TF1 = null;
+                CANDLES_TF1_DATA = null;
             }
 
             CandleId = item.Id;
@@ -93,7 +93,7 @@ namespace MrRobot.Section
         /// </summary>
         async void CandlesDataLoad()
         {
-            if (CANDLES_DATA != null && CANDLES_TF1 != null)
+            if (CANDLES_DATA != null && CANDLES_TF1_DATA != null)
                 return;
 
             InitParam.Id = CandleId;
@@ -112,7 +112,7 @@ namespace MrRobot.Section
                 });
 
             var CDI = Candle.Unit(CandleId);
-            if (CANDLES_TF1 == null)
+            if (CANDLES_TF1_DATA == null)
                 if ((bool)UseTF1Check.IsChecked)
                     if (CDI.ConvertedFromId > 0)
                     {
@@ -123,7 +123,7 @@ namespace MrRobot.Section
                             string sql = "SELECT*" +
                                         $"FROM`{TF1.Table}`" +
                                          "ORDER BY`unix`";
-                            CANDLES_TF1 = mysql.CandlesData(sql, InitParam);
+                            CANDLES_TF1_DATA = mysql.CandlesData(sql, InitParam);
                         });
                     }
 
@@ -142,7 +142,7 @@ namespace MrRobot.Section
             if (!(bool)UseTF1Check.IsChecked)
                 return;
 
-            CANDLES_TF1_USE = CANDLES_TF1 != null;
+            CANDLES_TF1_USE = CANDLES_TF1_DATA != null;
         }
 
 
@@ -352,16 +352,16 @@ namespace MrRobot.Section
             Step.Invoke(ObjInstance, new object[] { });
 
             // Обновление прогресс-бара над графиком
-            TesterBar.Value = (double)CANDLES.Count / (double)INSTRUMENT.RowsCount * 100;
+            TesterBar.Value = (double)CANDLES_COUNT / (double)INSTRUMENT.RowsCount * 100;
 
             // Отображение даты последней свечи в заголовке графика
             TesterChartHead.Period(DATE_TIME);
 
             // Отображение количества свечей в заголовке графика
-            TesterChartHead.CandleCount(CANDLES.Count);
+            TesterChartHead.CandleCount(CANDLES_COUNT);
 
             // Вставка очередной свечи в график
-            TesterBrowser.ExecuteScriptAsync($"candles.update({CANDLES[0].CandleToChart()})");
+            TesterBrowser.ExecuteScriptAsync($"candles.update({CANDLES().CandleToChart()})");
 
             if (!AutoGoStatus())
             {
@@ -443,7 +443,7 @@ namespace MrRobot.Section
             {
                 // Выполнение очередного шага в Роботе
                 Step.Invoke(ObjInstance, new object[] { });
-                bar.Val(CANDLES.Count, Progress);
+                bar.Val(CANDLES_COUNT, Progress);
             }
             Progress.Report(100);
         }
