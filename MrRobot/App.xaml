@@ -36,6 +36,7 @@
 
         <Style TargetType="CheckBox">
             <Setter Property="BorderBrush" Value="#A8C3D9"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
         <Style TargetType="Button">

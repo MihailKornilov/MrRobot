@@ -128,6 +128,8 @@ namespace MrRobot.Entity
             get => PU.CdiId;
             set { PU.CdiId = value; }
         }
+        public static CDIunit CdiUnit() => Candle.Unit(CdiId);
+
 
         public CDIpanel()
         {
@@ -195,6 +197,12 @@ namespace MrRobot.Entity
                 CDIList.ItemsSource = PU.Items();
                 return FindBox.Text.Length > 0 ? $"найдено: {CDIList.Items.Count}" : "";
             }
+        }
+
+        public static bool Lock
+        {
+            get => PU.TBLink.IsEnabled;
+            set => PU.TBLink.IsEnabled = value;
         }
     }
 }

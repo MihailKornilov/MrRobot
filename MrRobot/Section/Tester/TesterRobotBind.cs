@@ -67,7 +67,7 @@ namespace MrRobot.Section
 
         void InstrumentSet()
         {
-            var item = InstrumentListBox.SelectedItem as CDIunit;
+            var item = CDIpanel.CdiUnit();
             INSTRUMENT = Instrument.Unit(item.InstrumentId);
             INSTRUMENT.CdiId = item.Id;
 
@@ -135,9 +135,8 @@ namespace MrRobot.Section
         void CandlesTF1use()
         {
             CANDLES_TF1_USE = false;
-            
-            var item = InstrumentListBox.SelectedItem as CDIunit;
-            if (item.ConvertedFromId == 0)
+
+            if (CDIpanel.CdiUnit().ConvertedFromId == 0)
                 return;
             if (!(bool)UseTF1Check.IsChecked)
                 return;
@@ -193,7 +192,7 @@ namespace MrRobot.Section
         }
         void TesterChartInit()
         {
-            var item = InstrumentListBox.SelectedItem as CDIunit;
+            var item = CDIpanel.CdiUnit();
 
             if (!Visualization)
             {
@@ -207,7 +206,7 @@ namespace MrRobot.Section
             TesterChartHead.Period();
             TesterChartHead.CandleCount();
 
-            Chart chart = new Chart("Tester", item.Table);
+            var chart = new Chart("Tester", item.Table);
             chart.PageName = "TesterProcess";
             chart.TesterGraficInit();
             TesterBrowser.Address = chart.PageHtml;
@@ -396,7 +395,7 @@ namespace MrRobot.Section
             bool unlock = ButtonWidth > 0;
             NoVisualButton.Content = unlock ? ButtonContent : "Остановить";
             NoVisualButton.Width = unlock ? ButtonWidth : 80;
-            InstrumentListBox.IsEnabled = unlock;
+            CDIpanel.Lock = unlock;
             RobotsListBox.IsEnabled = unlock;
             RobotAddButton.IsEnabled = unlock;
             UseTF1Check.IsEnabled = unlock;

@@ -17,15 +17,13 @@ namespace MrRobot.Section
             InitializeComponent();
             TesterInit();
             CDIpanel.Page(4).TBLink = SelectLink.TBLink;
+            CDIpageUnit.OutMethod += SourceChanged;
         }
 
         public void TesterInit()
         {
             if (global.IsInited(4))
                 return;
-
-            InstrumentListBox.ItemsSource = Candle.ListAll();
-            InstrumentListBox.SelectedIndex = position.Val("4_InstrumentListBox_SelectedIndex", 0);
 
             RobotsListBox.ItemsSource = Robots.ListBox();
             RobotsListBox.SelectedIndex = 0;
@@ -47,40 +45,31 @@ namespace MrRobot.Section
         /// <summary>
         /// Выбор нового графика
         /// </summary>
-        private void InstrumentListChanged(object sender, SelectionChangedEventArgs e)
+        void SourceChanged()
         {
-            var box = sender as ListBox;
-            if (box == null)
+            if (position.MainMenu() != 4)
                 return;
 
-            position.Set("4_InstrumentListBox_SelectedIndex", box.SelectedIndex);
-            RobotPanel.Visibility = box.SelectedIndex == -1 ? Visibility.Hidden : Visibility.Visible;
+            RobotPanel.Visibility = CDIpanel.CdiId == 0 ? Visibility.Hidden : Visibility.Visible;
             RobotsListBox.SelectedIndex = 0;
 
-            if (box.SelectedIndex == -1)
+            if (CDIpanel.CdiId == 0)
                 return;
 
-            var item = box.SelectedItem as CDIunit;
-
-            // Прокручивание списка, пока не появится в представлении
-            InstrumentListBox.ScrollIntoView(item);
-
-            TesterBrowserShow(item);
-
-            UseTF1Check.Visibility = item.ConvertedFromId == 0 ? Visibility.Collapsed : Visibility.Visible;
+            TesterBrowserShow();
+            UseTF1Check.Visibility = CDIpanel.CdiUnit().ConvertedFromId == 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
 
         /// <summary>
         /// Показ графика
         /// </summary>
-        private void TesterBrowserShow(CDIunit item)
+        void TesterBrowserShow()
         {
             if (global.IsAutoProgon)
                 return;
-            if (Candle.Unit(item.Id) == null)
-                return;
 
+            var item = CDIpanel.CdiUnit();
             TesterBrowser.Address = new Chart("Tester", item.Table).PageHtml;
             TesterChartHead.Update(item);
         }
@@ -90,7 +79,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Сохранение позиции Лог-меню
         /// </summary>
-        private void LogMenuPosition(object sender, SelectionChangedEventArgs e)
+        void LogMenuPosition(object sender, SelectionChangedEventArgs e)
         {
             var tab = sender as TabControl;
             position.Set("4_LogMenu_SelectedIndex", tab.SelectedIndex.ToString());
@@ -121,17 +110,17 @@ namespace MrRobot.Section
         /// <summary>
         /// Робот выбран в списке роботов
         /// </summary>
-        private void RobotListChanged(object sender, SelectionChangedEventArgs e) => GlobalInit();
+        void RobotListChanged(object sender, SelectionChangedEventArgs e) => GlobalInit();
 
         /// <summary>
         /// Нажатие на галочку: Использовать таймфрейм 1m
         /// </summary>
-        private void UseTF1Checked(object sender, RoutedEventArgs e) => GlobalInit();
+        void UseTF1Checked(object sender, RoutedEventArgs e) => GlobalInit();
 
         /// <summary>
         /// Нажатие на галочку: Визуализация
         /// </summary>
-        private void VisualChecked(object sender, RoutedEventArgs e)
+        void VisualChecked(object sender, RoutedEventArgs e)
         {
             if (!global.IsInited())
                 return;

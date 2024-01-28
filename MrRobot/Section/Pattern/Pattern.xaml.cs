@@ -532,6 +532,7 @@ namespace MrRobot.Section
             int SearchId = Patterns.SUnitIdOnParam(SrcId, PatternLength, PrecisionPercent);
 
             Patterns.SUnitDel(SearchId);
+            SourceChanged();
             global.MW.Pattern.PatternArchive.SearchList();
         }
     }

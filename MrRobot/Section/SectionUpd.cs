@@ -9,11 +9,7 @@ namespace MrRobot.Section
     {
         public static bool[] Update = new bool[6];
 
-        private static bool isUpdateLater(int page)
-        {
-            Update[page] = position.MainMenu() != page;
-            return Update[page];
-        }
+        static bool isUpdateLater(int page) => Update[page] = position.MainMenu() != page;
 
         public static void All()
         {
@@ -61,9 +57,6 @@ namespace MrRobot.Section
         {
             if (isUpdateLater(4))
                 return;
-
-            global.MW.Tester.InstrumentListBox.ItemsSource = null;
-            global.MW.Tester.InstrumentListBox.ItemsSource = Candle.ListAll();
         }
         public static void Section()
         {

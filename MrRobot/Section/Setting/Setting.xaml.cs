@@ -31,8 +31,8 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
 
             var param = new AutoProgonParam
             {
-                ConvertTF = "3,4,5,10,15,20,25,30",
-                PatternLength = "3",
+                ConvertTF = "3,4,5,10,15,20,30",
+                PatternLength = "2",
                 FoundRepeatMin = "6",
                 SymbolMass = new string[]
                 {

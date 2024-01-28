@@ -115,7 +115,7 @@ namespace MrRobot.Section
 
             // Выбор скачанной истории TF=1
             var unit = Candle.UnitOnSymbol(PARAM.Symbol);
-            //global.MW.CDIselectPanel.Id(2, unit.Id);
+            CDIpanel.Page(2).CdiId = unit.Id;
 
             // Выбор таймфреймов
             int[] TimeFrame = Array.ConvertAll(PARAM.ConvertTF.Split(','), x => int.Parse(x));
@@ -266,8 +266,7 @@ namespace MrRobot.Section
 
             if (PARAM.IdLast != id)
             {
-                global.MW.Tester.InstrumentListBox.SelectedIndex = -1;
-                global.MW.Tester.InstrumentListBox.SelectedItem = Candle.Unit(id);
+                CDIpanel.Page(4).CdiId = id;
                 global.MW.Tester.RobotsListBox.SelectedIndex = 1;
                 PARAM.IdLast = id;
                 return;

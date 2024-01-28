@@ -218,6 +218,10 @@ namespace MrRobot.inc
             ass.Add(300, "5h");
             ass.Add(360, "6h");
 
+            ass.Add(1440,  "1D");
+            ass.Add(10080, "1W");
+            ass.Add(43200, "1M");
+
             return ass;
         }
 

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
-using MrRobot.Section;
-using System.Linq;
 
 namespace MrRobot.Entity
 {

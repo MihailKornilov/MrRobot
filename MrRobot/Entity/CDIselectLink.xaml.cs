@@ -23,5 +23,10 @@ namespace MrRobot.Entity
 
             CDIpanel.Open(left, top);
         }
+
+        /// <summary>
+        /// Установка размера шрифта ссылки
+        /// </summary>
+        public void Size(int v = 13) => TBLink.FontSize = v;
     }
 }
