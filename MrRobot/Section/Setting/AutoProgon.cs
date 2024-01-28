@@ -46,7 +46,7 @@ namespace MrRobot.Section
         /// </summary>
         static void SectionGo(int num)
         {
-            global.MW.MainMenuListBox.SelectedIndex = num - 1;
+            //global.MW.MMlist.SelectedIndex = num - 1;
         }
 
         /// <summary>

@@ -61,7 +61,7 @@ namespace MrRobot
             //WriteLine("scr.Height = " + scr.Height);
 
             Width  = position.Val("MainWindow.Width", 1366);
-            Height = position.Val("MainWindow.Height", 800);
+            Height = position.Val("MainWindow.Height", 700);
             Left   = position.Val("MainWindow.Left",   100);
             Top    = position.Val("MainWindow.Top",    100);
 
@@ -73,7 +73,6 @@ namespace MrRobot
 
             Loaded += (s, e) =>
             {
-                MainMenuCreate();
                 Trade.InstrumentSelect();
 
                 var hwnd = new WindowInteropHelper(this).Handle;
@@ -85,110 +84,6 @@ namespace MrRobot
             global.LogWrite($"Загружено за {dur.Second()} сек.");
         }
 
-        /// <summary>
-        /// Список разделов меню
-        /// </summary>
-        string[] MainMenuSectionName()
-        {
-            string[] mass = {
-                "Global",
-                "History",
-                "Converter",
-                "Pattern",
-                "Tester",
-                "Trade",
-                "Setting"
-            };
-
-            return mass;
-        }
-
-        /// <summary>
-        /// Создание главного меню
-        /// </summary>
-        void MainMenuCreate()
-        {
-            var butList = new List<MMUnit>();
-            for (int i = 1; i < MainMenuSectionName().Length; i++)
-                butList.Add(new MMUnit
-                {
-                    Index = i,
-                    Section = MainMenuSectionName()[i]
-                });
-
-            MainMenuListBox.ItemsSource = butList;
-            MainMenuListBox.SelectedIndex = position.MainMenu() - 1;
-        }
-
-
-        /// <summary>
-        /// Установка раздела Главного меню
-        /// </summary>
-        void MainMenuSet()
-        {
-            int index = position.MainMenu();
-            string[] section = MainMenuSectionName();
-            UserControl sect;
-            for (int i = 1; i < section.Length; i++)
-            {
-                sect = FindName(section[i]) as UserControl;
-                sect.Visibility = Visibility.Collapsed;
-            }
-
-            sect = FindName(section[index]) as UserControl;
-            sect.Visibility = Visibility.Visible;
-
-            CDIpanel.PageChanged();
-
-            switch (index)
-            {
-                case 1:
-                    if (SectionUpd.Update[1])
-                        SectionUpd.History();
-
-                    History.HistoryInit();
-                    History.InstrumentFindBox.Focus();
-                    break;
-
-                case 2:
-                    if (SectionUpd.Update[2])
-                        SectionUpd.Converter();
-
-                    Converter.ConverterInit();
-                    break;
-
-                case 3:
-                    if (SectionUpd.Update[3])
-                        SectionUpd.Pattern();
-
-                    Pattern.PatternInit();
-                    break;
-
-                case 4:
-                    if (SectionUpd.Update[4])
-                        SectionUpd.Tester();
-
-                    Tester.TesterInit();
-                    break;
-
-                case 5:
-                    Trade.TradeInit();
-                    Trade.InstrumentSelect();
-                    break;
-            }
-        }
-        void MainMenuButtonClick(object sender, RoutedEventArgs e)
-        {
-            var but = sender as Button;
-            MainMenuListBox.SelectedIndex = but.TabIndex - 1;
-            Pattern.ArchiveGo(true);
-        }
-        void MainMenuChanged(object sender, SelectionChangedEventArgs e)
-        {
-            int index = MainMenuListBox.SelectedIndex + 1;
-            position.MainMenu(index);
-            MainMenuSet();
-        }
 
 
 
@@ -264,16 +159,5 @@ namespace MrRobot
 
             return IntPtr.Zero;
         }
-    }
-
-    /// <summary>
-    /// Данные кнопок главного меню
-    /// </summary>
-    public class MMUnit
-    {
-        public int Index { get; set; }      // Подярковый индекс
-        public string Section { get; set; }    // Имя раздела
-        public string Image { get { return $"pack://application:,,,/Resources/images/button-{Section}.png"; } }
-        public string ImageOver { get { return $"pack://application:,,,/Resources/images/button-{Section}-over.png"; } }
     }
 }

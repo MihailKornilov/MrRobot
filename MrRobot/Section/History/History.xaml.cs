@@ -28,6 +28,8 @@ namespace MrRobot.Section
 
         public void HistoryInit()
         {
+            InstrumentFindBox.Focus();
+
             if (global.IsInited(1))
                 return;
 

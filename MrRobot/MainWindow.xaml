@@ -11,57 +11,6 @@
 		MinWidth="1175"
 		MinHeight="700"
 		Background="#FFF">
-
-	<Window.Resources>
-		<!-- Шаблон для главного меню -->
-		<DataTemplate x:Key="MainMenuItemTmp">
-			<Button Width="64" Height="64" Click="MainMenuButtonClick" TabIndex="{Binding Index}">
-				<Button.Template>
-					<ControlTemplate TargetType="Button">
-						<Image Name="img" Source="{Binding Image}"/>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="true">
-								<Setter TargetName="img" Property="Source" Value="{Binding ImageOver}"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Button.Template>
-			</Button>
-		</DataTemplate>
-
-		<Style x:Key="MMenuItemStyle" TargetType="ListBoxItem">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="ListBoxItem">
-						<Border Name="Bd" Background="{TemplateBinding Panel.Background}">
-							<ContentPresenter Content="{TemplateBinding ContentControl.Content}"
-											  ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"/>
-						</Border>
-						<ControlTemplate.Triggers>
-
-							<MultiTrigger>
-								<MultiTrigger.Conditions>
-									<Condition Property="Selector.IsSelectionActive" Value="False"/>
-									<Condition Property="Selector.IsSelected" Value="True"/>
-								</MultiTrigger.Conditions>
-                                <Setter Property="Panel.Background" Value="#B9D0E6" TargetName="Bd"/>
-							</MultiTrigger>
-
-							<MultiTrigger>
-								<MultiTrigger.Conditions>
-									<Condition Property="Selector.IsSelectionActive" Value="True"/>
-									<Condition Property="Selector.IsSelected" Value="True"/>
-								</MultiTrigger.Conditions>
-                                <Setter Property="Panel.Background" Value="#B9D0E6" TargetName="Bd"/>
-							</MultiTrigger>
-
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-	</Window.Resources>
 	
 	<Grid>
 		<Grid.RowDefinitions>
@@ -75,30 +24,18 @@
 				<ColumnDefinition/>
 			</Grid.ColumnDefinitions>
 
-			<!-- КНОПКИ ГЛАВНОГО МЕНЮ -->
-			<Grid Grid.Column="0" Background="#C8DCEE">
-				<StackPanel Grid.Column="0" Background="#DCEBF8" Margin="0,0,1,0">
-					<Separator Background="#C8DCEE" Margin="0"/>
-					<ListBox Name="MainMenuListBox"
-							 Width="64"
-							 Height="400"
-							 Background="Transparent"
-							 BorderThickness="0"
-							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
-							 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                             SelectionChanged="MainMenuChanged"
-							 ItemTemplate="{StaticResource MainMenuItemTmp}"
-                             ItemContainerStyle="{StaticResource MMenuItemStyle}"/>
-				</StackPanel>
-			</Grid>
+			<!-- Кнопки главного меню -->
+            <Entity:MainMenu	Grid.Column="0" x:Name="MMenu"/>
 
-            <Section:History	 Grid.Column="1" x:Name="History"	Visibility="Collapsed"/>
-            <Section:Converter	 Grid.Column="1" x:Name="Converter"	Visibility="Collapsed"/>
-            <Section:Pattern	 Grid.Column="1" x:Name="Pattern"	Visibility="Collapsed"/>
-            <Section:Tester		 Grid.Column="1" x:Name="Tester"	Visibility="Collapsed"/>
-            <Section:Trade		 Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
-            <Section:Setting	 Grid.Column="1" x:Name="Setting"	Visibility="Collapsed"/>
+            <!-- Основные разделы -->
+            <Section:History	Grid.Column="1" x:Name="History"	Visibility="Collapsed"/>
+            <Section:Converter	Grid.Column="1" x:Name="Converter"	Visibility="Collapsed"/>
+            <Section:Pattern	Grid.Column="1" x:Name="Pattern"	Visibility="Collapsed"/>
+            <Section:Tester		Grid.Column="1" x:Name="Tester"		Visibility="Collapsed"/>
+            <Section:Trade		Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
+            <Section:Setting	Grid.Column="1" x:Name="Setting"	Visibility="Collapsed"/>
 
+            <!-- Выпадающий список со свечными данными -->
             <Entity:CDIselectPanel Grid.Column="1" x:Name="CDIselectPanel"/>
         </Grid>
 		

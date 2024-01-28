@@ -155,6 +155,9 @@
     <Compile Include="Entity\CDIselectLink.xaml.cs">
       <DependentUpon>CDIselectLink.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entity\MainMenu.xaml.cs">
+      <DependentUpon>MainMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entity\Patterns.cs" />
     <Compile Include="Section\Converter\Converter.xaml.cs">
       <DependentUpon>Converter.xaml</DependentUpon>
@@ -201,6 +204,10 @@
     <Page Include="Entity\ChartHead.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Entity\MainMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
