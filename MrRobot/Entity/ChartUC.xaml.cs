@@ -83,6 +83,7 @@ namespace MrRobot.Entity
         public void Symbol(string txt = "") => HeadSymbol.Text = txt;
         public void Period(string txt = "") => HeadPeriod.Text = txt;
         public void CandleCount(int count = 0) => HeadCandleCount.Text = Candle.CountTxt(count);
+        public void Right(string txt = "") => HeadRight.Text = txt;
 
 
         /// <summary>
@@ -291,5 +292,54 @@ namespace MrRobot.Entity
 
             Browser.Address = PathHtml;
         }
+
+
+
+
+
+        /// <summary>
+        /// Актуальныы свечи для графика по конкретному инструменту
+        /// </summary>
+        public List<object> TradeCandlesActual(InstrumentUnit unit)
+        {
+            Section = "Trade";
+            PageName = "ChartActual";
+            Symbol(unit.Name);
+
+            var CandleList = Candle.WCkline(unit.Symbol);
+            var Candles = new List<string>();
+            var Volumes = new List<string>();
+            for (int k = 0; k < CandleList.Count; k++)
+            {
+                var cndl = CandleList[k] as CandleUnit;
+                Candles.Insert(0, cndl.CandleToChart());
+                Volumes.Insert(0, cndl.VolumeToChart());
+            }
+
+            var read = new StreamReader(PathTmp);
+            var write = new StreamWriter(PathHtml);
+
+            string title = $"{Section}: {unit.Name}";
+            string CANDLES_DATA = "[\n" + string.Join(",\n", Candles.ToArray()) + "]";
+            string VOLUMES_DATA = "[\n" + string.Join(",\n", Volumes.ToArray()) + "]";
+
+            string line;
+            while ((line = read.ReadLine()) != null)
+            {
+                line = line.Replace("TITLE", title);
+                line = line.Replace("CANDLES_DATA", CANDLES_DATA);
+                line = line.Replace("VOLUMES_DATA", VOLUMES_DATA);
+                line = line.Replace("TICK_SIZE", unit.TickSize.ToString());
+                line = line.Replace("NOL_COUNT", unit.NolCount.ToString());
+                write.WriteLine(line);
+            }
+            read.Close();
+            write.Close();
+
+            Browser.Address = PathHtml;
+
+            return CandleList;
+        }
+
     }
 }

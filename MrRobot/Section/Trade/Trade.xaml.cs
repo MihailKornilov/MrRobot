@@ -203,14 +203,7 @@ namespace MrRobot.Section
 
             position.Set("5.InstrumentListBox.Id", item.Id);
 
-            //TradeChartHead.Symbol(item.Name);
-
-            var chart = new Chart("Trade");
-            chart.PageName = "ChartActual";
-            var CandleList = chart.TradeCandlesActual(item);
-            TradeBrowser.Address = chart.PageHtml;
-
-            Depth.Start(item.Symbol, CandleList);
+            Depth.Start(item.Symbol, EChart.TradeCandlesActual(item));
         }
 
         /// <summary>
@@ -229,9 +222,7 @@ namespace MrRobot.Section
             InstrumentCancelLabel.Visibility = Visibility.Hidden;
 
             position.Set("5.InstrumentListBox.Id", 0);
-
-            //TradeChartHead.Symbol();
-            TradeBrowser.Address = new Chart().PageHtml;
+            EChart.Empty();
         }
 
 

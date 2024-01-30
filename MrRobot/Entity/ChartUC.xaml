@@ -16,12 +16,16 @@
 
         <!-- Заголовок -->
         <Grid Grid.Row="0" Margin="0,0,.6,0" Background="#555">
-            <WrapPanel Height="33" VerticalAlignment="Top" Background="#222">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="600"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <WrapPanel Grid.Column="0" Height="33" VerticalAlignment="Top" Background="#222">
                 <TextBlock Name="HeadSymbol"
-                           Width="170"
                            FontSize="17"
                            FontWeight="Bold"
-                           Margin="7,6,0,0"
+                           Margin="7,6,7,0"
                            Cursor="Hand"
                            MouseLeftButtonDown="SiteGo">
                     <TextBlock.Style>
@@ -37,20 +41,26 @@
                 </TextBlock>
                 <TextBlock Name="HeadTimeFrame"
                            Foreground="#DDD"
-                           Width="60"
-                           FontSize="15"
-                           Margin="0,7,0,0"/>
+                           FontSize="17"
+                           Margin="0,6,50,0"/>
                 <TextBlock Name="HeadPeriod"
                            Foreground="#DDD"
-                           Width="190"
                            FontSize="15"
-                           Margin="0,7,0,0"/>
+                           Margin="0,7,50,0"/>
                 <TextBlock Name="HeadCandleCount"
                            Foreground="#DDD"
-                           Width="200"
                            FontSize="15"
                            Margin="0,7,0,0"/>
             </WrapPanel>
+
+            <Grid Grid.Column="1" Height="33" VerticalAlignment="Top" Background="#222">
+                <TextBlock Name="HeadRight"
+                           Foreground="#DDD"
+                           FontSize="15"
+                           HorizontalAlignment="Right"
+                           Padding="0"
+                           Margin="0,7,7,0"/>
+            </Grid>
         </Grid>
 
         <wpf:ChromiumWebBrowser Name="Browser" Grid.Row="1" Background="#222"/>

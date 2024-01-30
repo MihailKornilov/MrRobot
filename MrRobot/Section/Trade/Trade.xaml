@@ -235,33 +235,12 @@
                                         <ColumnDefinition Width="220"/>
                                         <ColumnDefinition Width="203"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="34"/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
 
-                                    <Grid Grid.Column="0" Grid.Row="0" Height="34" VerticalAlignment="Top" Background="#555">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- Заголовок графика -->
-                                        <!--<Entity:ChartHead x:Name="TradeChartHead" Grid.Column="0"/>-->
-
-                                        <!-- Таймер в заголовке графика с правой стороры -->
-                                        <StackPanel Grid.Column="1" Height="33" VerticalAlignment="Top" Background="#222">
-                                            <TextBlock Name="ChartTime"
-                                                       HorizontalAlignment="Right"
-                                                       Foreground="#DDD"
-                                                       Padding="0,7,7,0"
-                                                       FontSize="15"/>
-                                        </StackPanel>
-                                    </Grid>
-                                    <wpf:ChromiumWebBrowser Name="TradeBrowser" Grid.Column="0" Grid.Row="1"/>
+                                    <!-- График -->
+                                    <Entity:ChartUC x:Name="EChart" Grid.Column="0"/>
 
                                     <!-- СТАКАН (книга ордеров) -->
-                                    <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Background="#555">
+                                    <Grid Grid.Column="1" Background="#555">
                                         <Grid Name="DepthPanel" Background="#222" Margin="1,0,0,0">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="24"/>
@@ -313,17 +292,17 @@
                                     </Grid>
 
                                     <!-- СДЕЛКИ -->
-                                    <Grid Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Background="#888">
+                                    <Grid Grid.Column="2" Background="#888">
                                         <Grid Name="TradePanel" Background="#222" Margin="2,0,1,0">
                                             <ListBox Grid.Row="0"
-                             Name="TradeListBox"
-                             Width="200"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Top"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                             ItemTemplate="{StaticResource TradeItemTmp}"/>
+                                                     Name="TradeListBox"
+                                                     Width="200"
+                                                     HorizontalAlignment="Left"
+                                                     VerticalAlignment="Top"
+                                                     Background="Transparent"
+                                                     BorderThickness="0"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                     ItemTemplate="{StaticResource TradeItemTmp}"/>
                                         </Grid>
                                     </Grid>
 

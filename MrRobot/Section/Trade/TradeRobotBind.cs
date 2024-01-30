@@ -104,9 +104,13 @@ namespace MrRobot.Section
         /// <summary>
         /// Подгрузка заказанных свечей для Robot:Trade:CANDLE_LIST
         /// </summary>
-        public async void CandlesActualUpdate()
+        public async void CandlesActualUpdate(string txt)
         {
+            EChart.Right(txt);
+
             if (!IsTradeInited)
+                return;
+            if (DateTime.Now.Second > 0)
                 return;
 
             await Task.Run(() =>
@@ -163,7 +167,7 @@ namespace MrRobot.Section
     {
         static bool IsWorked { get; set; }
 
-        public delegate void Dcall();
+        public delegate void Dcall(string txt);
         public static Dcall OutMethod;
 
         public TradeChartTimer()
@@ -180,12 +184,9 @@ namespace MrRobot.Section
         /// </summary>
         static async void Start()
         {
-            var prgs = new Progress<string>(v =>
+            var prgs = new Progress<string>((v) =>
             {
-                global.MW.Trade.ChartTime.Text = v;
-
-                if (DateTime.Now.Second == 0)
-                    OutMethod?.Invoke();
+                OutMethod?.Invoke(v);
             });
             await Task.Run(() => Process(prgs));
         }

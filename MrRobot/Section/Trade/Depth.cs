@@ -374,12 +374,9 @@ namespace MrRobot.Section
         /// </summary>
         static void ChartUpdate()
         {
-            if (global.MW.Trade.TradeBrowser.IsDisposed)
-                return;
-
             string script = $"candles.update({CandleFirst.CandleToChart()});" +
                             $"Volumes.update({CandleFirst.VolumeToChart()});";
-            global.MW.Trade.TradeBrowser.ExecuteScriptAsync(script);
+            global.MW.Trade.EChart.Script(script);
         }
 
         /// <summary>
@@ -413,7 +410,6 @@ namespace MrRobot.Section
             WebSocketOldClose();
             PriceUpdate();
 
-            global.MW.Trade.ChartTime.Text = "";
             global.MW.Trade.DepthSellListBox.ItemsSource = null;
             global.MW.Trade.DepthBuyListBox.ItemsSource = null;
             global.MW.Trade.TradeListBox.ItemsSource = null;

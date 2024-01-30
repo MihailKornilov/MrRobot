@@ -343,11 +343,11 @@ namespace MrRobot.Section
             // Обновление прогресс-бара над графиком
             TesterBar.Value = (double)CANDLES_COUNT / (double)INSTRUMENT.RowsCount * 100;
 
-            // Отображение даты последней свечи в заголовке графика
-            EChart.Period(DATE_TIME);
-
             // Отображение количества свечей в заголовке графика
             EChart.CandleCount(CANDLES_COUNT);
+
+            // Отображение даты последней свечи в заголовке графика
+            EChart.Right(DATE_TIME);
 
             // Вставка очередной свечи в график
             EChart.Script($"candles.update({CANDLES().CandleToChart()})");
@@ -474,7 +474,7 @@ namespace MrRobot.Section
                 script += $"Line{type}.price={spl[1]};candles.createPriceLine(Line{type});";
             }
 
-            //TesterBrowser.ExecuteScriptAsync(script);
+            EChart.Script(script);
         }
 
         /// <summary>
