@@ -33,6 +33,7 @@ namespace RobotAPI
             TESTER_AUTO = false;
             TESTER_FINISHED = false;
             new LOGG();
+            SETUP.Init();
         }
 
         public static bool TESTER_GLOBAL_STEP()

@@ -64,6 +64,86 @@ namespace RobotAPI
 
 
         /// <summary>
+        /// Единица данных для настроки робота в выпадающем списке (внешние данные)
+        /// </summary>
+        public class SETUP
+        {
+            public static List<SETUP> Items = new List<SETUP>();
+            public static void Init() => Items.Clear();
+
+            public SETUP(string label1 = "") => Label1 = label1;
+
+            /// <summary>
+            /// Вид настройки: Text, Slider, Check
+            /// </summary>
+            string Type { get; set; }
+
+
+
+
+            /// <summary>
+            /// Описание настройки
+            /// </summary>
+            public string Label1 { get; private set; } = "";
+            public string Label1Vis { get => Label1.Length > 0 ? "Visible" : "Hidden"; }
+
+
+
+            /// <summary>
+            /// Вид Slider
+            /// </summary>
+            public int Slider(int min = 0, int max = 10, int step = 1, int val = 0)
+            {
+                Type = "Slider";
+                SliderMin = min;
+                SliderMax = max;
+                SliderStep = step;
+                SliderValue = val;
+                Items.Add(this);
+                return val;
+            }
+            public string SliderVis { get => Type == "Slider" ? "Visible" : "Collapsed"; }
+            public int SliderMin { get; set; } = 0;
+            public int SliderMax { get; set; } = 10;
+            public int SliderStep { get; set; } = 1;
+            public int SliderValue { get; set; } = 0;
+
+
+
+            public string Text(string txt, string label3 = "")
+            {
+                Type = "Text";
+                TextValue = txt;
+                Label3 = label3;
+                Items.Add(this);
+                return txt;
+            }
+            public int Text(int val, string label3 = "") => Convert.ToInt32(Text(val.ToString(), label3));
+            public string TextVis { get => Type == "Text" ? "Visible" : "Collapsed"; }
+            public string TextValue { get; set; } = "";
+
+
+
+            public bool Check(string txt, bool isChecked = false)
+            {
+                Type = "Check";
+                CheckTxt = txt;
+                IsChecked = isChecked;
+                Items.Add(this);
+                return isChecked;
+            }
+            public string CheckVis { get => Type == "Check" ? "Visible" : "Collapsed"; }
+            public string CheckTxt { get; set; }
+            public bool IsChecked { get; set; }
+
+
+
+            public string Label3 { get; private set; } = "";
+            public string Label3Vis { get => Label3.Length > 0 ? "Visible" : "Hidden"; }
+        }
+
+
+        /// <summary>
         /// Класс с информацией о появлении новой свечи по каждому таймфрейму
         /// </summary>
         public class CANDLE_NEW

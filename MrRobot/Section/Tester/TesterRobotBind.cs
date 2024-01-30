@@ -148,6 +148,7 @@ namespace MrRobot.Section
         {
             PanelVisible();
             AutoGoStop();
+            RobotSetupList.ItemsSource = null;
             RobotLogList.Items.Clear();
             OrderExecuted.ItemsSource = null;
 
@@ -173,6 +174,7 @@ namespace MrRobot.Section
             Init.Invoke(ObjInstance, new object[] { new string[]{} });
             LOGG.Output();
 
+            RobotSetupButton.Visibility = SETUP.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
             OrderExecutedView();
             TesterChartInit();
             TesterBar.Value = 0;
@@ -185,7 +187,7 @@ namespace MrRobot.Section
         void PanelVisible()
         {
             bool hide = RobotsListBox.SelectedIndex <= 0;
-            RobotSetupButton.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
+            RobotSetupButton.Visibility = Visibility.Collapsed;
             BalancePanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
             VisualPanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
             ProcessPanel.Visibility = hide || !Visualization ? Visibility.Collapsed : Visibility.Visible;
@@ -210,6 +212,32 @@ namespace MrRobot.Section
             QuoteCommissSum.Content = format.Coin(INSTRUMENT.QuoteCommiss);
         }
 
+        /// <summary>
+        /// Открытие окна с настройками робота
+        /// </summary>
+        void RobotSetupOpen(object sender, RoutedEventArgs e)
+        {
+            if (SETUP.Items.Count == 0)
+                return;
+
+            RobotSetupPanel.Visibility = Visibility.Visible;
+            //global.MW.GridBack.Visibility = Visibility.Visible;
+
+            if (RobotSetupList.Items.Count > 0)
+                return;
+
+            RobotSetupList.ItemsSource = SETUP.Items;
+        }
+        /// <summary>
+        /// Изменение слайдера в Настройке робота
+        /// </summary>
+        void RobotSetupSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var slider = sender as Slider;
+            var parent = slider.Parent as WrapPanel;
+            var tb = parent.FindName("RSsliderTB") as TextBox;
+            tb.Text = slider.Value.ToString();
+        }
 
 
         #region AutoGo
@@ -387,8 +415,7 @@ namespace MrRobot.Section
             NoVisualButton.Content = unlock ? ButtonContent : "Остановить";
             NoVisualButton.Width = unlock ? ButtonWidth : 80;
             CDIpanel.Lock = unlock;
-            RobotsListBox.IsEnabled = unlock;
-            RobotAddButton.IsEnabled = unlock;
+            SetupGrid.IsEnabled = unlock;
             UseTF1Check.IsEnabled = unlock;
             VisualCheck.IsEnabled = unlock;
             IsNoVisualProcess = !unlock;

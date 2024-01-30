@@ -22,7 +22,6 @@
                 <Label Content="{Binding Name}" Foreground="{Binding NameColor}" Padding="0,2"/>
             </StackPanel>
         </DataTemplate>
-
         <!-- Шаблон для Робот-Лога -->
         <DataTemplate x:Key="TesterLogTmp">
             <StackPanel Orientation="Horizontal">
@@ -31,7 +30,6 @@
                 <Label Content="{Binding Text}" Padding="0"/>
             </StackPanel>
         </DataTemplate>
-
         <!-- Шаблон для активных ордеров -->
         <DataTemplate x:Key="OrderActiveTmp">
             <StackPanel Orientation="Horizontal">
@@ -62,7 +60,6 @@
                 </WrapPanel>
             </StackPanel>
         </DataTemplate>
-        
         <!-- Шаблон SPOT исполненных ордеров -->
         <DataTemplate x:Key="OrderSpotExecTmp">
             <StackPanel Orientation="Horizontal">
@@ -88,7 +85,73 @@
                 <Label Content="{Binding DtimeOpen}" Width="160" Padding="23,0,0,0"/>
             </StackPanel>
         </DataTemplate>
+        <!-- Шаблон для настроек робота -->
+        <DataTemplate x:Key="RSitemTmp">
+            <Grid Margin="15,5" HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="105"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
+                <Label Grid.Column="0"
+                       Content="{Binding Label1}"
+                       Padding="0"
+                       Foreground="#888"
+                       Visibility="{Binding Label1Vis}"/>
+
+                <WrapPanel Grid.Column="1" Visibility="{Binding SliderVis}">
+                    <TextBox Name="RSsliderTB"
+                             Text="{Binding SliderValue}"
+                             Width="35"
+                             FontWeight="Bold"
+                             Foreground="#888"
+                             Background="#F4F4F4"
+                             HorizontalContentAlignment="Center"
+                             IsReadOnly="True"/>
+                    <Slider Width="90"
+                            Margin="5,0,0,0"
+                            Minimum="{Binding SliderMin}"
+                            Maximum="{Binding SliderMax}"
+                            TickFrequency="{Binding SliderStep}"
+                            Value="{Binding SliderValue}"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="RobotSetupSliderChanged"/>
+                </WrapPanel>
+
+                <TextBox Grid.Column="1"
+                         Text="{Binding TextValue}"
+                         Width="35"
+                         Height="20"
+                         Margin="0,-1,5,0"
+                         HorizontalContentAlignment="Center"
+                         Visibility="{Binding TextVis}"/>
+
+                <CheckBox Grid.Column="1"
+                          Content="{Binding CheckTxt}"
+                          Margin="0,2,0,0"
+                          IsChecked="{Binding IsChecked}"
+                          Visibility="{Binding CheckVis}"/>
+
+                <Label Grid.Column="2"
+                       Content="{Binding Label3}"
+                       Padding="0"
+                       Foreground="#888"
+                       Visibility="{Binding Label3Vis}"/>
+            </Grid>
+        </DataTemplate>
+        <!-- Стиль настроек робота -->
+        <Style x:Key="RSitemStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="Bd" Background="{TemplateBinding Panel.Background}">
+                            <ContentPresenter ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid Background="#FFF">
@@ -143,6 +206,7 @@
                             Background="Transparent"
                             Foreground="#999"
                             FontSize="35"
+                            Click="RobotSetupOpen"
                             Visibility="Collapsed"/>
                     <Button Name="RobotAddButton"
                             Content="+"
@@ -331,6 +395,28 @@
             
             
         </Grid>
-        
+
+        <!-- Окно с настройками робота -->
+        <Border Grid.Row="1"
+                Grid.RowSpan="3"
+                Name="RobotSetupPanel"
+                Background="#E8E8E0"
+			    BorderThickness="1"
+			    BorderBrush="#C4D1DD"
+			    Padding="5"
+                Margin="57,66,0,0"
+			    HorizontalAlignment="Left"
+			    VerticalAlignment="Top"
+                Visibility="Hidden">
+            <StackPanel Background="#FFF">
+                <Label Content="Параметры:" Margin="8,5,0,0" Padding="0" FontSize="14" FontWeight="Medium"/>
+                <ListBox Name="RobotSetupList"
+                         Margin="0,8"
+                         BorderThickness="0"
+                         ItemTemplate="{StaticResource RSitemTmp}"
+                         ItemContainerStyle="{StaticResource RSitemStyle}"/>
+            </StackPanel>
+        </Border>
+
     </Grid>
 </UserControl>

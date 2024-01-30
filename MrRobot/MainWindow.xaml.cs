@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Controls;
 using System.Diagnostics;
 using System.Globalization;
-using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using static System.Console;
@@ -160,6 +159,13 @@ namespace MrRobot
             }
 
             return IntPtr.Zero;
+        }
+
+        void GridBackClick(object sender, MouseButtonEventArgs e)
+        {
+            CDIpanel.Hide();
+            global.MW.Tester.RobotSetupPanel.Visibility = Visibility.Collapsed;
+            GridBack.Visibility = Visibility.Collapsed;
         }
     }
 }

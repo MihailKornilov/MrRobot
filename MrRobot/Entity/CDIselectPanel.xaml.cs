@@ -165,6 +165,8 @@ namespace MrRobot.Entity
             OpenPanel.Margin = new Thickness(left, top, 0, 0);
             OpenPanel.Visibility = Visibility.Visible;
 
+            global.MW.GridBack.Visibility = Visibility.Visible;
+
             FindBox.Text = PU.FindTxt;
             FindBox.Focus();
         }
@@ -176,6 +178,7 @@ namespace MrRobot.Entity
             if (OpenPanel.Visibility == Visibility.Visible)
             {
                 OpenPanel.Visibility = Visibility.Collapsed;
+                global.MW.GridBack.Visibility = Visibility.Collapsed;
                 return true;
             }
 
