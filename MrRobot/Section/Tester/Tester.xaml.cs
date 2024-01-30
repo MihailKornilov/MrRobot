@@ -31,7 +31,7 @@ namespace MrRobot.Section
 
             Visualization = position.Val("4_VisualCheck.IsChecked", true);
             VisualCheck.IsChecked = Visualization;
-            NoVisualButton.Visibility = Visualization ? Visibility.Hidden : Visibility.Visible;
+            NoVisualButton.Visibility = Visualization ? Visibility.Collapsed : Visibility.Visible;
             AutoGoSlider.Value = position.Val("4_TesterSlider.Value", 0);
 
             LogMenu.SelectedIndex = position.Val("4_LogMenu_SelectedIndex", 0);
@@ -116,7 +116,7 @@ namespace MrRobot.Section
 
             Visualization = (bool)VisualCheck.IsChecked;
             position.Set("4_VisualCheck.IsChecked", Visualization);
-            NoVisualButton.Visibility = Visualization ? Visibility.Hidden : Visibility.Visible;
+            NoVisualButton.Visibility = Visualization ? Visibility.Collapsed : Visibility.Visible;
             GlobalInit();
         }
     }

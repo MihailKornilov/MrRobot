@@ -61,6 +61,7 @@ namespace MrRobot.Entity
             HeadTimeFrame.Text = "";
             Period();
             CandleCount();
+            Right();
 
             Browser.Address = PathEmpty;
 
@@ -74,6 +75,7 @@ namespace MrRobot.Entity
             HeadTimeFrame.Text = unit.TF;
             Period(unit.DatePeriod);
             CandleCount(unit.RowsCount);
+            Right();
         }
         public void HeadOnly(CDIunit unit)
         {

@@ -185,9 +185,10 @@ namespace MrRobot.Section
         void PanelVisible()
         {
             bool hide = RobotsListBox.SelectedIndex <= 0;
+            RobotSetupButton.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
             BalancePanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
             VisualPanel.Visibility = hide ? Visibility.Hidden : Visibility.Visible;
-            ProcessPanel.Visibility = hide || !Visualization ? Visibility.Hidden : Visibility.Visible;
+            ProcessPanel.Visibility = hide || !Visualization ? Visibility.Collapsed : Visibility.Visible;
         }
         void TesterChartInit()
         {

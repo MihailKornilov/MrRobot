@@ -94,8 +94,7 @@
     <Grid Background="#FFF">
         <Grid.RowDefinitions>
             <RowDefinition Height="41"/>
-            <RowDefinition Height="110"/>
-            <RowDefinition Height="33"/>
+            <RowDefinition Height="120"/>
             <RowDefinition Height="7"/>
             <RowDefinition/>
             <RowDefinition Height="165"/>
@@ -111,7 +110,7 @@
         <!-- ПАНЕЛЬ НАСТРОЕК РОБОТА -->
         <Grid Grid.Row="1" Name="SetupGrid" Background="#ECF3F8">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="270"/>
                 <ColumnDefinition Width="360"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
@@ -119,13 +118,13 @@
             <!-- Список доступных свечных паттернов -->
             <StackPanel Grid.Column="0">
                 <WrapPanel Margin="10,10,0,0">
-                    <Label Content="Свечные данные:" Style="{StaticResource LabelDark}"/>
+                    <Label Content="Свечи:" Style="{StaticResource LabelDark}"/>
                     <Entity:CDIselectLink x:Name="SelectLink" Margin="7,0,0,0"/>
                 </WrapPanel>
                 <WrapPanel Margin="10,10,0,0" Name="RobotPanel">
                     <Label Content="Робот:"
                            Margin="0,3,8,0"
-                           Width="103"
+                           Width="39"
                            HorizontalContentAlignment="Right"
                            Style="{StaticResource LabelDark}"/>
                     <ComboBox Name="RobotsListBox"
@@ -134,13 +133,23 @@
                               HorizontalAlignment="Left"
                               ItemTemplate="{StaticResource RobotListTmp}"
                               SelectionChanged="RobotListChanged"/>
+                    <Button Name="RobotSetupButton"
+                            Content="*"
+                            Margin="4,0,0,0"
+                            Padding="0,-8,0,0"
+                            Width="20"
+                            Height="21"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Foreground="#999"
+                            FontSize="35"
+                            Visibility="Collapsed"/>
                     <Button Name="RobotAddButton"
                             Content="+"
-                            Margin="5,0,0,0"
+                            Margin="4,0,0,0"
                             Width="25"
                             Height="25"
-                            FontWeight="Bold"
-                            HorizontalAlignment="Left"/>
+                            FontWeight="Bold"/>
                 </WrapPanel>
                 <WrapPanel Name="CDIdownloadPanel" Margin="10,25,0,0" Visibility="Hidden">
                     <TextBlock Text="Загрузка свечей. . . " FontSize="15" Foreground="#772"/>
@@ -178,7 +187,7 @@
             <!-- Настройки визуализации -->
             <StackPanel Name="VisualPanel" Grid.Column="2" Margin="10,23,0,0" Visibility="Hidden">
                 <CheckBox Name="UseTF1Check"
-                          Margin="10,10,0,5"
+                          Margin="10,8,0,5"
                           Cursor="Hand"
                           Checked="UseTF1Checked"
                           Unchecked="UseTF1Checked"
@@ -188,67 +197,70 @@
                         <TextBlock Text="использовать таймфрейм 1m"/>
                     </StackPanel>
                 </CheckBox>
+
                 <WrapPanel>
                     <CheckBox Name="VisualCheck"
                               Content="Визуализация"
-                              Margin="10,10,0,0"
-                              Cursor="Hand"
+                              Margin="10,15,0,0"
                               Checked="VisualChecked"
                               Unchecked="VisualChecked"/>
                     <Button Name="NoVisualButton"
                             Content="Запуск теста без визуализации"
                             Width="190"
                             Height="23"
-                            HorizontalAlignment="Left"
-                            Margin="120,8,0,0"
-                            Cursor="Hand"
-                            Click="NoVisualStart"/>
-                </WrapPanel>
-            </StackPanel>
+                            Margin="15,12,0,0"
+                            Click="NoVisualStart"
+                            Visibility="Collapsed"/>
 
+                    <!-- Управление процессом тестирования -->
+                    <Border Name="ProcessPanel"
+                            Width="315"
+                            Height="38"
+                            Margin="15,5,0,0"
+                            Background="#EFE"
+                            BorderThickness="1"
+                            BorderBrush="#ADA"
+                            Visibility="Collapsed">
+                        <WrapPanel Margin="0,0,5,0" VerticalAlignment="Center">
+                            <Slider Name="AutoGoSlider"
+                                    Width="150"
+                                    Margin="7,5,5,0"
+                                    TickPlacement="TopLeft"
+                                    Minimum="0"
+                                    Maximum="10"
+                                    Foreground="#555"
+                                    IsSnapToTickEnabled="True"
+                                    ValueChanged="AutoGoSliderChanged"/>
+                            <Button Name="AutoGoButton"
+                                    Content="Старт"
+                                    Width="40"
+                                    Height="23"
+                                    Margin="0,1,5,0"
+                                    Background="#1AA573"
+                                    Foreground="#0A422E"
+                                    Cursor="Hand"
+                                    Click="AutoGo"/>
+                            <Button Name="CandleAddButton"
+                                    Content="Добавить свечу"
+                                    Width="100"
+                                    Height="23"
+                                    Margin="0,1,0,0"
+                                    Click="CandleAdd"/>
+                        </WrapPanel>
+                    </Border>
+                </WrapPanel>
+
+            </StackPanel>
         </Grid>
 
         <!-- ПРОГРЕСС-БАР ПРОЦЕССА ТЕСТИРОВАНИЯ -->
-        <ProgressBar Name="TesterBar" Grid.Row="3" Height="7"/>
+        <ProgressBar Name="TesterBar" Grid.Row="2" Height="7"/>
 
         <!-- ГРАФИК ТЕСТЕРА -->
-        <Entity:ChartUC x:Name="EChart" Grid.Row="4"/>
-
-        <!-- Управление процессом тестирования -->
-        <WrapPanel Grid.Row="2"
-                   Name="ProcessPanel"
-                   Height="33"
-                   HorizontalAlignment="Right"
-                   Margin="0,0,5,0"
-                   VerticalAlignment="Center"
-                   Visibility="Hidden">
-            <Slider Name="AutoGoSlider"
-                    Width="150"
-                    Margin="0,3,5,0"
-                    TickPlacement="TopLeft"
-                    Minimum="0"
-                    Maximum="10"
-                    IsSnapToTickEnabled="True"
-                    ValueChanged="AutoGoSliderChanged"/>
-            <Button Name="AutoGoButton"
-                    Content="Старт"
-                    Width="40"
-                    Height="23"
-                    Margin="0,0,5,0"
-                    Background="#1AA573"
-                    Foreground="#0A422E"
-                    Cursor="Hand"
-                    Click="AutoGo"/>
-            <Button Name="CandleAddButton"
-                    Content="Добавить свечу"
-                    Width="100"
-                    Height="23"
-                    Cursor="Hand"
-                    Click="CandleAdd"/>
-        </WrapPanel>
+        <Entity:ChartUC x:Name="EChart" Grid.Row="3"/>
 
         <!-- ЛОГИ и ОРДЕРА -->
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="4">
             <TabControl Name="LogMenu"
                         VerticalAlignment="Top"
                         Padding="0"
