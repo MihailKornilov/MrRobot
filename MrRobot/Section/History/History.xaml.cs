@@ -332,24 +332,23 @@ namespace MrRobot.Section
         /// <summary>
         /// Выбор из списка загруженных свечных данных
         /// </summary>
-        private void DowloadedListChanged(object sender, SelectionChangedEventArgs e)
+        void DowloadedListChanged(object s, SelectionChangedEventArgs e)
         {
-            var item = (sender as ListBox).SelectedItem as CDIunit;
-            if (item == null)
-                return;
-            if (Candle.Unit(item.Id) == null)
-                return;
+            var box = s as ListBox;
 
-            ChartHead.Update(item);
-            var chart = new Chart("History", item.Table);
-            HistoryBrowser.Address = chart.PageHtml;
-            BrowserGrid.Visibility = Visibility.Visible;
+            if (box.Items.Count > 0 && box.SelectedIndex == -1)
+            {
+                box.SelectedIndex = 0;
+                return;
+            }
+
+            EChart.CDI("History", box.SelectedItem as CDIunit);
         }
 
         /// <summary>
         /// Нажатие на крестик удаления загруженной истории
         /// </summary>
-        private void DownloadedX(object sender, MouseButtonEventArgs e)
+        void DownloadedX(object sender, MouseButtonEventArgs e)
         {
             var panel = ((FrameworkElement)sender).Parent as StackPanel;
             var label = panel.Children[0] as Label;

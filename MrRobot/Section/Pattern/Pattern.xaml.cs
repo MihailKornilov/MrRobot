@@ -30,17 +30,20 @@ namespace MrRobot.Section
             if (global.IsInited(3))
                 return;
 
-            SourceChanged();
             LengthSlider.Value = position.Val("3_CandlesCountForSearch", 1);
             PrecisionPercentSlider.Value = position.Val("3_ScatterPercent", 100);
             FoundRepeatMin.Text = position.Val("3_FoundRepeatMin", "0");
+            FoundButtonBack.Content = "<<<";
+            FoundSlider.ValueChanged += (s, e) => PatternFoundStep();
+
+            SourceChanged();
 
             global.Inited(3);
         }
 
 
-        bool IsSrcChosen => SrcId > 0;          // Свечные данные выбраны
-        int SrcId => CDIpanel.CdiId; // ID свечных данных
+        bool IsSrcChosen => SrcId > 0;  // Свечные данные выбраны
+        int SrcId => CDIpanel.CdiId;    // ID свечных данных
         CDIunit SrcUnit => Candle.Unit(SrcId);  // Единица свечных данных
 
 
@@ -60,14 +63,14 @@ namespace MrRobot.Section
             DBdateEnd.Text = SrcUnit.DateEnd;
 
             // Вывод графика
-            PatternChartHead.Update(SrcUnit);
             if (global.IsAutoProgon)
             {
-                SearchBrowser.Address = new Chart().PageHtml;
+                EChart.Empty();
                 return;
             }
-            SearchBrowser.Address = new Chart("Pattern", SrcUnit.Table).PageHtml;
-            SearchResultCheck();
+
+            if(!SearchResultCheck())
+                EChart.CDI("Pattern", SrcUnit);
         }
 
 
@@ -102,14 +105,12 @@ namespace MrRobot.Section
             SearchResultCheck((sender as TextBox).IsFocused);
         }
 
-        void SearchResultCheck(bool isCheck = true)
+        bool SearchResultCheck(bool isCheck = true)
         {
             if (!global.IsInited(3))
-                return;
+                return false;
             if (!isCheck)
-                return;
-
-            FoundLinePanel.Children.Clear();
+                return false;
 
             var param = new PatternSearchParam
             {
@@ -119,7 +120,7 @@ namespace MrRobot.Section
                 FoundRepeatMin = Convert.ToInt32(FoundRepeatMin.Text)
             };
 
-            PatternSearchExist(param);
+            return PatternSearchExist(param);
         }
 
 
@@ -311,6 +312,8 @@ namespace MrRobot.Section
             if (param.FoundCount == 0)
                 FoundListBox.ItemsSource = null;
 
+            FoundLine();
+
             if (isSearchNew)
                 return;
 
@@ -421,13 +424,22 @@ namespace MrRobot.Section
         /// <summary>
         /// Расстановка временных линий для визуального отображенмя найденных паттернов
         /// </summary>
-        void FoundLine(int index = 0)
+        public void FoundLine()
         {
+            if (position.MainMenu() != 3)
+                return;
+
             FoundLinePanel.Children.Clear();
 
+            if (FoundListBox.Items.Count == 0)
+                return;
+
+
+            int index = Convert.ToInt32(FoundStep.Text) - 1;
             var found = FoundListBox.SelectedItem as PatternUnit;
             var CDI = Candle.Unit(found.CdiId);
             int Width = (int)FoundLinePanel.ActualWidth;
+            int Height = (int)FoundLinePanel.ActualHeight;
 
             for(int i = 0; i < found.UnixList.Count; i++)
             {
@@ -437,16 +449,26 @@ namespace MrRobot.Section
 
                 var line = new Line()
                 {
+                    Tag = i+1,
                     X1 = X,
                     Y1 = 0,
                     X2 = X,
-                    Y2 = 24,
-                    Stroke = format.RGB(i == index ? "#FFFC00" : "#CCCCCC"),
-                    StrokeThickness = i == index ? 1.7 : 0.5 
+                    Y2 = Height
                 };
+
+                if(i == index)
+                {
+                    line.Stroke = format.RGB("#FFFFC0");
+                    line.StrokeThickness = 2;
+                }
+
+                // Нажатие на временную линию
+                line.MouseLeftButtonDown += (s, e) => FoundSlider.Value = (int)(s as Line).Tag;
+
                 FoundLinePanel.Children.Add(line);
             }
         }
+
         /// <summary>
         /// Визуальное отображение найденного паттерна
         /// </summary>
@@ -456,39 +478,36 @@ namespace MrRobot.Section
                 return;
 
             var found = FoundListBox.SelectedItem as PatternUnit;
-            var chart = new Chart("Pattern");
-            chart.PageName = "PatternFound";
-            chart.PatternSource(found);
-            FoundBrowser.Address = chart.PageHtml;
+            FoundChart.PatternSource(found);
 
-            PatternFoundStep();
+            FoundSlider.Maximum = found.UnixList.Count;
+
+            if (FoundSlider.Value == 1)
+                PatternFoundStep();
+
+            FoundSlider.Value = 1;
         }
 
         /// <summary>
         /// Нажатие на кнопку для отображения очередного найденного паттерна
         /// </summary>
-        void PatternFoundBack(object sender, RoutedEventArgs e) => PatternFoundStep(-1);
-        void PatternFoundNext(object sender, RoutedEventArgs e) => PatternFoundStep(1);
-        void PatternFoundStep(int step = 0)
+        void PatternFoundBack(object sender, RoutedEventArgs e) => FoundSlider.Value -= 1;
+        void PatternFoundNext(object sender, RoutedEventArgs e) => FoundSlider.Value += 1;
+        void PatternFoundStep()
         {
-            int index = step == 0 ? 1 : Convert.ToInt32(FoundStep.Text);
-            var found = FoundListBox.SelectedItem as PatternUnit;
-
-            if (step < 0 && index <= 1
-             || step > 0 && index >= found.Repeat)
+            int index = (int)FoundSlider.Value;
+            if (index == 0)
                 return;
 
-            index += step;
+            var found = FoundListBox.SelectedItem as PatternUnit;
+
             FoundStep.Text = index.ToString();
-            ButtonFoundBack.IsEnabled = index > 1;
-            ButtonFoundNext.IsEnabled = index < found.Repeat;
+            FoundButtonBack.IsEnabled = index > 1;
+            FoundButtonNext.IsEnabled = index < found.Repeat;
 
-            var visual = new Chart("Pattern", Candle.Unit(found.CdiId).Table);
-            visual.PageName = "PatternVisual";
-            visual.PatternVisual(found, index-1);
-            SearchBrowser.Address = visual.PageHtml;
+            EChart.PatternVisual(found, index-1);
 
-            FoundLine(index-1);
+            FoundLine();
         }
 
 

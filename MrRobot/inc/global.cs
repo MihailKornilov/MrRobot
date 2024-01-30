@@ -44,7 +44,7 @@ namespace MrRobot.inc
         }
 
 
-        public static MainWindow MW = Application.Current.Windows[0] as MainWindow;
+        public static MainWindow MW { get => Application.Current.Windows[0] as MainWindow; }
 
 
         // Флаг запущенного АвтоПрогона

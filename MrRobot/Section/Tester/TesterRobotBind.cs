@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using static System.Console;
 
-using CefSharp;
 using MrRobot.inc;
 using MrRobot.Entity;
 using static RobotAPI.Robot;
@@ -196,20 +195,11 @@ namespace MrRobot.Section
 
             if (!Visualization)
             {
-                TesterChartHead.Update(item);
-
                 // Отображение пустой страницы вместо графика
-                TesterBrowser.Address = new Chart().PageHtml;
+                EChart.HeadOnly(item);
                 return;
             }
-
-            TesterChartHead.Period();
-            TesterChartHead.CandleCount();
-
-            var chart = new Chart("Tester", item.Table);
-            chart.PageName = "TesterProcess";
-            chart.TesterGraficInit();
-            TesterBrowser.Address = chart.PageHtml;
+            EChart.TesterGraficInit(item);
         }
         void BalanceUpdate()
         {
@@ -354,13 +344,13 @@ namespace MrRobot.Section
             TesterBar.Value = (double)CANDLES_COUNT / (double)INSTRUMENT.RowsCount * 100;
 
             // Отображение даты последней свечи в заголовке графика
-            TesterChartHead.Period(DATE_TIME);
+            EChart.Period(DATE_TIME);
 
             // Отображение количества свечей в заголовке графика
-            TesterChartHead.CandleCount(CANDLES_COUNT);
+            EChart.CandleCount(CANDLES_COUNT);
 
             // Вставка очередной свечи в график
-            TesterBrowser.ExecuteScriptAsync($"candles.update({CANDLES().CandleToChart()})");
+            EChart.Script($"candles.update({CANDLES().CandleToChart()})");
 
             if (!AutoGoStatus())
             {
@@ -484,7 +474,7 @@ namespace MrRobot.Section
                 script += $"Line{type}.price={spl[1]};candles.createPriceLine(Line{type});";
             }
 
-            TesterBrowser.ExecuteScriptAsync(script);
+            //TesterBrowser.ExecuteScriptAsync(script);
         }
 
         /// <summary>

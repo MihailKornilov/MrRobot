@@ -46,6 +46,19 @@
             <Setter Property="BorderBrush" Value="#7EACC7"/>
         </Style>
 
+        <Style TargetType="Line">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Stroke" Value="#CCC"/>
+            <Setter Property="StrokeThickness" Value=".5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Stroke" Value="#EEEEB0"/>
+                    <Setter Property="StrokeThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        
 
 
 

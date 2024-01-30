@@ -24,7 +24,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
 ) order by symbol;
 */
 
-        private void AutoProgonGo(object sender, RoutedEventArgs e)
+        void AutoProgonGo(object sender, RoutedEventArgs e)
         {
             if (global.IsAutoProgon)
                 return;
@@ -67,7 +67,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
                     //"DGB/USDT",
                     "DOGE/USDT",
                     "DOT/USDT",
-    "DYDX/USDT",
+    //"DYDX/USDT",
                     "EGLD/USDT",
                     //"ENJ/USDT",
                     "ENS/USDT",

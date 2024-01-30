@@ -203,7 +203,7 @@ namespace MrRobot.Section
 
             position.Set("5.InstrumentListBox.Id", item.Id);
 
-            TradeChartHead.Symbol(item.Name);
+            //TradeChartHead.Symbol(item.Name);
 
             var chart = new Chart("Trade");
             chart.PageName = "ChartActual";
@@ -230,7 +230,7 @@ namespace MrRobot.Section
 
             position.Set("5.InstrumentListBox.Id", 0);
 
-            TradeChartHead.Symbol();
+            //TradeChartHead.Symbol();
             TradeBrowser.Address = new Chart().PageHtml;
         }
 

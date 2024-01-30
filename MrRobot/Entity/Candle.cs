@@ -168,16 +168,12 @@ namespace MrRobot.Entity
             return list.ToArray();
         }
 
+
         /// <summary>
         /// Единица информации свечных данных на основании ID
         /// </summary>
-        public static CDIunit Unit(int Id)
-        {
-            if (IdUnitAss.ContainsKey(Id))
-                return IdUnitAss[Id];
-
-            return null;
-        }
+        public static CDIunit Unit(int id) => IdUnitAss.ContainsKey(id) ? IdUnitAss[id] : null;
+        public static int Id(int id) => Unit(id) == null ? 0 : id;
 
         /// <summary>
         /// Единица информации свечных данных на основании названия таблицы со свечами

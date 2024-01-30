@@ -155,6 +155,8 @@ namespace MrRobot
                 position.Set("MainWindow.Height", (int)Height);
                 position.Set("MainWindow.Left",   (int)Left);
                 position.Set("MainWindow.Top",    (int)Top);
+
+                global.MW.Pattern.FoundLine();
             }
 
             return IntPtr.Zero;

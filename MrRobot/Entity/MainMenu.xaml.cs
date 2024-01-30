@@ -18,7 +18,7 @@ namespace MrRobot.Entity
                 MMlist.Items.Add(new MMUnit(i));
 
             MMlist.SelectionChanged += Change;
-            global.MW.Loaded += (s, e) => Active();
+            global.MW.Loaded += (s, e) => Go();
         }
 
 
@@ -43,9 +43,9 @@ namespace MrRobot.Entity
         /// <summary>
         /// Клик по кнопке меню
         /// </summary>
-        void ButtonClick(object sender, RoutedEventArgs e) => Active((sender as Button).TabIndex);
-
-        void Active(int i = 0) => MMlist.SelectedIndex = position.MainMenu(i) - 1;
+        void ButtonClick(object sender, RoutedEventArgs e) => Go((sender as Button).TabIndex);
+        //public static void Go(int i) => global.MW.MMenu.Active(i);
+        public static void Go(int i = 0) => global.MW.MMenu.MMlist.SelectedIndex = position.MainMenu(i) - 1;
 
         /// <summary>
         /// Смена раздела Главного меню
@@ -61,6 +61,7 @@ namespace MrRobot.Entity
             }
 
             global.MW.Pattern.ArchiveGo(true);
+            global.MW.Pattern.FoundLine();
             CDIpanel.PageChanged();
 
             switch (index)

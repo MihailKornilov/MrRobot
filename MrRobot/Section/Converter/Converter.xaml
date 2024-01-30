@@ -129,7 +129,7 @@
 
             <!-- Результат конвертации -->
             <Grid Grid.Column="1" Background="#D4DEE7">
-                <StackPanel Name="ConverterResultPanel" Background="#E4EDF3" Margin="1,0,1,0">
+                <StackPanel Background="#E4EDF3" Margin="1,0,1,0">
                     <Label Content="Результат конвертации:" Margin="10,10,0,0" Style="{StaticResource LabelDark}"/>
                     <ListBox Name="ResultListBox"
                              Margin="10,3,10,0"
@@ -146,16 +146,6 @@
         </Grid>
 
         <!-- ОТОБРАЖЕНИЕ ГРАФИКА -->
-        <Grid Grid.Row="2" Background="#222" Margin="0,0,1,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="34"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Height="34" VerticalAlignment="Top" Background="#555">
-                <Entity:ChartHead x:Name="ConverterChartHead"/>
-            </StackPanel>
-            <wpf:ChromiumWebBrowser Name="ConverterBrowser" Grid.Row="1"/>
-        </Grid>
-
+        <Entity:ChartUC x:Name="EChart" Grid.Row="2"/>
     </Grid>
 </UserControl>

@@ -9,10 +9,10 @@ namespace InnoSetup
         static void Main()
         {
             MainDir = Directory.GetCurrentDirectory();
-            FileSrc = $"{MainDir}\\SourceScript.iss";
-            FileIss = $"{MainDir}\\MrRobot.iss";
+            FileSrc = $"{MainDir}\\src.iss";
+            FileIss = $"{MainDir}\\dst.iss";
 
-            string WorkDir = $"{MainDir}\\MrRobot";
+            string WorkDir = $"{MainDir}\\Debug";
             if (!Directory.Exists(WorkDir))
             {
                 WriteLine($"Каталога {WorkDir} не существует.");
@@ -30,7 +30,6 @@ namespace InnoSetup
 
             Process.Start(FileIss);
         }
-
 
         static string MainDir;
         static string FileSrc;

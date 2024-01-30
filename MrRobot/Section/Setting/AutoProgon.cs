@@ -42,14 +42,6 @@ namespace MrRobot.Section
         }
 
         /// <summary>
-        /// Переход на выбранную страницу
-        /// </summary>
-        static void SectionGo(int num)
-        {
-            //global.MW.MMlist.SelectedIndex = num - 1;
-        }
-
-        /// <summary>
         /// Смена на очередную валютную пару
         /// </summary>
         static bool SymbolChange(bool IsChange = true)
@@ -80,7 +72,7 @@ namespace MrRobot.Section
         static void HistoryDownload()
         {
             // Переход на страницу 1:"Скачивание исторических данных"
-            SectionGo(1);
+            MainMenu.Go(1);
 
             // Если свечные данные были скачаны ранее, переход на Конвертацию
             if(Candle.IsTFexist(PARAM.Symbol))
@@ -111,7 +103,7 @@ namespace MrRobot.Section
 
 
             // Переход на страницу 2:"Конвертер"
-            SectionGo(2);
+            MainMenu.Go(2);
 
             // Выбор скачанной истории TF=1
             var unit = Candle.UnitOnSymbol(PARAM.Symbol);
@@ -161,7 +153,7 @@ namespace MrRobot.Section
             PARAM.ConvertedIds = PARAM.ConvertedIds.Reverse().ToArray();
 
             // Переход на страницу 3:"Поиск паттернов"
-            SectionGo(3);
+            MainMenu.Go(3);
 
             // Установка настроек
             global.MW.Pattern.LengthSlider.Value = Convert.ToInt32(PARAM.PatternLength);
@@ -228,7 +220,7 @@ namespace MrRobot.Section
                 return false;
 
             // Переход на страницу 4:"Tester"
-            SectionGo(4);
+            MainMenu.Go(4);
 
             // Идентификаторы свечных данных текущего Symbol
             int[] CDIids = Candle.IdsOnSymbol(PARAM.Symbol, PARAM.ConvertTF);

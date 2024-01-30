@@ -141,9 +141,10 @@
 
             <!-- ПОДКЛЮЧЕНИЕ, ГРАФИК, ЛОГ -->
             <Grid Grid.Row="1">
-                <TabControl BorderBrush="#D3DDE6"
+                <TabControl BorderThickness="0"
                             Background="#ECF3F8"
-                            Margin="-1,5,-1,0"
+                            Padding="0"
+                            Margin="0,5,0,0"
                             SelectedIndex="1"
                             SelectionChanged="MenuChanged">
                     <!-- Подключение -->
@@ -246,7 +247,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Заголовок графика -->
-                                        <Entity:ChartHead x:Name="TradeChartHead" Grid.Column="0"/>
+                                        <!--<Entity:ChartHead x:Name="TradeChartHead" Grid.Column="0"/>-->
 
                                         <!-- Таймер в заголовке графика с правой стороры -->
                                         <StackPanel Grid.Column="1" Height="33" VerticalAlignment="Top" Background="#222">

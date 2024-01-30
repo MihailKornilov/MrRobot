@@ -93,7 +93,7 @@ namespace MrRobot.Entity
         // ID выбранных свечных данных
         public int CdiId
         {
-            get { return position.Val($"{Page}.CDIselect.ID", 0); }
+            get => Candle.Id(position.Val($"{Page}.CDIselect.ID", 0));
             set
             {
                 position.Set($"{Page}.CDIselect.ID", value);

@@ -15,7 +15,7 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
-			<RowDefinition Height="23"/>
+			<RowDefinition Height="0.5"/>
 		</Grid.RowDefinitions>
 
 		<Grid Grid.Row="0">
@@ -41,7 +41,7 @@
 		
 		<!-- НИЖНЯЯ СТРОКА ДЛЯ ВЫВОДА КОРОТКИХ СООБЩЕНИЙ -->
 		<Grid Grid.Row="1" Background="#CCDAE6">
-			<StackPanel Height="22" Background="#D2E0ED" Margin="0,1,0,0">
+			<StackPanel Height="22" Background="#D2E0ED" Margin="0,1,0,0" Visibility="Hidden">
 				<TextBlock Name="MainLineBottom"
 						   Height="22"
 						   Padding="6,0,0,0"

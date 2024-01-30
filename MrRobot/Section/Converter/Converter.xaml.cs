@@ -41,19 +41,11 @@ namespace MrRobot.Section
                 return;
             if (!IsSourceChosen)
                 return;
-
-
-            ResultListCreate();
-            ChartBrowserShow();
-        }
-
-        void ChartBrowserShow()
-        {
             if (global.IsAutoProgon)
                 return;
 
-            ConverterBrowser.Address = new Chart("Converter", SourceUnit.Table).PageHtml;
-            ConverterChartHead.Update(SourceUnit);
+            ResultListCreate();
+            EChart.CDI("Converter", SourceUnit);
         }
 
 
@@ -231,7 +223,6 @@ namespace MrRobot.Section
 
             var list = Candle.ListOnIID(SourceUnit.InstrumentId, false);
             ResultListBox.ItemsSource = list;
-            ConverterResultPanel.Visibility = list.Count == 0 ? Visibility.Hidden : Visibility.Visible;
         }
 
         /// <summary>
@@ -240,11 +231,9 @@ namespace MrRobot.Section
         void ConverterResultChanged(object sender, SelectionChangedEventArgs e)
         {
             var item = (sender as ListBox).SelectedItem as CDIunit;
-            if (item == null)
-                return;
 
-            ConverterBrowser.Address = new Chart("Converter", item.Table).PageHtml;
-            ConverterChartHead.Update(item);
+            if(item != null)
+                EChart.CDI("Converter", item);
         }
 
         /// <summary>

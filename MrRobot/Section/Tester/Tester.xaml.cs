@@ -36,6 +36,7 @@ namespace MrRobot.Section
 
             LogMenu.SelectedIndex = position.Val("4_LogMenu_SelectedIndex", 0);
 
+            SourceChanged();
 
             global.Inited(4);
         }
@@ -56,22 +57,10 @@ namespace MrRobot.Section
             if (CDIpanel.CdiId == 0)
                 return;
 
-            TesterBrowserShow();
             UseTF1Check.Visibility = CDIpanel.CdiUnit().ConvertedFromId == 0 ? Visibility.Collapsed : Visibility.Visible;
-        }
 
-
-        /// <summary>
-        /// Показ графика
-        /// </summary>
-        void TesterBrowserShow()
-        {
-            if (global.IsAutoProgon)
-                return;
-
-            var item = CDIpanel.CdiUnit();
-            TesterBrowser.Address = new Chart("Tester", item.Table).PageHtml;
-            TesterChartHead.Update(item);
+            if (!global.IsAutoProgon)
+                EChart.CDI("Tester", CDIpanel.CdiUnit());
         }
 
 

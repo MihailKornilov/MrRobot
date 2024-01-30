@@ -95,6 +95,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="41"/>
             <RowDefinition Height="110"/>
+            <RowDefinition Height="33"/>
             <RowDefinition Height="7"/>
             <RowDefinition/>
             <RowDefinition Height="165"/>
@@ -208,61 +209,46 @@
         </Grid>
 
         <!-- ПРОГРЕСС-БАР ПРОЦЕССА ТЕСТИРОВАНИЯ -->
-        <ProgressBar Name="TesterBar" Grid.Row="2" Height="7"/>
+        <ProgressBar Name="TesterBar" Grid.Row="3" Height="7"/>
 
         <!-- ГРАФИК ТЕСТЕРА -->
-        <Grid Grid.Row="3" Background="#222" Margin="0,0,1,1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="34"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Height="34" VerticalAlignment="Top" Background="#555">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="700"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+        <Entity:ChartUC x:Name="EChart" Grid.Row="4"/>
 
-                <!-- Заголовок графика -->
-                <Entity:ChartHead Grid.Column="0" x:Name="TesterChartHead"/>
-
-                <!-- Управление процессом тестирования -->
-                <Grid Grid.Column="1" Height="33" Background="#222" VerticalAlignment="Top">
-                    <WrapPanel Name="ProcessPanel"
-                               HorizontalAlignment="Right"
-                               Margin="0,0,5,0"
-                               VerticalAlignment="Center"
-                               Visibility="Hidden">
-                        <Slider Name="AutoGoSlider"
-                                Width="150"
-                                Margin="0,3,5,0"
-                                TickPlacement="TopLeft"
-                                Minimum="0"
-                                Maximum="10"
-                                IsSnapToTickEnabled="True"
-                                ValueChanged="AutoGoSliderChanged"/>
-                        <Button Name="AutoGoButton"
-                                Content="Старт"
-                                Width="40"
-                                Height="23"
-                                Margin="0,0,5,0"
-                                Background="#1AA573"
-                                Foreground="#0A422E"
-                                Cursor="Hand"
-                                Click="AutoGo"/>
-                        <Button Name="CandleAddButton"
-                                Content="Добавить свечу"
-                                Width="100"
-                                Height="23"
-                                Cursor="Hand"
-                                Click="CandleAdd"/>
-                    </WrapPanel>
-                </Grid>
-            </Grid>
-            <wpf:ChromiumWebBrowser Name="TesterBrowser" Grid.Row="1"/>
-        </Grid>
+        <!-- Управление процессом тестирования -->
+        <WrapPanel Grid.Row="2"
+                   Name="ProcessPanel"
+                   Height="33"
+                   HorizontalAlignment="Right"
+                   Margin="0,0,5,0"
+                   VerticalAlignment="Center"
+                   Visibility="Hidden">
+            <Slider Name="AutoGoSlider"
+                    Width="150"
+                    Margin="0,3,5,0"
+                    TickPlacement="TopLeft"
+                    Minimum="0"
+                    Maximum="10"
+                    IsSnapToTickEnabled="True"
+                    ValueChanged="AutoGoSliderChanged"/>
+            <Button Name="AutoGoButton"
+                    Content="Старт"
+                    Width="40"
+                    Height="23"
+                    Margin="0,0,5,0"
+                    Background="#1AA573"
+                    Foreground="#0A422E"
+                    Cursor="Hand"
+                    Click="AutoGo"/>
+            <Button Name="CandleAddButton"
+                    Content="Добавить свечу"
+                    Width="100"
+                    Height="23"
+                    Cursor="Hand"
+                    Click="CandleAdd"/>
+        </WrapPanel>
 
         <!-- ЛОГИ и ОРДЕРА -->
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="5">
             <TabControl Name="LogMenu"
                         VerticalAlignment="Top"
                         Padding="0"
