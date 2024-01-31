@@ -37,15 +37,6 @@
 
             <!-- Выпадающий список со свечными данными -->
             <Entity:CDIselectPanel Grid.Column="1" x:Name="CDIselectPanel" Panel.ZIndex="2"/>
-
-            <!-- Задний план, который появляется при открытии выпающего меню, чтобы это меню закрывать -->
-            <Grid Grid.Column="0"
-                  Grid.ColumnSpan="2"
-                  x:Name="GridBack"
-                  Background="Transparent"
-                  Panel.ZIndex="1"
-                  MouseLeftButtonDown="GridBackClick"
-                  Visibility="Collapsed"/>
         </Grid>
 		
 		<!-- НИЖНЯЯ СТРОКА ДЛЯ ВЫВОДА КОРОТКИХ СООБЩЕНИЙ -->

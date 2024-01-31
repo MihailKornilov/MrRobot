@@ -44,7 +44,6 @@ namespace MrRobot.Entity
         /// Клик по кнопке меню
         /// </summary>
         void ButtonClick(object sender, RoutedEventArgs e) => Go((sender as Button).TabIndex);
-        //public static void Go(int i) => global.MW.MMenu.Active(i);
         public static void Go(int i = 0) => global.MW.MMenu.MMlist.SelectedIndex = position.MainMenu(i) - 1;
 
         /// <summary>

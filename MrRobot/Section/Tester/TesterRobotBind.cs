@@ -220,8 +220,7 @@ namespace MrRobot.Section
             if (SETUP.Items.Count == 0)
                 return;
 
-            RobotSetupPanel.Visibility = Visibility.Visible;
-            //global.MW.GridBack.Visibility = Visibility.Visible;
+            new GridBack(RobotSetupPanel);
 
             if (RobotSetupList.Items.Count > 0)
                 return;

@@ -4,6 +4,7 @@ using static System.Console;
 
 using MrRobot.Entity;
 using MrRobot.inc;
+using System.Reflection;
 
 namespace MrRobot.Section
 {
@@ -118,6 +119,43 @@ namespace MrRobot.Section
             position.Set("4_VisualCheck.IsChecked", Visualization);
             NoVisualButton.Visibility = Visualization ? Visibility.Collapsed : Visibility.Visible;
             GlobalInit();
+        }
+    }
+
+    class GridBack
+    {
+        public GridBack(UIElement elem)
+        {
+            elem.Visibility = Visibility.Visible;
+
+            var border = elem as Border;
+
+            var grid = new Grid();
+            grid.Background = format.RGB("#888888");
+            grid.Opacity = 0.05;
+            grid.MouseLeftButtonDown += (s, ee) =>
+            {
+                (grid.Parent as Panel).Children.Remove(grid);
+                elem.Visibility = Visibility.Collapsed;
+            };
+            Grid.SetRow(grid, 0);
+            Grid.SetRowSpan(grid, 5);
+            (border.Parent as Panel).Children.Add(grid);
+        }
+
+        public GridBack(CDIselectPanel elem)
+        {
+            var grid = new Grid();
+            grid.Background = format.RGB("#888888");
+            grid.Opacity = 0.05;
+            grid.MouseLeftButtonDown += (s, ee) =>
+            {
+                (grid.Parent as Panel).Children.Remove(grid);
+                CDIpanel.Hide();
+            };
+            Grid.SetColumn(grid, 0);
+            Grid.SetColumnSpan(grid, 2);
+            (elem.Parent as Panel).Children.Add(grid);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Collections.Generic;
 using static System.Console;
 using MrRobot.inc;
+using MrRobot.Section;
 
 namespace MrRobot.Entity
 {
@@ -165,7 +166,7 @@ namespace MrRobot.Entity
             OpenPanel.Margin = new Thickness(left, top, 0, 0);
             OpenPanel.Visibility = Visibility.Visible;
 
-            global.MW.GridBack.Visibility = Visibility.Visible;
+            new GridBack(global.MW.CDIselectPanel);
 
             FindBox.Text = PU.FindTxt;
             FindBox.Focus();
@@ -178,7 +179,6 @@ namespace MrRobot.Entity
             if (OpenPanel.Visibility == Visibility.Visible)
             {
                 OpenPanel.Visibility = Visibility.Collapsed;
-                global.MW.GridBack.Visibility = Visibility.Collapsed;
                 return true;
             }
 

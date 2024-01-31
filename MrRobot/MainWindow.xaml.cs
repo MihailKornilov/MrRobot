@@ -160,12 +160,5 @@ namespace MrRobot
 
             return IntPtr.Zero;
         }
-
-        void GridBackClick(object sender, MouseButtonEventArgs e)
-        {
-            CDIpanel.Hide();
-            global.MW.Tester.RobotSetupPanel.Visibility = Visibility.Collapsed;
-            GridBack.Visibility = Visibility.Collapsed;
-        }
     }
 }
