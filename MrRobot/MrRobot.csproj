@@ -158,6 +158,9 @@
     <Compile Include="Entity\ChartUC.xaml.cs">
       <DependentUpon>ChartUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entity\InstrumentSelect.xaml.cs">
+      <DependentUpon>InstrumentSelect.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Entity\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
@@ -211,6 +214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Entity\ChartUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Entity\InstrumentSelect.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

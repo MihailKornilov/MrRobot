@@ -26,7 +26,6 @@ namespace MrRobot.Section
             if (isUpdateLater(1))
                 return;
 
-            global.MW.History.InstrumentListBoxFill();
             global.MW.History.DownloadedListCreate();
         }
 

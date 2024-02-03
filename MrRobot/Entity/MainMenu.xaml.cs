@@ -95,7 +95,6 @@ namespace MrRobot.Entity
 
                 case 5:
                     global.MW.Trade.TradeInit();
-                    global.MW.Trade.InstrumentSelect();
                     break;
             }
         }

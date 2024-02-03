@@ -73,8 +73,6 @@ namespace MrRobot
 
             Loaded += (s, e) =>
             {
-                Trade.InstrumentSelect();
-
                 var hwnd = new WindowInteropHelper(this).Handle;
                 HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
             };

@@ -29,7 +29,7 @@ namespace MrRobot.Section
             });
             await Task.Run(() => InstrumentUpdateProcess(progress));
             new Instrument();
-            InstrumentCountWrite();
+            HeadCountWrite();
 
             await Task.Run(() => Candle.DataControl(prgs: progress));
             InstrumentUpdateButton.Visibility = Visibility.Visible;

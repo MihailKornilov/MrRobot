@@ -146,6 +146,6 @@
         </Grid>
 
         <!-- ОТОБРАЖЕНИЕ ГРАФИКА -->
-        <Entity:ChartUC x:Name="EChart" Grid.Row="2"/>
+        <Entity:ChartUC x:Name="EChart" Grid.Row="2" Margin="0,0,0,.6"/>
     </Grid>
 </UserControl>

@@ -46,13 +46,13 @@ namespace MrRobot.Section
         /// </summary>
         void InstrumentSet()
         {
-            INSTRUMENT = InstrumentListBox.SelectedItem as InstrumentUnit;
+            //INSTRUMENT = InstrumentListBox.SelectedItem as InstrumentUnit;
         }
 
         void GlobalInit()
         {
-            InstrumentSelectBlock.IsEnabled = IsTradeInited;
-            InstrumentCancelLabel.IsEnabled = IsTradeInited;
+            //InstrumentSelectBlock.IsEnabled = IsTradeInited;
+            //InstrumentCancelLabel.IsEnabled = IsTradeInited;
             RobotsListBox.IsEnabled = IsTradeInited;
             RobotButton.Content = IsTradeInited ? "Старт" : "Стоп";
 

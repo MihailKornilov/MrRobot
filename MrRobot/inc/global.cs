@@ -3,13 +3,12 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Windows.Controls;
 using System.Diagnostics;
 using static System.Console;
 
 using MrRobot.Section;
 using MrRobot.Entity;
-using System.Windows.Controls;
 
 namespace MrRobot.inc
 {
@@ -146,9 +145,6 @@ namespace MrRobot.inc
         /// </summary>
         public static void Msg(string txt)
         {
-            global.MW.MainLineBottom.Text = txt;
-            global.MW.MainLineBottom.Background = new SolidColorBrush(Color.FromArgb(255, 0xFF, 0xAA, 0xAA));  // FAA
-            global.MW.MainLineBottom.Foreground = new SolidColorBrush(Color.FromArgb(255, 0xCC, 0x00, 0x00));  // C00
         }
 
         /// <summary>
@@ -156,12 +152,6 @@ namespace MrRobot.inc
         /// </summary>
         public static void Clear(object sender, MouseButtonEventArgs e)
         {
-            if (global.MW.MainLineBottom.Text.Length == 0)
-                return;
-
-            global.MW.MainLineBottom.Text = "";
-            global.MW.MainLineBottom.Background = null;
-            global.MW.MainLineBottom.Foreground = null;
         }
     }
 
@@ -251,7 +241,10 @@ namespace MrRobot.inc
 
     class GridBack
     {
-        public GridBack(UIElement elem)
+        delegate void Dcall();
+        static Dcall GBremove;
+
+        public GridBack(FrameworkElement elem)
         {
             elem.Visibility = Visibility.Visible;
 
@@ -263,27 +256,34 @@ namespace MrRobot.inc
             grid.MouseLeftButtonDown += (s, ee) =>
             {
                 (grid.Parent as Panel).Children.Remove(grid);
-                elem.Visibility = Visibility.Collapsed;
+                global.Hid(border);
             };
             Grid.SetRow(grid, 0);
             Grid.SetRowSpan(grid, 5);
             (border.Parent as Panel).Children.Add(grid);
         }
 
-        public GridBack(CDIselectPanel elem)
+        public GridBack(InstrumentSelect panel) => Create(panel.Parent as Panel, panel.OpenPanel);
+        public GridBack(CDIselectPanel panel)   => Create(panel.Parent as Panel, panel.OpenPanel);
+        void Create(Panel panel, Border border)
         {
             var grid = new Grid();
             grid.Background = format.RGB("#888888");
             grid.Opacity = 0.05;
-            grid.MouseLeftButtonDown += (s, ee) =>
-            {
-                (grid.Parent as Panel).Children.Remove(grid);
-                CDIpanel.Hide();
+            GBremove += () => {
+                panel.Children.Remove(grid);
+                global.Hid(border);
+                GBremove = null;
             };
+            grid.MouseLeftButtonDown += (s, e) => GBremove();
             Grid.SetColumn(grid, 0);
             Grid.SetColumnSpan(grid, 2);
-            (elem.Parent as Panel).Children.Add(grid);
+            panel.Children.Add(grid);
+        }
+        public static void Remove()
+        {
+            if (GBremove != null)
+                GBremove();
         }
     }
-
 }

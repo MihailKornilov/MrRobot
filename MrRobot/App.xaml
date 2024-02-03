@@ -79,18 +79,6 @@
             <Setter Property="FontSize" Value="20"/>
         </Style>
 
-        <Style x:Key="LabelForCheckBox" TargetType="Label">
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Foreground" Value="#777"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="#222"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
         <Style x:Key="LabelMain" TargetType="Label">
             <Setter Property="Padding" Value="0,2"/>
             <Setter Property="Foreground" Value="#777"/>
@@ -158,10 +146,26 @@
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
         </Style>
 
+
+
+
+
         <!-- Ссылка: изменение цвета при наведении -->
         <Style x:Key="TBLink" TargetType="TextBlock">
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Foreground" Value="#A0B5C8"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#31618C" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Ссылка: значение выбрано -->
+        <Style x:Key="TBLinkSel" TargetType="TextBlock">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="#31618C"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Foreground" Value="#31618C" />
@@ -180,6 +184,25 @@
             </Style.Triggers>
         </Style>
 
+
+
+
+
+        <!-- Красный крестик отмены выбора -->
+        <Style x:Key="CancelRed" TargetType="TextBlock">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="7,-1,0,0"/>
+            <Setter Property="Opacity" Value=".4"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        <!--<Setter Property="FontFamily" Value="Comic Sans Ms"/>-->
+            <Setter Property="Foreground" Value="#B22"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#C55"/>
+                    <Setter Property="Opacity" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
 
 

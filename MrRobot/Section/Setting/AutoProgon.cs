@@ -165,7 +165,6 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             global.MW.Setting.AutoProgonButton.IsEnabled = false;
 
             // Установка параметров в History
-            global.MW.History.InstrumentFindBox.Text = "";
             global.MW.History.SetupPeriod.SelectedIndex = 7;
             global.MW.History.SetupTimeFrame.SelectedIndex = 0;
 
@@ -227,7 +226,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             }
 
             // Выбор инструмента
-            global.MW.History.InstrumentListBox.SelectedItem = Instrument.UnitOnSymbol(PARAM.Symbol);
+            //global.MW.History.InstrumentListBox.SelectedItem = Instrument.UnitOnSymbol(PARAM.Symbol);
 
             // Запуск скачивания - нажатие на кнопку
             ButtonClick(global.MW.History.DownloadGoButton);

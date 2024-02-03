@@ -3,8 +3,8 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using static System.Console;
+
 using MrRobot.inc;
-using MrRobot.Section;
 
 namespace MrRobot.Entity
 {
@@ -65,7 +65,7 @@ namespace MrRobot.Entity
         }
         int Page { get; set; }   // Номер страницы
         public TextBlock TBLink { get; set; }
-        string TBlinkSrc { get; set; }   // Текст ссылки, при нажатии на которую открывается окно выбора (конда свечные данные не выбраны)
+        string TBlinkSrc { get; set; }   // Текст ссылки, при нажатии на которую открывается окно выбора (когда свечные данные не выбраны)
         public void TBlinkTxt()
         {
             if (CdiId == 0)
@@ -138,10 +138,7 @@ namespace MrRobot.Entity
             foreach (int page in new int[]{2,3,4})
                 PageASS.Add(page, new CDIpageUnit(page));
         }
-        public static CDIpageUnit Page(int page)
-        {
-            return PageASS[page];
-        }
+        public static CDIpageUnit Page(int page) => PageASS[page];
         static Border OpenPanel  { get { return global.MW.CDIselectPanel.OpenPanel; } }
         static ListView GroupBox { get { return global.MW.CDIselectPanel.GroupBox; } }
         static ListBox CDIList   { get { return global.MW.CDIselectPanel.CDIList; } }

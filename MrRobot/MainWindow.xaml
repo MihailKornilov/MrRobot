@@ -13,42 +13,27 @@
 		Background="#FFF">
 	
 	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition/>
-			<RowDefinition Height="0.5"/>
-		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="64"/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
 
-		<Grid Grid.Row="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="64"/>
-				<ColumnDefinition/>
-			</Grid.ColumnDefinitions>
+		<!-- Кнопки главного меню -->
+        <Entity:MainMenu	Grid.Column="0" x:Name="MMenu"/>
 
-			<!-- Кнопки главного меню -->
-            <Entity:MainMenu	Grid.Column="0" x:Name="MMenu"/>
+        <!-- Основные разделы -->
+        <Section:History	Grid.Column="1" x:Name="History"	Visibility="Collapsed"/>
+        <Section:Converter	Grid.Column="1" x:Name="Converter"	Visibility="Collapsed"/>
+        <Section:Pattern	Grid.Column="1" x:Name="Pattern"	Visibility="Collapsed"/>
+        <Section:Tester		Grid.Column="1" x:Name="Tester"		Visibility="Collapsed"/>
+        <Section:Trade		Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
+        <Section:Setting	Grid.Column="1" x:Name="Setting"	Visibility="Collapsed"/>
 
-            <!-- Основные разделы -->
-            <Section:History	Grid.Column="1" x:Name="History"	Visibility="Collapsed"/>
-            <Section:Converter	Grid.Column="1" x:Name="Converter"	Visibility="Collapsed"/>
-            <Section:Pattern	Grid.Column="1" x:Name="Pattern"	Visibility="Collapsed"/>
-            <Section:Tester		Grid.Column="1" x:Name="Tester"		Visibility="Collapsed"/>
-            <Section:Trade		Grid.Column="1" x:Name="Trade"		Visibility="Collapsed"/>
-            <Section:Setting	Grid.Column="1" x:Name="Setting"	Visibility="Collapsed"/>
-
-            <!-- Выпадающий список со свечными данными -->
-            <Entity:CDIselectPanel Grid.Column="1" x:Name="CDIselectPanel" Panel.ZIndex="2"/>
-        </Grid>
-		
-		<!-- НИЖНЯЯ СТРОКА ДЛЯ ВЫВОДА КОРОТКИХ СООБЩЕНИЙ -->
-		<Grid Grid.Row="1" Background="#CCDAE6">
-			<StackPanel Height="22" Background="#D2E0ED" Margin="0,1,0,0" Visibility="Hidden">
-				<TextBlock Name="MainLineBottom"
-						   Height="22"
-						   Padding="6,0,0,0"
-						   FontSize="15"/>
-			</StackPanel>
-		</Grid>
-
-	</Grid>
+        <!-- Выпадающий список с инструментами -->
+		<Entity:InstrumentSelect Grid.Column="1" x:Name="ISPanel" Panel.ZIndex="2"/>
+        
+        <!-- Выпадающий список со свечными данными -->
+        <Entity:CDIselectPanel   Grid.Column="1" x:Name="CDIselectPanel" Panel.ZIndex="2"/>
+    </Grid>
     
 </Window>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows;
@@ -28,79 +27,46 @@ namespace MrRobot.Section
 
         public void HistoryInit()
         {
-            InstrumentFindBox.Focus();
-
             if (global.IsInited(1))
                 return;
 
             MenuCreate();
+            HeadCountWrite();
 
-            InstrumentFindBox.Text = position.Val("1_InstrumentFindBox_Text");
-            InstrumentListBoxFill();
-            InstrumentListBox.SelectedIndex = position.Val("1_InstrumentListBox_SelectedIndex", 0);
-            InstrumentCountWrite();
+            IS = new ISunit(HistoryIS);
+            IS.Changed = InstrumentChanged;
+            InstrumentChanged();
 
             global.Inited(1);
         }
-        
+
+        ISunit IS;
+        InstrumentUnit IUnit { get => IS.IUnit; }
+
         /// <summary>
         /// Вывод количества инструментов в заголовке
         /// </summary>
-        void InstrumentCountWrite()
-        {
-            InstrumentCount.Text = Instrument.Count + " инструмент" + format.End(Instrument.Count, "", "а", "ов");
-        }
-
-        /// <summary>
-        /// Быстрый поиск по инструментам ByBit
-        /// </summary>
-        void FindBoxChanged(object sender, TextChangedEventArgs e)
-        {
-            position.Set("1_InstrumentFindBox_Text", InstrumentFindBox.Text);
-            InstrumentListBoxFill();
-        }
-
-        /// <summary>
-        /// Заполнение списка инструментов с учётом поиска
-        /// </summary>
-        public void InstrumentListBoxFill()
-        {
-            string txt = InstrumentFindBox.Text;
-            var list = Instrument.ListBox(txt);
-            InstrumentListBox.ItemsSource = list;
-
-            string lfc = list.Count > 0 ? "найдено: " + list.Count : "не найдено";
-            LabelFound.Content = txt.Length > 0 ? lfc : "";
-        }
+        void HeadCountWrite() => IHeadCount.Text = Instrument.Count + " инструмент" + format.End(Instrument.Count, "", "а", "ов");
 
         /// <summary>
         /// Выбран инструмент в списке
         /// </summary>
-        void InstrumentListChanged(object sender, SelectionChangedEventArgs e)
+        void InstrumentChanged()
         {
-            var box = sender as ListBox;
+            global.Vis(InfoPanel, IUnit != null);
+            global.Vis(DownloadPanel, IUnit != null);
 
-            if (box.SelectedIndex == -1)
+            if (IUnit == null)
                 return;
 
-            position.Set("1_InstrumentListBox_SelectedIndex", box.SelectedIndex);
-
-            InstrumentInfoPanel.Visibility = Visibility.Visible;
-            InstrumentDownloadPanel.Visibility = Visibility.Visible;
-
-            var item = box.SelectedItem as InstrumentUnit;
-
-            InstrumentListBox.ScrollIntoView(item);
-
-            ByBitInstrumentName.Text = item.Name;
-            ByBitInstrumentPrecision.Text = format.E(item.BasePrecision);
-            ByBitInstrumentMinOrder.Text = format.E(item.MinOrderQty);
-            ByBitInstrumentTickSize.Text = format.E(item.TickSize);
-            ByBitInstrumentHistoryBegin.Text = item.HistoryBegin;
+            ByBitInstrumentPrecision.Text = format.E(IUnit.BasePrecision);
+            ByBitInstrumentMinOrder.Text = format.E(IUnit.MinOrderQty);
+            ByBitInstrumentTickSize.Text = format.E(IUnit.TickSize);
+            ByBitInstrumentHistoryBegin.Text = IUnit.HistoryBegin;
 
             DownloadedListCreate();
 
-            string[] data = item.HistoryBegin.Split(' ');
+            string[] data = IUnit.HistoryBegin.Split(' ');
             string[] sp = data[0].Split('.');
             if (sp.Length < 3)
                 return;
@@ -111,18 +77,6 @@ namespace MrRobot.Section
             int mon = int.Parse(sp[1]);
             int day = int.Parse(sp[0]);
             SetupDateBegin.SelectedDate = new DateTime(year, mon, day);
-        }
-
-        /// <summary>
-        /// Ссылка на страницу инструмента сайта ByBit
-        /// </summary>
-        void InstrumentNamePage(object sender, MouseButtonEventArgs e)
-        {
-            var block = sender as TextBlock;
-            if (block == null)
-                return;
-
-            Process.Start("https://www.bybit.com/ru-RU/trade/spot/" + block.Text);
         }
 
 
@@ -151,18 +105,16 @@ namespace MrRobot.Section
         /// </summary>
         async void DownloadGo(object sender, RoutedEventArgs e)
         {
-            var Iitem = InstrumentListBox.SelectedItem as InstrumentUnit;
-
             // Таймфрейм
             var TFitem = SetupTimeFrame.SelectedItem as ComboBoxItem;
 
             DownloadParam = new CDIparam()
             {
-                Symbol = Iitem.Symbol,
+                Symbol = IUnit.Symbol,
                 TimeFrame = format.TimeFrame((string)TFitem.Content),
                 UnixStart = format.UnixFromDay(SetupDateBegin.Text),
                 UnixFinish = UnixFinish(),
-                NolCount = format.NolCount(Iitem.TickSize),
+                NolCount = format.NolCount(IUnit.TickSize),
                 CC = 0
             };
 
@@ -181,7 +133,7 @@ namespace MrRobot.Section
                 return;
 
             new Candle();
-            Instrument.DataCountPlus(Iitem.Id);
+            Instrument.DataCountPlus(IUnit.Id);
             SectionUpd.All();
 
             AutoProgon.Converter();
@@ -284,7 +236,6 @@ namespace MrRobot.Section
         /// </summary>
         void DownloadElemDisable()
         {
-            InstrumentListPanel.IsEnabled = false;
             DownloadProgressBar.Value = 0;
             SetupPanel.IsEnabled = false;
             ProgressPanel.Visibility = Visibility.Visible;
@@ -296,7 +247,6 @@ namespace MrRobot.Section
         /// </summary>
         void DownloadElemEnable()
         {
-            InstrumentListPanel.IsEnabled = true;
             SetupPanel.IsEnabled = true;
             ProgressPanel.Visibility = Visibility.Collapsed;
         }
@@ -320,13 +270,16 @@ namespace MrRobot.Section
         /// iid - ID инструмента из `_instrument`
         public void DownloadedListCreate()
         {
-            if (InstrumentListBox.SelectedIndex == -1)
+            if (IUnit == null)
                 return;
 
-            var item = InstrumentListBox.SelectedItem as InstrumentUnit;
-            var list = Candle.ListOnIID(item.Id);
+            var list = Candle.ListOnIID(IUnit.Id);
             DownloadedList.ItemsSource = list;
-            DownloadedPanel.Visibility = list.Count == 0 ? Visibility.Hidden : Visibility.Visible;
+
+            global.Vis(DownloadedPanel, list.Count > 0);
+
+            if (list.Count > 0 && DownloadedList.SelectedIndex == -1)
+                DownloadedList.SelectedIndex = 0;
         }
 
         /// <summary>

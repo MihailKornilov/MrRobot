@@ -33,9 +33,8 @@ namespace MrRobot.Section
             ApiKey.Text = position.Val("5_ApiKey_Text");
             ApiSecret.Text = position.Val("5_ApiSecret_Text");
 
-            InstrumentQuoteCoin();
-            InstrumentListBox.ItemsSource = Instrument.ListBox();
-            InstrumentFindBox.Text = position.Val("5.InstrumentFindBox.Text");
+            new ISunit(TradeIS);
+
             RobotsListBox.ItemsSource = Robots.ListBox();
             RobotsListBox.SelectedIndex = position.Val("5.RobotsListBox.Index", 0);
 
@@ -98,133 +97,6 @@ namespace MrRobot.Section
                     LogList.ScrollIntoView(LogList.Items[c - 1]);
             }
         }
-
-
-
-        /// <summary>
-        /// Нажатие на "выбор" для выбора инструмента
-        /// </summary>
-        void InstrumentSelect(object sender, MouseButtonEventArgs e)
-        {
-            bool toHide = InstrumentSelectPanel.Visibility == Visibility.Visible;
-            InstrumentSelectPanel.Visibility = toHide ? Visibility.Collapsed : Visibility.Visible;
-
-            if (toHide)
-                return;
-
-            int id = position.Val("5.InstrumentListBox.Id", 0);
-            if (id > 0)
-                InstrumentListBox.ScrollIntoView(Instrument.Unit(id));
-
-            InstrumentFindBox.Focus();
-        }
-        /// <summary>
-        /// Произведён поиск в текстовом поле
-        /// </summary>
-        void FindBoxChanged(object sender, TextChangedEventArgs e)
-        {
-            string txt = InstrumentFindBox.Text;
-            position.Set("5.InstrumentFindBox.Text", txt);
-            InstrumentListBox.ItemsSource = Instrument.ListBox(txt);
-        }
-        /// <summary>
-        /// Список котировочных монет с количествами
-        /// </summary>
-        void InstrumentQuoteCoin()
-        {
-            string sql = "SELECT" +
-                            "`quoteCoin`," +
-                            "COUNT(*)`count`" +
-                         "FROM`_instrument`" +
-                         "GROUP BY`quoteCoin`" +
-                         "ORDER BY`count`DESC " +
-                         "LIMIT 4";
-            var list = mysql.QueryList(sql);
-            var items = new List<FindUnit>();
-            foreach (dynamic row in list)
-            {
-                items.Add(new FindUnit
-                {
-                    Coin = row["quoteCoin"],
-                    Count = " (" + row["count"] + ")"
-                });
-            }
-
-            QuoteCoinBox.ItemsSource = items;
-        }
-        /// <summary>
-        /// Поиск по котировочной монете
-        /// </summary>
-        void QuoteCoinChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (QuoteCoinBox.SelectedIndex == -1)
-                return;
-            var item = QuoteCoinBox.SelectedItem as FindUnit;
-            InstrumentFindBox.Text = "/" + item.Coin;
-            QuoteCoinBox.SelectedIndex = -1;
-        }
-        /// <summary>
-        /// Установка инструмента после полной загрузки приложения
-        /// </summary>
-        public void InstrumentSelect()
-        {
-            if (position.MainMenu() != 5)
-                return;
-
-            int id = position.Val("5.InstrumentListBox.Id", 0);
-            if (id == 0)
-                return;
-
-            var item = InstrumentListBox.SelectedItem as InstrumentUnit;
-            if (item != null)
-                if (item.Id == id)
-                    return;
-
-            InstrumentListBox.SelectedItem = Instrument.Unit(id);
-            InstrumentChanged();
-        }
-        /// <summary>
-        /// Выбран инструмент
-        /// </summary>
-        void InstrumentChanged(object sender, MouseButtonEventArgs e) => InstrumentChanged();
-        void InstrumentChanged()
-        {
-            InstrumentSelectPanel.Visibility = Visibility.Collapsed;
-
-            var item = InstrumentListBox.SelectedItem as InstrumentUnit;
-            if (item == null)
-                return;
-
-            InstrumentSelectBlock.Text = item.Name;
-            InstrumentSelectBlock.Foreground = format.RGB("004481");
-            InstrumentSelectBlock.FontWeight = FontWeights.Medium;
-
-            InstrumentCancelLabel.Visibility = Visibility.Visible;
-
-            position.Set("5.InstrumentListBox.Id", item.Id);
-
-            Depth.Start(item.Symbol, EChart.TradeCandlesActual(item));
-        }
-
-        /// <summary>
-        /// Отмена выбора инструмента
-        /// </summary>
-        void InstrumentCancel(object sender, MouseButtonEventArgs e)
-        {
-            Depth.Stop();
-
-            InstrumentSelectBlock.Text = "выбрать";
-            InstrumentSelectBlock.Foreground = format.RGB("A0B5C8");
-            InstrumentSelectBlock.FontWeight = FontWeights.Normal;
-
-            InstrumentListBox.SelectedIndex = -1;
-
-            InstrumentCancelLabel.Visibility = Visibility.Hidden;
-
-            position.Set("5.InstrumentListBox.Id", 0);
-            EChart.Empty();
-        }
-
 
 
         /// <summary>
