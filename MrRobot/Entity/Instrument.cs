@@ -7,24 +7,22 @@ namespace MrRobot.Entity
 {
     public class Instrument
     {
-        public Instrument()
-        {
-            ListCreate();
-        }
-        private static List<InstrumentUnit> InstrumentList { get; set; }
+        static List<InstrumentUnit> InstrumentList { get; set; }
+
         /// <summary>
         /// Количество доступных инструментов
         /// </summary>
-        public static int Count { get { return InstrumentList.Count; } }
+        public static int Count { get => InstrumentList.Count; }
+
         /// <summary>
         /// Ассоциативный массив ID и данных об инструменте (для быстрого поиска)
         /// </summary>
-        private static Dictionary<int, InstrumentUnit> IdUnitAss { get; set; } = null;
+        static Dictionary<int, InstrumentUnit> IdUnitAss { get; set; } = null;
 
         /// <summary>
         /// Загрузка списка инструментов из базы
         /// </summary>
-        public static void ListCreate()
+        public Instrument()
         {
             string sql = "SELECT" +
                             "`instrumentId`," +

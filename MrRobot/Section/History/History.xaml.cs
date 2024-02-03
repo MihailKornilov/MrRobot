@@ -33,7 +33,7 @@ namespace MrRobot.Section
             if (global.IsInited(1))
                 return;
 
-            MarketSel(1);
+            MenuCreate();
 
             InstrumentFindBox.Text = position.Val("1_InstrumentFindBox_Text");
             InstrumentListBoxFill();

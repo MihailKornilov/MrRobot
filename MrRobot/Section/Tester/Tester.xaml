@@ -104,7 +104,7 @@
                              Text="{Binding SliderValue}"
                              Width="35"
                              FontWeight="Bold"
-                             Foreground="#888"
+                             Foreground="#555"
                              Background="#F4F4F4"
                              HorizontalContentAlignment="Center"
                              IsReadOnly="True"/>
@@ -139,18 +139,6 @@
                        Visibility="{Binding Label3Vis}"/>
             </Grid>
         </DataTemplate>
-        <!-- Стиль настроек робота -->
-        <Style x:Key="RSitemStyle" TargetType="ListBoxItem">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBoxItem">
-                        <Border Name="Bd" Background="{TemplateBinding Panel.Background}">
-                            <ContentPresenter ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </UserControl.Resources>
 
     <Grid Background="#FFF">
@@ -177,7 +165,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <!-- Список доступных свечных паттернов -->
+            <!-- Выбор свечных данных и робота -->
             <StackPanel Grid.Column="0">
                 <WrapPanel Margin="10,10,0,0">
                     <Label Content="Свечи:" Style="{StaticResource LabelDark}"/>
@@ -414,7 +402,7 @@
                          Margin="0,8"
                          BorderThickness="0"
                          ItemTemplate="{StaticResource RSitemTmp}"
-                         ItemContainerStyle="{StaticResource RSitemStyle}"/>
+                         ItemContainerStyle="{StaticResource LBspisokStyle}"/>
             </StackPanel>
         </Border>
 

@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
              xmlns:Entity="clr-namespace:MrRobot.Entity"
              mc:Ignorable="d" 
+             Background="#FFF"
              d:DesignWidth="1200"
              d:DesignHeight="750">
 
@@ -27,8 +27,7 @@
                        FontWeight="Bold"/>
             </StackPanel>
         </DataTemplate>
-
-            <!-- Шаблон для списка загруженной истории -->
+        <!-- Шаблон для списка загруженной истории -->
         <DataTemplate x:Key="ListBoxTemplate">
             <StackPanel Orientation="Horizontal">
                 <Label Content="{Binding Id}" Width="0"/>
@@ -52,239 +51,242 @@
     </UserControl.Resources>
     
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="41"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Background="#D9E3EC">
+
+        <!-- ЗАГОЛОВОК -->
+        <StackPanel Grid.Row="0" Background="#D9E3EC">
             <Separator Background="#C2CBD3" Margin="0"/>
             <TextBlock Text="Скачивание исторических данных" Style="{StaticResource HeadName}"/>
             <Separator Background="#C2CBD3" Margin="0"/>
         </StackPanel>
-        <StackPanel Grid.Column="0" Grid.Row="1" Background="#ECF3F8">
-            <Separator Background="#ECF3F8" Margin="5"/>
-            <Button Name="HistoryMarketButton_1" Content="Bybit" Style="{StaticResource ButtonMarket}" Click="Market_ByBit_Click" Background="#C1E2FA"/>
-            <Button Name="HistoryMarketButton_2" Content="Binance" Style="{StaticResource ButtonMarket}" Click="Market_Binance_Click"/>
-            <Button Name="HistoryMarketButton_3" Content="Huobi" Style="{StaticResource ButtonMarket}" Click="Market_Huobi_Click"/>
-        </StackPanel>
-        
-        <Grid Grid.Column="1" Grid.Row="1" Background="#DCE2E7">
-            <Grid Background="#FFF" Margin="1,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid Name="HistoryMarketPanel_1" Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="60"/>
-                        <RowDefinition Height="245"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
 
-                    <!--Заголовок-->
-                    <Border Grid.Row="0" Margin="10" BorderBrush="#C6D8E6" BorderThickness="1">
-                        <StackPanel Background="#ECF3F8" Orientation="Horizontal">
-                            <TextBlock Text="Bybit-Spot:" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
-                            <TextBlock Name="InstrumentCount" Margin="6,3,0,0" FontSize="22" Foreground="#999"/>
-                            <Button Name="InstrumentUpdateButton"
-                                    Content="Обновить"
-                                    Margin="30,2,0,0"
-                                    FontSize="14"
-                                    Background="Transparent"
-                                    Foreground="#A0B5C8"
-                                    BorderThickness="0"
-                                    Width="80"
-                                    Height="23"
-                                    Cursor="Hand"
-                                    Click="InstrumentUpdateGo"/>
-                            <WrapPanel Name="InstrumentUpdateBarPanel" Margin="30,10,0,0" Visibility="Collapsed">
-                                <ProgressBar Name="InstrumentUpdateBar" Width="79" Height="21"/>
-                                <Label Name="InstrumentUpdateBarText"
-                                       Padding="0"
-                                       Width="40"
-                                       HorizontalContentAlignment="Center"
-                                       Foreground="#777"
-                                       Margin="-76,3,0,0"/>
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="220"/>
-                            <ColumnDefinition Width="250"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-
-                        <!--Быстрый поиск инструмента-->
-                        <StackPanel Name="InstrumentListPanel" Grid.Column="0">
-                            <Label Name="LabelFound"
-                                   Width="100"
-                                   Foreground="#999"
-                                   Margin="0,5,16,-22"
-                                   Padding="0"
-                                   FontSize="14"
-                                   HorizontalAlignment="right"
-                                   HorizontalContentAlignment="Right"/>
-                            <TextBox Name="InstrumentFindBox"
-                                     Width="200"
-                                     HorizontalAlignment="Left"
-                                     Margin="10,0,0,0"
-                                     Padding="3,2,0,3"
-                                     FontSize="14"
-                                     Background="Transparent"
-                                     TextChanged="FindBoxChanged"/>
-                            <ListBox Name="InstrumentListBox"
-                                     Height="200"
-                                     Width="200"
-                                     Margin="10"
-                                     HorizontalAlignment="Left"
-                                     ItemTemplate="{StaticResource InstrumentItemTmp}"
-                                     SelectionChanged="InstrumentListChanged"/>
-                        </StackPanel>
-
-                        <!--Информация о выбранном инструменте-->
-                        <StackPanel Name="InstrumentInfoPanel"
-                                    Grid.Column="1"
-                                    Margin="0,35,0,0"
-                                    Background="#ECECCD"
-                                    Height="200"
-                                    VerticalAlignment="Top"
-                                    Visibility="Hidden">
-                            <StackPanel Background="#FFFFE0" Margin="1" Height="198">
-                                <WrapPanel Margin="10,6,0,0">
-                                    <TextBlock Text="Инструмент " FontSize="15" Foreground="#555"/>
-                                    <TextBlock Name="ByBitInstrumentName"
-                                               FontSize="15"
-                                               FontWeight="Bold"
-                                               TextDecorations="Underline"
-                                               Cursor="Hand"
-                                               MouseLeftButtonDown="InstrumentNamePage">
-                                        <TextBlock.Style>
-                                            <Style TargetType="{x:Type TextBlock}">
-                                                <Setter Property="Foreground" Value="#004481"/>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Foreground" Value="#31618C" />
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </WrapPanel>
-                                <WrapPanel Margin="15,7,0,0">
-                                    <Label Content="Точность монеты:" Style="{StaticResource LabelHistory}"/>
-                                    <TextBlock Name="ByBitInstrumentPrecision"/>
-                                </WrapPanel>
-                                <WrapPanel Margin="15,4,0,0">
-                                    <Label Content="Мин. цена ордера:" Style="{StaticResource LabelHistory}"/>
-                                    <TextBlock Name="ByBitInstrumentMinOrder"/>
-                                </WrapPanel>
-                                <WrapPanel Margin="15,4,0,0">
-                                    <Label Content="Шаг цены:" Style="{StaticResource LabelHistory}"/>
-                                    <TextBlock Name="ByBitInstrumentTickSize"/>
-                                </WrapPanel>
-                                <WrapPanel Margin="15,4,0,0">
-                                    <Label Content="Начало истории:" Style="{StaticResource LabelHistory}"/>
-                                    <TextBlock Name="ByBitInstrumentHistoryBegin"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <!--Загрузка истории выбранного инструмента-->
-                        <StackPanel Name="InstrumentDownloadPanel"
-                                    Grid.Column="2"
-                                    Margin="10,35,0,0"
-                                    Width="420"
-                                    HorizontalAlignment="Left"
-                                    Visibility="Hidden">
-                            <WrapPanel>
-                                <Label Content="Дата начала истории:" Width="140" Style="{StaticResource LabelHistory}"/>
-                                <Label Content="Период:" Width="100" Style="{StaticResource LabelHistory}"/>
-                                <Label Content="Таймфрейм:" Style="{StaticResource LabelHistory}"/>
-                            </WrapPanel>
-                            <WrapPanel Name="SetupPanel" Margin="0,3,0,0" HorizontalAlignment="Left">
-                                <DatePicker Name="SetupDateBegin" Width="130" SelectedDateFormat="Short"/>
-                                <ComboBox Name="SetupPeriod" Width="90" Margin="10,0,0,0" SelectedIndex="2">
-                                    <ComboBoxItem TabIndex="1">1 день</ComboBoxItem>
-                                    <ComboBoxItem TabIndex="7">1 неделя</ComboBoxItem>
-                                    <ComboBoxItem TabIndex="30">1 месяц</ComboBoxItem>
-                                    <ComboBoxItem TabIndex="61">2 месяца</ComboBoxItem>
-                                    <ComboBoxItem TabIndex="92">3 месяца</ComboBoxItem>
-                                    <ComboBoxItem TabIndex="183">6 месяцев</ComboBoxItem>
-                                    <ComboBoxItem TabIndex="365">1 год</ComboBoxItem>
-                                    <ComboBoxItem TabIndex="-1">По сегодня</ComboBoxItem>
-                                </ComboBox>
-                                <ComboBox Name="SetupTimeFrame" Width="75" Margin="10,0,0,0" SelectedIndex="0">
-                                    <ComboBoxItem>1m</ComboBoxItem>
-                                    <ComboBoxItem>3m</ComboBoxItem>
-                                    <ComboBoxItem>5m</ComboBoxItem>
-                                    <ComboBoxItem>15m</ComboBoxItem>
-                                    <ComboBoxItem>30m</ComboBoxItem>
-                                    <ComboBoxItem>1h</ComboBoxItem>
-                                </ComboBox>
-                                <Button Name="DownloadGoButton"
-                                        Content="Загрузить"
-                                        Width="80"
-                                        Margin="10,0,0,0"
-                                        Cursor="Hand"
-                                        Click="DownloadGo"/>
-                            </WrapPanel>
-
-                            <WrapPanel Name="ProgressPanel" Margin="0,10,0,0" Visibility="Collapsed">
-                                <ProgressBar Name="DownloadProgressBar"
-                                             Width="315"
-                                             Height="22"
-                                             HorizontalAlignment="Left"/>
-                                <Button Content="Отмена"
-                                        Width="80"
-                                        Margin="10,0,0,0"
-                                        Cursor="Hand"
-                                        Click="DownloadCancel"/>
-                                <TextBlock Name="ProcessText"
-                                           Margin="0,7,0,0"
-                                           FontSize="14"
-                                           Foreground="#555"/>
-                            </WrapPanel>
-
-                            <WrapPanel Name="DownloadedPanel" Margin="0,10,0,0">
-                                <Label Content="Заргуженная история:" Style="{StaticResource LabelHistory}" Width="300"/>
-                                <ListBox Name="DownloadedList"
-                                         Width="405"
-                                         Height="128"
-                                         Margin="0,2,0,0"
-                                         ItemTemplate="{StaticResource ListBoxTemplate}"
-                                         SelectionChanged="DowloadedListChanged"/>
-                            </WrapPanel>
-                        </StackPanel>
-                    </Grid>
-                    
-                    <!--График загруженной истории-->
-                    <Entity:ChartUC x:Name="EChart" Grid.Row="2"/>
+            <!-- Список-меню бирж -->
+            <Grid Grid.Column="0" Background="#DCE2E7">
+                <Grid Background="#ECF3F8" Margin="0,0,1,0">
+                    <ListBox Name="MarketBox"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             Margin="5"
+                             ItemTemplate="{StaticResource LBMenuTmp}"
+                             ItemContainerStyle="{StaticResource LBMenuStyle}"/>
                 </Grid>
-
-
-
-
-                <Grid Name="HistoryMarketPanel_2" Grid.Column="0">
-                    <TextBlock FontSize="22" Margin="10" Foreground="#888">Binance</TextBlock>
-                </Grid>
-
-
-
-
-                <Grid Name="HistoryMarketPanel_3" Grid.Column="0">
-                    <TextBlock FontSize="22" Margin="10" Foreground="#888">Huobi</TextBlock>
-                </Grid>
-
-
-
             </Grid>
-        </Grid>
 
+            <!-- BYBIT -->
+            <Grid Grid.Column="1" Name="MarketPanel1" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="245"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <!-- Заголовок -->
+                <Border Grid.Row="0" Margin="10" BorderBrush="#C6D8E6" BorderThickness="1">
+                    <StackPanel Background="#ECF3F8" Orientation="Horizontal">
+                        <TextBlock Text="Bybit-Spot:" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
+                        <TextBlock Name="InstrumentCount" Margin="6,3,0,0" FontSize="22" Foreground="#999"/>
+                        <Button Name="InstrumentUpdateButton"
+                                Content="Обновить"
+                                Margin="30,2,0,0"
+                                FontSize="14"
+                                Background="Transparent"
+                                Foreground="#A0B5C8"
+                                BorderThickness="0"
+                                Width="80"
+                                Height="23"
+                                Cursor="Hand"
+                                Click="InstrumentUpdateGo"/>
+                        <WrapPanel Name="InstrumentUpdateBarPanel" Margin="30,10,0,0" Visibility="Collapsed">
+                            <ProgressBar Name="InstrumentUpdateBar" Width="79" Height="21"/>
+                            <Label Name="InstrumentUpdateBarText"
+                                    Padding="0"
+                                    Width="40"
+                                    HorizontalContentAlignment="Center"
+                                    Foreground="#777"
+                                    Margin="-76,3,0,0"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Быстрый поиск инструмента-->
+                    <StackPanel Name="InstrumentListPanel" Grid.Column="0">
+                        <Label Name="LabelFound"
+                            Width="100"
+                            Foreground="#999"
+                            Margin="0,5,16,-22"
+                            Padding="0"
+                            FontSize="14"
+                            HorizontalAlignment="right"
+                            HorizontalContentAlignment="Right"/>
+                        <TextBox Name="InstrumentFindBox"
+                                Width="200"
+                                HorizontalAlignment="Left"
+                                Margin="10,0,0,0"
+                                Padding="3,2,0,3"
+                                FontSize="14"
+                                Background="Transparent"
+                                TextChanged="FindBoxChanged"/>
+                        <ListBox Name="InstrumentListBox"
+                                Height="200"
+                                Width="200"
+                                Margin="10"
+                                HorizontalAlignment="Left"
+                                ItemTemplate="{StaticResource InstrumentItemTmp}"
+                                SelectionChanged="InstrumentListChanged"/>
+                    </StackPanel>
+
+                    <!--Информация о выбранном инструменте-->
+                    <StackPanel Name="InstrumentInfoPanel"
+                            Grid.Column="1"
+                            Margin="0,35,0,0"
+                            Background="#ECECCD"
+                            Height="200"
+                            VerticalAlignment="Top"
+                            Visibility="Hidden">
+                        <StackPanel Background="#FFFFE0" Margin="1" Height="198">
+                            <WrapPanel Margin="10,6,0,0">
+                                <TextBlock Text="Инструмент " FontSize="15" Foreground="#555"/>
+                                <TextBlock Name="ByBitInstrumentName"
+                                        FontSize="15"
+                                        FontWeight="Bold"
+                                        TextDecorations="Underline"
+                                        Cursor="Hand"
+                                        MouseLeftButtonDown="InstrumentNamePage">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Foreground" Value="#004481"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Foreground" Value="#31618C" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </WrapPanel>
+                            <WrapPanel Margin="15,7,0,0">
+                                <Label Content="Точность монеты:" Style="{StaticResource LabelHistory}"/>
+                                <TextBlock Name="ByBitInstrumentPrecision"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="15,4,0,0">
+                                <Label Content="Мин. цена ордера:" Style="{StaticResource LabelHistory}"/>
+                                <TextBlock Name="ByBitInstrumentMinOrder"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="15,4,0,0">
+                                <Label Content="Шаг цены:" Style="{StaticResource LabelHistory}"/>
+                                <TextBlock Name="ByBitInstrumentTickSize"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="15,4,0,0">
+                                <Label Content="Начало истории:" Style="{StaticResource LabelHistory}"/>
+                                <TextBlock Name="ByBitInstrumentHistoryBegin"/>
+                            </WrapPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!--Загрузка истории выбранного инструмента-->
+                    <StackPanel Name="InstrumentDownloadPanel"
+                            Grid.Column="2"
+                            Margin="10,35,0,0"
+                            Width="420"
+                            HorizontalAlignment="Left"
+                            Visibility="Hidden">
+                        <WrapPanel>
+                            <Label Content="Дата начала истории:" Width="140" Style="{StaticResource LabelHistory}"/>
+                            <Label Content="Период:" Width="100" Style="{StaticResource LabelHistory}"/>
+                            <Label Content="Таймфрейм:" Style="{StaticResource LabelHistory}"/>
+                        </WrapPanel>
+                        <WrapPanel Name="SetupPanel" Margin="0,3,0,0" HorizontalAlignment="Left">
+                            <DatePicker Name="SetupDateBegin" Width="130" SelectedDateFormat="Short"/>
+                            <ComboBox Name="SetupPeriod" Width="90" Margin="10,0,0,0" SelectedIndex="2">
+                                <ComboBoxItem TabIndex="1">1 день</ComboBoxItem>
+                                <ComboBoxItem TabIndex="7">1 неделя</ComboBoxItem>
+                                <ComboBoxItem TabIndex="30">1 месяц</ComboBoxItem>
+                                <ComboBoxItem TabIndex="61">2 месяца</ComboBoxItem>
+                                <ComboBoxItem TabIndex="92">3 месяца</ComboBoxItem>
+                                <ComboBoxItem TabIndex="183">6 месяцев</ComboBoxItem>
+                                <ComboBoxItem TabIndex="365">1 год</ComboBoxItem>
+                                <ComboBoxItem TabIndex="-1">По сегодня</ComboBoxItem>
+                            </ComboBox>
+                            <ComboBox Name="SetupTimeFrame" Width="75" Margin="10,0,0,0" SelectedIndex="0">
+                                <ComboBoxItem>1m</ComboBoxItem>
+                                <ComboBoxItem>3m</ComboBoxItem>
+                                <ComboBoxItem>5m</ComboBoxItem>
+                                <ComboBoxItem>15m</ComboBoxItem>
+                                <ComboBoxItem>30m</ComboBoxItem>
+                                <ComboBoxItem>1h</ComboBoxItem>
+                            </ComboBox>
+                            <Button Name="DownloadGoButton"
+                                Content="Загрузить"
+                                Width="80"
+                                Margin="10,0,0,0"
+                                Cursor="Hand"
+                                Click="DownloadGo"/>
+                        </WrapPanel>
+
+                        <WrapPanel Name="ProgressPanel" Margin="0,10,0,0" Visibility="Collapsed">
+                            <ProgressBar Name="DownloadProgressBar"
+                                        Width="315"
+                                        Height="22"
+                                        HorizontalAlignment="Left"/>
+                            <Button Content="Отмена"
+                                Width="80"
+                                Margin="10,0,0,0"
+                                Cursor="Hand"
+                                Click="DownloadCancel"/>
+                            <TextBlock Name="ProcessText"
+                                    Margin="0,7,0,0"
+                                    FontSize="14"
+                                    Foreground="#555"/>
+                        </WrapPanel>
+
+                        <WrapPanel Name="DownloadedPanel" Margin="0,10,0,0">
+                            <Label Content="Заргуженная история:" Style="{StaticResource LabelHistory}" Width="300"/>
+                            <ListBox Name="DownloadedList"
+                                    Width="405"
+                                    Height="128"
+                                    Margin="0,2,0,0"
+                                    ItemTemplate="{StaticResource ListBoxTemplate}"
+                                    SelectionChanged="DowloadedListChanged"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Grid>
+
+                <!--График загруженной истории-->
+                <Entity:ChartUC x:Name="EChart" Grid.Row="2"/>
+            </Grid>
+
+
+            
+            
+            <Grid Grid.Column="1" Name="MarketPanel2" Visibility="Collapsed">
+                <TextBlock FontSize="22" Margin="10" Foreground="#888"/>
+            </Grid>
+
+
+
+
+            <Grid Grid.Column="1" Name="MarketPanel3" Visibility="Collapsed">
+                <TextBlock FontSize="22" Margin="10" Foreground="#888"/>
+            </Grid>
+
+
+
+        </Grid>
     </Grid>
 </UserControl>

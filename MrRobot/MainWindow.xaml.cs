@@ -46,6 +46,7 @@ namespace MrRobot
             Cef.Initialize(Settings);
 
 
+            new Market();
             new Instrument();
             new Candle();
             new Patterns();

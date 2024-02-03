@@ -120,16 +120,6 @@
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
-        <Style x:Key="ButtonMarket" TargetType="Button">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontSize" Value="15"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="Margin" Value="10,0,10,7"/>
-            <Setter Property="Background" Value="#ECF3F8"/>
-        </Style>
-
         <Style x:Key="LabelHistory" TargetType="Label">
             <Setter Property="Foreground" Value="#777"/>
             <Setter Property="Width" Value="110"/>
@@ -190,6 +180,86 @@
             </Style.Triggers>
         </Style>
 
+
+
+
+
+
+        <!-- ListBox-меню: шаблон пункта меню -->
+        <DataTemplate x:Key="LBMenuTmp">
+            <TextBlock Text="{Binding Name}" Padding="8" FontSize="15" Foreground="#555"/>
+        </DataTemplate>
+        <!-- ListBox-меню: стили пункта меню -->
+        <Style x:Key="LBMenuStyle" TargetType="ListBoxItem">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,0,3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="Bd"
+                                Background="{TemplateBinding Panel.Background}">
+                            <ContentPresenter Content="{TemplateBinding ContentControl.Content}"
+											  ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <!-- ListBox не в фокусе -->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                    <Condition Property="Selector.IsSelected" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" Value="#CCD9E4" TargetName="Bd"/>
+                            </MultiTrigger>
+
+                            <!-- ListBox в фокусе -->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                    <Condition Property="Selector.IsSelected" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" Value="#CCD9E4" TargetName="Bd"/>
+                            </MultiTrigger>
+
+                            <!-- ListBox не в фокусе: мышь наведена -->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                    <Condition Property="Selector.IsSelected" Value="False"/>
+                                    <Condition Property="Selector.IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" Value="#DBE6ED" TargetName="Bd"/>
+                            </MultiTrigger>
+
+                            <!-- ListBox в фокусе: мышь наведена -->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                    <Condition Property="Selector.IsSelected" Value="False"/>
+                                    <Condition Property="Selector.IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" Value="#DBE6ED" TargetName="Bd"/>
+                            </MultiTrigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ListBox-список: стили (при наведении мыши и выборе значения цвет не меняется) -->
+        <Style x:Key="LBspisokStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Background="{TemplateBinding Panel.Background}">
+                            <ContentPresenter Content="{TemplateBinding ContentControl.Content}"
+											  ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
 
 

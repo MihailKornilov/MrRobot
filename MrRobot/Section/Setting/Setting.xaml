@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Section="clr-namespace:MrRobot.Section"
              mc:Ignorable="d"
              Background="#FFF"
              d:DesignWidth="1300"
@@ -20,11 +21,54 @@
             <TextBlock Text="Настройки: управление приложением" Style="{StaticResource HeadName}"/>
             <Separator Background="#C2CBD3" Margin="0"/>
         </StackPanel>
-        <Button Grid.Row="1"
-                Name="AutoProgonButton"
-                Content="Погнали."
-                Width="90"
-                Height="25"
-                Click="AutoProgonGo"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid Background="#DCE2E7" Margin="10" Height="200" VerticalAlignment="Top">
+                    <Grid Margin="1,1,1,1" Background="#ECF3F8">
+                        <ListBox Name="SettingMenuBox"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 ItemTemplate="{StaticResource LBMenuTmp}"
+                                 ItemContainerStyle="{StaticResource LBMenuStyle}"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+            
+            <Grid Grid.Column="1" Background="#D1E0EC" Margin="0,10,10,10">
+                <Grid Margin="1,1,1,1" Background="#E0EBF4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="27"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Background="#D2DDE5">
+                        <TextBlock Name="MenuHead" Text="Общие" Padding="10,3" FontSize="15" Foreground="#555"/>
+                        <Separator Background="#C8D2DA" Margin="0"/>
+                    </StackPanel>
+
+                    <Section:SettingMain Grid.Row="1" x:Name="Setting0" Visibility="Collapsed"/>
+                    <Section:SettingEntity Grid.Row="1" x:Name="Setting1" Visibility="Collapsed"/>
+
+                    <StackPanel Grid.Row="1" x:Name="Setting2" Visibility="Collapsed">
+                        <Button Name="AutoProgonButton"
+                                Content="Go!"
+                                Width="50"
+                                Height="25"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="15"
+                                Click="AutoProgonGo"/>
+                    </StackPanel>
+
+                </Grid>
+            </Grid>
+            
+        </Grid>
+
     </Grid>
 </UserControl>

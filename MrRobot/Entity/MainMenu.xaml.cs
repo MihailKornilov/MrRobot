@@ -55,8 +55,8 @@ namespace MrRobot.Entity
             string[] section = SectionName();
             for (int i = 1; i < section.Length; i++)
             {
-                var sect = global.MW.FindName(section[i]) as UserControl;
-                sect.Visibility = i == index ? Visibility.Visible : Visibility.Collapsed;
+                var uc = global.MW.FindName(section[i]) as UserControl;
+                global.Vis(uc, i == index);
             }
 
             global.MW.Pattern.ArchiveGo(true);

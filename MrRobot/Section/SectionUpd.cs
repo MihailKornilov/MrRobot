@@ -1,6 +1,5 @@
 ﻿using static System.Console;
 
-using MrRobot.Entity;
 using MrRobot.inc;
 
 namespace MrRobot.Section
@@ -22,7 +21,6 @@ namespace MrRobot.Section
         /// <summary>
         /// Обновление списка инструментов в Истории
         /// </summary>
-        // iid - ID инструмента
         public static void History()
         {
             if (isUpdateLater(1))

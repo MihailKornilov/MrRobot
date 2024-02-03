@@ -168,7 +168,7 @@
     <Compile Include="Section\History\History.xaml.cs">
       <DependentUpon>History.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Section\History\HistoryMarket.cs" />
+    <Compile Include="Section\History\HistoryMenu.cs" />
     <Compile Include="Section\History\HistoryService.cs" />
     <Compile Include="Section\Pattern\Pattern.xaml.cs">
       <DependentUpon>Pattern.xaml</DependentUpon>
@@ -186,6 +186,12 @@
     <Compile Include="Section\Setting\AutoProgon.cs" />
     <Compile Include="Section\Setting\Setting.xaml.cs">
       <DependentUpon>Setting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\Setting\SettingEntity.xaml.cs">
+      <DependentUpon>SettingEntity.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\Setting\SettingMain.xaml.cs">
+      <DependentUpon>SettingMain.xaml</DependentUpon>
     </Compile>
     <Compile Include="Section\Tester\TesterRobotBind.cs" />
     <Compile Include="Section\Tester\Tester.xaml.cs">
@@ -259,6 +265,14 @@
     <Page Include="Section\Setting\Setting.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Setting\SettingEntity.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Section\Setting\SettingMain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Section\Tester\Tester.xaml">
       <Generator>MSBuild:Compile</Generator>

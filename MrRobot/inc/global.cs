@@ -8,6 +8,8 @@ using System.Diagnostics;
 using static System.Console;
 
 using MrRobot.Section;
+using MrRobot.Entity;
+using System.Windows.Controls;
 
 namespace MrRobot.inc
 {
@@ -73,6 +75,13 @@ namespace MrRobot.inc
             file.Write(buffer, 0, buffer.Length);
             file.Close();
         }
+
+
+        public static Visibility Vis(bool isVis = true) => isVis ? Visibility.Visible : Visibility.Collapsed;
+        public static Visibility Vis(FrameworkElement elem) => elem.Visibility = Visibility.Visible;
+        public static Visibility Vis(UserControl uc, bool isVis = true) => uc.Visibility = Vis(isVis);
+        public static Visibility Vis(FrameworkElement elem, bool isVis = true) => elem.Visibility = Vis(isVis);
+        public static Visibility Hid(FrameworkElement elem) => elem.Visibility = Visibility.Collapsed;
     }
 
 
@@ -238,4 +247,43 @@ namespace MrRobot.inc
             return true;
         }
     }
+
+
+    class GridBack
+    {
+        public GridBack(UIElement elem)
+        {
+            elem.Visibility = Visibility.Visible;
+
+            var border = elem as Border;
+
+            var grid = new Grid();
+            grid.Background = format.RGB("#888888");
+            grid.Opacity = 0.05;
+            grid.MouseLeftButtonDown += (s, ee) =>
+            {
+                (grid.Parent as Panel).Children.Remove(grid);
+                elem.Visibility = Visibility.Collapsed;
+            };
+            Grid.SetRow(grid, 0);
+            Grid.SetRowSpan(grid, 5);
+            (border.Parent as Panel).Children.Add(grid);
+        }
+
+        public GridBack(CDIselectPanel elem)
+        {
+            var grid = new Grid();
+            grid.Background = format.RGB("#888888");
+            grid.Opacity = 0.05;
+            grid.MouseLeftButtonDown += (s, ee) =>
+            {
+                (grid.Parent as Panel).Children.Remove(grid);
+                CDIpanel.Hide();
+            };
+            Grid.SetColumn(grid, 0);
+            Grid.SetColumnSpan(grid, 2);
+            (elem.Parent as Panel).Children.Add(grid);
+        }
+    }
+
 }
