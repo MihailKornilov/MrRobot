@@ -30,7 +30,7 @@ namespace MrRobot.Section
             if (global.IsInited(1))
                 return;
 
-            MenuCreate();
+            MenuCreate(2);
             HeadCountWrite();
 
             IS = new ISunit(HistoryIS);

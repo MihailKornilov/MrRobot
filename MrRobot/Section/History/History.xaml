@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Entity="clr-namespace:MrRobot.Entity"
+             xmlns:Section="clr-namespace:MrRobot.Section"
              mc:Ignorable="d" 
              Background="#FFF"
              d:DesignWidth="1200"
@@ -211,11 +212,9 @@
             </Grid>
 
 
-            
-            
-            <Grid Grid.Column="1" Name="MarketPanel2" Visibility="Collapsed">
-                <TextBlock FontSize="22" Margin="10" Foreground="#888"/>
-            </Grid>
+
+
+            <Section:HistoryMoex Grid.Column="1" x:Name="MarketPanel2" Visibility="Collapsed"/>
 
 
 

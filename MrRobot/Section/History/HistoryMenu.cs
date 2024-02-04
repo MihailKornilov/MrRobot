@@ -19,8 +19,9 @@ namespace MrRobot.Section
                 for (int i = 0; i < MarketBox.Items.Count; i++)
                 {
                     var unit = MarketBox.Items[i] as MarketUnit;
-                    var panel = FindName($"MarketPanel{unit.Id}") as Panel;
-                    global.Vis(panel, i == sel);
+                    var FN   = FindName($"MarketPanel{unit.Id}");
+                    global.Vis(FN as Panel, i == sel);
+                    global.Vis(FN as UserControl, i == sel);
                 }
             };
             MarketBox.SelectedItem = Market.Unit(marketId);

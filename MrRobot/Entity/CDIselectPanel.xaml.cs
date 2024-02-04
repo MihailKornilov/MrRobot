@@ -173,13 +173,10 @@ namespace MrRobot.Entity
         /// </summary>
         public static bool Hide()
         {
-            if (OpenPanel.Visibility == Visibility.Visible)
-            {
-                OpenPanel.Visibility = Visibility.Collapsed;
-                return true;
-            }
-
-            return false;
+            bool isVis = OpenPanel.Visibility == Visibility.Visible;
+            GridBack.Remove();
+            global.Hid(OpenPanel);
+            return isVis;
         }
 
         public static void Selected()

@@ -78,8 +78,8 @@ namespace MrRobot.inc
 
         public static Visibility Vis(bool isVis = true) => isVis ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility Vis(FrameworkElement elem) => elem.Visibility = Visibility.Visible;
-        public static Visibility Vis(UserControl uc, bool isVis = true) => uc.Visibility = Vis(isVis);
-        public static Visibility Vis(FrameworkElement elem, bool isVis = true) => elem.Visibility = Vis(isVis);
+        public static Visibility Vis(UserControl uc, bool isVis = true) => uc != null ? uc.Visibility = Vis(isVis) : Vis(false);
+        public static Visibility Vis(FrameworkElement elem, bool isVis = true) => elem != null ? elem.Visibility = Vis(isVis) : Vis(false);
         public static Visibility Hid(FrameworkElement elem) => elem.Visibility = Visibility.Collapsed;
     }
 

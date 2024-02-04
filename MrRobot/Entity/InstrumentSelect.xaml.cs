@@ -8,9 +8,6 @@ using MrRobot.Section;
 
 namespace MrRobot.Entity
 {
-    /// <summary>
-    /// Логика взаимодействия для InstrumentSelect.xaml
-    /// </summary>
     public partial class InstrumentSelect : UserControl
     {
         public InstrumentSelect()

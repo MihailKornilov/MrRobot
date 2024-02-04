@@ -164,12 +164,16 @@
     <Compile Include="Entity\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entity\MOEX.cs" />
     <Compile Include="Entity\Patterns.cs" />
     <Compile Include="Section\Converter\Converter.xaml.cs">
       <DependentUpon>Converter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Section\History\History.xaml.cs">
       <DependentUpon>History.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\History\HistoryMoex.xaml.cs">
+      <DependentUpon>HistoryMoex.xaml</DependentUpon>
     </Compile>
     <Compile Include="Section\History\HistoryMenu.cs" />
     <Compile Include="Section\History\HistoryService.cs" />
@@ -253,6 +257,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Section\History\HistoryMoex.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Section\Pattern\Pattern.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -309,6 +317,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Resource Include="!\Update.txt" />
+    <Content Include="!\table_moex.sql" />
     <Content Include="Browser\Converter\Chart.tmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -9,11 +9,14 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using static System.Console;
 
+using System.Windows.Forms;
+
 using CefSharp;
 using CefSharp.Wpf;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
+using System.Windows.Controls;
 
 namespace MrRobot
 {
