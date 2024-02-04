@@ -194,7 +194,25 @@
             <Setter Property="Margin" Value="7,-1,0,0"/>
             <Setter Property="Opacity" Value=".4"/>
             <Setter Property="FontWeight" Value="Bold"/>
-        <!--<Setter Property="FontFamily" Value="Comic Sans Ms"/>-->
+            <Setter Property="Foreground" Value="#B22"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#C55"/>
+                    <Setter Property="Opacity" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Красный крестик отмены выбора -->
+        <Style x:Key="CancelLabel" TargetType="Label">
+            <Setter Property="Content" Value="X"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Opacity" Value=".4"/>
+            <Setter Property="Padding" Value="5,6,5,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontFamily" Value="Comic Sans Ms"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="Foreground" Value="#B22"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">

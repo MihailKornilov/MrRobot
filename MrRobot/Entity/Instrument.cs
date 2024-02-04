@@ -72,12 +72,15 @@ namespace MrRobot.Entity
         public static List<InstrumentUnit> ListBox(string txt = "")
         {
             var list = new List<InstrumentUnit>();
+            bool isHist = txt == "/HISTORY";
+            bool isTxt = txt.Length > 0 && !isHist;
             int num = 1;
             foreach (var v in InstrumentList)
             {
-                if (txt.Length > 0)
-                    if (!v.Name.Contains(txt.ToUpper()))
-                        continue;
+                if (isTxt && !v.Name.Contains(txt.ToUpper()))
+                    continue;
+                if (isHist && v.CandleDataCount.Length == 0)
+                    continue;
 
                 v.Num = num++ + ".";
                 list.Add(v);

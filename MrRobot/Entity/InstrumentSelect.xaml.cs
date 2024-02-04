@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
-using MrRobot.Section;
 
 namespace MrRobot.Entity
 {
@@ -14,46 +13,40 @@ namespace MrRobot.Entity
         {
             InitializeComponent();
 
-            //InstrumentQuoteCoin();
+            QuoteCoin();
+        }
+
+        /// <summary>
+        /// Список котировочных монет с количествами
+        /// </summary>
+        void QuoteCoin()
+        {
+            string sql = "SELECT" +
+                            "`quoteCoin`," +
+                            "COUNT(*)`count`" +
+                         "FROM`_instrument`" +
+                         "GROUP BY`quoteCoin`" +
+                         "ORDER BY`count`DESC";
+            var list = mysql.QueryList(sql);
+            foreach (dynamic row in list)
+                QuoteCoinBox.Items.Add(new QCoinCount(row["quoteCoin"], row["count"]));
+        }
+        /// <summary>
+        /// Поиск по котировочной монете
+        /// </summary>
+        void QuoteCoinChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (QuoteCoinBox.SelectedIndex == -1)
+                return;
+
+            CDIcheck.IsChecked = false;
+
+            var item = QuoteCoinBox.SelectedItem as QCoinCount;
+            FindBox.Text = $"/{item.Coin}";
+            QuoteCoinBox.SelectedIndex = -1;
         }
 
         /*
-                /// <summary>
-                /// Список котировочных монет с количествами
-                /// </summary>
-                void InstrumentQuoteCoin()
-                {
-                    string sql = "SELECT" +
-                                    "`quoteCoin`," +
-                                    "COUNT(*)`count`" +
-                                 "FROM`_instrument`" +
-                                 "GROUP BY`quoteCoin`" +
-                                 "ORDER BY`count`DESC " +
-                                 "LIMIT 4";
-                    var list = mysql.QueryList(sql);
-                    var items = new List<FindUnit>();
-                    foreach (dynamic row in list)
-                    {
-                        items.Add(new FindUnit
-                        {
-                            Coin = row["quoteCoin"],
-                            Count = " (" + row["count"] + ")"
-                        });
-                    }
-
-                    QuoteCoinBox.ItemsSource = items;
-                }
-                /// <summary>
-                /// Поиск по котировочной монете
-                /// </summary>
-                void QuoteCoinChanged(object sender, SelectionChangedEventArgs e)
-                {
-                    if (QuoteCoinBox.SelectedIndex == -1)
-                        return;
-                    var item = QuoteCoinBox.SelectedItem as FindUnit;
-                    InstrumentFindBox.Text = "/" + item.Coin;
-                    QuoteCoinBox.SelectedIndex = -1;
-                }
                 /// <summary>
                 /// Выбран инструмент
                 /// </summary>
@@ -75,6 +68,21 @@ namespace MrRobot.Entity
         */
     }
 
+    /// <summary>
+    /// Шаблон для котировочных монет (для быстрого поиска инструментов)
+    /// </summary>
+    public class QCoinCount
+    {
+        public QCoinCount(string coin, string count)
+        {
+            Coin = coin;
+            Count = count;
+        }
+
+        public string Coin { get; set; }
+        public string Count { get; set; }
+    }
+
 
     class ISunit
     {
@@ -84,9 +92,12 @@ namespace MrRobot.Entity
         // Ассоциативный массив созданных ссылок
         static Dictionary<string, ISunit> ISlist { get; set; }
         static ISunit ISU { get; set; }
-        static Border OpenPanel { get => global.MW.ISPanel.OpenPanel; }
-        static TextBox FindBox  { get => global.MW.ISPanel.FindBox; }
-        static ListBox ISBox    { get => global.MW.ISPanel.ISBox; }
+        static Border OpenPanel  { get => global.MW.ISPanel.OpenPanel; }
+        static TextBox FindBox   { get => global.MW.ISPanel.FindBox; }
+        static Label FoundCount  { get => global.MW.ISPanel.FoundCount; }
+        static Label FoundCancel { get => global.MW.ISPanel.FoundCancel; }
+        static CheckBox CDIcheck { get => global.MW.ISPanel.CDIcheck; }
+        static ListBox ISBox     { get => global.MW.ISPanel.ISBox; }
         static void Init()
         {
             if (ISlist != null)
@@ -97,7 +108,21 @@ namespace MrRobot.Entity
         }
         static void MWloaded()
         {
-            FindBox.TextChanged += (s, e) => ISBox.ItemsSource = Instrument.ListBox(ISU.FindTxt = FindBox.Text);
+            FindBox.TextChanged += (s, e) =>
+            {
+                var items = Instrument.ListBox(ISU.FindTxt = FindBox.Text);
+                ISBox.ItemsSource = items;
+                bool isTxt = FindBox.Text.Length > 0;
+                FoundCount.Content = isTxt ? $"найдено: {items.Count}" : "";
+                global.Vis(FoundCancel, isTxt);
+            };
+            FoundCancel.MouseLeftButtonDown += (s, e) =>
+            {
+                FindBox.Text = "";
+                CDIcheck.IsChecked = false;
+            };
+            CDIcheck.Checked   += (s, e) => FindBox.Text = "/HISTORY";
+            CDIcheck.Unchecked += (s, e) => FindBox.Text = "";
             ISBox.MouseDoubleClick += (s, e) =>
             {
                 if (ISBox.SelectedIndex == -1)
@@ -122,6 +147,8 @@ namespace MrRobot.Entity
             ChosenApply();
             ISlist.Add(Name, this);
         }
+        // Показывать циферки со скачанными свечными данными
+        public bool WithHistory { get; set; } = false;
         TextBlock TB { get; set; }
         string Name { get => TB.Name; }
         string NoSelTxt { get; set; }
@@ -160,6 +187,7 @@ namespace MrRobot.Entity
             int top = (int)(el.Y - win.Y) + 20;
 
             OpenPanel.Margin = new Thickness(left, top, 0, 0);
+            global.Vis(CDIcheck, WithHistory);
             global.Vis(OpenPanel);
 
             new GridBack(global.MW.ISPanel);

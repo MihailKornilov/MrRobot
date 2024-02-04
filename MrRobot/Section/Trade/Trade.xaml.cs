@@ -114,14 +114,4 @@ namespace MrRobot.Section
         /// </summary>
         void RobotButtonGo(object sender, RoutedEventArgs e) => GlobalInit();
     }
-
-
-    /// <summary>
-    /// Шаблон для котировочных монет (для быстрого поиска инструментов)
-    /// </summary>
-    public class FindUnit
-    {
-        public string Coin { get; set; }
-        public string Count { get; set; }
-    }
 }

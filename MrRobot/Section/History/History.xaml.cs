@@ -34,6 +34,7 @@ namespace MrRobot.Section
             HeadCountWrite();
 
             IS = new ISunit(HistoryIS);
+            IS.WithHistory = true;
             IS.Changed = InstrumentChanged;
             InstrumentChanged();
 

@@ -16,7 +16,14 @@
                        Padding="0,2,5,0"
                        HorizontalContentAlignment="Right"
                        Foreground="#999"/>
-                <Label Content="{Binding Name}" Width="100" Padding="0,2"/>
+                <Label Content="{Binding Name}" Width="135" Padding="0,2"/>
+                <Label Content="{Binding CandleDataCount}"
+                       Width="30"
+                       Padding="0,2"
+                       FontWeight="Medium"
+                       Foreground="#777"
+                       Visibility="{Binding ElementName=CDIcheck,Path=Visibility}"
+                       HorizontalContentAlignment="Center"/>
             </StackPanel>
         </DataTemplate>
         <!-- Шаблон для популярных валют (для быстрого поиска инструментов) -->
@@ -24,48 +31,66 @@
             <StackPanel Orientation="Horizontal" Cursor="Hand">
                 <Label Content="{Binding Coin}"
                        Padding="0"
+                       Width="35"
                        Foreground="#004481"
                        FontWeight="Bold"
                        FontSize="11"/>
                 <Label Content="{Binding Count}"
                        Padding="0"
-                       Foreground="#999"
-                       FontSize="11"/>
+                       Width="23"
+                       Foreground="#888"
+                       FontSize="11"
+                       HorizontalContentAlignment="Right"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
-
 
     <!-- Выпадающий список с выбором инструментов -->
     <Border Name="OpenPanel"
             Background="#DAF8D9"
             BorderThickness="1"
             BorderBrush="#C5DDC4"
-            Padding="4"
+            Padding="6"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Visibility="Collapsed">
-        <StackPanel>
-            <TextBox Name="FindBox" FontSize="14" Padding="4,3"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="75"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-            <!--<ListView Name="QuoteCoinBox"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        ItemTemplate="{StaticResource QuoteCoinTmp}">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>-->
+            <ListView Name="QuoteCoinBox"
+                      Grid.Column="0"
+                      Margin="0,0,5,0"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      ItemTemplate="{StaticResource QuoteCoinTmp}"
+                      SelectionChanged="QuoteCoinChanged"/>
 
-            <ListBox Name="ISBox"
-                     Width="227"
-                     Height="144"
-                     Margin="0,4,0,0"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Top"
-                     ItemTemplate="{StaticResource ISitemTmp}"/>
-        </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBox Name="FindBox" FontSize="14" Padding="4,3"/>
+                <Label Name="FoundCount"
+                       Width="100"
+                       Foreground="#999"
+                       Padding="0"
+                       Margin="0,-23,25,0"
+                       FontSize="14"
+                       HorizontalAlignment="Right"
+                       HorizontalContentAlignment="Right"/>
+                <Label Name="FoundCancel"
+                       Margin="0,-28,2,0"
+                       Style="{StaticResource CancelLabel}"/>
+                <CheckBox Name="CDIcheck" Content="скачаны исторические данные" Margin="0,4,0,0"/>
+                <ListBox Name="ISBox"
+                         Tag="30"
+                         Width="227"
+                         Height="144"
+                         Margin="0,4,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         ItemTemplate="{StaticResource ISitemTmp}"/>
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>
