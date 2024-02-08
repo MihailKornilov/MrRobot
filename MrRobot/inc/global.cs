@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -9,6 +10,8 @@ using static System.Console;
 
 using MrRobot.Section;
 using MrRobot.Entity;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace MrRobot.inc
 {
@@ -18,7 +21,7 @@ namespace MrRobot.inc
         /// Флаги инициализации страниц и всего приложения
         /// </summary>
         public static bool[] InitPage { get; set; } = new bool[7];
-        private static string[] PageName = new string[7]
+        static string[] PageName = new string[7]
         {
             "GLOBAL",
             "HISTORY",

@@ -337,7 +337,7 @@ namespace MrRobot.inc
         /// <summary>
         /// Получение данных о свечах для графика
         /// </summary>
-        public static List<string> ChartCandles(string sql)
+        public static List<string> ChartCandles(string sql, bool msec = false)
         {
             new mysql(sql, true);
 
@@ -346,7 +346,7 @@ namespace MrRobot.inc
             while (res.Read())
             {
                 var cndl = new CandleUnit(res);
-                CandlesData.Add(cndl.CandleToChart());
+                CandlesData.Add(cndl.CandleToChart(msec: msec));
                 VolumesData.Add(cndl.VolumeToChart());
             }
 

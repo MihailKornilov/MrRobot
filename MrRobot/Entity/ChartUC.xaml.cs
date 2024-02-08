@@ -110,7 +110,7 @@ namespace MrRobot.Entity
             var read = new StreamReader(PathTmp);
             var write = new StreamWriter(PathHtml);
 
-            int Limit = 2000;
+            int Limit = 1000;
             string sql = "SELECT*" +
                         $"FROM`{CdiUnit.Table}`" +
                          "ORDER BY`unix`DESC " +

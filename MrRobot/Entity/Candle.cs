@@ -451,12 +451,13 @@ namespace MrRobot.Entity
         /// <summary>
         /// Количество свечей в виде текста: "1 234 свечи"
         /// </summary>
-        public static string CountTxt(int count)
+        public static string CountTxt(int count, bool useNum = true)
         {
             if (count == 0)
                 return "";
 
-            return format.Num(count) + " свеч" + format.End(count, "а", "и", "ей");
+            string countStr = useNum ? format.Num(count) : count.ToString();
+            return $"{countStr} свеч{format.End(count, "а", "и", "ей")}";
         }
 
         /// <summary>
@@ -731,10 +732,11 @@ namespace MrRobot.Entity
 
 
         // Обновление первой свечи в графике
-        public string CandleToChart(bool withColor = false)
+        public string CandleToChart(bool withColor = false, bool msec = false)
         {
+            string u000 = msec ? "000" : "";
             return "{" +
-                $"time:{format.TimeZone(Unix)}," +
+                $"time:{format.TimeZone(Unix)}{u000}," +
    (withColor ? $"color:'#{(IsGreen ? "60CE5E" : "FF324D")}'," : "") +
                 $"high:{High}," +
                 $"open:{Open}," +

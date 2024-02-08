@@ -45,7 +45,8 @@ namespace MrRobot.Section
                 return;
 
             ResultListCreate();
-            EChart.CDI("Converter", SourceUnit);
+            //EChart.CDI("Converter", SourceUnit);
+            AdvChart.CDI(SourceUnit);
         }
 
 
@@ -233,7 +234,8 @@ namespace MrRobot.Section
             var item = (sender as ListBox).SelectedItem as CDIunit;
 
             if(item != null)
-                EChart.CDI("Converter", item);
+                AdvChart.CDI(item);
+            //EChart.CDI("Converter", item);
         }
 
         /// <summary>

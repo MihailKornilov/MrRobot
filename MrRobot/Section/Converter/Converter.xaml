@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
              xmlns:Entity="clr-namespace:MrRobot.Entity"
              mc:Ignorable="d" 
              Background="#FFF"
@@ -146,6 +145,7 @@
         </Grid>
 
         <!-- ОТОБРАЖЕНИЕ ГРАФИКА -->
-        <Entity:ChartUC x:Name="EChart" Grid.Row="2" Margin="0,0,0,.6"/>
+        <!--<Entity:ChartUC x:Name="EChart" Grid.Row="2" Margin="0,0,0,.6"/>-->
+        <Entity:AdvChartUC x:Name="AdvChart" Grid.Row="2" Margin="0,0,0,.6"/>
     </Grid>
 </UserControl>

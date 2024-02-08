@@ -91,42 +91,43 @@
         <!-- ПОДКЛЮЧЕНИЕ, ГРАФИК, ЛОГ -->
         <Grid Grid.Row="1" Margin="0,0,0,.5">
             <TabControl BorderThickness="0"
-                            Background="#ECF3F8"
-                            Padding="0"
-                            Margin="0,5,0,0"
-                            SelectedIndex="1"
-                            SelectionChanged="MenuChanged">
+                        Background="#ECF3F8"
+                        Padding="0"
+                        Margin="0,5,0,0"
+                        SelectedIndex="0"
+                        SelectionChanged="MenuChanged">
                 <!-- Подключение -->
                 <TabItem>
                     <TabItem.Header>Подключение</TabItem.Header>
                     <TabItem.Content>
                         <StackPanel Margin="8,6">
-                            <WrapPanel>
-                                <Label Content="API ключ:" Width="72" Foreground="#777"/>
-                                <TextBox Name="ApiKey"
-                                         Width="250"
-                                         Height="20"
-                                         BorderBrush="#D3DDE6"
-                                         Margin="0,3,0,0"
-                                         TextChanged="ApiKeyChanged"/>
+                            <WrapPanel Margin="0,8,0,0">
+                                <Label Content="API ключ:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
+                                <TextBox Name="ApiKey" Width="250" Padding="4"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <Label Content="API секрет:" Width="72" Foreground="#777"/>
-                                <TextBox Name="ApiSecret"
-                                         Width="250"
-                                         Height="20"
-                                         BorderBrush="#D3DDE6"
-                                         Margin="0,3,0,0"
-                                         TextChanged="ApiSecretChanged"/>
+                            <WrapPanel Margin="0,5,0,0">
+                                <Label Content="API секрет:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
+                                <PasswordBox Name="ApiSecret" Width="250" Padding="4"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="0,5,0,0">
+                                <Label Content="Запрос:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
+                                <TextBox Name="ApiQueryTB" Width="250" Padding="4"/>
                             </WrapPanel>
                             <Button Name="ApiQueryButton"
-                                    Content="Проверка ключей"
-                                    Width="130"
+                                    Content="Go"
+                                    Width="50"
                                     Height="25"
-                                    Margin="72,5,0,0"
-                                    Cursor="Hand"
+                                    Margin="72,6,0,0"
                                     HorizontalAlignment="Left"
-                                    Click="ApiQuery"/>
+                                    Click="QueryGo"/>
+                            <TextBox Name="QueryResult"
+                                     Width="320"
+                                     Height="450"
+                                     Margin="0,10"
+                                     Padding="5"
+                                     FontSize="11"
+                                     FontFamily="Verdana"
+                                     HorizontalAlignment="Left"/>
                         </StackPanel>
                     </TabItem.Content>
                 </TabItem>

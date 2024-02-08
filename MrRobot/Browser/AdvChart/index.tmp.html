@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>*{padding:0;margin:0}</style>
+    <script src="library/charting_library.standalone.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        const bars = CANDLES_DATA;
+        //const resolutions = TIME_FRAME == 1 ? [1, 5, 10, 15, 20, 25, 30, 60] : [TIME_FRAME];
+        const resolutions = [TIME_FRAME];
+        const datafeed = {
+            onReady: (callback) => {
+                console.log('[ON_READY]: * * * * * * * * * * * * * * *');
+                setTimeout(() => callback({
+                    exchanges: [],
+                    symbols_types: [],
+                    supported_resolutions: resolutions
+                }));
+            },
+            searchSymbols: (userInput, exchange, symbolType, onResultReadyCallback) => {
+                console.log('[searchSymbols]: Method call');
+            },
+            resolveSymbol: async (symbolName, onSymbolResolvedCallback, onResolveErrorCallback, extension) => {
+                console.log('[RESOLVE_SYMBOL]: SymbolName: ', symbolName);
+                console.log('[RESOLVE_SYMBOL]: extension: ', extension);
+                const symbolInfo = await {
+                    ticker: 'CANDLES_COUNT',
+                    name: 'NAME',
+                    description: '',
+                    type: 'stock',
+                    session: '24x7',
+                    timezone: 'Europe/Moscow',
+                    exchange: '',
+                    visible_plots_set: 'ohlcv',
+                    minmov: 1,
+                    minmov2: 0,
+                    pricescale: EXP,
+                    has_intraday: true,
+                    has_daily: false,
+                    has_weekly_and_monthly: false,
+                    supported_resolutions: resolutions,
+                    volume_precision: NOL_COUNT,
+                    data_status: 'streaming',
+                    format: 'price'
+                };
+                onSymbolResolvedCallback(symbolInfo);
+            },
+            getBars: (symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) => {
+                console.log('[GET_BARS]: symbolInfo: ', symbolInfo);
+                console.log('[GET_BARS]: resolution: ', resolution);
+                console.log('[GET_BARS]: periodParams: ', periodParams);
+                setTimeout(() => {
+                    onHistoryCallback(bars, { noData: bars.length == 0 });
+                    bars.length = 0;
+                }, 50);
+            },
+            subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscriberUID, onResetCacheNeededCallback) => {
+                console.log('[SUBSCRIBE_BARS]: subscriberUID: ', subscriberUID);
+            },
+            unsubscribeBars: (subscriberUID) => {
+                console.log('[UNSUBSCRIBE_BARS]: subscriberUID: ', subscriberUID);
+            }
+        };
+
+
+        new TradingView.widget({
+            container: 'container',
+            locale: 'ru',
+            library_path: 'library/',
+            symbol: 'SYMBOL',
+            interval: TIME_FRAME,
+            datafeed: datafeed,
+            fullscreen: true,
+            theme: 'dark',
+            timezone: 'Europe/Moscow',
+            enabled_features: [
+            ],
+            disabled_features: [
+                //"left_toolbar",
+                //"legend_widget",
+
+                "header_symbol_search",
+                "header_compare",
+                "header_resolutions",
+                "header_fullscreen_button",
+                "header_quick_search",
+            ],
+            additional_symbol_info_fields: [
+                { title: 'Ticker', propertyName: 'ticker' }
+            ],
+            debug: false
+        });
+</script>
+</body>
+</html>

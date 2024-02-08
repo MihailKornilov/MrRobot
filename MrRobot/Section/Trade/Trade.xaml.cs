@@ -1,16 +1,10 @@
-﻿using System;
-using System.Text;
-using System.Net.Http;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using static System.Console;
 
-using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Entity;
+using MrRobot.Connector;
 
 namespace MrRobot.Section
 {
@@ -30,8 +24,11 @@ namespace MrRobot.Section
             if (global.IsInited(5))
                 return;
 
-            ApiKey.Text = position.Val("5_ApiKey_Text");
-            ApiSecret.Text = position.Val("5_ApiSecret_Text");
+            ApiKey.Text = ByBit.ApiKey;
+            ApiKey.TextChanged += ByBit.ApiKeyChanged;
+            ApiSecret.Password = ByBit.ApiSecret;
+            ApiSecret.PasswordChanged += ByBit.ApiSecretChanged;
+            ApiQueryTB.Text = ApiQuery;
 
             new ISunit(TradeIS);
 
@@ -42,48 +39,21 @@ namespace MrRobot.Section
         }
 
 
-        dynamic ByBitConnector(string query)
+        string ApiQuery
         {
-            string API_KEY = ApiKey.Text;
-            string API_SECRET = ApiSecret.Text;
-            string URL = "https://api.bybit.com";
-            long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            long recvWindow = 5000;
-
-            string signature = "";
-            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(API_SECRET)))
-            {
-                string msg = $"{timestamp}{API_KEY}{recvWindow}";
-                byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(msg));
-                signature = BitConverter.ToString(hash).Replace("-", "").ToLower();
-            }
-
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("X-BAPI-API-KEY", API_KEY);
-            client.DefaultRequestHeaders.Add("X-BAPI-TIMESTAMP", timestamp.ToString());
-            client.DefaultRequestHeaders.Add("X-BAPI-RECV-WINDOW", recvWindow.ToString());
-            client.DefaultRequestHeaders.Add("X-BAPI-SIGN", signature);
-
-            HttpResponseMessage res = client.GetAsync(URL + query).Result;
-            string content = res.Content.ReadAsStringAsync().Result;
-            dynamic array = JsonConvert.DeserializeObject(content);
-
-            return array;
+            get => position.Val("5_ApiQuery_Text");
+            set => position.Set("5_ApiQuery_Text", value);
         }
-
-        void ApiKeyChanged(object sender, TextChangedEventArgs e)
+        void QueryGo(object sender, RoutedEventArgs e)
         {
-            position.Set("5_ApiKey_Text", ApiKey.Text);
-        }
-        void ApiSecretChanged(object sender, TextChangedEventArgs e)
-        {
-            position.Set("5_ApiSecret_Text", ApiSecret.Text);
-        }
-        void ApiQuery(object sender, RoutedEventArgs e)
-        {
-            //dynamic res = ByBitConnector("/v5/user/query-api");
-            //dynamic res = ByBitConnector("/v5/account/wallet-balance?accountType=UNIFIED&coin=USDT");
-            //WriteLine(res);
+            /*
+                /v5/user/query-api - информация о ключах
+                /v5/user/get-member-type - тип аккаунта
+                /v5/account/wallet-balance?accountType=SPOT
+            */
+            ApiQuery = ApiQueryTB.Text;
+            dynamic res = ByBit.Api(ApiQuery);
+            QueryResult.Text = res.ToString();
         }
 
 
