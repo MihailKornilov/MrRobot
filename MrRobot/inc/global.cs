@@ -149,13 +149,6 @@ namespace MrRobot.inc
         public static void Msg(string txt)
         {
         }
-
-        /// <summary>
-        /// Очистка нижней строки приложения
-        /// </summary>
-        public static void Clear(object sender, MouseButtonEventArgs e)
-        {
-        }
     }
 
 

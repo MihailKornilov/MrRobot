@@ -8,7 +8,6 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
-using CefSharp.Wpf;
 
 namespace MrRobot.Section
 {
@@ -32,7 +31,7 @@ namespace MrRobot.Section
         }
 
         bool IsSourceChosen => SourceId > 0;        // Свечные данные выбраны
-        int SourceId => CDIpanel.CdiId;  // ID свечных данных
+        int SourceId => CDIpanel.CdiId;             // ID свечных данных
         CDIunit SourceUnit => Candle.Unit(SourceId);// Единица свечных данных
 
 
@@ -46,12 +45,7 @@ namespace MrRobot.Section
                 return;
 
             ResultListCreate();
-            //EChart.CDI("Converter", SourceUnit);
-            //AdvChart.CDI(SourceUnit);
-
-            var browser = new ChromiumWebBrowser();
-            browser.Address = "http://127.0.0.1:8888/advchart/index.html";
-            ChartPanel.Children.Add(browser);
+            new AdvChart(ChartPanel, SourceUnit);
         }
 
 
@@ -237,10 +231,7 @@ namespace MrRobot.Section
         void ConverterResultChanged(object sender, SelectionChangedEventArgs e)
         {
             var item = (sender as ListBox).SelectedItem as CDIunit;
-
-            //if (item != null)
-                //AdvChart.CDI(item);
-            //EChart.CDI("Converter", item);
+            new AdvChart(ChartPanel, item);
         }
 
         /// <summary>

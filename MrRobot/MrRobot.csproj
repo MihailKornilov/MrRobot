@@ -152,9 +152,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Connector\ByBit.cs" />
-    <Compile Include="Entity\AdvChartUC.xaml.cs">
-      <DependentUpon>AdvChartUC.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Entity\AdvChart.cs" />
     <Compile Include="Entity\CDIselectPanel.xaml.cs">
       <DependentUpon>CDIselectPanel.xaml</DependentUpon>
     </Compile>
@@ -216,10 +214,6 @@
     <Compile Include="Section\Trade\Trade.xaml.cs">
       <DependentUpon>Trade.xaml</DependentUpon>
     </Compile>
-    <Page Include="Entity\AdvChartUC.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Entity\CDIselectPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -329,7 +323,9 @@
     </EmbeddedResource>
     <Resource Include="!\Update.txt" />
     <Content Include="!\table_moex.sql" />
-    <Content Include="Browser\AdvChart\index.tmp.html" />
+    <Content Include="Browser\AdvChart\index.tmp.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Browser\AdvChart\library\bundles\1033.5197f9f8b8500206d06c.css" />
     <Content Include="Browser\AdvChart\library\bundles\1033.5197f9f8b8500206d06c.rtl.css" />
     <Content Include="Browser\AdvChart\library\bundles\1109.b1ced88f4a839badfff1.css" />

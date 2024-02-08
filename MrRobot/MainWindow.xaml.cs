@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,14 +8,11 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using static System.Console;
 
-using System.Windows.Forms;
-
 using CefSharp;
 using CefSharp.Wpf;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
-using System.Windows.Controls;
 
 namespace MrRobot
 {
@@ -70,8 +66,6 @@ namespace MrRobot
             Top    = position.Val("MainWindow.Top",    100);
 
 
-            
-            MouseLeftButtonDown += error.Clear;      // Очистка нижней строки приложения
             SizeChanged += Tester.RobotLogWidthSet;
             SizeChanged += Depth.SizeChanged;
 

@@ -1,28 +1,47 @@
 ﻿using System.IO;
+using System.Net;
 using System.Windows.Controls;
 using static System.Console;
 
-using MrRobot.inc;
 using CefSharp;
+using CefSharp.Wpf;
+using MrRobot.inc;
 
 namespace MrRobot.Entity
 {
-    /// <summary>
-    /// Логика взаимодействия для AdvChartUC.xaml
-    /// </summary>
-    public partial class AdvChartUC : UserControl
+    public class AdvChart
     {
-        public AdvChartUC() => InitializeComponent();
+        static readonly IPAddress IP = IPAddress.Loopback;
+        static readonly int Port = 8888;
+
+        public AdvChart(Panel panel, CDIunit cdi)
+        {
+            if (cdi == null)
+                return;
+
+            PageCreate(cdi);
+
+            if (panel.Children.Count == 0)
+            {
+                var browser = new ChromiumWebBrowser();
+                browser.Address = $"http://{IP}:{Port}/advchart/index.html";
+                panel.Children.Add(browser);
+                return;
+            }
+
+            (panel.Children[0] as ChromiumWebBrowser).Reload();
+        }
+
 
         string PathTmp  { get => Path.GetFullPath($"Browser/AdvChart/index.tmp.html"); }
         string PathHtml { get => Path.GetFullPath($"Browser/AdvChart/index.html"); }
 
-        public void CDI(CDIunit unit)
+        void PageCreate(CDIunit unit)
         {
             var read = new StreamReader(PathTmp);
             var write = new StreamWriter(PathHtml);
 
-            int Limit = 1000;
+            int Limit = 500;
             string sql = "SELECT*" +
                         $"FROM`{unit.Table}`" +
                          "ORDER BY`unix`DESC " +
@@ -43,12 +62,7 @@ namespace MrRobot.Entity
             }
             read.Close();
             write.Close();
-
-            //if (ACBrowser.Address == null)
-            //    ACBrowser.Address = "http://127.0.0.1:8888/advchart/index.html";
-            //else
-            //    ACBrowser.Reload();
         }
+
     }
 }
-

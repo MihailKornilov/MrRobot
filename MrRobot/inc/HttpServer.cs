@@ -31,7 +31,7 @@ namespace MrRobot.inc
 
         void Listen()
         {
-            Listener = new TcpListener(IPAddress.Any, Port);
+            Listener = new TcpListener(IPAddress.Loopback, Port);
             Listener.Start();
             while (true)
                 try
@@ -267,7 +267,6 @@ namespace MrRobot.inc
     }
     public class QuickMimeTypeMapper
     {
-
         public static string GetMimeType(string extension)
         {
             if (extension == null)
@@ -850,7 +849,7 @@ namespace MrRobot.inc
 
     public class HttpProcessor
     {
-        private List<Route> Routes = new List<Route>();
+        List<Route> Routes = new List<Route>();
 
         public HttpProcessor() { }
 
