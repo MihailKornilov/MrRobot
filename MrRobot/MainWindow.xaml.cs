@@ -49,6 +49,7 @@ namespace MrRobot
             Cef.Initialize(Settings);
 
 
+            new HttpServer();
             new Market();
             new Instrument();
             new Candle();
@@ -79,6 +80,7 @@ namespace MrRobot
                 var hwnd = new WindowInteropHelper(this).Handle;
                 HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
             };
+            Closed += (s, e) => HttpServer.Stop();
 
 
             global.Inited();

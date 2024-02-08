@@ -16,7 +16,6 @@ namespace MrRobot.Entity
 
         string PathTmp  { get => Path.GetFullPath($"Browser/AdvChart/index.tmp.html"); }
         string PathHtml { get => Path.GetFullPath($"Browser/AdvChart/index.html"); }
-        string PathHttp { get => "c:/www/nyandoma/advanced_chart/index.html"; }
 
         public void CDI(CDIunit unit)
         {
@@ -45,12 +44,10 @@ namespace MrRobot.Entity
             read.Close();
             write.Close();
 
-            File.Copy(PathHtml, PathHttp, true);
-
-            if (ACBrowser.Address == null)
-                ACBrowser.Address = "http://nyandoma/advanced_chart/index.html";
-            else
-                ACBrowser.Reload();
+            //if (ACBrowser.Address == null)
+            //    ACBrowser.Address = "http://127.0.0.1:8888/advchart/index.html";
+            //else
+            //    ACBrowser.Reload();
         }
     }
 }

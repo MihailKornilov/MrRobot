@@ -8,6 +8,7 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
+using CefSharp.Wpf;
 
 namespace MrRobot.Section
 {
@@ -46,7 +47,11 @@ namespace MrRobot.Section
 
             ResultListCreate();
             //EChart.CDI("Converter", SourceUnit);
-            AdvChart.CDI(SourceUnit);
+            //AdvChart.CDI(SourceUnit);
+
+            var browser = new ChromiumWebBrowser();
+            browser.Address = "http://127.0.0.1:8888/advchart/index.html";
+            ChartPanel.Children.Add(browser);
         }
 
 
@@ -233,8 +238,8 @@ namespace MrRobot.Section
         {
             var item = (sender as ListBox).SelectedItem as CDIunit;
 
-            if(item != null)
-                AdvChart.CDI(item);
+            //if (item != null)
+                //AdvChart.CDI(item);
             //EChart.CDI("Converter", item);
         }
 

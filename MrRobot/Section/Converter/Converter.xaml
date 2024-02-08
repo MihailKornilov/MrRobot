@@ -146,6 +146,7 @@
 
         <!-- ОТОБРАЖЕНИЕ ГРАФИКА -->
         <!--<Entity:ChartUC x:Name="EChart" Grid.Row="2" Margin="0,0,0,.6"/>-->
-        <Entity:AdvChartUC x:Name="AdvChart" Grid.Row="2" Margin="0,0,0,.6"/>
+        <!--<Entity:AdvChartUC x:Name="AdvChart" Grid.Row="2" Margin="0,0,0,.6"/>-->
+        <Grid Grid.Row="2" Name="ChartPanel" Background="#222" Margin="0,0,.6,.6"/>
     </Grid>
 </UserControl>
