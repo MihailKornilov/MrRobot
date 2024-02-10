@@ -17,17 +17,8 @@ namespace MrRobot.Section
         public PatternArchive()
         {
             InitializeComponent();
-        }
-
-        bool PAinited;
-        public void PatternArchiveInit()
-        {
-            if (PAinited)
-                return;
-
             SearchList();
-
-            PAinited = true;
+            Candle.Updated += SearchList;
         }
 
         /// <summary>

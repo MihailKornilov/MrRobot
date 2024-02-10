@@ -14,21 +14,20 @@
         <!-- Шаблон для списка загруженной истории -->
         <DataTemplate x:Key="ListBoxTemplate">
             <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Id}" Width="0"/>
                 <Label Content="{Binding Name}" Width="100" Padding="0,5"/>
                 <Label Content="{Binding DatePeriod}" Width="140"/>
                 <Label Content="Таймфрейм:" Padding="0,5,0,0" Foreground="#555"/>
                 <Label Content="{Binding TF}" Width="35" FontWeight="Bold"/>
-                <Label Width="10"/>
-                <Label Width="20"
-                       Opacity=".5"
-                       Padding="4,4,0,0"
+                <Label Opacity=".5"
+                       Padding="4,4,4,0"
+                       Margin="15,0,0,0"
                        FontSize="14"
                        Foreground="Red"
                        FontWeight="Bold"
                        FontFamily="Comic Sans Ms"
                        Cursor="Hand"
                        Content="X"
+                       TabIndex="{Binding Id}"
                        MouseLeftButtonDown="DownloadedX"/>
             </StackPanel>
         </DataTemplate>
@@ -66,7 +65,7 @@
             </Grid>
 
             <!-- BYBIT -->
-            <Grid Grid.Column="1" Name="MarketPanel1" Visibility="Visible">
+            <Grid Grid.Column="1" Name="MarketPanel1" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="210"/>
@@ -92,11 +91,11 @@
                         <WrapPanel Name="InstrumentUpdateBarPanel" Margin="30,10,0,0" Visibility="Collapsed">
                             <ProgressBar Name="InstrumentUpdateBar" Width="79" Height="21"/>
                             <Label Name="InstrumentUpdateBarText"
-                                    Padding="0"
-                                    Width="40"
-                                    HorizontalContentAlignment="Center"
-                                    Foreground="#777"
-                                    Margin="-76,3,0,0"/>
+                                   Padding="0"
+                                   Width="40"
+                                   HorizontalContentAlignment="Center"
+                                   Foreground="#777"
+                                   Margin="-76,3,0,0"/>
                         </WrapPanel>
                     </StackPanel>
                 </Border>

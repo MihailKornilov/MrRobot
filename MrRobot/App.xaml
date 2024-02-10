@@ -228,7 +228,10 @@
 
         <!-- ListBox-меню: шаблон пункта меню -->
         <DataTemplate x:Key="LBMenuTmp">
-            <TextBlock Text="{Binding Name}" Padding="8" FontSize="15" Foreground="#555"/>
+            <TextBlock Text="{Binding Name}"
+                       Padding="8"
+                       FontSize="15"
+                       Foreground="#555"/>
         </DataTemplate>
         <!-- ListBox-меню: стили пункта меню -->
         <Style x:Key="LBMenuStyle" TargetType="ListBoxItem">

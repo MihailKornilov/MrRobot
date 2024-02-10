@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 
 using MrRobot.inc;
+using MrRobot.Section;
 
 namespace MrRobot.Entity
 {
     public class Market
     {
+        public delegate void Dlgt();
+        public static Dlgt Updated = () => { };
+
         // Список бирж
         static List<MarketUnit> MarketList { get; set; }
 
@@ -31,6 +35,7 @@ namespace MrRobot.Entity
                 MarketList.Add(unit);
                 ID_UNIT.Add(id, unit);
             }
+            Updated();
         }
 
         public static List<MarketUnit> ListAll() => MarketList;

@@ -13,6 +13,7 @@ using CefSharp.Wpf;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
+using MrRobot.Connector;
 
 namespace MrRobot
 {
@@ -49,9 +50,9 @@ namespace MrRobot
             new Market();
             new Instrument();
             new Candle();
-            new Patterns();
             new Robots();
             new CDIpanel();
+            new MOEX();
 
             InitializeComponent();
 
@@ -66,14 +67,11 @@ namespace MrRobot
             Top    = position.Val("MainWindow.Top",    100);
 
 
+            Loaded += MouseHookInit;
+            Loaded += ISunit.Init;
+            Loaded += (s, e) => MainMenu.Go();
             SizeChanged += Tester.RobotLogWidthSet;
             SizeChanged += Depth.SizeChanged;
-
-            Loaded += (s, e) =>
-            {
-                var hwnd = new WindowInteropHelper(this).Handle;
-                HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
-            };
             Closed += (s, e) => HttpServer.Stop();
 
 
@@ -134,7 +132,11 @@ namespace MrRobot
 
 
 
-
+        void MouseHookInit(object sender, RoutedEventArgs e)
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
+        }
         IntPtr MouseHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             const int WM_ENTERSIZEMOVE = 0x0231;
@@ -160,3 +162,5 @@ namespace MrRobot
         }
     }
 }
+
+

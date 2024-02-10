@@ -56,7 +56,7 @@ namespace MrRobot.Entity
     public class CDIpageUnit
     {
         public delegate void Dcall();
-        public static Dcall OutMethod;
+        public Dcall OutMethod;
 
         public CDIpageUnit(int page, string src = "выбрать")
         {
@@ -112,7 +112,7 @@ namespace MrRobot.Entity
 
     public class CDIpanel
     {
-        static Dictionary<int, CDIpageUnit> PageASS;   // Ассоциативный массив с данными по каждой странице
+        static Dictionary<int, CDIpageUnit> PageASS { get; set; }   // Ассоциативный массив с данными по каждой странице
         static CDIpageUnit PU
         {
             get
@@ -126,8 +126,8 @@ namespace MrRobot.Entity
 
         public static int CdiId
         {
-            get => PU.CdiId;
-            set { PU.CdiId = value; }
+            get => PU == null ? 0 : PU.CdiId;
+            set => PU.CdiId = value;
         }
         public static CDIunit CdiUnit() => Candle.Unit(CdiId);
 
@@ -137,6 +137,8 @@ namespace MrRobot.Entity
             PageASS = new Dictionary<int, CDIpageUnit>();
             foreach (int page in new int[]{2,3,4})
                 PageASS.Add(page, new CDIpageUnit(page));
+
+            MainMenu.Changed += PageChanged;
         }
         public static CDIpageUnit Page(int page) => PageASS[page];
         static Border OpenPanel  { get { return global.MW.CDIselectPanel.OpenPanel; } }

@@ -18,8 +18,8 @@ namespace MrRobot.Entity
         {
             if (cdi == null)
                 return;
-
-            PageCreate(cdi);
+            if (!PageCreate(cdi))
+                return;
 
             if (panel.Children.Count == 0)
             {
@@ -36,8 +36,11 @@ namespace MrRobot.Entity
         string PathTmp  { get => Path.GetFullPath($"Browser/AdvChart/index.tmp.html"); }
         string PathHtml { get => Path.GetFullPath($"Browser/AdvChart/index.html"); }
 
-        void PageCreate(CDIunit unit)
+        bool PageCreate(CDIunit unit)
         {
+            if(!mysql.IsTableExist(unit.Table))
+                return false;
+
             var read = new StreamReader(PathTmp);
             var write = new StreamWriter(PathHtml);
 
@@ -62,6 +65,8 @@ namespace MrRobot.Entity
             }
             read.Close();
             write.Close();
+
+            return true;
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using static System.Console;
@@ -90,7 +91,7 @@ namespace MrRobot.Entity
         public Dlg Changed = () => { };
 
         // Ассоциативный массив созданных ссылок
-        static Dictionary<string, ISunit> ISlist { get; set; }
+        static Dictionary<string, ISunit> ISlist { get; set; } = new Dictionary<string, ISunit>();
         static ISunit ISU { get; set; }
         static Border OpenPanel  { get => global.MW.ISPanel.OpenPanel; }
         static TextBox FindBox   { get => global.MW.ISPanel.FindBox; }
@@ -98,15 +99,7 @@ namespace MrRobot.Entity
         static Label FoundCancel { get => global.MW.ISPanel.FoundCancel; }
         static CheckBox CDIcheck { get => global.MW.ISPanel.CDIcheck; }
         static ListBox ISBox     { get => global.MW.ISPanel.ISBox; }
-        static void Init()
-        {
-            if (ISlist != null)
-                return;
-
-            ISlist = new Dictionary<string, ISunit>();
-            global.MW.Loaded += (s, e) => MWloaded();
-        }
-        static void MWloaded()
+        public static void Init(object sender, RoutedEventArgs RE)
         {
             FindBox.TextChanged += (s, e) =>
             {
@@ -137,22 +130,20 @@ namespace MrRobot.Entity
         // Создание ссылки для выбора инструмента из выпадающего списка
         public ISunit(TextBlock tb)
         {
-            Init();
-
             TB = tb;
-            TB.MouseLeftButtonDown += (s, e) => Open();
+            TB.MouseLeftButtonDown += Open;
             NoSelTxt = TB.Text;
             CancelAdd();
-
             ChosenApply();
             ISlist.Add(Name, this);
         }
+
         // Показывать циферки со скачанными свечными данными
         public bool WithHistory { get; set; } = false;
         TextBlock TB { get; set; }
         string Name { get => TB.Name; }
         string NoSelTxt { get; set; }
-        string PosPrefix { get => $"{position.MainMenu()}.{Name}."; }
+        public string PosPrefix { get => $"{Name}."; }
 
         TextBlock X { get; set; }
         // Вставка красного крестика для отмены выбора инструмента
@@ -176,7 +167,7 @@ namespace MrRobot.Entity
         }
 
         // Открытие окна со списком
-        void Open()
+        void Open(object sender, MouseButtonEventArgs e)
         {
             ISU = ISlist[Name];
             ISBox.ItemsSource = Instrument.ListBox(FindTxt);

@@ -22,7 +22,9 @@ namespace MrRobot.Section
         {
             InitializeComponent();
             CDIpanel.Page(3).TBLink = SelectLink.TBLink;
-            CDIpageUnit.OutMethod += SourceChanged;
+            CDIpanel.Page(3).OutMethod += SourceChanged;
+            MainMenu.Changed += () => ArchiveGo(true);
+            MainMenu.Changed += FoundLine;
         }
 
         public void PatternInit()
@@ -529,10 +531,8 @@ namespace MrRobot.Section
 
             HeadArchive.Text = "Поиск паттернов" + (isSearch ? ": история" : "");
             ButtonArchive.Content = isSearch ? "<<< назад" : "История поисков";
-            PatternSearchGrid.Visibility = isSearch ? Visibility.Collapsed : Visibility.Visible;
-            PatternArchiveGrid.Visibility = !isSearch ? Visibility.Collapsed : Visibility.Visible;
-
-            global.MW.Pattern.PatternArchive.PatternArchiveInit();
+            PatternSearchGrid.Visibility  = global.Vis(!isSearch);
+            PatternArchiveGrid.Visibility = global.Vis(isSearch);
         }
 
         /// <summary>

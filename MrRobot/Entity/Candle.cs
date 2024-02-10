@@ -4,18 +4,17 @@ using System.Linq;
 using System.Collections.Generic;
 using static System.Console;
 
+using MySqlConnector;
 using Newtonsoft.Json;
 using MrRobot.inc;
-using MySqlConnector;
 
 namespace MrRobot.Entity
 {
     public class Candle
     {
-        public Candle()
-        {
-            ListCreate();
-        }
+        public delegate void Dlgt();
+        public static Dlgt Updated = () => { };
+
         /// <summary>
         /// Список доступных скачанных свечных данных
         /// </summary>
@@ -23,16 +22,15 @@ namespace MrRobot.Entity
         /// <summary>
         /// Ассоциативный массив ID и свечных данных (для быстрого поиска)
         /// </summary>
-        static Dictionary<int, CDIunit> IdUnitAss { get; set; }
-
+        static Dictionary<int, CDIunit> ID_UNIT { get; set; }
 
         /// <summary>
         /// Загрузка из базы списка свечных данных
         /// </summary>
-        public static void ListCreate()
+        public Candle()
         {
             CDIlist = new List<CDIunit>();
-            IdUnitAss = new Dictionary<int, CDIunit>();
+            ID_UNIT = new Dictionary<int, CDIunit>();
 
             string sql = "SELECT*" +
                          "FROM`_candle_data_info`" +
@@ -63,8 +61,10 @@ namespace MrRobot.Entity
                     ConvertedFromId = Convert.ToInt32(v["convertedFromId"])
                 };
                 CDIlist.Add(Unit);
-                IdUnitAss.Add(Unit.Id, Unit);
+                ID_UNIT.Add(Unit.Id, Unit);
             }
+            new Patterns();
+            Updated();
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Единица информации свечных данных на основании ID
         /// </summary>
-        public static CDIunit Unit(int id) => IdUnitAss.ContainsKey(id) ? IdUnitAss[id] : null;
+        public static CDIunit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
         public static int Id(int id) => Unit(id) == null ? 0 : id;
 
         /// <summary>
@@ -219,16 +219,16 @@ namespace MrRobot.Entity
         /// <summary>
         /// Удаление единицы свечных данных из списка
         /// </summary>
-        public static void InfoUnitDel(int id)
+        public static void UnitDel(int id)
         {
             if (CDIlist == null)
                 return;
             if (CDIlist.Count == 0)
                 return;
-            if(!IdUnitAss.ContainsKey(id))
+            if(!ID_UNIT.ContainsKey(id))
                 return;
 
-            var unit = IdUnitAss[id];
+            var unit = ID_UNIT[id];
             
             string sql = $"DROP TABLE IF EXISTS`{unit.Table}`";
             mysql.Query(sql);
@@ -246,9 +246,8 @@ namespace MrRobot.Entity
             sql = $"DELETE FROM`_pattern_search`WHERE`cdiId`={id}";
             mysql.Query(sql);
 
-            CDIlist.Remove(unit);
-            IdUnitAss.Remove(id);
             Instrument.DataCountMinus(unit.InstrumentId);
+            new Candle();
         }
 
 

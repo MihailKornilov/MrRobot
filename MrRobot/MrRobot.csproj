@@ -168,7 +168,7 @@
     <Compile Include="Entity\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Entity\MOEX.cs" />
+    <Compile Include="Connector\MOEX.cs" />
     <Compile Include="Entity\Patterns.cs" />
     <Compile Include="inc\HttpServer.cs" />
     <Compile Include="Section\Converter\Converter.xaml.cs">
@@ -194,7 +194,6 @@
     <Compile Include="Section\Pattern\PatternInfo.xaml.cs">
       <DependentUpon>PatternInfo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Section\SectionUpd.cs" />
     <Compile Include="Section\Setting\AutoProgon.cs" />
     <Compile Include="Section\Setting\Setting.xaml.cs">
       <DependentUpon>Setting.xaml</DependentUpon>

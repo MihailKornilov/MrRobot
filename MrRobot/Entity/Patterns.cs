@@ -51,10 +51,7 @@ namespace MrRobot.Entity
                     SearchResult.Add(unit);
             }
         }
-        public static List<SearchUnit> SearchListAll()
-        {
-            return SearchResult;
-        }
+        public static List<SearchUnit> SearchListAll() => SearchResult;
         /// <summary>
         /// Данные поиска по ID
         /// </summary>

@@ -17,28 +17,19 @@ namespace MrRobot.Section
         {
             InitializeComponent();
             CDIpanel.Page(2).TBLink = SelectLink.TBLink;
-            CDIpageUnit.OutMethod += SourceChanged;
-        }
-
-        public void ConverterInit()
-        {
-            if (global.IsInited(2))
-                return;
-
+            CDIpanel.Page(2).OutMethod += SourceChanged;
             SourceChanged();
-
-            global.Inited(2);
+            Candle.Updated += ResultListCreate;
         }
+
 
         bool IsSourceChosen => SourceId > 0;        // Свечные данные выбраны
-        int SourceId => CDIpanel.CdiId;             // ID свечных данных
+        int SourceId => CDIpanel.Page(2).CdiId;             // ID свечных данных
         CDIunit SourceUnit => Candle.Unit(SourceId);// Единица свечных данных
 
 
         public void SourceChanged()
         {
-            if (position.MainMenu() != 2)
-                return;
             if (!IsSourceChosen)
                 return;
             if (global.IsAutoProgon)
@@ -115,7 +106,6 @@ namespace MrRobot.Section
 
             new Candle();
             Instrument.DataCountPlus(SourceUnit.InstrumentId, CheckedTF.Length);
-            SectionUpd.All();
 
             ConvertGoButton.Visibility = Visibility.Visible;
             ProcessPanel.Visibility = Visibility.Collapsed;
@@ -215,14 +205,7 @@ namespace MrRobot.Section
         /// </summary>
         public void ResultListCreate()
         {
-            if (!IsSourceChosen)
-            {
-                ResultListBox.ItemsSource = null;
-                return;
-            }
-
-            var list = Candle.ListOnIID(SourceUnit.InstrumentId, false);
-            ResultListBox.ItemsSource = list;
+            ResultListBox.ItemsSource = IsSourceChosen ? Candle.ListOnIID(SourceUnit.InstrumentId, false) : null;
         }
 
         /// <summary>
@@ -237,15 +220,6 @@ namespace MrRobot.Section
         /// <summary>
         /// Удаление результата конвертации
         /// </summary>
-        void ConvertedX(object sender, MouseButtonEventArgs e)
-        {
-            var panel = ((FrameworkElement)sender).Parent as StackPanel;
-            var label = panel.Children[0] as Label;
-
-            int id = Convert.ToInt32(label.Content);
-            Candle.InfoUnitDel(id);
-
-            SectionUpd.All();
-        }
+        void ConvertedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
     }
 }

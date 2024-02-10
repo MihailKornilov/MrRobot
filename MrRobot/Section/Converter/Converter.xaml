@@ -13,19 +13,19 @@
         <!-- Шаблон для списка таймфреймов c результатами конвертации -->
         <DataTemplate x:Key="ItemsResultTmp">
             <StackPanel Orientation="Horizontal">
-                <Label Width="0"   Content="{Binding Id}"/>
                 <Label Width="100" Content="{Binding Name}" Padding="0,5"/>
                 <Label Width="50"  Content="{Binding TF}" FontWeight="Bold"/>
                 <Label Width="130" Content="{Binding DatePeriod}"/>
-                <Label Width="15"/>
                 <Label Width="20"
                        Opacity=".5"
                        Padding="4,4,0,0"
+                       Margin="15,0,0,0"
                        FontSize="14"
                        Foreground="Red"
                        FontWeight="Bold"
                        FontFamily="Comic Sans Ms"
                        Content="X"
+                       TabIndex="{Binding Id}"
                        MouseLeftButtonDown="ConvertedX"/>
             </StackPanel>
         </DataTemplate>

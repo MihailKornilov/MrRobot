@@ -18,7 +18,7 @@ namespace MrRobot.Section
             InitializeComponent();
             TesterInit();
             CDIpanel.Page(4).TBLink = SelectLink.TBLink;
-            CDIpageUnit.OutMethod += SourceChanged;
+            CDIpanel.Page(4).OutMethod += SourceChanged;
         }
 
         public void TesterInit()

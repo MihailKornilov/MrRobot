@@ -8,24 +8,53 @@
              d:DesignWidth="800"
              d:DesignHeight="450">
 
+    <UserControl.Resources>
+        <!-- Шаблон для списка загруженной истории -->
+        <DataTemplate x:Key="DefaultUnit">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Title}" FontSize="11" Width="200" Padding="0,2"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="210"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
         <!-- Заголовок -->
         <Border Grid.Row="0" Margin="10" BorderBrush="#C6D8E6" BorderThickness="1">
             <StackPanel Background="#ECF3F8" Orientation="Horizontal">
-                <TextBlock Name="HeadTB" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
+                <TextBlock Text="{Binding Path=HdName}" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
             </StackPanel>
         </Border>
 
-        <Grid Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0">
-            <Button Content="Скачать"
+        <Grid Grid.Row="1" Margin="10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+                <Label Content="Режимы торгов:" Margin="0,0,0,3" Style="{StaticResource LabelMedium}"/>
+                <ListBox Name="EngineBox"
+                         Width="240"
+                         Height="116"
+                         ItemsSource="{Binding Path=EngineList}"
+                         ItemTemplate="{StaticResource DefaultUnit}"/>
+                <Label Content="Рынки:" Margin="0,13,0,3" Style="{StaticResource LabelMedium}"/>
+                <ListBox Name="MarketBox"
+                         Width="240"
+                         Height="80"
+                         ItemsSource="{Binding Path=MarketList}"
+                         ItemTemplate="{StaticResource DefaultUnit}"/>
+            </StackPanel>
+            <Button Grid.Column="1"
+                    Content="Скачать"
                     Width="100"
                     Height="25"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
                     Click="EngineIss"/>
         </Grid>
         

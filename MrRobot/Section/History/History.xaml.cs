@@ -22,13 +22,6 @@ namespace MrRobot.Section
         public History()
         {
             InitializeComponent();
-            HistoryInit();
-        }
-
-        public void HistoryInit()
-        {
-            if (global.IsInited(1))
-                return;
 
             MenuCreate(2);
             HeadCountWrite();
@@ -38,10 +31,10 @@ namespace MrRobot.Section
             IS.Changed = InstrumentChanged;
             InstrumentChanged();
 
-            global.Inited(1);
+            Candle.Updated += DownloadedListCreate;
         }
 
-        ISunit IS;
+        ISunit IS { get; set; }
         InstrumentUnit IUnit { get => IS.IUnit; }
 
         /// <summary>
@@ -135,7 +128,6 @@ namespace MrRobot.Section
 
             new Candle();
             Instrument.DataCountPlus(IUnit.Id);
-            SectionUpd.All();
 
             AutoProgon.Converter();
         }
@@ -302,15 +294,6 @@ namespace MrRobot.Section
         /// <summary>
         /// Нажатие на крестик удаления загруженной истории
         /// </summary>
-        void DownloadedX(object sender, MouseButtonEventArgs e)
-        {
-            var panel = ((FrameworkElement)sender).Parent as StackPanel;
-            var label = panel.Children[0] as Label;
-
-            int id = Convert.ToInt32(label.Content);
-            Candle.InfoUnitDel(id);
-
-            SectionUpd.All();
-        }
+        void DownloadedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
     }
 }

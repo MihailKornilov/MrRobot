@@ -39,6 +39,9 @@ namespace MrRobot.Entity
 
         public void CDI(string section, CDIunit unit, string pageName = "Chart")
         {
+            if (!mysql.IsTableExist(unit.Table))
+                return;
+
             Section = section;
             CdiUnit = unit;
             PageName = pageName;

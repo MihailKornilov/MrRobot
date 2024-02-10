@@ -3,12 +3,14 @@ using System.Windows.Controls;
 using static System.Console;
 
 using MrRobot.inc;
-using MrRobot.Section;
 
 namespace MrRobot.Entity
 {
     public partial class MainMenu : UserControl
     {
+        public delegate void Dlgt();
+        public static Dlgt Changed = () => { };
+
         public MainMenu()
         {
             InitializeComponent();
@@ -18,7 +20,6 @@ namespace MrRobot.Entity
                 MMlist.Items.Add(new MMUnit(i));
 
             MMlist.SelectionChanged += Change;
-            global.MW.Loaded += (s, e) => Go();
         }
 
 
@@ -59,37 +60,15 @@ namespace MrRobot.Entity
                 global.Vis(uc, i == index);
             }
 
-            global.MW.Pattern.ArchiveGo(true);
-            global.MW.Pattern.FoundLine();
-            CDIpanel.PageChanged();
+            Changed();
 
             switch (index)
             {
-                case 1:
-                    if (SectionUpd.Update[1])
-                        SectionUpd.History();
-
-                    global.MW.History.HistoryInit();
-                    break;
-
-                case 2:
-                    if (SectionUpd.Update[2])
-                        SectionUpd.Converter();
-
-                    global.MW.Converter.ConverterInit();
-                    break;
-
                 case 3:
-                    if (SectionUpd.Update[3])
-                        SectionUpd.Pattern();
-
                     global.MW.Pattern.PatternInit();
                     break;
 
                 case 4:
-                    if (SectionUpd.Update[4])
-                        SectionUpd.Tester();
-
                     global.MW.Tester.TesterInit();
                     break;
 

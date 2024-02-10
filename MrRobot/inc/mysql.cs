@@ -90,6 +90,16 @@ namespace MrRobot.inc
 
 
 
+        /// <summary>
+        /// Проверка существования таблицы
+        /// </summary>
+        public static bool IsTableExist(string tableName)
+        {
+            string sql = $"SHOW TABLES LIKE'{tableName}'";
+            new mysql(sql, true);
+            return res.HasRows;
+        }
+
 
         /// <summary>
         /// Внесение INSERT, удаление DELETE, обновление UPDATE данных
