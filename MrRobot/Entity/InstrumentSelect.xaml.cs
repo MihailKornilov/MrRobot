@@ -126,6 +126,15 @@ namespace MrRobot.Entity
                 ISU.ChosenId = unit.Id;
             };
         }
+        // Установка инструмента со стороны
+        public static void Chose(string name, int iid)
+        {
+            if (!ISlist.ContainsKey(name))
+                return;
+
+            ISU = ISlist[name];
+            ISU.ChosenId = iid;
+        }
 
         // Создание ссылки для выбора инструмента из выпадающего списка
         public ISunit(TextBlock tb)

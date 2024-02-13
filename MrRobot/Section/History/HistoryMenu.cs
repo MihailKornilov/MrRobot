@@ -7,24 +7,31 @@ namespace MrRobot.Section
 {
     public partial class History : UserControl
     {
+        public delegate void Dlgt(int id);
+        public static Dlgt MenuMethod = (int id) => { };
+
         /// <summary>
         /// Меню: выбор биржи
         /// </summary>
-        void MenuCreate(int marketId = 1)
+        void MenuCreate()
         {
             MarketBox.ItemsSource = Market.ListAll();
             MarketBox.SelectionChanged += (s, e) =>
             {
                 int sel = MarketBox.SelectedIndex;
+                MarketUnit unit;
                 for (int i = 0; i < MarketBox.Items.Count; i++)
                 {
-                    var unit = MarketBox.Items[i] as MarketUnit;
-                    var FN   = FindName($"MarketPanel{unit.Id}");
+                    unit = MarketBox.Items[i] as MarketUnit;
+                    var FN = FindName($"MarketPanel{unit.Id}");
                     global.Vis(FN as Panel, i == sel);
                     global.Vis(FN as UserControl, i == sel);
                 }
+                unit = MarketBox.SelectedItem as MarketUnit;
+                position.Set("1.MarketMenu.Index", unit.Id);
+                MenuMethod(unit.Id);
             };
-            MarketBox.SelectedItem = Market.Unit(marketId);
+            MarketBox.SelectedItem = Market.Unit(position.Val("1.MarketMenu.Index", 1));
         }
     }
 }

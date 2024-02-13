@@ -206,9 +206,7 @@
                 </Grid>
 
                 <!-- Список найденных паттернов -->
-                <StackPanel Grid.Column="2"
-                            Name="FoundPanel"
-                            Visibility="Hidden">
+                <StackPanel Grid.Column="2" Name="FoundPanel" Visibility="Hidden">
                     <WrapPanel Margin="10,10,0,0">
                         <Label Content="№" FontSize="11" Padding="0" Margin="20,0,0,0" Foreground="#888"/>
                         <Label Content="Паттерн" FontSize="11" Padding="0" Margin="9,0,0,0" Foreground="#888"/>

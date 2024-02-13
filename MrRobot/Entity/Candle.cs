@@ -443,8 +443,6 @@ namespace MrRobot.Entity
                             "`end`=VALUES(`end`)";
                 mysql.Query(sql);
             }
-
-            new Candle();
         }
 
         /// <summary>

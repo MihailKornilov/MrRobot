@@ -32,6 +32,7 @@ namespace MrRobot.Section
             HeadCountWrite();
 
             await Task.Run(() => Candle.DataControl(prgs: progress));
+            new Candle();
             InstrumentUpdateButton.Visibility = Visibility.Visible;
             InstrumentUpdateBarPanel.Visibility = Visibility.Collapsed;
         }

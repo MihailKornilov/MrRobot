@@ -522,8 +522,6 @@ namespace MrRobot.Section
             if (position.MainMenu() != 3)
                 return;
 
-            CDIpanel.Hide();
-
             bool isSearch = PatternSearchGrid.Visibility == Visibility.Visible;
 
             if (fromMM && isSearch)

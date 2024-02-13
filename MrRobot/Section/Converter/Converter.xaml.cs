@@ -213,6 +213,9 @@ namespace MrRobot.Section
         /// </summary>
         void ConverterResultChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (global.IsAutoProgon)
+                return;
+
             var item = (sender as ListBox).SelectedItem as CDIunit;
             new AdvChart(ChartPanel, item);
         }

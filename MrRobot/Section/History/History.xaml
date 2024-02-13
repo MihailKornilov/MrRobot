@@ -214,9 +214,9 @@
 
 
 
-            <Grid Grid.Column="1" Name="MarketPanel3" Visibility="Collapsed">
-                <TextBlock FontSize="22" Margin="10" Foreground="#888"/>
-            </Grid>
+            <StackPanel Grid.Column="1" Name="MarketPanel3" Visibility="Collapsed">
+                <TextBlock Text="123" FontSize="22" Margin="10" Foreground="#888"/>
+            </StackPanel>
 
 
 

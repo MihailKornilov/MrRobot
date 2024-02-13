@@ -9,10 +9,34 @@
              d:DesignHeight="450">
 
     <UserControl.Resources>
-        <!-- Шаблон для списка загруженной истории -->
+        <!-- Шаблон -->
         <DataTemplate x:Key="DefaultUnit">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Title}" FontSize="11" Width="200" Padding="0,2"/>
+                <TextBlock Text="{Binding Title}" FontSize="11" Width="175" Padding="0,2"/>
+                <Label Content="{Binding SecurityCount}"
+                       FontSize="11"
+                       Width="30"
+                       Padding="0,2"
+                       Foreground="#777"
+                       FontWeight="Medium"
+                       HorizontalContentAlignment="Right"
+                       Visibility="{Binding SecurityCountVis}"/>
+            </StackPanel>
+        </DataTemplate>
+        <!-- Шаблон для списка инструментов -->
+        <DataTemplate x:Key="SecurityUnit">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding Id}"
+                       Width="65"
+                       Foreground="#999"
+                       FontWeight="Medium"
+                       HorizontalContentAlignment="Right"
+                       Padding="0,3"
+                       Margin="0,0,7,0"/>
+                <StackPanel Margin="0,3" Width="550">
+                    <TextBlock Text="{Binding ShortName}" FontWeight="Medium"/>
+                    <TextBlock Text="{Binding Name}"/>
+                </StackPanel>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
@@ -26,36 +50,68 @@
         <!-- Заголовок -->
         <Border Grid.Row="0" Margin="10" BorderBrush="#C6D8E6" BorderThickness="1">
             <StackPanel Background="#ECF3F8" Orientation="Horizontal">
-                <TextBlock Text="{Binding Path=HdName}" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
+                <TextBlock Text="{Binding HdName}" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
             </StackPanel>
         </Border>
 
         <Grid Grid.Row="1" Margin="10,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="255"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
+
             <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                <Label Content="Режимы торгов:" Margin="0,0,0,3" Style="{StaticResource LabelMedium}"/>
+                <Label Content="...:" Margin="0,0,0,2" Style="{StaticResource LabelMedium}"/>
                 <ListBox Name="EngineBox"
                          Width="240"
-                         Height="116"
                          ItemsSource="{Binding Path=EngineList}"
                          ItemTemplate="{StaticResource DefaultUnit}"/>
                 <Label Content="Рынки:" Margin="0,13,0,3" Style="{StaticResource LabelMedium}"/>
                 <ListBox Name="MarketBox"
                          Width="240"
-                         Height="80"
+                         MaxHeight="195"
                          ItemsSource="{Binding Path=MarketList}"
                          ItemTemplate="{StaticResource DefaultUnit}"/>
             </StackPanel>
-            <Button Grid.Column="1"
+
+            <StackPanel Grid.Column="1" HorizontalAlignment="Left">
+                <Label Content="Быстрый поиск инструментов:" Style="{StaticResource LabelMedium}"/>
+                <TextBox Name="FindBox"
+                         Text="{Binding Path=FindTxt}"
+                         Width="700"
+                         Height="30"
+                         Margin="0,2,0,0"
+                         Padding="5"
+                         FontSize="15"/>
+                <Label Name="FoundCount"
+                       Width="120"
+                       Foreground="#999"
+                       Padding="0"
+                       Margin="0,-24,28,0"
+                       FontSize="15"
+                       Visibility="{Binding Path=FindVis}"
+                       HorizontalAlignment="Right"
+                       HorizontalContentAlignment="Right"/>
+                <Label Name="FoundCancel"
+                       FontSize="15"
+                       Margin="0,-30,3,0"
+                       Visibility="{Binding Path=FindVis}"
+                       Style="{StaticResource CancelLabel}"/>
+                <ListBox Name="SecurityBox"
+                         Width="700"
+                         Height="385"
+                         Margin="0,5,0,0"
+                         ItemsSource="{Binding Path=SecurityList}"
+                         ItemTemplate="{StaticResource SecurityUnit}"/>
+            </StackPanel>
+
+                <!--<Button Grid.Column="1"
                     Content="Скачать"
                     Width="100"
                     Height="25"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Click="EngineIss"/>
+                    Click="EngineIss"/>-->
         </Grid>
         
     </Grid>

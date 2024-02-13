@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Windows;
 using MrRobot.inc;
-using MrRobot.Section;
 
 namespace MrRobot.Entity
 {

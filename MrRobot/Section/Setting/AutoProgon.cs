@@ -226,7 +226,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             }
 
             // Выбор инструмента
-            //global.MW.History.InstrumentListBox.SelectedItem = Instrument.UnitOnSymbol(PARAM.Symbol);
+            ISunit.Chose("HistoryIS", Instrument.UnitOnSymbol(PARAM.Symbol).Id);
 
             // Запуск скачивания - нажатие на кнопку
             ButtonClick(global.MW.History.DownloadGoButton);

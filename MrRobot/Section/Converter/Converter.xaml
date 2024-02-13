@@ -82,7 +82,7 @@
                         <CheckBox Name="CheckTF5" Content="5min" Margin="0,5,0,0"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Margin="0,7,0,0">
-                        <CheckBox Name="CheckTF11" Content="10min"/>
+                        <CheckBox Name="CheckTF10" Content="10min"/>
                         <CheckBox Name="CheckTF15" Content="15min" Margin="0,5,0,0"/>
                         <CheckBox Name="CheckTF20" Content="20min" Margin="0,5,0,0"/>
                         <CheckBox Name="CheckTF30" Content="30min" Margin="0,5,0,0"/>

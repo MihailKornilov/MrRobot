@@ -23,7 +23,7 @@ namespace MrRobot.Section
         {
             InitializeComponent();
 
-            MenuCreate(2);
+            MenuCreate();
             HeadCountWrite();
 
             IS = new ISunit(HistoryIS);
@@ -287,6 +287,9 @@ namespace MrRobot.Section
                 box.SelectedIndex = 0;
                 return;
             }
+
+            if (global.IsAutoProgon)
+                return;
 
             EChart.CDI("History", box.SelectedItem as CDIunit);
         }
