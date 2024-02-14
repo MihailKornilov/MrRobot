@@ -3,9 +3,9 @@ using System.Windows.Controls;
 using System.Collections.Generic;
 using static System.Console;
 
+using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
-using MrRobot.inc;
 
 namespace MrRobot.Section
 {
@@ -18,25 +18,47 @@ namespace MrRobot.Section
             DataContext = new MoexDC();
             Market.Updated += () => DataContext = new MoexDC();
 
-            EngineBox.SelectedIndex = 0;
-            EngineBox.SelectionChanged += (s, e) =>
-            {
-                MoexDC.EngineId = (EngineBox.SelectedItem as MoexUnit).Id;
-                DataContext = new MoexDC();
-                MarketBox.SelectedIndex = 0;
-            };
-
-            FindBox.TextChanged += (s, e) =>
-            {
-                MoexDC.FindTxt = FindBox.Text;
-                DataContext = new MoexDC();
-                FoundCount.Content = $"найдено: {MOEX.Security.FoundCount(FindBox.Text)}";
-            };
-            FoundCancel.MouseLeftButtonDown += (s, e) => FindBox.Text = "";
-
+            // Установка фокуса на Быстрый поиск, если был переход на страницу МосБиржи
             History.MenuMethod += (id) => {
                 if (id == 2)
-                    FindBox.Focus();
+                    FastBox.Focus();
+            };
+
+
+            // Фильтр "Быстрый поиск"
+            FastBox.Text = SecurityFilter.FastTxt;
+            FastBox.TextChanged += (s, e) =>
+            {
+                SecurityFilter.FastTxt = FastBox.Text;
+                EngineBox.SelectedIndex = -1;
+                DataContext = new MoexDC();
+            };
+            FastCancel.MouseLeftButtonDown += (s, e) =>
+            {
+                FastBox.Text = "";
+                FastBox.Focus();
+            };
+
+
+            // Фильтр "Торговая система"
+            EngineBox.SelectedIndex = MOEX.Engine.FilterIndex();
+            EngineBox.SelectionChanged += (s, e) =>
+            {
+                if (EngineBox.SelectedIndex == -1)
+                    return;
+                SecurityFilter.EngineId = (EngineBox.SelectedItem as MoexUnit).Id;
+                DataContext = new MoexDC();
+            };
+
+
+            // Фильтр "Рынки"
+            MarketBox.SelectedIndex = MOEX.Market.FilterIndex();
+            MarketBox.SelectionChanged += (s, e) =>
+            {
+                if (MarketBox.SelectedIndex == -1)
+                    return;
+                SecurityFilter.MarketId = (MarketBox.SelectedItem as MoexUnit).Id;
+                DataContext = new MoexDC();
             };
         }
 
@@ -46,25 +68,116 @@ namespace MrRobot.Section
             //MOEX.Market.iss();
             //MOEX.Board.iss();
             //MOEX.BoardGroup.iss();
-            //MOEX.Security.iss();
+            //MOEX.SecurityGroup.iss();
+            //MOEX.SecurityType.iss();
+            //MOEX.SecurityСollections.iss();
+            MOEX.Security.iss();
         }
     }
 
+    /// <summary>
+    /// Moex DataContext
+    /// </summary>
     public class MoexDC
     {
-        public static string HdName { get => Market.Unit(2).Name; }
-        public static List<MoexUnit> EngineList { get => MOEX.Engine.ListAll(); }
-
-        public static int EngineId { get; set; } 
-        public static List<MoexUnit> MarketList { get => MOEX.Market.ListEngine(EngineId); }
-
-
-        public static string FindTxt
+        public MoexDC()
         {
-            get => position.Val($"1.Moex.FindTxt", "");
-            set => position.Set($"1.Moex.FindTxt", value);
+            MOEX.Engine.CountFilter();
+            MOEX.Market.CountFilter();
+            FoundCount = MOEX.Security.FoundCount();
         }
-        public static Visibility FindVis { get => global.Vis(FindTxt.Length > 0); }
-        public static List<SecurityUnit> SecurityList { get => MOEX.Security.List1000(FindTxt); }
+        // Название Московской биржи из базы в заголовке
+        public static string HdName { get => Market.Unit(2).Name; }
+        // Количество бумаг в заголовке
+        public static string HdSecurityCount { get => MOEX.Security.CountStr(); }
+
+
+        // Видимость крестика отмены быстрого поиска
+        public static Visibility FastCancelVis  { get => global.Vis(SecurityFilter.FastTxt.Length > 0); }
+        public static List<MoexUnit> EngineList { get => MOEX.Engine.ListActual(); }
+
+
+        // Видимость списка рынков
+        public static Visibility MarketVis { get => global.Vis(SecurityFilter.EngineId > 0); }
+        public static List<MoexUnit> MarketList { get => MOEX.Market.ListEngine(); }
+
+
+        // Количество найденных бумаг
+        public static int FoundCount { get; set; }
+        // Текст с количеством найденных бумаг
+        public static string FoundCountStr
+        {
+            get
+            {
+                if (FoundCount == 0)
+                    return "Бумаг не найдено.";
+                return $"Показан{format.End(FoundCount, "а", "о")} {MOEX.Security.CountStr(FoundCount)}";
+            }
+        }
+
+
+        // Видимость списка бумаг
+        public static Visibility SecurityListVis { get => global.Vis(FoundCount > 0); }
+        // Список бумаг
+        public static List<SecurityUnit> SecurityList { get => MOEX.Security.ListFilter(); }
+    }
+
+    /// <summary>
+    /// Фильтр для вывода списка бумаг
+    /// </summary>
+    public class SecurityFilter
+    {
+        // Фильтрация единицы бумаги для вывода списка
+        public static bool IsAllow(SecurityUnit unit)
+        {
+            if (MarketId > 0 && unit.MarketId != MarketId)
+                return false;
+            if (EngineId > 0 && unit.EngineId != EngineId)
+                return false;
+            if (!IsAllowFast(unit))
+                return false;
+            return true;
+        }
+        // Обработка текста Быстрого поиска
+        public static bool IsAllowFast(SecurityUnit unit)
+        {
+            if (FastTxt.Length == 0)
+                return true;
+            //if (unit.Id.ToString() == FastTxt)
+            //    return true;
+            if (unit.SecId.ToLower().Contains(FastTxt))
+                return true;
+            if (unit.Name.ToLower().Contains(FastTxt))
+                return true;
+            if (unit.ShortName.ToLower().Contains(FastTxt))
+                return true;
+            return false;
+        }
+        // Быстрый поиск
+        public static string FastTxt
+        {
+            get => position.Val($"1.2.SecurityFilter.FastTxt");
+            set
+            {
+                position.Set($"1.2.SecurityFilter.FastTxt", value.ToLower());
+                EngineId = 0;
+            }
+        }
+        // Торговая система
+        public static int EngineId
+        {
+            get => position.Val($"1.2.SecurityFilter.EngineId", 0);
+            set
+            {
+                position.Set($"1.2.SecurityFilter.EngineId", value);
+                MarketId = 0;
+            }
+        }
+        // Рынок
+        public static int MarketId
+        {
+            get => position.Val($"1.2.SecurityFilter.MarketId", 0);
+            set => position.Set($"1.2.SecurityFilter.MarketId", value);
+        }
     }
 }

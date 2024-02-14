@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using static System.Console;
 
 namespace MrRobot.inc
 {
 	public class position
 	{
 		// Значения всех позиций
-		private static Dictionary<string, string> AllPos;
+		static Dictionary<string, string> ASS;
 
-		/// <summary>
-		/// Получение всех значений позиций
-		/// </summary>
-		private static void All()
+        /// <summary>
+        /// Получение всех значений позиций
+        /// </summary>
+		public position()
 		{
-			if(AllPos == null)
-				AllPos = new Dictionary<string, string>();
-			if (AllPos.Count > 0)
-				return;
-
-			string sql = "SELECT `key`,`val` FROM `_position`";
-			AllPos = mysql.StringAss(sql);
-		}
-
+            string sql = "SELECT `key`,`val` FROM `_position`";
+            ASS = mysql.StringAss(sql);
+        }
 
 		/// <summary>
 		/// Внесение ключа и значения
 		/// </summary>
-		private static bool Insert(string key, string val)
+		static bool Insert(string key, string val)
 		{
-			All();
-			if (AllPos.ContainsKey(key))
+			if (ASS.ContainsKey(key))
 				return false;
 
 			string sql = "INSERT INTO `_position`" +
@@ -38,7 +33,7 @@ namespace MrRobot.inc
 						$"('{key}','{val}')";
 			mysql.Query(sql);
 
-			AllPos.Add(key, val);
+			ASS.Add(key, val);
 
 			return true;
 		}
@@ -53,22 +48,17 @@ namespace MrRobot.inc
 				return;
 			if (Insert(key, val))
 				return;
-			if (AllPos[key] == val)
+			if (ASS[key] == val)
 				return;
 
 			string sql = $"UPDATE`_position`SET`val`='{val}'WHERE`key`='{key}'";
-			mysql.Query(sql);
+            if (!global.IsAutoProgon)
+                mysql.Query(sql);
 
-			AllPos[key] = val;
+			ASS[key] = val;
 		}
-		public static void Set(string key, int val)
-		{
-			Set(key, val.ToString());
-		}
-		public static void Set(string key, bool val)
-		{
-			Set(key, val ? "1" : "0");
-		}
+		public static void Set(string key, int val) => Set(key, val.ToString());
+		public static void Set(string key, bool val) => Set(key, val ? "1" : "0");
 
 
 		/// <summary>
@@ -78,7 +68,7 @@ namespace MrRobot.inc
 		{
 			Insert(key, val);
 
-			return AllPos[key];
+			return ASS[key];
 		}
 		public static int Val(string key, int val)
 		{

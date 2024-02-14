@@ -346,10 +346,9 @@ namespace MrRobot.inc
         /// <summary>
         /// Формирование окончаний в словах
         /// </summary>
-        public static string End(int count, string o1, string o2, string o5="")
+        public static string End(int count, string o1, string o2, string o5=null)
         {
-            if (o5.Length == 0)
-                o5 = o2;
+            o5 = o5 == null ? o2 : o5;
 
             //Цифры 11-19
             if (count / 10 % 10 == 1)

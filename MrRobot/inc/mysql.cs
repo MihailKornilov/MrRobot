@@ -6,9 +6,6 @@ using MySqlConnector;
 
 using MrRobot.Entity;
 using MrRobot.Section;
-using System.Windows.Documents;
-using System.Windows.Markup;
-using System.Diagnostics;
 
 namespace MrRobot.inc
 {
@@ -58,7 +55,7 @@ namespace MrRobot.inc
             cmd = null;
             res = null;
 
-            return;
+            //return;
 
             long Unix = format.UnixNow_MilliSec();
             if (Unix - UnixLast > 1000)
@@ -69,6 +66,7 @@ namespace MrRobot.inc
             if (txt.Length > 500)
                 txt = txt.Substring(0, 500);
             WriteLine(txt);
+            global.LogWrite(txt);
         }
 
 

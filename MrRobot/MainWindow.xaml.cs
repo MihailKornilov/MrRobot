@@ -45,7 +45,7 @@ namespace MrRobot
             Settings.CachePath = Directory.GetCurrentDirectory() + @"\CefSharpCache";
             Cef.Initialize(Settings);
 
-
+            new position();
             new HttpServer();
             new Market();
             new Instrument();
@@ -73,7 +73,6 @@ namespace MrRobot
             SizeChanged += Tester.RobotLogWidthSet;
             SizeChanged += Depth.SizeChanged;
             Closed += (s, e) => HttpServer.Stop();
-
 
             global.Inited();
             global.LogWrite($"Загружено за {dur.Second()} сек.");

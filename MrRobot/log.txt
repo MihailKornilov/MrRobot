@@ -1,0 +1,4 @@
+14.02.2024 3:22:47: SQL.1: 0:848 SELECT`quoteCoin`,COUNT(*)`count`FROM`_instrument`GROUP BY`quoteCoin`ORDER BY`count`DESC
+14.02.2024 3:24:19: SQL.2: 0:030 SELECT`quoteCoin`,COUNT(*)`count`FROM`_instrument`GROUP BY`quoteCoin`ORDER BY`count`DESC
+14.02.2024 3:28:51: SQL.1: 0:894 SELECT`quoteCoin`,COUNT(*)`count`FROM`_instrument`GROUP BY`quoteCoin`ORDER BY`count`DESC
+14.02.2024 3:38:09: SQL.1: 0:330 SELECT`quoteCoin`,COUNT(*)`count`FROM`_instrument`GROUP BY`quoteCoin`ORDER BY`count`DESC

@@ -10,20 +10,25 @@
 
     <UserControl.Resources>
         <!-- Шаблон -->
-        <DataTemplate x:Key="DefaultUnit">
+        <DataTemplate x:Key="FilterUnit">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Title}" FontSize="11" Width="175" Padding="0,2"/>
-                <Label Content="{Binding SecurityCount}"
+                <TextBlock Text="{Binding Title}"
+                           FontSize="11"
+                           Width="155"
+                           Padding="0,2"
+                           TextWrapping="Wrap"/>
+                <Label Content="{Binding SecurityCountFilter}"
                        FontSize="11"
-                       Width="30"
+                       Width="33"
                        Padding="0,2"
-                       Foreground="#777"
+                       Foreground="#AAA"
                        FontWeight="Medium"
                        HorizontalContentAlignment="Right"
+                       VerticalContentAlignment="Center"
                        Visibility="{Binding SecurityCountVis}"/>
             </StackPanel>
         </DataTemplate>
-        <!-- Шаблон для списка инструментов -->
+        <!-- Шаблон для списка бумаг -->
         <DataTemplate x:Key="SecurityUnit">
             <StackPanel Orientation="Horizontal">
                 <Label Content="{Binding Id}"
@@ -32,11 +37,15 @@
                        FontWeight="Medium"
                        HorizontalContentAlignment="Right"
                        Padding="0,3"
-                       Margin="0,0,7,0"/>
-                <StackPanel Margin="0,3" Width="550">
-                    <TextBlock Text="{Binding ShortName}" FontWeight="Medium"/>
-                    <TextBlock Text="{Binding Name}"/>
-                </StackPanel>
+                       Margin="0,0,10,0"
+                       Visibility="Collapsed"/>
+                <Label Content="{Binding SecId}"
+                       Width="100"
+                       Padding="0,2"
+                       Margin="0,0,10,0"
+                       HorizontalContentAlignment="Right"
+                       FontWeight="Medium"/>
+                <Label Content="{Binding Name}" Padding="0,2"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
@@ -47,61 +56,60 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <!-- Заголовок -->
+        <!-- ЗАГОЛОВОК -->
         <Border Grid.Row="0" Margin="10" BorderBrush="#C6D8E6" BorderThickness="1">
             <StackPanel Background="#ECF3F8" Orientation="Horizontal">
                 <TextBlock Text="{Binding HdName}" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
+                <TextBlock Text=":" Margin="0,3,0,0" FontSize="22" Foreground="#444"/>
+                <TextBlock Text="{Binding HdSecurityCount}" Margin="5,3,0,0" FontSize="22" Foreground="#999"/>
             </StackPanel>
         </Border>
 
+        
         <Grid Grid.Row="1" Margin="10,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="255"/>
+                <ColumnDefinition Width="210"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                <Label Content="...:" Margin="0,0,0,2" Style="{StaticResource LabelMedium}"/>
-                <ListBox Name="EngineBox"
-                         Width="240"
-                         ItemsSource="{Binding Path=EngineList}"
-                         ItemTemplate="{StaticResource DefaultUnit}"/>
-                <Label Content="Рынки:" Margin="0,13,0,3" Style="{StaticResource LabelMedium}"/>
-                <ListBox Name="MarketBox"
-                         Width="240"
-                         MaxHeight="195"
-                         ItemsSource="{Binding Path=MarketList}"
-                         ItemTemplate="{StaticResource DefaultUnit}"/>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" HorizontalAlignment="Left">
-                <Label Content="Быстрый поиск инструментов:" Style="{StaticResource LabelMedium}"/>
-                <TextBox Name="FindBox"
-                         Text="{Binding Path=FindTxt}"
-                         Width="700"
-                         Height="30"
+            <!-- Фильтры -->
+            <StackPanel Grid.Column="0" Margin="0,1,10,0">
+                <Label Content="Быстрый поиск:" Style="{StaticResource LabelMedium}"/>
+                <TextBox Name="FastBox"
                          Margin="0,2,0,0"
-                         Padding="5"
+                         Padding="4,3"
                          FontSize="15"/>
-                <Label Name="FoundCount"
-                       Width="120"
-                       Foreground="#999"
-                       Padding="0"
-                       Margin="0,-24,28,0"
-                       FontSize="15"
-                       Visibility="{Binding Path=FindVis}"
-                       HorizontalAlignment="Right"
-                       HorizontalContentAlignment="Right"/>
-                <Label Name="FoundCancel"
+                <Label Name="FastCancel"
                        FontSize="15"
                        Margin="0,-30,3,0"
-                       Visibility="{Binding Path=FindVis}"
+                       Visibility="{Binding FastCancelVis}"
                        Style="{StaticResource CancelLabel}"/>
+
+                <Label Content="Торговая система:" Margin="0,10,0,2" Style="{StaticResource LabelMedium}"/>
+                <ListBox Name="EngineBox" ItemsSource="{Binding EngineList}" ItemTemplate="{StaticResource FilterUnit}"/>
+
+                <StackPanel Margin="0,10,0,2" Visibility="{Binding MarketVis}">
+                    <Label Content="Рынок:" Style="{StaticResource LabelMedium}"/>
+                    <ListBox Name="MarketBox"
+                             MaxHeight="250"
+                             ItemsSource="{Binding MarketList}"
+                             ItemTemplate="{StaticResource FilterUnit}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Список бумаг -->
+            <StackPanel Grid.Column="1" HorizontalAlignment="Left">
+                <Label Name="FoundCount"
+                       Content="{Binding FoundCountStr}"
+                       Foreground="#777"
+                       Padding="0"
+                       FontSize="15"/>
                 <ListBox Name="SecurityBox"
-                         Width="700"
-                         Height="385"
-                         Margin="0,5,0,0"
-                         ItemsSource="{Binding Path=SecurityList}"
+                         Width="740"
+                         MaxHeight="385"
+                         Margin="0,2,0,0"
+                         Visibility="{Binding  SecurityListVis}"
+                         ItemsSource="{Binding SecurityList}"
                          ItemTemplate="{StaticResource SecurityUnit}"/>
             </StackPanel>
 

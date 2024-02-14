@@ -162,6 +162,9 @@ namespace MrRobot.Entity
         /// </summary>
         public void PatternSource(PatternUnit unit)
         {
+            if (global.IsAutoProgon)
+                return;
+
             CDI("Pattern", Candle.Unit(unit.CdiId), "PatternFound");
             HeadPanel.Height = new GridLength(0);
 
@@ -214,6 +217,9 @@ namespace MrRobot.Entity
         /// </summary>
         public void PatternVisual(PatternUnit item, int UnixIndex = 0)
         {
+            if (global.IsAutoProgon)
+                return;
+
             CDI("Pattern", Candle.Unit(item.CdiId), "PatternVisual");
 
             var read = new StreamReader(PathTmp);
@@ -303,7 +309,7 @@ namespace MrRobot.Entity
 
 
         /// <summary>
-        /// Актуальныы свечи для графика по конкретному инструменту
+        /// Актуальные свечи для графика по конкретному инструменту
         /// </summary>
         public List<object> TradeCandlesActual(InstrumentUnit unit)
         {
