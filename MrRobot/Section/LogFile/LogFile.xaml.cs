@@ -12,9 +12,20 @@ namespace MrRobot.Section
     {
         public LogFile()
         {
-            InitializeComponent();
             G.LogFile = this;
+            MainMenu.Init += Init;
+        }
+
+        void Init(int id)
+        {
+            if (id != (int)SECT.LogFile)
+                return;
+
+            InitializeComponent();
             MainMenu.Changed += FileRead;
+
+            MainMenu.Init -= Init;
+            G.SectionInited(id);
         }
 
         public void FileRead(object s, RoutedEventArgs e) => FileRead();
@@ -29,6 +40,8 @@ namespace MrRobot.Section
             string line;
             while ((line = file.ReadLine()) != null)
                 content += $"{line}\n";
+
+            file.Close();
 
             Log1.Text = content;
             Log1.ScrollToEnd();

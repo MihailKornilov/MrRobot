@@ -1,5 +1,9 @@
-﻿using MrRobot.inc;
+﻿using System;
 using System.Windows.Controls;
+using static System.Console;
+
+using MrRobot.inc;
+using MrRobot.Entity;
 
 namespace MrRobot.Section
 {
@@ -7,8 +11,19 @@ namespace MrRobot.Section
     {
         public Manual()
         {
-            InitializeComponent();
             G.Manual = this;
+            MainMenu.Init += Init;
+        }
+
+        void Init(int id)
+        {
+            if (id != (int)SECT.Manual)
+                return;
+
+            InitializeComponent();
+
+            MainMenu.Init -= Init;
+            G.SectionInited(id);
         }
     }
 }

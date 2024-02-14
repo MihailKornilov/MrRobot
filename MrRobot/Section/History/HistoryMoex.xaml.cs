@@ -13,6 +13,11 @@ namespace MrRobot.Section
     {
         public HistoryMoex()
         {
+            G.HistoryMoex = this;
+        }
+
+        public void Init()
+        {
             InitializeComponent();
 
             DataContext = new MoexDC();

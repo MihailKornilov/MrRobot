@@ -11,6 +11,9 @@ namespace MrRobot.Entity
     {
         public delegate void Dlgt();
         public static Dlgt Changed = () => { };
+        // Инициализация страниц после загрузки приложения
+        public delegate void DlgtInit(int id);
+        public static DlgtInit Init = (int id) => WriteLine($"MM: {id}");
 
         public MainMenu()
         {
@@ -30,7 +33,7 @@ namespace MrRobot.Entity
             lb.Style = Application.Current.Resources["MMStyle"] as Style;
             lb.ItemTemplate = Application.Current.Resources["MMItemTmp"] as DataTemplate;
             lb.ItemContainerStyle = Application.Current.Resources["MMItemStyle"] as Style;
-            for (int i = 1; i <= Enum.GetNames(typeof(inc.Page)).Length; i++)
+            for (int i = 1; i <= Enum.GetNames(typeof(SECT)).Length; i++)
                 lb.Items.Add(new MMUnit(i));
             lb.SelectionChanged += Change;
             SP.Children.Add(lb);
@@ -69,22 +72,8 @@ namespace MrRobot.Entity
                 index++;
             }
 
+            Init(unit.Index);
             Changed();
-
-            switch (unit.Index)
-            {
-                case 3:
-                    G.Pattern.PatternInit();
-                    break;
-
-                case 4:
-                    G.Tester.TesterInit();
-                    break;
-
-                case 5:
-                    G.Trade.TradeInit();
-                    break;
-            }
         }
     }
 
@@ -100,7 +89,7 @@ namespace MrRobot.Entity
         // Подярковый индекс
         public int Index { get; private set; }
         // Имя раздела
-        public string Section => Enum.GetName(typeof(inc.Page), Index);
+        public string Section => Enum.GetName(typeof(SECT), Index);
         public string Image => $"pack://application:,,,/Resources/images/button-{Section}.png";
         public string ImageOver => $"pack://application:,,,/Resources/images/button-{Section}-over.png";
     }

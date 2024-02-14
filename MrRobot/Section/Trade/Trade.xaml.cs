@@ -15,16 +15,16 @@ namespace MrRobot.Section
     {
         public Trade()
         {
-            InitializeComponent();
-            TradeInit();
-
             G.Trade = this;
+            MainMenu.Init += TradeInit;
         }
 
-        public void TradeInit()
+        void TradeInit(int id)
         {
-            if (G.IsInited(5))
+            if (id != (int)SECT.Trade)
                 return;
+
+            InitializeComponent();
 
             ApiKey.Text = ByBit.ApiKey;
             ApiKey.TextChanged += ByBit.ApiKeyChanged;
@@ -37,8 +37,11 @@ namespace MrRobot.Section
             RobotsListBox.ItemsSource = Robots.ListBox();
             RobotsListBox.SelectedIndex = position.Val("5.RobotsListBox.Index", 0);
 
-            G.Inited(5);
+
+            MainMenu.Init -= TradeInit;
+            G.SectionInited(id);
         }
+
 
 
         string ApiQuery

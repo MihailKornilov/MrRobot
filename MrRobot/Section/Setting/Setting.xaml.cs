@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using static System.Console;
 
 using MrRobot.inc;
+using MrRobot.Entity;
 
 namespace MrRobot.Section
 {
@@ -13,10 +14,23 @@ namespace MrRobot.Section
     {
         public Setting()
         {
+            G.Setting = this;
+            MainMenu.Init += Init;
+        }
+
+        void Init(int id)
+        {
+            if (id != (int)SECT.Setting)
+                return;
+
             InitializeComponent();
             MenuCreate();
 
-            G.Setting = this;
+            G.SettingEntity.Init();
+            G.SettingMain.Init();
+
+            MainMenu.Init -= Init;
+            G.SectionInited(id);
         }
 
         /// <summary>
@@ -60,7 +74,6 @@ namespace MrRobot.Section
                 uc.Visibility = i == sel ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-
     }
 
 

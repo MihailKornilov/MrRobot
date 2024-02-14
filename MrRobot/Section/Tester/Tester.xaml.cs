@@ -4,7 +4,6 @@ using static System.Console;
 
 using MrRobot.Entity;
 using MrRobot.inc;
-using System.Reflection;
 
 namespace MrRobot.Section
 {
@@ -15,19 +14,19 @@ namespace MrRobot.Section
     {
         public Tester()
         {
+            G.Tester = this;
+            MainMenu.Init += TesterInit;
+        }
+
+        public void TesterInit(int id)
+        {
+            if (id != (int)SECT.Tester)
+                return;
+
             InitializeComponent();
-            TesterInit();
 
             CDIpanel.Page(4).TBLink = SelectLink.TBLink;
             CDIpanel.Page(4).OutMethod += SourceChanged;
-
-            G.Tester = this;
-        }
-
-        public void TesterInit()
-        {
-            if (G.IsInited(4))
-                return;
 
             RobotsListBox.ItemsSource = Robots.ListBox();
             RobotsListBox.SelectedIndex = 0;
@@ -35,14 +34,15 @@ namespace MrRobot.Section
 
             Visualization = position.Val("4_VisualCheck.IsChecked", true);
             VisualCheck.IsChecked = Visualization;
-            NoVisualButton.Visibility = Visualization ? Visibility.Collapsed : Visibility.Visible;
+            NoVisualButton.Visibility = G.Vis(!Visualization);
             AutoGoSlider.Value = position.Val("4_TesterSlider.Value", 0);
 
             LogMenu.SelectedIndex = position.Val("4_LogMenu_SelectedIndex", 0);
 
             SourceChanged();
 
-            G.Inited(4);
+            MainMenu.Init -= TesterInit;
+            G.SectionInited(id);
         }
 
 
@@ -52,7 +52,7 @@ namespace MrRobot.Section
         /// </summary>
         void SourceChanged()
         {
-            if (position.MainMenu() != 4)
+            if (position.MainMenu() != (int)SECT.Tester)
                 return;
 
             RobotPanel.Visibility = CDIpanel.CdiId == 0 ? Visibility.Hidden : Visibility.Visible;

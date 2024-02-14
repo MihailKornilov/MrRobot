@@ -15,6 +15,11 @@ namespace MrRobot.Section
     {
         public PatternArchive()
         {
+            G.PatternArchive = this;
+        }
+
+        public void Init()
+        {
             InitializeComponent();
             SearchList();
             Candle.Updated += SearchList;

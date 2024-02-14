@@ -10,13 +10,16 @@ namespace MrRobot.Section
     {
         public SettingEntity()
         {
-            InitializeComponent();
-            DataListCreate();
-
-            Data_Market();
-
             G.SettingEntity = this;
         }
+
+        public void Init()
+        {
+            InitializeComponent();
+            DataListCreate();
+            Data_Market();
+        }
+
 
         /// <summary>
         /// Виды данных

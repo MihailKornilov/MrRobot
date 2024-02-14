@@ -72,7 +72,6 @@ namespace MrRobot
 
             Loaded += MouseHookInit;
             Loaded += ISunit.Init;
-            Loaded += G.LogFile.FileRead;
             SizeChanged += Depth.SizeChanged;
             SizeChanged += G.Tester.RobotLogWidthSet;
             Closed += HttpServer.Stop;

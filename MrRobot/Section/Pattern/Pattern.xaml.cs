@@ -20,19 +20,20 @@ namespace MrRobot.Section
     {
         public Pattern()
         {
+            G.Pattern = this;
+            MainMenu.Init += Init;
+        }
+
+        void Init(int id)
+        {
+            if (id != (int)SECT.Pattern)
+                return;
+
             InitializeComponent();
             CDIpanel.Page(3).TBLink = SelectLink.TBLink;
             CDIpanel.Page(3).OutMethod += SourceChanged;
             MainMenu.Changed += () => ArchiveGo(true);
             MainMenu.Changed += FoundLine;
-
-            G.Pattern = this;
-        }
-
-        public void PatternInit()
-        {
-            if (G.IsInited(3))
-                return;
 
             LengthSlider.Value = position.Val("3_CandlesCountForSearch", 1);
             PrecisionPercentSlider.Value = position.Val("3_ScatterPercent", 100);
@@ -42,7 +43,10 @@ namespace MrRobot.Section
 
             SourceChanged();
 
-            G.Inited(3);
+            G.PatternArchive.Init();
+
+            MainMenu.Init -= Init;
+            G.SectionInited(id);
         }
 
 

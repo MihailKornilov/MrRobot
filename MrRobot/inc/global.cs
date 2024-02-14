@@ -30,7 +30,11 @@ namespace MrRobot.inc
         {
             InitPage[page] = true;
             string pg = page > 0 ? page + "." : "";
-            WriteLine(pg + Enum.GetNames(typeof(Page))[page] + " inited");
+        }
+
+        public static void SectionInited(int id)
+        {
+            WriteLine($"{id}.{Enum.GetName(typeof(SECT), id)} INITED");
         }
 
 
@@ -72,12 +76,15 @@ namespace MrRobot.inc
         public static MainWindow MW     { get; set; }
 
         public static History History   { get; set; }
+        public static HistoryMoex HistoryMoex { get; set; }
         public static Converter Converter { get; set; }
         public static Pattern Pattern   { get; set; }
+        public static PatternArchive PatternArchive { get; set; }
         public static Tester Tester     { get; set; }
         public static Trade Trade       { get; set; }
         public static Setting Setting   { get; set; }
         public static SettingEntity SettingEntity { get; set; }
+        public static SettingMain SettingMain { get; set; }
         public static LogFile LogFile   { get; set; }
         public static Manual Manual     { get; set; }
 
@@ -286,7 +293,7 @@ namespace MrRobot.inc
     /// <summary>
     /// Список главных разделов приложения
     /// </summary>
-    enum Page
+    enum SECT
     {
         History = 1,
         Converter,

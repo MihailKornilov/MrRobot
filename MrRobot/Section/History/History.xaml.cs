@@ -21,6 +21,15 @@ namespace MrRobot.Section
     {
         public History()
         {
+            G.History = this;
+            MainMenu.Init += Init;
+        }
+
+        void Init(int id)
+        {
+            if (id != (int)SECT.History)
+                return;
+
             InitializeComponent();
 
             MenuCreate();
@@ -33,16 +42,21 @@ namespace MrRobot.Section
 
             Candle.Updated += DownloadedListCreate;
 
-            G.History = this;
+            G.HistoryMoex.Init();
+
+            MainMenu.Init -= Init;
+            G.SectionInited(id);
         }
 
+
         ISunit IS { get; set; }
-        InstrumentUnit IUnit { get => IS.IUnit; }
+        InstrumentUnit IUnit => IS.IUnit;
 
         /// <summary>
         /// Вывод количества инструментов в заголовке
         /// </summary>
-        void HeadCountWrite() => IHeadCount.Text = Instrument.Count + " инструмент" + format.End(Instrument.Count, "", "а", "ов");
+        void HeadCountWrite() =>
+            IHeadCount.Text = $"{Instrument.Count} инструмент{format.End(Instrument.Count, "", "а", "ов")}";
 
         /// <summary>
         /// Выбран инструмент в списке

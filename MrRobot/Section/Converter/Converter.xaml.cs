@@ -15,18 +15,28 @@ namespace MrRobot.Section
     {
         public Converter()
         {
+            G.Converter = this;
+            MainMenu.Init += Init;
+        }
+
+        void Init(int id)
+        {
+            if (id != (int)SECT.Converter)
+                return;
+
             InitializeComponent();
             CDIpanel.Page(2).TBLink = SelectLink.TBLink;
             CDIpanel.Page(2).OutMethod += SourceChanged;
             SourceChanged();
             Candle.Updated += ResultListCreate;
 
-            G.Converter = this;
+            MainMenu.Init -= Init;
+            G.SectionInited(id);
         }
 
 
         bool IsSourceChosen => SourceId > 0;        // Свечные данные выбраны
-        int SourceId => CDIpanel.Page(2).CdiId;             // ID свечных данных
+        int SourceId => CDIpanel.Page(2).CdiId;     // ID свечных данных
         CDIunit SourceUnit => Candle.Unit(SourceId);// Единица свечных данных
 
 
