@@ -1,1 +1,0 @@
-14.02.2024 17:53:47: SQL.1: 0:587 SELECT`quoteCoin`,COUNT(*)`count`FROM`_instrument`GROUP BY`quoteCoin`ORDER BY`count`DESC
