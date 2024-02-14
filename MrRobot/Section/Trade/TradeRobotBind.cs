@@ -216,7 +216,7 @@ namespace MrRobot.Section
                 MinuteLast = now.Minute;
 
                 //CandleFirst.Update(format.UnixNow());
-                //global.MW.Trade.Candles_0_upd(CandleFirst);
+                //G.Trade.Candles_0_upd(CandleFirst);
                 //ChartUpdate();
             }
         }

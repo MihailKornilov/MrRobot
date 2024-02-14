@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
 using System.Windows.Controls;
-using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
@@ -147,12 +146,12 @@ namespace MrRobot.Section
             param.PrecisionPercent = Item.PrecisionPercent;
             param.FoundRepeatMin = Item.FoundRepeatMin;
 
-            global.MW.Pattern.ArchiveGo();
+            G.Pattern.ArchiveGo();
             CDIpanel.CdiId = CDI.Id;
-            global.MW.Pattern.LengthSlider.Value = len;
-            global.MW.Pattern.PrecisionPercentSlider.Value = Item.PrecisionPercent;
-            global.MW.Pattern.FoundRepeatMin.Text = Item.FoundRepeatMin.ToString();
-            global.MW.Pattern.PatternSearchExist(param);
+            G.Pattern.LengthSlider.Value = len;
+            G.Pattern.PrecisionPercentSlider.Value = Item.PrecisionPercent;
+            G.Pattern.FoundRepeatMin.Text = Item.FoundRepeatMin.ToString();
+            G.Pattern.PatternSearchExist(param);
         }
 
         /// <summary>

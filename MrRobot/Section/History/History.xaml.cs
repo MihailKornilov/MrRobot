@@ -32,6 +32,8 @@ namespace MrRobot.Section
             InstrumentChanged();
 
             Candle.Updated += DownloadedListCreate;
+
+            G.History = this;
         }
 
         ISunit IS { get; set; }
@@ -47,8 +49,8 @@ namespace MrRobot.Section
         /// </summary>
         void InstrumentChanged()
         {
-            global.Vis(InfoPanel, IUnit != null);
-            global.Vis(DownloadPanel, IUnit != null);
+            G.Vis(InfoPanel, IUnit != null);
+            G.Vis(DownloadPanel, IUnit != null);
 
             if (IUnit == null)
                 return;
@@ -269,7 +271,7 @@ namespace MrRobot.Section
             var list = Candle.ListOnIID(IUnit.Id);
             DownloadedList.ItemsSource = list;
 
-            global.Vis(DownloadedPanel, list.Count > 0);
+            G.Vis(DownloadedPanel, list.Count > 0);
 
             if (list.Count > 0 && DownloadedList.SelectedIndex == -1)
                 DownloadedList.SelectedIndex = 0;
@@ -288,7 +290,7 @@ namespace MrRobot.Section
                 return;
             }
 
-            if (global.IsAutoProgon)
+            if (G.IsAutoProgon)
                 return;
 
             EChart.CDI("History", box.SelectedItem as CDIunit);

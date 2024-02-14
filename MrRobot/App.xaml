@@ -58,7 +58,72 @@
             </Style.Triggers>
         </Style>
 
-        
+
+
+
+
+
+
+
+
+
+
+        <!-- Стиль главного меню -->
+        <Style x:Key="MMStyle" TargetType="ListBox">
+            <Setter Property="Height" Value="520"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"   Value="Disabled"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        </Style>
+        <!-- Шаблон кнопки главного меню -->
+        <DataTemplate x:Key="MMItemTmp">
+            <Button Width="64" Height="64" Click="MMGo" TabIndex="{Binding Index}">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Image Name="img" Source="{Binding Image}"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="img" Property="Source" Value="{Binding ImageOver}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </DataTemplate>
+        <!-- Стиль кнопки главного меню -->
+        <Style x:Key="MMItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="Bd" Background="{TemplateBinding Panel.Background}">
+                            <ContentPresenter Content="{TemplateBinding ContentControl.Content}"
+											  ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                    <Condition Property="Selector.IsSelected" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Panel.Background" Value="#B9D0E6" TargetName="Bd"/>
+                            </MultiTrigger>
+
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                    <Condition Property="Selector.IsSelected" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Panel.Background" Value="#B9D0E6" TargetName="Bd"/>
+                            </MultiTrigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
 
 

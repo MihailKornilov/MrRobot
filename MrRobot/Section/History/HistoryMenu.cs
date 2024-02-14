@@ -24,8 +24,8 @@ namespace MrRobot.Section
                 {
                     unit = MarketBox.Items[i] as MarketUnit;
                     var FN = FindName($"MarketPanel{unit.Id}");
-                    global.Vis(FN as Panel, i == sel);
-                    global.Vis(FN as UserControl, i == sel);
+                    G.Vis(FN as Panel, i == sel);
+                    G.Vis(FN as UserControl, i == sel);
                 }
                 unit = MarketBox.SelectedItem as MarketUnit;
                 position.Set("1.MarketMenu.Index", unit.Id);

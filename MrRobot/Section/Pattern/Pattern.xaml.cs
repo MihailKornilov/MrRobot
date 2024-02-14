@@ -25,11 +25,13 @@ namespace MrRobot.Section
             CDIpanel.Page(3).OutMethod += SourceChanged;
             MainMenu.Changed += () => ArchiveGo(true);
             MainMenu.Changed += FoundLine;
+
+            G.Pattern = this;
         }
 
         public void PatternInit()
         {
-            if (global.IsInited(3))
+            if (G.IsInited(3))
                 return;
 
             LengthSlider.Value = position.Val("3_CandlesCountForSearch", 1);
@@ -40,7 +42,7 @@ namespace MrRobot.Section
 
             SourceChanged();
 
-            global.Inited(3);
+            G.Inited(3);
         }
 
 
@@ -65,7 +67,7 @@ namespace MrRobot.Section
             DBdateEnd.Text = SrcUnit.DateEnd;
 
             // Вывод графика
-            if (global.IsAutoProgon)
+            if (G.IsAutoProgon)
             {
                 EChart.Empty();
                 return;
@@ -109,7 +111,7 @@ namespace MrRobot.Section
 
         bool SearchResultCheck(bool isCheck = true)
         {
-            if (!global.IsInited(3))
+            if (!G.IsInited(3))
                 return false;
             if (!isCheck)
                 return false;
@@ -160,7 +162,7 @@ namespace MrRobot.Section
             if (!PatternFoundBaseInsert())
                 return;
 
-            global.MW.Pattern.PatternArchive.SearchList();
+            G.Pattern.PatternArchive.SearchList();
             if (!AutoProgon.PatternSearch())
                 PatternSearchExist(SPARAM);
         }
@@ -529,8 +531,8 @@ namespace MrRobot.Section
 
             HeadArchive.Text = "Поиск паттернов" + (isSearch ? ": история" : "");
             ButtonArchive.Content = isSearch ? "<<< назад" : "История поисков";
-            PatternSearchGrid.Visibility  = global.Vis(!isSearch);
-            PatternArchiveGrid.Visibility = global.Vis(isSearch);
+            PatternSearchGrid.Visibility  = G.Vis(!isSearch);
+            PatternArchiveGrid.Visibility = G.Vis(isSearch);
         }
 
         /// <summary>
@@ -550,7 +552,7 @@ namespace MrRobot.Section
 
             Patterns.SUnitDel(SearchId);
             SourceChanged();
-            global.MW.Pattern.PatternArchive.SearchList();
+            G.Pattern.PatternArchive.SearchList();
         }
     }
 

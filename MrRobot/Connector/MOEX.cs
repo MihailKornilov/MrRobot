@@ -801,7 +801,7 @@ namespace MrRobot.Connector
 
         public int SecurityCount { get; set; }      // Количество бумаг в определённой группе
         public int SecurityCountFilter { get; set; }// Количество бумаг в определённой группе на основании фильтра
-        public Visibility SecurityCountVis { get => global.Vis(SecurityCountFilter > 0); }
+        public Visibility SecurityCountVis { get => G.Vis(SecurityCountFilter > 0); }
     }
 
 

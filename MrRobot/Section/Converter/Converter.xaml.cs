@@ -20,6 +20,8 @@ namespace MrRobot.Section
             CDIpanel.Page(2).OutMethod += SourceChanged;
             SourceChanged();
             Candle.Updated += ResultListCreate;
+
+            G.Converter = this;
         }
 
 
@@ -32,7 +34,7 @@ namespace MrRobot.Section
         {
             if (!IsSourceChosen)
                 return;
-            if (global.IsAutoProgon)
+            if (G.IsAutoProgon)
                 return;
 
             ResultListCreate();
@@ -213,7 +215,7 @@ namespace MrRobot.Section
         /// </summary>
         void ConverterResultChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (global.IsAutoProgon)
+            if (G.IsAutoProgon)
                 return;
 
             var item = (sender as ListBox).SelectedItem as CDIunit;

@@ -29,7 +29,7 @@ namespace MrRobot.Section
         public static CandleUnit CandleFirst { get; set; }
         static SortedDictionary<double, double> Ask,  // Sell, верх стакана
                                                 Bid;  // Buy,  низ стакана
-        static List<DepthUnit> TradeList;   // Список сделок
+        static List<DepthUnit> TradeList { get; set; }   // Список сделок
 
         static string DataCut = "";
 
@@ -68,9 +68,9 @@ namespace MrRobot.Section
             bp = format.NolCount(Instr.BasePrecision);
             qp = Instr.NolCount;
 
-            global.MW.Trade.DepthHeadPrice.Content = $"Цена({Instr.QuoteCoin})";
-            global.MW.Trade.DepthHeadQty.Content = $"Кол-во({Instr.BaseCoin})";
-            global.MW.Trade.DepthHeadAmount.Content = $"Всего({Instr.BaseCoin})";
+            G.Trade.DepthHeadPrice.Content = $"Цена({Instr.QuoteCoin})";
+            G.Trade.DepthHeadQty.Content = $"Кол-во({Instr.BaseCoin})";
+            G.Trade.DepthHeadAmount.Content = $"Всего({Instr.BaseCoin})";
 
             PriceUpdate(CandleFirst.Close.ToString(), "EF454A");
         }
@@ -268,9 +268,9 @@ namespace MrRobot.Section
             if (json.topic != "orderbook.50." + Symbol)
                 return;
             if (DataFill(json.data.a, ref Ask))
-                global.MW.Trade.DepthSellListBox.ItemsSource = AskItems();
+                G.Trade.DepthSellListBox.ItemsSource = AskItems();
             if (DataFill(json.data.b, ref Bid))
-                global.MW.Trade.DepthBuyListBox.ItemsSource = BidItems();
+                G.Trade.DepthBuyListBox.ItemsSource = BidItems();
         }
         static List<DepthUnit> ListItemsCreate(SortedDictionary<double, double> Book, bool isAsk = false)
         {
@@ -336,11 +336,11 @@ namespace MrRobot.Section
                     Time = format.TimeFromUnix(unix)
                 };
                 TradeList.Insert(0, unit);
-                global.MW.Trade.TradeListAdd(unit);
+                G.Trade.TradeListAdd(unit);
             }
 
             CandleFirst.Update(unix, price, volume);
-            global.MW.Trade.Candles_0_upd(CandleFirst);
+            G.Trade.Candles_0_upd(CandleFirst);
 
             PriceUpdate(TradeList[0].Price, TradeList[0].PriceColor);
             ChartUpdate();
@@ -357,7 +357,7 @@ namespace MrRobot.Section
             for (int i = 0; i < rows; i++)
                 list.Add(TradeList[i]);
 
-            global.MW.Trade.TradeListBox.ItemsSource = list;
+            G.Trade.TradeListBox.ItemsSource = list;
         }
 
 
@@ -366,8 +366,8 @@ namespace MrRobot.Section
         /// </summary>
         static void PriceUpdate(string price = "", string color = "000000")
         {
-            global.MW.Trade.DepthPrice.Text = IsWork ? format.Price(price, qp) : "";
-            global.MW.Trade.DepthPrice.Foreground = format.RGB(color);
+            G.Trade.DepthPrice.Text = IsWork ? format.Price(price, qp) : "";
+            G.Trade.DepthPrice.Foreground = format.RGB(color);
         }
         /// <summary>
         /// Обновление свечи в графике
@@ -376,7 +376,7 @@ namespace MrRobot.Section
         {
             string script = $"candles.update({CandleFirst.CandleToChart()});" +
                             $"Volumes.update({CandleFirst.VolumeToChart()});";
-            global.MW.Trade.EChart.Script(script);
+            G.Trade.EChart.Script(script);
         }
 
         /// <summary>
@@ -387,16 +387,16 @@ namespace MrRobot.Section
             if (position.MainMenu() != 5)
                 return;
 
-            double pph = global.MW.Trade.PricePanel.ActualHeight;
-            double hph = global.MW.Trade.HeadPanel.ActualHeight;
-            double height = Math.Floor((global.MW.Trade.DepthPanel.ActualHeight - pph - hph) / 2) - 2;
+            double pph = G.Trade.PricePanel.ActualHeight;
+            double hph = G.Trade.HeadPanel.ActualHeight;
+            double height = Math.Floor((G.Trade.DepthPanel.ActualHeight - pph - hph) / 2) - 2;
             DepthRows = (int)(height / 20);
 
             if (!IsWork)
                 return;
 
-            global.MW.Trade.DepthSellListBox.ItemsSource = AskItems();
-            global.MW.Trade.DepthBuyListBox.ItemsSource = BidItems();
+            G.Trade.DepthSellListBox.ItemsSource = AskItems();
+            G.Trade.DepthBuyListBox.ItemsSource = BidItems();
         }
 
         /// <summary>
@@ -410,9 +410,9 @@ namespace MrRobot.Section
             WebSocketOldClose();
             PriceUpdate();
 
-            global.MW.Trade.DepthSellListBox.ItemsSource = null;
-            global.MW.Trade.DepthBuyListBox.ItemsSource = null;
-            global.MW.Trade.TradeListBox.ItemsSource = null;
+            G.Trade.DepthSellListBox.ItemsSource = null;
+            G.Trade.DepthBuyListBox.ItemsSource = null;
+            G.Trade.TradeListBox.ItemsSource = null;
         }
     }
 

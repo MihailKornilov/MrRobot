@@ -14,6 +14,8 @@ namespace MrRobot.Section
             DataListCreate();
 
             Data_Market();
+
+            G.SettingEntity = this;
         }
 
         /// <summary>
@@ -65,14 +67,14 @@ namespace MrRobot.Section
                     mysql.Query(sql);
                 }
 
-                global.Hid(MarketSaveButton);
-                global.Vis(MarketSaveOk);
+                G.Hid(MarketSaveButton);
+                G.Vis(MarketSaveOk);
                 new Market();
             };
             MarketSaveOkTB.MouseLeftButtonDown += (s, e) =>
             {
-                global.Vis(MarketSaveButton);
-                global.Hid(MarketSaveOk);
+                G.Vis(MarketSaveButton);
+                G.Hid(MarketSaveOk);
             };
         }
 

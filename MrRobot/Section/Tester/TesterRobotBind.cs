@@ -436,7 +436,7 @@ namespace MrRobot.Section
 
             NoVisualLock();
 
-            if(!global.IsAutoProgon)
+            if(!G.IsAutoProgon)
                 GlobalInit();
 
             var progress = new Progress<decimal>(v => { TesterBar.Value = (double)v; });

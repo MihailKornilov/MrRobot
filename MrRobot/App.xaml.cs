@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using MrRobot.Entity;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MrRobot
 {
-    /// <summary>
-    /// Логика взаимодействия для App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        void MMGo(object sender, RoutedEventArgs e) => MainMenu.Go((sender as Button).TabIndex);
     }
 }

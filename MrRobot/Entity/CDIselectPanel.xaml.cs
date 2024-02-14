@@ -16,6 +16,7 @@ namespace MrRobot.Entity
         public CDIselectPanel()
         {
             InitializeComponent();
+            G.CDIselectPanel = this;
         }
 
         /// <summary>
@@ -141,10 +142,10 @@ namespace MrRobot.Entity
             MainMenu.Changed += PageChanged;
         }
         public static CDIpageUnit Page(int page) => PageASS[page];
-        static Border OpenPanel  { get { return global.MW.CDIselectPanel.OpenPanel; } }
-        static ListView GroupBox { get { return global.MW.CDIselectPanel.GroupBox; } }
-        static ListBox CDIList   { get { return global.MW.CDIselectPanel.CDIList; } }
-        static TextBox FindBox   { get { return global.MW.CDIselectPanel.FindBox; } }
+        static Border OpenPanel  => G.CDIselectPanel.OpenPanel;
+        static ListView GroupBox => G.CDIselectPanel.GroupBox;
+        static ListBox CDIList   => G.CDIselectPanel.CDIList;
+        static TextBox FindBox   => G.CDIselectPanel.FindBox;
         public static void PageChanged()
         {
             Hide();
@@ -165,7 +166,7 @@ namespace MrRobot.Entity
             OpenPanel.Margin = new Thickness(left, top, 0, 0);
             OpenPanel.Visibility = Visibility.Visible;
 
-            new GridBack(global.MW.CDIselectPanel);
+            new GridBack(OpenPanel.Parent as CDIselectPanel);
 
             FindBox.Text = PU.FindTxt;
             FindBox.Focus();
@@ -177,7 +178,7 @@ namespace MrRobot.Entity
         {
             bool isVis = OpenPanel.Visibility == Visibility.Visible;
             GridBack.Remove();
-            global.Hid(OpenPanel);
+            G.Hid(OpenPanel);
             return isVis;
         }
 

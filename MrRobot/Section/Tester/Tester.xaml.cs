@@ -17,13 +17,16 @@ namespace MrRobot.Section
         {
             InitializeComponent();
             TesterInit();
+
             CDIpanel.Page(4).TBLink = SelectLink.TBLink;
             CDIpanel.Page(4).OutMethod += SourceChanged;
+
+            G.Tester = this;
         }
 
         public void TesterInit()
         {
-            if (global.IsInited(4))
+            if (G.IsInited(4))
                 return;
 
             RobotsListBox.ItemsSource = Robots.ListBox();
@@ -39,7 +42,7 @@ namespace MrRobot.Section
 
             SourceChanged();
 
-            global.Inited(4);
+            G.Inited(4);
         }
 
 
@@ -60,7 +63,7 @@ namespace MrRobot.Section
 
             UseTF1Check.Visibility = CDIpanel.CdiUnit().ConvertedFromId == 0 ? Visibility.Collapsed : Visibility.Visible;
 
-            if (!global.IsAutoProgon)
+            if (!G.IsAutoProgon)
                 EChart.CDI("Tester", CDIpanel.CdiUnit());
         }
 
@@ -112,7 +115,7 @@ namespace MrRobot.Section
         /// </summary>
         void VisualChecked(object sender, RoutedEventArgs e)
         {
-            if (!global.IsInited())
+            if (!G.IsInited())
                 return;
 
             Visualization = (bool)VisualCheck.IsChecked;

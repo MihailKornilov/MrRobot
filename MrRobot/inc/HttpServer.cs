@@ -43,7 +43,8 @@ namespace MrRobot.inc
                 }
                 catch { break; }
         }
-        public static void Stop() => Listener.Stop();
+
+        public static void Stop(object s, EventArgs e) => Listener.Stop();
     }
 
 

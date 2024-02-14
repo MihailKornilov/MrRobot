@@ -17,11 +17,13 @@ namespace MrRobot.Section
         {
             InitializeComponent();
             TradeInit();
+
+            G.Trade = this;
         }
 
         public void TradeInit()
         {
-            if (global.IsInited(5))
+            if (G.IsInited(5))
                 return;
 
             ApiKey.Text = ByBit.ApiKey;
@@ -35,7 +37,7 @@ namespace MrRobot.Section
             RobotsListBox.ItemsSource = Robots.ListBox();
             RobotsListBox.SelectedIndex = position.Val("5.RobotsListBox.Index", 0);
 
-            global.Inited(5);
+            G.Inited(5);
         }
 
 
@@ -51,9 +53,10 @@ namespace MrRobot.Section
                 /v5/user/get-member-type - тип аккаунта
                 /v5/account/wallet-balance?accountType=SPOT
             */
-            ApiQuery = ApiQueryTB.Text;
-            dynamic res = ByBit.Api(ApiQuery);
-            QueryResult.Text = res.ToString();
+
+            //ApiQuery = ApiQueryTB.Text;
+            //dynamic res = ByBit.Api(ApiQuery);
+            //QueryResult.Text = res.ToString();
         }
 
 

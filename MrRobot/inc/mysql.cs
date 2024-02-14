@@ -39,7 +39,7 @@ namespace MrRobot.inc
             }
             catch (MySqlException ex)
             {
-                global.LogWrite($"ОШИБКА ПОДКЛЮЧЕНИЯ К БАЗЕ: {ex.Message}\n{sql}");
+                G.LogWrite($"ОШИБКА ПОДКЛЮЧЕНИЯ К БАЗЕ: {ex.Message}\n{sql}");
                 Environment.Exit(0);
             }
         }
@@ -66,7 +66,7 @@ namespace MrRobot.inc
             if (txt.Length > 500)
                 txt = txt.Substring(0, 500);
             WriteLine(txt);
-            global.LogWrite(txt);
+            G.LogWrite(txt);
         }
 
 

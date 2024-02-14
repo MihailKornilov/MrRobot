@@ -23,7 +23,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
     {
         void AutoProgonGo(object sender, RoutedEventArgs e)
         {
-            if (global.IsAutoProgon)
+            if (G.IsAutoProgon)
                 return;
 
             var param = new AutoProgonParam
@@ -162,17 +162,17 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
 
         public static void Go(AutoProgonParam param)
         {
-            global.MW.Setting.AutoProgonButton.IsEnabled = false;
+            G.Setting.AutoProgonButton.IsEnabled = false;
 
             // Установка параметров в History
-            global.MW.History.SetupPeriod.SelectedIndex = 7;
-            global.MW.History.SetupTimeFrame.SelectedIndex = 0;
+            G.History.SetupPeriod.SelectedIndex = 7;
+            G.History.SetupTimeFrame.SelectedIndex = 0;
 
             // Установка параметров в Тестере
-            if (!(bool)global.MW.Tester.UseTF1Check.IsChecked)
-                global.MW.Tester.UseTF1Check.IsChecked = true;
-            if ((bool)global.MW.Tester.VisualCheck.IsChecked)
-                global.MW.Tester.VisualCheck.IsChecked = false;
+            if (!(bool)G.Tester.UseTF1Check.IsChecked)
+                G.Tester.UseTF1Check.IsChecked = true;
+            if ((bool)G.Tester.VisualCheck.IsChecked)
+                G.Tester.VisualCheck.IsChecked = false;
 
             PARAM = param;
             Active = true;
@@ -196,7 +196,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             if (PARAM.SymbolIndex >= PARAM.SymbolMass.Length)
             {
                 Active = false;
-                global.MW.Setting.AutoProgonButton.IsEnabled = true;
+                G.Setting.AutoProgonButton.IsEnabled = true;
                 WriteLine("------------------- AutoProgon FINISHED: " + PARAM.dur.Second());
                 return true;
             }
@@ -229,7 +229,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             ISunit.Chose("HistoryIS", Instrument.UnitOnSymbol(PARAM.Symbol).Id);
 
             // Запуск скачивания - нажатие на кнопку
-            ButtonClick(global.MW.History.DownloadGoButton);
+            ButtonClick(G.History.DownloadGoButton);
         }
 
 
@@ -262,7 +262,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
                 if(Candle.IsTFexist(PARAM.Symbol, tf))
                     continue;
 
-                (global.MW.Converter.FindName($"CheckTF{tf}") as CheckBox).IsChecked = true;
+                (G.Converter.FindName($"CheckTF{tf}") as CheckBox).IsChecked = true;
                 ConvertGo = true;
             }
 
@@ -274,7 +274,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             }
 
             // Запуск конвертации - нажатие на кнопку
-            ButtonClick(global.MW.Converter.ConvertGoButton);
+            ButtonClick(G.Converter.ConvertGoButton);
         }
 
 
@@ -300,8 +300,8 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             MainMenu.Go(3);
 
             // Установка настроек
-            global.MW.Pattern.LengthSlider.Value = Convert.ToInt32(PARAM.PatternLength);
-            global.MW.Pattern.FoundRepeatMin.Text = PARAM.FoundRepeatMin;
+            G.Pattern.LengthSlider.Value = Convert.ToInt32(PARAM.PatternLength);
+            G.Pattern.FoundRepeatMin.Text = PARAM.FoundRepeatMin;
 
             PARAM.Index = 0;
             PatternSearch();
@@ -326,7 +326,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
                 PARAM.Index++;
 
             // Нажатие на кнопку "Запуск поиска паттернов"
-            ButtonClick(global.MW.Pattern.SearchGoButton);
+            ButtonClick(G.Pattern.SearchGoButton);
 
             return true;
         }
@@ -348,7 +348,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
                     return false;
             }
 
-            global.MW.Pattern.PrecisionPercentSlider.Value = prc;
+            G.Pattern.PrecisionPercentSlider.Value = prc;
 
             return true;
         }
@@ -403,12 +403,12 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             if (PARAM.IdLast != id)
             {
                 CDIpanel.Page(4).CdiId = id;
-                global.MW.Tester.RobotsListBox.SelectedIndex = 1;
+                G.Tester.RobotsListBox.SelectedIndex = 1;
                 PARAM.IdLast = id;
                 return;
             }
 
-            global.MW.Tester.GlobalInit();
+            G.Tester.GlobalInit();
         }
 
         public static void RobotStart()
@@ -417,7 +417,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
                 return;
 
             // Нажатие на кнопку "Запуск тестера без визуализации" после загрузки всех свечных данных
-            ButtonClick(global.MW.Tester.NoVisualButton);
+            ButtonClick(G.Tester.NoVisualButton);
         }
     }
 

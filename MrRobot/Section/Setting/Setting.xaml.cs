@@ -15,6 +15,8 @@ namespace MrRobot.Section
         {
             InitializeComponent();
             MenuCreate();
+
+            G.Setting = this;
         }
 
         /// <summary>

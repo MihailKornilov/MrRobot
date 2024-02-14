@@ -29,16 +29,18 @@ namespace MrRobot.Entity
         string PageName { get; set; }
 
         // Заголовок страницы
-        string Title { get => $"{Section}: {CdiUnit.Name}"; }
+        string Title => $"{Section}: {CdiUnit.Name}";
 
         // Путь к файлу-шаблону, с которого формируется страница с графиком
-        string PathTmp   { get => Path.GetFullPath($"Browser/{Section}/{PageName}.tmp"); }
-        string PathHtml  { get => Path.GetFullPath($"Browser/{Section}/{PageName}.html"); }
-        string PathEmpty { get => Path.GetFullPath($"Browser/PageEmpty.html"); }
+        string PathTmp   => Path.GetFullPath($"Browser/{Section}/{PageName}.tmp");
+        string PathHtml  => Path.GetFullPath($"Browser/{Section}/{PageName}.html");
+        string PathEmpty => Path.GetFullPath($"Browser/PageEmpty.html");
 
 
         public void CDI(string section, CDIunit unit, string pageName = "Chart")
         {
+            if (unit == null)
+                return;
             if (!mysql.IsTableExist(unit.Table))
                 return;
 
@@ -162,7 +164,7 @@ namespace MrRobot.Entity
         /// </summary>
         public void PatternSource(PatternUnit unit)
         {
-            if (global.IsAutoProgon)
+            if (G.IsAutoProgon)
                 return;
 
             CDI("Pattern", Candle.Unit(unit.CdiId), "PatternFound");
@@ -217,7 +219,7 @@ namespace MrRobot.Entity
         /// </summary>
         public void PatternVisual(PatternUnit item, int UnixIndex = 0)
         {
-            if (global.IsAutoProgon)
+            if (G.IsAutoProgon)
                 return;
 
             CDI("Pattern", Candle.Unit(item.CdiId), "PatternVisual");

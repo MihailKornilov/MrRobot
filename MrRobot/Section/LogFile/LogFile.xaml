@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="MrRobot.Section.LogFile"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             Background="#FFD"
+             d:DesignWidth="800"
+             d:DesignHeight="450">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="41"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!-- ЗАГОЛОВОК -->
+        <StackPanel Grid.Row="0" Background="#D9E3EC">
+            <Separator Background="#C2CBD3" Margin="0"/>
+            <TextBlock Text="Лог-файлы" Style="{StaticResource HeadName}"/>
+            <Separator Background="#C2CBD3" Margin="0"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <TextBox Name="Log1"
+                     Margin="12"
+                     Padding="7"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     IsReadOnly="True"/>
+        </Grid>
+    </Grid>
+
+</UserControl>

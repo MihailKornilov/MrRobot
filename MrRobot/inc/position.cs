@@ -44,7 +44,7 @@ namespace MrRobot.inc
 		/// </summary>
 		public static void Set(string key, string val)
 		{
-			if (!global.IsInited())
+			if (!G.IsInited())
 				return;
 			if (Insert(key, val))
 				return;
@@ -52,7 +52,7 @@ namespace MrRobot.inc
 				return;
 
 			string sql = $"UPDATE`_position`SET`val`='{val}'WHERE`key`='{key}'";
-            if (!global.IsAutoProgon)
+            if (!G.IsAutoProgon)
                 mysql.Query(sql);
 
 			ASS[key] = val;

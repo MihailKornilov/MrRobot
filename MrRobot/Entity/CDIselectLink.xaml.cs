@@ -16,7 +16,7 @@ namespace MrRobot.Entity
 
         void OpenPanel(object sender, MouseButtonEventArgs e)
         {
-            var win = global.MW.PointToScreen(new Point(0, 0));
+            var win = G.MW.PointToScreen(new Point(0, 0));
             var el = TBLink.PointToScreen(new Point(0, 0));
             int left = (int)(el.X - win.X) - 64;
             int top = (int)(el.Y - win.Y) + 20;

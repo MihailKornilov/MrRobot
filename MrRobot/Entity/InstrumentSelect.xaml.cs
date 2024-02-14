@@ -15,6 +15,8 @@ namespace MrRobot.Entity
             InitializeComponent();
 
             QuoteCoin();
+
+            G.ISPanel = this;
         }
 
         /// <summary>
@@ -93,12 +95,12 @@ namespace MrRobot.Entity
         // Ассоциативный массив созданных ссылок
         static Dictionary<string, ISunit> ISlist { get; set; } = new Dictionary<string, ISunit>();
         static ISunit ISU { get; set; }
-        static Border OpenPanel  { get => global.MW.ISPanel.OpenPanel; }
-        static TextBox FindBox   { get => global.MW.ISPanel.FindBox; }
-        static Label FoundCount  { get => global.MW.ISPanel.FoundCount; }
-        static Label FoundCancel { get => global.MW.ISPanel.FoundCancel; }
-        static CheckBox CDIcheck { get => global.MW.ISPanel.CDIcheck; }
-        static ListBox ISBox     { get => global.MW.ISPanel.ISBox; }
+        static Border OpenPanel  { get => G.ISPanel.OpenPanel; }
+        static TextBox FindBox   { get => G.ISPanel.FindBox; }
+        static Label FoundCount  { get => G.ISPanel.FoundCount; }
+        static Label FoundCancel { get => G.ISPanel.FoundCancel; }
+        static CheckBox CDIcheck { get => G.ISPanel.CDIcheck; }
+        static ListBox ISBox     { get => G.ISPanel.ISBox; }
         public static void Init(object sender, RoutedEventArgs RE)
         {
             FindBox.TextChanged += (s, e) =>
@@ -107,7 +109,7 @@ namespace MrRobot.Entity
                 ISBox.ItemsSource = items;
                 bool isTxt = FindBox.Text.Length > 0;
                 FoundCount.Content = isTxt ? $"найдено: {items.Count}" : "";
-                global.Vis(FoundCancel, isTxt);
+                G.Vis(FoundCancel, isTxt);
             };
             FoundCancel.MouseLeftButtonDown += (s, e) =>
             {
@@ -181,16 +183,16 @@ namespace MrRobot.Entity
             ISU = ISlist[Name];
             ISBox.ItemsSource = Instrument.ListBox(FindTxt);
 
-            var win = global.MW.PointToScreen(new Point(0, 0));
+            var win = G.MW.PointToScreen(new Point(0, 0));
             var el = TB.PointToScreen(new Point(0, 0));
             int left = (int)(el.X - win.X) - 64;
             int top = (int)(el.Y - win.Y) + 20;
 
             OpenPanel.Margin = new Thickness(left, top, 0, 0);
-            global.Vis(CDIcheck, WithHistory);
-            global.Vis(OpenPanel);
+            G.Vis(CDIcheck, WithHistory);
+            G.Vis(OpenPanel);
 
-            new GridBack(global.MW.ISPanel);
+            new GridBack(OpenPanel.Parent as InstrumentSelect);
 
             FindBox.Text = FindTxt;
             FindBox.Focus();
@@ -212,7 +214,7 @@ namespace MrRobot.Entity
             bool isSel = ChosenId > 0;
             TB.Text = isSel ? Instrument.Unit(ChosenId).Name : NoSelTxt;
             TB.Style = Application.Current.Resources[$"TBLink{(isSel ? "Sel" : "")}"] as Style;
-            global.Vis(X, isSel);
+            G.Vis(X, isSel);
             Changed();
         }
 

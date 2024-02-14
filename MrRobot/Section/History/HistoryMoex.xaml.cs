@@ -93,12 +93,12 @@ namespace MrRobot.Section
 
 
         // Видимость крестика отмены быстрого поиска
-        public static Visibility FastCancelVis  { get => global.Vis(SecurityFilter.FastTxt.Length > 0); }
+        public static Visibility FastCancelVis  { get => G.Vis(SecurityFilter.FastTxt.Length > 0); }
         public static List<MoexUnit> EngineList { get => MOEX.Engine.ListActual(); }
 
 
         // Видимость списка рынков
-        public static Visibility MarketVis { get => global.Vis(SecurityFilter.EngineId > 0); }
+        public static Visibility MarketVis { get => G.Vis(SecurityFilter.EngineId > 0); }
         public static List<MoexUnit> MarketList { get => MOEX.Market.ListEngine(); }
 
 
@@ -117,7 +117,7 @@ namespace MrRobot.Section
 
 
         // Видимость списка бумаг
-        public static Visibility SecurityListVis { get => global.Vis(FoundCount > 0); }
+        public static Visibility SecurityListVis { get => G.Vis(FoundCount > 0); }
         // Список бумаг
         public static List<SecurityUnit> SecurityList { get => MOEX.Security.ListFilter(); }
     }

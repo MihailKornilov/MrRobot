@@ -1,36 +1,22 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Text;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Controls;
 using System.Diagnostics;
 using static System.Console;
 
 using MrRobot.Section;
 using MrRobot.Entity;
-using System.Net.Sockets;
-using System.Threading;
 
 namespace MrRobot.inc
 {
-    public class global
+    public class G
     {
         /// <summary>
         /// Флаги инициализации страниц и всего приложения
         /// </summary>
-        public static bool[] InitPage { get; set; } = new bool[7];
-        static string[] PageName = new string[7]
-        {
-            "GLOBAL",
-            "HISTORY",
-            "CONVERTER",
-            "PATTERN",
-            "TESTER",
-            "TRARE",
-            ""
-        };
+        public static bool[] InitPage { get; set; } = new bool[9];
         public static bool IsInited(int page = 0)
         {
             if (InitPage[page])
@@ -44,18 +30,13 @@ namespace MrRobot.inc
         {
             InitPage[page] = true;
             string pg = page > 0 ? page + "." : "";
-            WriteLine(pg + PageName[page] + " inited");
+            WriteLine(pg + Enum.GetNames(typeof(Page))[page] + " inited");
         }
 
-
-        public static MainWindow MW { get => Application.Current.Windows[0] as MainWindow; }
 
 
         // Флаг запущенного АвтоПрогона
-        public static bool IsAutoProgon
-        {
-            get { return AutoProgon.Active; }
-        }
+        public static bool IsAutoProgon => AutoProgon.Active;
 
         /// <summary>
         /// Запись данных в log-файл
@@ -72,7 +53,7 @@ namespace MrRobot.inc
                 return;
             }
             txt = txt.Length > 0 ? $"{format.DTimeNow()}: {txt}\n" : file.Length == 0 ? "" : "\n";
-            byte[] buffer = Encoding.Default.GetBytes(txt);
+            byte[] buffer = Encoding.UTF8.GetBytes(txt);
             file.Seek(0, SeekOrigin.End);
             file.Write(buffer, 0, buffer.Length);
             file.Close();
@@ -84,6 +65,25 @@ namespace MrRobot.inc
         public static Visibility Vis(UserControl uc, bool isVis = true) => uc != null ? uc.Visibility = Vis(isVis) : Vis(false);
         public static Visibility Vis(FrameworkElement elem, bool isVis = true) => elem != null ? elem.Visibility = Vis(isVis) : Vis(false);
         public static Visibility Hid(FrameworkElement elem) => elem.Visibility = Visibility.Collapsed;
+
+
+
+
+        public static MainWindow MW     { get; set; }
+
+        public static History History   { get; set; }
+        public static Converter Converter { get; set; }
+        public static Pattern Pattern   { get; set; }
+        public static Tester Tester     { get; set; }
+        public static Trade Trade       { get; set; }
+        public static Setting Setting   { get; set; }
+        public static SettingEntity SettingEntity { get; set; }
+        public static LogFile LogFile   { get; set; }
+        public static Manual Manual     { get; set; }
+
+
+        public static CDIselectPanel CDIselectPanel { get; set; }
+        public static InstrumentSelect ISPanel { get; set; }
     }
 
 
@@ -252,7 +252,7 @@ namespace MrRobot.inc
             grid.MouseLeftButtonDown += (s, ee) =>
             {
                 (grid.Parent as Panel).Children.Remove(grid);
-                global.Hid(border);
+                G.Hid(border);
             };
             Grid.SetRow(grid, 0);
             Grid.SetRowSpan(grid, 5);
@@ -268,7 +268,7 @@ namespace MrRobot.inc
             grid.Opacity = 0.05;
             GBremove += () => {
                 panel.Children.Remove(grid);
-                global.Hid(border);
+                G.Hid(border);
                 GBremove = null;
             };
             grid.MouseLeftButtonDown += (s, e) => GBremove();
@@ -281,5 +281,20 @@ namespace MrRobot.inc
             if (GBremove != null)
                 GBremove();
         }
+    }
+
+    /// <summary>
+    /// Список главных разделов приложения
+    /// </summary>
+    enum Page
+    {
+        History = 1,
+        Converter,
+        Pattern,
+        Tester,
+        Trade,
+        Setting,
+        LogFile,
+        Manual
     }
 }

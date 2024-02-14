@@ -116,9 +116,9 @@ namespace MrRobot.Entity
                 return;
 
             new Robots();
-            global.MW.Tester.RobotsListBox.ItemsSource = ListBox();
-            global.MW.Tester.RobotsListBox.SelectedItem = Unit(RobotId);
-            global.MW.Trade.RobotsListBox.ItemsSource = ListBox();
+            G.Tester.RobotsListBox.ItemsSource = ListBox();
+            G.Tester.RobotsListBox.SelectedItem = Unit(RobotId);
+            G.Trade.RobotsListBox.ItemsSource = ListBox();
         }
 
         /// <summary>

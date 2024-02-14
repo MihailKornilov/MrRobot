@@ -20,7 +20,7 @@ namespace MrRobot.Section
 
         void InfoShow()
         {
-            var found = global.MW.Pattern.FoundListBox.SelectedItem as PatternUnit;
+            var found = G.Pattern.FoundListBox.SelectedItem as PatternUnit;
             var CDI = Candle.Unit(found.CdiId);
 
             PatternInfoBox.Text =

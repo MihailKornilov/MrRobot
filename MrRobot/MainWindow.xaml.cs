@@ -45,6 +45,7 @@ namespace MrRobot
             Settings.CachePath = Directory.GetCurrentDirectory() + @"\CefSharpCache";
             Cef.Initialize(Settings);
 
+
             new position();
             new HttpServer();
             new Market();
@@ -55,6 +56,8 @@ namespace MrRobot
             new MOEX();
 
             InitializeComponent();
+
+            G.MW = this;
 
             // Разрешение экрана
             //Rect scr = SystemParameters.WorkArea;
@@ -69,26 +72,21 @@ namespace MrRobot
 
             Loaded += MouseHookInit;
             Loaded += ISunit.Init;
-            Loaded += (s, e) => MainMenu.Go();
-            SizeChanged += Tester.RobotLogWidthSet;
+            Loaded += G.LogFile.FileRead;
             SizeChanged += Depth.SizeChanged;
-            Closed += (s, e) => HttpServer.Stop();
+            SizeChanged += G.Tester.RobotLogWidthSet;
+            Closed += HttpServer.Stop;
 
-            global.Inited();
-            global.LogWrite($"Загружено за {dur.Second()} сек.");
+            new MainMenu();
+
+            G.Inited();
+            G.LogWrite($"Загружено за {dur.Second()} сек.");
         }
-
-
-
-
-
-
-
 
         void AppLoadControl()
         {
-            global.LogWrite();
-            global.LogWrite("MrRobot загружается...");
+            G.LogWrite();
+            G.LogWrite("MrRobot загружается...");
 
             AppExceptionLog();
             Control_Mysqld();
@@ -101,11 +99,11 @@ namespace MrRobot
         }
         static void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
         {
-            global.LogWrite($"Необработанное исключение: {e.ExceptionObject}", "error.txt");
+            G.LogWrite($"Необработанное исключение: {e.ExceptionObject}", "error.txt");
         }
         static void FirstChanceExceptionEventHandler(object sender, FirstChanceExceptionEventArgs e)
         {
-            global.LogWrite($"Обработанное исключение: {e.Exception}", "error.txt");
+            G.LogWrite($"Обработанное исключение: {e.Exception}", "error.txt");
         }
 
 
@@ -121,9 +119,9 @@ namespace MrRobot
             if (Process.GetProcessesByName(ProcessName).Length > 0)
                 return;
 
-            global.LogWrite($"Запуск процесса `{ProcessName}`...");
+            G.LogWrite($"Запуск процесса `{ProcessName}`...");
             var mysqld = Process.Start(Path.GetFullPath($"mysql\\server\\bin\\{ProcessName}.exe"));
-            global.LogWrite($"Процесс `{ProcessName}` запущен. ID: {mysqld.Id}");
+            G.LogWrite($"Процесс `{ProcessName}` запущен. ID: {mysqld.Id}");
             //Environment.Exit(0);
         }
 
@@ -154,7 +152,7 @@ namespace MrRobot
                 position.Set("MainWindow.Left",   (int)Left);
                 position.Set("MainWindow.Top",    (int)Top);
 
-                global.MW.Pattern.FoundLine();
+                G.Pattern.FoundLine();
             }
 
             return IntPtr.Zero;

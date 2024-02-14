@@ -456,7 +456,7 @@ namespace MrRobot.Entity
         public void FoundSave()
         {
             string txt = $"Найдено совпадение: {Name} {TF}   id.{Id}   {StructDB}";
-            global.LogWrite(txt, "found.txt");
+            G.LogWrite(txt, "found.txt");
         }
 
 
@@ -534,7 +534,7 @@ namespace MrRobot.Entity
             mysql.Query(sql);
 
             new Patterns();
-            global.MW.Pattern.PatternArchive.SearchList();
+            G.Pattern.PatternArchive.SearchList();
         }
     }
 }

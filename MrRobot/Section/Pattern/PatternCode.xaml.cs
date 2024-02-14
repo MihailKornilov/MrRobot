@@ -14,7 +14,7 @@ namespace MrRobot.Section
         {
             InitializeComponent();
 
-            var Unit = global.MW.Pattern.FoundListBox.SelectedItem as PatternUnit;
+            var Unit = G.Pattern.FoundListBox.SelectedItem as PatternUnit;
             CodeCreate(Unit);
             PatternOnlyCreate(Unit);
         }
