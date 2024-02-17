@@ -161,7 +161,10 @@ namespace MrRobot.Section
             var SubBar = new ProBar(SourceData.Count);
             PARAM.Progress.Report(0);
 
-            string TableName = Candle.DataTableCreate(PARAM);
+            string TableName = Candle.DataTableCreate(Market.Unit(SourceUnit.MarketId).Name,
+                                                      PARAM.Symbol,
+                                                      PARAM.TimeFrame,
+                                                      PARAM.NolCount);
 
             // Определение начала первой свечи согласно таймфрейму
             int iBegin;
@@ -203,10 +206,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Отмена процесса конвертации
         /// </summary>
-        void ConvertCancel(object sender, RoutedEventArgs e)
-        {
-            ConvertParam.IsProcess = false;
-        }
+        void ConvertCancel(object s, RoutedEventArgs e) => ConvertParam.IsProcess = false;
 
         #endregion
 

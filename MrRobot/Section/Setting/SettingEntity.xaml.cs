@@ -65,7 +65,9 @@ namespace MrRobot.Section
                         continue;
 
                     string sql = "UPDATE`_market`" +
-                                $"SET`name`='{unit.Name.Trim()}'" +
+                                $"SET`name`='{unit.Name.Trim()}'," +
+                                   $"`prefix`='{unit.Prefix.Trim()}'," +
+                                   $"`url`='{unit.Url.Trim()}'" +
                                 $"WHERE`id`={unit.Id}";
                     mysql.Query(sql);
                 }
@@ -80,9 +82,6 @@ namespace MrRobot.Section
                 G.Hid(MarketSaveOk);
             };
         }
-
-
-
     }
 
 

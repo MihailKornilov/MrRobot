@@ -7,9 +7,14 @@
         xmlns:Entity="clr-namespace:MrRobot.Entity"
 		mc:Ignorable="d"
 		Title="Mr.Robot v0.0.1"
-		MinWidth="1175"
+		Background="#FFF"
+        MinWidth="1175"
 		MinHeight="700"
-		Background="#FFF">
+        
+        Width="{Binding Width}"
+        Height="{Binding Height}"
+        Left="{Binding Left}"
+        Top="{Binding Top}">
 	
 	<Grid>
 		<Grid.ColumnDefinitions>

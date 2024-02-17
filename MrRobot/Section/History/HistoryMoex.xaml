@@ -5,11 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
              Background="#FFF"
-             d:DesignWidth="800"
-             d:DesignHeight="450">
+             d:DesignWidth="975"
+             d:DesignHeight="600">
 
     <UserControl.Resources>
-        <!-- Шаблон -->
+        <!-- Шаблон ListBox-фильтра -->
         <DataTemplate x:Key="FilterUnit">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding Title}"
@@ -30,7 +30,7 @@
         </DataTemplate>
         <!-- Шаблон для списка бумаг -->
         <DataTemplate x:Key="SecurityUnit">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Width="290">
                 <Label Content="{Binding Id}"
                        Width="65"
                        Foreground="#999"
@@ -40,19 +40,81 @@
                        Margin="0,0,10,0"
                        Visibility="Collapsed"/>
                 <Label Content="{Binding SecId}"
-                       Width="100"
-                       Padding="0,2"
-                       Margin="0,0,10,0"
-                       HorizontalContentAlignment="Right"
+                       Padding="0,4,0,0"
+                       Margin="0"
                        FontWeight="Medium"/>
-                <Label Content="{Binding Name}" Padding="0,2"/>
+                <TextBlock Text="{Binding Name}"
+                           Padding="0,0,0,3"
+                           Margin="0,-3,0,0"
+                           Foreground="#777"
+                           TextWrapping="Wrap"/>
+                <Separator Background="#C6D8E6" Margin="0"/>
             </StackPanel>
+        </DataTemplate>
+        <!-- Шаблон Информации о бумаге -->
+        <DataTemplate x:Key="SecurityInfoUnit">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Title}"
+                           Width="220"
+                           Margin="8,4,0,4"
+                           FontSize="13"
+                           Foreground="#888"
+                           TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding Value}"
+                           Margin="8,4,0,4"
+                           Width="145"
+                           FontSize="13"
+                           FontWeight="{Binding ValueWeight}"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </DataTemplate>
+        <!-- Шаблон Режимы торгов -->
+        <DataTemplate x:Key="BoardsUnit">
+            <StackPanel>
+                <WrapPanel Margin="0,4">
+                    <Label Content="{Binding Num}"
+                           Width="25"
+                           Padding="0,0,4,0"
+                           FontSize="13"
+                           Foreground="#AAA"
+                           HorizontalContentAlignment="Right"/>
+                    <StackPanel Width="190">
+                        <TextBlock Text="{Binding Name}"
+                                   FontSize="13"
+                                   FontWeight="{Binding NameWeight}"/>
+                        <TextBlock Text="{Binding Title}"
+                                   FontSize="11"
+                                   Margin="0,-2,0,0"
+                                   Foreground="#888"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding ListedFrom}"
+                               Width="80"
+                               Margin="10,0,0,0"
+                               FontSize="13"
+                               Foreground="{Binding ListedColor}"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding ListedTill}"
+                               FontSize="13"
+                               Foreground="{Binding ListedColor}"
+                               VerticalAlignment="Center"/>
+                </WrapPanel>
+            </StackPanel>
+        </DataTemplate>
+        <!-- Стили Режимы торгов -->
+        <Style x:Key="BoardsStyle" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="{Binding ItemBG}"/>
+        </Style>
+        <!-- Шаблон Таймфреймы -->
+        <DataTemplate x:Key="IntervalUnit">
+            <TextBlock Text="{Binding TF}"/>
         </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
+            <RowDefinition Height="420"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -65,11 +127,11 @@
             </StackPanel>
         </Border>
 
-        
         <Grid Grid.Row="1" Margin="10,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="210"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="330"/>
+                <ColumnDefinition Width="413"/>
             </Grid.ColumnDefinitions>
 
             <!-- Фильтры -->
@@ -98,19 +160,60 @@
             </StackPanel>
 
             <!-- Список бумаг -->
-            <StackPanel Grid.Column="1" HorizontalAlignment="Left">
+            <StackPanel Grid.Column="1">
                 <Label Name="FoundCount"
                        Content="{Binding FoundCountStr}"
                        Foreground="#777"
                        Padding="0"
                        FontSize="15"/>
                 <ListBox Name="SecurityBox"
-                         Width="740"
-                         MaxHeight="385"
-                         Margin="0,2,0,0"
+                         MinHeight="150"
+                         MaxHeight="389"
+                         Margin="0,2,10,0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Visibility="{Binding  SecurityListVis}"
                          ItemsSource="{Binding SecurityList}"
                          ItemTemplate="{StaticResource SecurityUnit}"/>
+            </StackPanel>
+
+            <!-- Информация о бумаге, режимы торгов -->
+            <StackPanel Grid.Column="2" Name="InfoPanel" Visibility="Visible">
+                <Label Content="Информация о бумаге:"
+                       Foreground="#777"
+                       Padding="2,0,0,0"
+                       FontSize="15"/>
+                <Grid Background="#E5E5C6"
+                      MinHeight="100"
+                      VerticalAlignment="Top"
+                      Margin="0,2,0,0">
+                    <StackPanel Background="#FFD" Margin="1,1,1,1">
+                        <ListBox Name="SecurityInfoBox"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 MaxHeight="200"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ItemTemplate="{StaticResource SecurityInfoUnit}"
+                                 ItemContainerStyle="{StaticResource LBspisokStyle}"/>
+                    </StackPanel>
+                </Grid>
+
+                <Label Content="Режимы торгов:"
+                       Foreground="#777"
+                       Padding="0"
+                       Margin="2,13,0,2"
+                       FontSize="15"/>
+                <Grid Background="#DDD"
+                      Width="410">
+                    <StackPanel Background="#E8E8E8" Margin="1,1,1,1">
+                        <ListBox Name="BoardsBox"
+                                 BorderThickness="0"
+                                 Height="150"
+                                 Background="Transparent"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ItemTemplate="{StaticResource BoardsUnit}"
+                                 ItemContainerStyle="{StaticResource BoardsStyle}"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
 
                 <!--<Button Grid.Column="1"
@@ -121,7 +224,36 @@
                     VerticalAlignment="Top"
                     Click="EngineIss"/>-->
         </Grid>
-        
+
+        <StackPanel Grid.Row="2" Name="LoadPanel" Margin="10,0" Visibility="Collapsed">
+            <WrapPanel>
+                <Label Content="Таймфрейм:"           Width="100" Style="{StaticResource LabelHistory}"/>
+                <Label Content="Дата начала истории:" Width="140" Style="{StaticResource LabelHistory}"/>
+                <Label Content="Конец истории:" Style="{StaticResource LabelHistory}"/>
+            </WrapPanel>
+            <WrapPanel>
+                <ComboBox Name="LoadInterval"
+                          Width="90"
+                          ItemTemplate="{StaticResource IntervalUnit}"/>
+                <DatePicker Name="LoadBegin"
+                            Width="130"
+                            Margin="10,0,0,0"
+                            SelectedDateFormat="Short"/>
+                <DatePicker Name="LoadEnd"
+                            Width="130"
+                            Margin="10,0,0,0"
+                            SelectedDateFormat="Short"/>
+                <Button Name="LoadGoButton"
+                        Content="Загрузить"
+                        Width="80"
+                        Margin="10,0,0,0"/>
+            </WrapPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Name="LoadNoPanel" Margin="10,0" Visibility="Collapsed">
+            <TextBlock Text="Истории нет." FontSize="15"/>
+        </StackPanel>
+
     </Grid>
 
 </UserControl>

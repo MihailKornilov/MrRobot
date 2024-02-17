@@ -6,6 +6,9 @@ using static System.Console;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
+using CefSharp.DevTools.CSS;
+using System.Net;
+using System.Text;
 
 namespace MrRobot.Section
 {
@@ -44,7 +47,6 @@ namespace MrRobot.Section
                 FastBox.Focus();
             };
 
-
             // Фильтр "Торговая система"
             EngineBox.SelectedIndex = MOEX.Engine.FilterIndex();
             EngineBox.SelectionChanged += (s, e) =>
@@ -55,7 +57,6 @@ namespace MrRobot.Section
                 DataContext = new MoexDC();
             };
 
-
             // Фильтр "Рынки"
             MarketBox.SelectedIndex = MOEX.Market.FilterIndex();
             MarketBox.SelectionChanged += (s, e) =>
@@ -64,6 +65,81 @@ namespace MrRobot.Section
                     return;
                 SecurityFilter.MarketId = (MarketBox.SelectedItem as MoexUnit).Id;
                 DataContext = new MoexDC();
+            };
+
+
+            // Выбрана Бумага
+            SecurityBox.SelectionChanged += (s, e) =>
+            {
+                if (SecurityBox.SelectedIndex == -1)
+                    return;
+
+                var unit = SecurityBox.SelectedItem as SecurityUnit;
+                var arr = MOEX.SecurityInfoBoards(unit.SecId);
+
+                SecurityInfoBox.ItemsSource = arr[0];
+                var first = SecurityInfoBox.Items[0];
+                SecurityInfoBox.ScrollIntoView(first);
+
+                BoardsBox.ItemsSource = arr[1];
+                first = BoardsBox.Items[0];
+                BoardsBox.ScrollIntoView(first);
+
+                G.Vis(InfoPanel);
+            };
+
+            // Выбран Режим торгов
+            BoardsBox.SelectionChanged += (s, e) =>
+            {
+                if (BoardsBox.SelectedIndex == -1)
+                    return;
+
+                var unit = BoardsBox.SelectedItem as BoardUnit;
+                var src = MOEX.BoardLoad(unit);
+
+                G.Vis(LoadPanel, src.Count > 0);
+                G.Vis(LoadNoPanel, src.Count == 0);
+
+                if(src.Count == 0)
+                    return;
+
+                LoadInterval.ItemsSource = src;
+                LoadInterval.SelectedIndex = 0;
+            };
+
+            // Выбран таймфрейм
+            LoadInterval.SelectionChanged += (s, e) =>
+            {
+                if (LoadInterval.SelectedIndex == -1)
+                    return;
+
+                var unit = LoadInterval.SelectedItem as BorderUnit;
+
+                LoadBegin.SelectedDate = unit.Begin;
+                LoadBegin.DisplayDateStart = unit.Begin;
+                LoadBegin.DisplayDateEnd = unit.End;
+
+                LoadEnd.SelectedDate = unit.End;
+                LoadEnd.DisplayDateStart = unit.Begin;
+                LoadEnd.DisplayDateEnd = unit.End;
+            };
+
+            // Кнопка запуска загрузки свечных данных
+            LoadGoButton.Click += (s, e) =>
+            {
+                var board = BoardsBox.SelectedItem as BoardUnit;
+                var unit = LoadInterval.SelectedItem as BorderUnit;
+
+                var begin = LoadBegin.SelectedDate;
+                var end = LoadEnd.SelectedDate;
+
+                if (begin > end)
+                    return;
+
+                MOEX.CandlesLoad(board,
+                                 unit.Interval,
+                                 begin.Value.ToString("yyyy-MM-dd"),
+                                 end.Value.ToString("yyyy-MM-dd 23:59:59"));
             };
         }
 
@@ -76,7 +152,7 @@ namespace MrRobot.Section
             //MOEX.SecurityGroup.iss();
             //MOEX.SecurityType.iss();
             //MOEX.SecurityСollections.iss();
-            MOEX.Security.iss();
+            //MOEX.Security.iss();
         }
     }
 

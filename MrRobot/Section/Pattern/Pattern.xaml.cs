@@ -115,8 +115,6 @@ namespace MrRobot.Section
 
         bool SearchResultCheck(bool isCheck = true)
         {
-            if (!G.IsInited(3))
-                return false;
             if (!isCheck)
                 return false;
 
@@ -579,7 +577,7 @@ namespace MrRobot.Section
 
 
         public int SearchId { get; set; }       // ID произведённого поиска
-        public int FoundCount { get { return FoundList.Count; } }// Количество найденных паттернов
+        public int FoundCount => FoundList.Count;// Количество найденных паттернов
         public List<PatternUnit> FoundList { get; set; } = new List<PatternUnit>();  // Список с данными найденных паттернов
         public long Iterations { get; set; }    // Количество итераций
         public string Duration { get; set; }    // Время выполнения

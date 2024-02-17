@@ -1,17 +1,17 @@
-﻿// markets (рынки)
-// boards (режимы торгов)
-// board_groups (группировка режимов)
-
-using System;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 using System.Collections.Generic;
 using static System.Console;
 
 using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Section;
+using static MrRobot.Connector.MOEX;
+using MrRobot.Entity;
 
 namespace MrRobot.Connector
 {
@@ -27,6 +27,164 @@ namespace MrRobot.Connector
             new SecurityType();
             new SecurityСollections();
             new Security();
+        }
+
+
+        // Формирование страницы со всеми запросами ISS
+        public static void IssQueriesPage(BoardUnit board)
+        {
+            string name = "MoexIssQueries";
+            string src = Path.GetFullPath($"Browser/{name}.tmp.html");
+            string dst = Path.GetFullPath($"Browser/{name}.html");
+
+            var read  = new StreamReader(src);
+            var write = new StreamWriter(dst);
+
+            string line;
+            while ((line = read.ReadLine()) != null)
+            {
+/*
+                if (line.Contains("        /iss"))
+                {
+                    line = line.Replace("        ", "");
+                    line = $"    <a href='https://iss.moex.com{line}.json' target='_blank'>{line}</a>";
+                }
+                else if (line.Contains("        "))
+                {
+                    line = line.Replace("        ", "");
+                    line = $"    <div>{line}</div>";
+                }
+                else if (line.Length == 0)
+                    line = "<br>";
+*/
+                line = line.Replace("[engine]", board.EngineName);
+                line = line.Replace("[market]", board.MarketName);
+                line = line.Replace("[board]",  board.Name);
+                line = line.Replace("[boardgroup]",  board.Group);
+                line = line.Replace("[security]", board.SecId);
+
+                write.WriteLine(line);
+            }
+            read.Close();
+            write.Close();
+        }
+
+        // Информация о Бумаге и Режимы торгов
+        public static dynamic[] SecurityInfoBoards(string secid)
+        {
+            var wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+            string url = $"https://iss.moex.com/iss/securities/{secid}.json?" +
+                                "iss.meta=off" +
+                               "&description.columns=name,title,value" +
+                               "&boards.columns=" +
+                                    "secid," +
+                                    "boardid," +
+                                    "is_primary," +
+                                    "listed_from," +
+                                    "listed_till," +
+                                    "title," +
+                                    "is_traded," +
+                                    "decimals";
+            string str = wc.DownloadString(url);
+            dynamic json = JsonConvert.DeserializeObject(str);
+
+            dynamic data = json.description.data;
+            var SecInfoList = new List<SecurityInfoUnit>();
+            for (int i = 0; i < data.Count; i++)
+                SecInfoList.Add(new SecurityInfoUnit(data[i]));
+
+            data = json.boards.data;
+            var BoardsList = new List<BoardUnit>();
+            for (int i = 0; i < data.Count; i++)
+                BoardsList.Add(new BoardUnit(i+1, data[i]));
+
+            return new dynamic[2] { SecInfoList, BoardsList };
+        }
+
+        // Параметры для загрузки свечных данных выбранного Режима торгов
+        public static List<BorderUnit> BoardLoad(BoardUnit board)
+        {
+            var wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+            string url = $"https://iss.moex.com/iss" +
+                                $"/engines/{board.EngineName}" +
+                                $"/markets/{board.MarketName}" +
+                                $"/boards/{board.Name}" +
+                                $"/securities/{board.SecId}" +
+                                 "/candleborders.json" +
+                                 "?iss.only=borders" +
+                                 "&iss.meta=off";
+            WriteLine(url);
+            string str = wc.DownloadString(url);
+            dynamic json = JsonConvert.DeserializeObject(str);
+            dynamic data = json.borders.data;
+
+            var list = new List<BorderUnit>();
+            if (data.Count == 0)
+                return list;
+
+            var dict = new Dictionary<int, BorderUnit>();
+            for (int i = 0; i < data.Count; i++)
+            {
+                var unit = new BorderUnit(data[i]);
+                dict.Add(unit.Interval, unit);
+            }
+
+            foreach (int i in BorderUnit.Sort)
+                if (dict.ContainsKey(i))
+                    list.Add(dict[i]);
+
+            return list;
+        }
+
+        // Загрузка свечных данных
+        public static void CandlesLoad(BoardUnit board, int interval, string from, string till)
+        {
+            string table = Candle.DataTableCreate("moex", board.SecId, interval, board.Decimals);
+
+            var wc = new WebClient();
+            wc.Encoding = Encoding.UTF8;
+
+            while (true)
+            {
+                string url = $"https://iss.moex.com/iss" +
+                                    $"/engines/{board.EngineName}" +
+                                    $"/markets/{board.MarketName}" +
+                                    $"/boards/{board.Name}" +
+                                    $"/securities/{board.SecId}" +
+                                     "/candles.json" +
+                                     "?iss.only=candles" +
+                                     "&candles.columns=begin,open,high,low,close,volume" +
+                                     "&iss.meta=off" +
+                                    $"&interval={interval}" +
+                                    $"&from={from}" +
+                                    $"&till={till}";
+                WriteLine(url);
+                string str = wc.DownloadString(url);
+                dynamic json = JsonConvert.DeserializeObject(str);
+                dynamic data = json.candles.data;
+
+                var insert = new List<string>();
+
+                if (data.Count == 0)
+                    break;
+
+                int count = data.Count;
+                if (data.Count == 500) count--;
+
+                for (int i = 0; i < count; i++)
+                    insert.Add(new CandleUnit(data[i]).Insert);
+
+                Candle.DataInsert(table, insert);
+
+                if (data.Count < 500)
+                    break;
+
+                from = data[count][0];
+            }
+
+            Candle.InfoCreate(table);
         }
 
 
@@ -266,7 +424,7 @@ namespace MrRobot.Connector
                 UnitList = new List<MoexUnit>();
                 ID_UNIT = new Dictionary<int, MoexUnit>();
 
-                string sql = "SELECT*FROM`_moex_boardgroups`ORDER BY`engineId`,`id`";
+                string sql = "SELECT*FROM`_moex_boardgroups`";
                 foreach (Dictionary<string, string> row in mysql.QueryList(sql))
                 {
                     var unit = new MoexUnit(row);
@@ -274,6 +432,9 @@ namespace MrRobot.Connector
                     ID_UNIT.Add(unit.Id, unit);
                 }
             }
+
+            // Единица на основании ID
+            public static MoexUnit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
 
             // Загрузка данных с биржи
             public static void iss()
@@ -337,7 +498,7 @@ namespace MrRobot.Connector
                 ID_UNIT = new Dictionary<int, MoexUnit>();
                 NAME_ID = new Dictionary<string, int>();
 
-                string sql = "SELECT*FROM`_moex_boards`ORDER BY`engineId`,`id`";
+                string sql = "SELECT*FROM`_moex_boards`";
                 foreach (Dictionary<string, string> row in mysql.QueryList(sql))
                 {
                     var unit = new MoexUnit(row);
@@ -347,12 +508,61 @@ namespace MrRobot.Connector
                 }
             }
 
+            // Единица на основании ID
+            public static MoexUnit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
+
             // ID режима торгов по названию
             public static int IdOnName(string name) => NAME_ID.ContainsKey(name) ? NAME_ID[name] : 0;
-            // ID ... по ID режима торгов
+
+
+
+            // ID Торговой системы по ID режима торгов
             public static int EngineId(int boardId) => ID_UNIT.ContainsKey(boardId) ? ID_UNIT[boardId].EngineId : 0;
-            // ID рынка по ID режима торгов
+            // Название Торговой системы по ID режима торгов
+            public static string EngineName(int boardId)
+            {
+                int engineId = EngineId(boardId);
+                if (engineId == 0)
+                    return "";
+
+                var unit = Engine.Unit(engineId);
+                if (unit == null)
+                    return "";
+
+                return unit.Name;
+            }
+
+
+            // ID Рынка по ID режима торгов
             public static int MarketId(int boardId) => ID_UNIT.ContainsKey(boardId) ? ID_UNIT[boardId].MarketId : 0;
+            // Название Рынка по ID режима торгов
+            public static string MarketName(int boardId)
+            {
+                int marketId = MarketId(boardId);
+                if (marketId == 0)
+                    return "";
+
+                var unit = Market.Unit(marketId);
+                if (unit == null)
+                    return "";
+
+                return unit.Name;
+            }
+
+
+            // Название Группы режима по ID режима торгов
+            public static string Group(int boardId)
+            {
+                var board = Unit(boardId);
+                if (board == null)
+                    return "";
+
+                var unit = BoardGroup.Unit(board.GroupId);
+                if (unit == null)
+                    return "";
+
+                return unit.Name;
+            }
 
 
             // Загрузка данных с биржи
@@ -623,6 +833,15 @@ namespace MrRobot.Connector
             public static int Count => UnitList.Count;
             public static List<SecurityUnit> ListAll => UnitList;
 
+            // Информация о бумаге на основании SecId
+            public static SecurityUnit UnitOnSecId(string secid)
+            {
+                foreach (var unit in UnitList)
+                    if (unit.SecId == secid)
+                        return unit;
+                return null;
+            }
+
             // Текст: "1403 бумаги"
             public static string CountStr(int c = -1)
             {
@@ -678,10 +897,7 @@ namespace MrRobot.Connector
                                             "group," +
                                             "secid," +
                                             "shortname," +
-                                            "name," +
-                                            "regnumber," +
-                                            "isin," +
-                                            "emitent_id" +
+                                            "name" +
                                      "&is_trading=1" +
                                     $"&start={start}";
                     string str = wc.DownloadString(url);
@@ -698,7 +914,6 @@ namespace MrRobot.Connector
                     {
                         var v = data[i];
                         int boardId = Board.IdOnName(v[1].ToString());
-                        string emitentId = v[9].ToString().Length == 0 ? "0" : v[9].ToString();
                         values[i] = "(" +
                                         $"{v[0]}," +        // id
                                         $"{Board.EngineId(boardId)}," + // EngineId
@@ -708,10 +923,7 @@ namespace MrRobot.Connector
                                         $"{SecurityType.IdOnName(v[3].ToString())}," +  // group
                                         $"'{v[4]}'," +      // secId
                                         $"'{v[5].ToString().Replace("'", "")}'," +      // shortName
-                                        $"'{v[6].ToString().Replace("'", "")}'," +      // name
-                                        $"'{v[7]}'," +      // regnumber
-                                        $"'{v[8]}'," +      // isin
-                                        $"{emitentId}" +    // emitent_id
+                                        $"'{v[6].ToString().Replace("'", "")}'" +      // name
                                     ")";
                     }
 
@@ -724,10 +936,7 @@ namespace MrRobot.Connector
                                     "`securityTypeId`," +
                                     "`secId`," +
                                     "`shortName`," +
-                                    "`name`," +
-                                    "`regNumber`," +
-                                    "`isin`," +
-                                    "`emitentId`" +
+                                    "`name`" +
                                 $")VALUES{string.Join(",\n", values)}" +
                                  "ON DUPLICATE KEY UPDATE" +
                                     "`engineId`=VALUES(`engineId`)," +
@@ -737,10 +946,7 @@ namespace MrRobot.Connector
                                     "`securityTypeId`=VALUES(`securityTypeId`)," +
                                     "`secId`=VALUES(`secId`)," +
                                     "`shortName`=VALUES(`shortName`)," +
-                                    "`name`=VALUES(`name`)," +
-                                    "`regNumber`=VALUES(`regNumber`)," +
-                                    "`isin`=VALUES(`isin`)," +
-                                    "`emitentId`=VALUES(`emitentId`)";
+                                    "`name`=VALUES(`name`)";
                     mysql.Query(sql);
 
                     start += 100;
@@ -810,7 +1016,7 @@ namespace MrRobot.Connector
 
 
     /// <summary>
-    /// Единица данных инструмента
+    /// Единица данных списка бумаг
     /// </summary>
     public class SecurityUnit
     {
@@ -825,10 +1031,100 @@ namespace MrRobot.Connector
         public string Name { get; set; }    // Полное наименование
         public string ShortName { get; set; }// Краткое наименование
 
-        public int EmitentId { get; set; }  // Код эмитента
-        public string Isin { get; set; }    // ISIN код
-        public string RegNumber { get; set; }//Номер государственной регистрации
-
         public bool IsTraded { get; set; }  // Бумага торгуется или нет
+    }
+
+
+    /// <summary>
+    /// Единица данных информации о бумаге
+    /// </summary>
+    public class SecurityInfoUnit
+    { 
+        public SecurityInfoUnit(dynamic v)
+        {
+            Name = v[0];
+            Title = v[1];
+            Value = v[2];
+        }
+        public string Name { get; set; }
+        string _Title;
+        public string Title
+        {
+            get => $"{_Title}:";
+            set => _Title = value;
+        }
+        public string Value { get; set; }
+        public string ValueWeight => Name == "SECID" ? "Medium" : "Normal";
+    }
+
+
+    /// <summary>
+    /// Единица данных Режима торгов бумаги
+    /// </summary>
+    public class BoardUnit
+    { 
+        public BoardUnit(int num, dynamic v)
+        {
+            Num = $"{num}.";
+            SecId = v[0];
+            Name = v[1];
+            IsPrimary = v[2];
+            ListedFrom = v[3];
+            ListedTill = v[4];
+            Title = v[5];
+            IsTraded = v[6];
+            Decimals = v[7];
+        }
+        public string Num { get; set; }
+        public string SecId { get; set; }
+        public string EngineName => MOEX.Board.EngineName(Id);
+        public string MarketName => MOEX.Board.MarketName(Id);
+        public int Id => MOEX.Board.IdOnName(Name);
+        public string Name { get; set; }
+        public string NameWeight => IsPrimary ? "Bold" : "Normal";
+        public string Group => MOEX.Board.Group(Id);
+        public string Title { get; set; }
+        public string ListedFrom { get; set; }
+        public string ListedTill { get; set; }
+        public SolidColorBrush ListedColor => format.RGB(IsTraded ? "#000000" : "#AAAAAA");
+        public bool IsPrimary { get; set; }
+        public bool IsTraded { get; set; }
+        public SolidColorBrush ItemBG => format.RGB(IsTraded ? "#DDFFDD" : "#F8F8F8");
+        public int Decimals { get; set; }
+    }
+
+
+    /// <summary>
+    /// Доступные таймфреймы и даты для загрузки свечной истории
+    /// </summary>
+    public class BorderUnit
+    {
+        public BorderUnit(dynamic v)
+        {
+            Begin = Convert.ToDateTime(v[0]);
+            End = Convert.ToDateTime(v[1]);
+            Interval = v[2];
+        }
+        public int Interval { get; set; }
+        public DateTime Begin { get; set; }
+        public DateTime End { get; set; }
+        public string TF => Duration(Interval);
+
+
+        // Ассоциативный массив таймфреймов с описаниями
+        static string Duration(int i)
+        {
+            var ass = new Dictionary<int, string>();
+            ass.Add( 1, "Минута");
+            ass.Add(10, "10 минут");
+            ass.Add(60, "Час");
+            ass.Add(24, "День");
+            ass.Add( 7, "Неделя");
+            ass.Add(31, "Месяц");
+            ass.Add( 4, "Квартал");
+            return ass[i];
+        }
+        // Порядок отображенмя таймфреймов
+        public static int[] Sort => new[] { 1, 10, 60, 24, 7, 31, 4 };
     }
 }

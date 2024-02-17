@@ -7,6 +7,7 @@ using static System.Console;
 using MySqlConnector;
 using Newtonsoft.Json;
 using MrRobot.inc;
+using MrRobot.Connector;
 
 namespace MrRobot.Entity
 {
@@ -34,30 +35,20 @@ namespace MrRobot.Entity
 
             string sql = "SELECT*" +
                          "FROM`_candle_data_info`" +
-                         "ORDER BY`marketId`,`symbol`,`timeFrame`";
+                         "ORDER BY`marketId`,`timeFrame`";
             foreach (Dictionary<string, string> v in mysql.QueryList(sql))
             {
-                var Instr = Instrument.Unit(v["instrumentId"]);
-                int marketId = Convert.ToInt32(v["marketId"]);
-                int timeFrame = Convert.ToInt32(v["timeFrame"]);
-                string[] spl = v["name"].Split('/');
-                string begin = v["begin"].Substring(0, 10);
-                string end = v["end"].Substring(0, 10);
                 var Unit = new CDIunit
                 {
                     Id = Convert.ToInt32(v["id"]),
-                    Market = format.MarketName(marketId),
+                    MarketId = Convert.ToInt32(v["marketId"]),
                     InstrumentId = Convert.ToInt32(v["instrumentId"]),
-                    Name = v["name"],
-                    Symbol = spl[0] + spl[1],
-                    DateBegin = begin,
-                    DateEnd = end,
+                    DateBegin = v["begin"].Substring(0, 10),
+                    DateEnd = v["end"].Substring(0, 10),
                     UnixBegin = format.UnixFromDate(v["begin"]),
-                    TimeFrame = timeFrame,
+                    TimeFrame = Convert.ToInt32(v["timeFrame"]),
                     Table = v["table"],
                     RowsCount = Convert.ToInt32(v["rowsCount"]),
-                    TickSize = Instr.TickSize,
-                    NolCount = Instr.NolCount,
                     ConvertedFromId = Convert.ToInt32(v["convertedFromId"])
                 };
                 CDIlist.Add(Unit);
@@ -263,9 +254,9 @@ namespace MrRobot.Entity
         /// <summary>
         /// Создание таблицы со свечными данными, если не существует
         /// </summary>
-        public static string DataTableCreate(CDIparam param)
+        public static string DataTableCreate(string exchange, string symbol, int tf, int decimals)
         {
-            string TableName = "bybit_" + param.Symbol.ToLower() + "_" + param.TimeFrame;
+            string TableName = $"{exchange}_{symbol.ToLower()}_{tf}";
 
             string sql = $"DROP TABLE IF EXISTS`{TableName}`";
             mysql.Query(sql);
@@ -275,10 +266,10 @@ namespace MrRobot.Entity
 
             sql = $"CREATE TABLE`{TableName}`(" +
                         "`unix` INT UNSIGNED DEFAULT 0 NOT NULL," +
-                       $"`high` DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
-                       $"`open` DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
-                       $"`close`DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
-                       $"`low`  DECIMAL(20,{param.NolCount}) UNSIGNED DEFAULT 0 NOT NULL," +
+                       $"`high` DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
+                       $"`open` DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
+                       $"`close`DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
+                       $"`low`  DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
                         "`vol`  DECIMAL(30,8) UNSIGNED DEFAULT 0 NOT NULL," +
                         "PRIMARY KEY(`unix`)" +
                   $")ENGINE=MyISAM DEFAULT CHARSET=cp1251";
@@ -298,8 +289,8 @@ namespace MrRobot.Entity
                 return;
 
             string sql = $"INSERT INTO`{TableName}`" +
-                        $"(`unix`,`high`,`open`,`close`,`low`,`vol`) " +
-                        $"VALUES " + string.Join(",", insert.ToArray());
+                          "(`unix`,`high`,`open`,`close`,`low`,`vol`)" +
+                         $"VALUES{string.Join(",", insert.ToArray())}";
             mysql.Query(sql);
 
             insert.Clear();
@@ -308,47 +299,49 @@ namespace MrRobot.Entity
         /// <summary>
         /// Внесение заголовка свечных данных
         /// </summary>
-        public static int InfoCreate(string TableName, int ConvertedFromId = 0)
+        public static int InfoCreate(string table, int ConvertedFromId = 0)
         {
             string sql = "SELECT " +
                             "COUNT(*)`count`," +
                             "MIN(FROM_UNIXTIME(`unix`))`begin`," +
                             "MAX(FROM_UNIXTIME(`unix`))`end`" +
-                         $"FROM`{TableName}`" +
+                         $"FROM`{table}`" +
                           "LIMIT 1";
             var data = mysql.QueryOne(sql);
 
             if (data["count"] == "0")
                 return 0;
 
-            string[] spl = TableName.Split('_');
-            string TimeFrame = spl[2];
-            string Symbol = spl[1].ToUpper();
+            string[] spl = table.Split('_');
+            string prefix = spl[0];
+            string symbol = spl[1].ToUpper();
+            string tf = spl[2];
 
-            if (!mysql.CandleDataCheck(TableName))
-                WriteLine($"Ошибка в последовательности таблицы `{TableName}`.");
+            if (!mysql.CandleDataCheck(table))
+                WriteLine($"Ошибка в последовательности таблицы `{table}`.");
 
-            // Получение данных об инструменте по его названию
-            var Instr = Instrument.UnitOnSymbol(Symbol);
+            int ExchangeId = Market.UnitOnPrefix(prefix).Id;
+            int iid = 0;
+            switch (ExchangeId)
+            {
+                case 1: iid = Instrument.UnitOnSymbol(symbol).Id; break;
+                case 2: iid = MOEX.Security.UnitOnSecId(symbol).Id; break;
+            }
 
             sql = "INSERT INTO`_candle_data_info`(" +
                     "`marketId`," +
                     "`instrumentId`," +
                     "`table`," +
                     "`timeFrame`," +
-                    "`name`," +
-                    "`symbol`," +
                     "`rowsCount`," +
                     "`begin`," +
                     "`end`," +
                     "`convertedFromId`" +
                 ")VALUES(" +
-                    "1," +
-                    $"{Instr.Id}," +
-                    $"'{TableName}'," +
-                    $"{TimeFrame}," +
-                    $"'{Instr.Name}'," +
-                    $"'{Symbol}'," +
+                    $"{ExchangeId}," +
+                    $"{iid}," +
+                    $"'{table}'," +
+                    $"{tf}," +
                     $"{data["count"]}," +
                     $"'{data["begin"]}'," +
                     $"'{data["end"]}'," +
@@ -421,8 +414,6 @@ namespace MrRobot.Entity
                             "`instrumentId`," +
                             "`table`," +
                             "`timeFrame`," +
-                            "`name`," +
-                            "`symbol`," +
                             "`rowsCount`," +
                             "`begin`," +
                             "`end`" +
@@ -432,8 +423,6 @@ namespace MrRobot.Entity
                            $"{Instr.Id}," +
                            $"'{tableName}'," +
                            $"{timeFrame}," +
-                           $"'{Instr.Name}'," +
-                           $"'{symbol}'," +
                            $"{count}," +
                            $"'{begin}'," +
                            $"'{end}'" +
@@ -518,24 +507,25 @@ namespace MrRobot.Entity
     {
         public int Num { get; set; }            // Порядковый номер
         public int Id { get; set; }             // ID инфо свечных данных из `_candle_data_info`
+        public int MarketId { get; set; }       // ID биржи
         public int InstrumentId { get; set; }   // ID инструмента из `_instrument`
-        public string Market { get; set; }      // Имя биржи, из которой взят инструмент
-        public string Symbol { get; set; }      // Название инструмента в виде "BTCUSDT"
-        public string Name { get; set; }        // Название инструмента в виде "BTC/USDT"
+        InstrumentUnit IUnit => Instrument.Unit(InstrumentId);   // Данные об инструменте
+        public string Symbol => IUnit.Symbol;   // Название инструмента в виде "BTCUSDT"
+        public string Name => IUnit.Name;       // Название инструмента в виде "BTC/USDT"
         public string Table { get; set; }       // Имя таблицы со свечами
         public int TimeFrame { get; set; }      // Таймфрейм в виде 15
-        public string TF { get { return format.TF(TimeFrame); } } // Таймфрейм в виде "15m"
+        public string TF => format.TF(TimeFrame); // Таймфрейм в виде "15m"
         public int RowsCount { get; set; }      // Количество свечей в графике (в таблице)
         public string DateBegin { get; set; }   // Дата начала графика в формате 12.03.2022
         public string DateEnd { get; set; }     // Дата конца графика в формате 12.03.2022
-        public string DatePeriod { get { return $"{DateBegin}-{DateEnd}"; } }  // Диапазон даты от начала до конца всего графика в формате 12.03.2022 - 30.11.2022
+        public string DatePeriod => $"{DateBegin}-{DateEnd}";  // Диапазон даты от начала до конца всего графика в формате 12.03.2022 - 30.11.2022
         public int UnixBegin { get; set; }      // Время начала графика в формате Unix
         public int ConvertedFromId { get; set; }// ID минутного таймфрейма, с которого была произведена конвертация
 
 
-        public double TickSize { get; set; }    // Шаг цены
-        public int NolCount { get; set; }       // Количество нулей после запятой
-        public ulong Exp { get { return format.Exp(NolCount); } }
+        public double TickSize => IUnit.TickSize;    // Шаг цены
+        public int NolCount => IUnit.NolCount;       // Количество нулей после запятой
+        public ulong Exp => format.Exp(NolCount);
     }
 
     /// <summary>
@@ -571,10 +561,15 @@ namespace MrRobot.Entity
     public class CandleUnit
     {
         public CandleUnit() { }
-        // Свечные данные из биржи ByBit
+        // Свечные данные из биржи
         public CandleUnit(dynamic v)
         {
-            Unix   = Convert.ToInt32(v[0].ToString().Substring(0, 10));
+            string str = v[0].ToString();
+            if (str.Contains("000"))
+                Unix = Convert.ToInt32(str.Substring(0, 10));
+            else
+                Unix = format.UnixFromDate(str);
+
             High   = v[2];
             Open   = v[1];
             Close  = v[4];
@@ -620,7 +615,7 @@ namespace MrRobot.Entity
 
 
         public int Unix { get; set; }           // Время свечи в формате Unix согласно Таймфрейму
-        public string DateTime { get { return format.DTimeFromUnix(Unix); } }
+        public string DateTime => format.DTimeFromUnix(Unix);
         public double High { get; set; }        // Максимальная цена свечи
         public double Open { get; set; }        // Цена открытия
         public double Close { get; set; }       // Цена закрытия
@@ -630,7 +625,7 @@ namespace MrRobot.Entity
 
         public int TimeFrame { get; set; } = 1; // Таймфрейм свечи
         int UpdCount { get; set; } = 1;         // Количество обновлений свечи единичными таймфреймами
-        public bool IsFull { get { return UpdCount == TimeFrame; } } // Свеча заполнена единичными таймфреймами
+        public bool IsFull => UpdCount == TimeFrame; // Свеча заполнена единичными таймфреймами
 
 
         // Обновление свечи (для динамического графика)
@@ -724,8 +719,8 @@ namespace MrRobot.Entity
 
 
         // Внесение в базу одной свечи
-        public string Insert { get { return $"({Unix},{High},{Open},{Close},{Low},{Volume})"; } }
-        public string View { get { return $"{DateTime}   ОТКР {Open}   МАКС {High}   МИН {Low}   ЗАКР {Close}"; } }
+        public string Insert => $"({Unix},{High},{Open},{Close},{Low},{Volume})";
+        public string View => $"{DateTime}   ОТКР {Open}   МАКС {High}   МИН {Low}   ЗАКР {Close}";
 
 
         // Обновление первой свечи в графике

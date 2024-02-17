@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
+
 using MrRobot.inc;
 
 namespace MrRobot.Entity
@@ -29,10 +29,9 @@ namespace MrRobot.Entity
             string sql = "SELECT*FROM`_market`ORDER BY`id`";
             foreach (Dictionary<string, string> row in mysql.QueryList(sql))
             {
-                int id = Convert.ToInt32(row["id"]);
-                var unit = new MarketUnit(id, row["name"]);
+                var unit = new MarketUnit(row);
                 MarketList.Add(unit);
-                ID_UNIT.Add(id, unit);
+                ID_UNIT.Add(unit.Id, unit);
             }
             Updated();
         }
@@ -43,6 +42,22 @@ namespace MrRobot.Entity
         /// Единица бмржм на основании ID
         /// </summary>
         public static MarketUnit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
+
+
+        /// <summary>
+        /// Единица бмржм на основании Prefix
+        /// </summary>
+        public static MarketUnit UnitOnPrefix(string prefix)
+        {
+            if (prefix.Length == 0)
+                return null;
+
+            foreach(var unit in MarketList)
+                if(unit.Prefix == prefix)
+                    return unit;
+
+            return null;
+        }
     }
 
 
@@ -51,12 +66,16 @@ namespace MrRobot.Entity
     /// </summary>
     public class MarketUnit
     {
-        public MarketUnit(int id, string name)
+        public MarketUnit(Dictionary<string, string> row)
         {
-            Id = id;
-            Name = name;
+            Id = Convert.ToInt32(row["id"]);
+            Name = row["name"];
+            Prefix = row["prefix"];
+            Url = row["url"];
         }
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Prefix { get; set; }
+        public string Url { get; set; }
     }
 }

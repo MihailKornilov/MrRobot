@@ -153,7 +153,7 @@ namespace MrRobot.Section
         /// </summary>
         void DownloadProcess(CDIparam PARAM, IProgress<decimal> Progress)
         {
-            PARAM.Table = Candle.DataTableCreate(PARAM);
+            PARAM.Table = Candle.DataTableCreate("bybit", PARAM.Symbol, PARAM.TimeFrame, PARAM.NolCount);
 
             DownloadCheck12(PARAM);
 
@@ -172,7 +172,7 @@ namespace MrRobot.Section
                 string url = "https://api.bybit.com/v5/market/kline?category=spot" +
                             "&symbol=" + PARAM.Symbol +
                             "&interval=" + PARAM.TimeFrame +
-                            "&start=" + PARAM.UnixStart + "000" +
+                           $"&start={PARAM.UnixStart}000" +
                             "&limit=1000";
                 string json = wc.DownloadString(url);
 

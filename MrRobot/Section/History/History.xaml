@@ -167,11 +167,10 @@
                                 <ComboBoxItem>1h</ComboBoxItem>
                             </ComboBox>
                             <Button Name="DownloadGoButton"
-                                Content="Загрузить"
-                                Width="80"
-                                Margin="10,0,0,0"
-                                Cursor="Hand"
-                                Click="DownloadGo"/>
+                                    Content="Загрузить"
+                                    Width="80"
+                                    Margin="10,0,0,0"
+                                    Click="DownloadGo"/>
                         </WrapPanel>
 
                         <WrapPanel Name="ProgressPanel" Margin="0,10,0,0" Visibility="Collapsed">

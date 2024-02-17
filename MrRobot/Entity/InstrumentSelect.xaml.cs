@@ -12,11 +12,14 @@ namespace MrRobot.Entity
     {
         public InstrumentSelect()
         {
-            InitializeComponent();
-
-            QuoteCoin();
-
             G.ISPanel = this;
+        }
+
+        public void Init(object s, RoutedEventArgs e)
+        {
+            InitializeComponent();
+            QuoteCoin();
+            ISunit.Init();
         }
 
         /// <summary>
@@ -95,13 +98,13 @@ namespace MrRobot.Entity
         // Ассоциативный массив созданных ссылок
         static Dictionary<string, ISunit> ISlist { get; set; } = new Dictionary<string, ISunit>();
         static ISunit ISU { get; set; }
-        static Border OpenPanel  { get => G.ISPanel.OpenPanel; }
-        static TextBox FindBox   { get => G.ISPanel.FindBox; }
-        static Label FoundCount  { get => G.ISPanel.FoundCount; }
-        static Label FoundCancel { get => G.ISPanel.FoundCancel; }
-        static CheckBox CDIcheck { get => G.ISPanel.CDIcheck; }
-        static ListBox ISBox     { get => G.ISPanel.ISBox; }
-        public static void Init(object sender, RoutedEventArgs RE)
+        static Border OpenPanel  => G.ISPanel.OpenPanel;
+        static TextBox FindBox   => G.ISPanel.FindBox;
+        static Label FoundCount  => G.ISPanel.FoundCount;
+        static Label FoundCancel => G.ISPanel.FoundCancel;
+        static CheckBox CDIcheck => G.ISPanel.CDIcheck;
+        static ListBox ISBox     => G.ISPanel.ISBox;
+        public static void Init()
         {
             FindBox.TextChanged += (s, e) =>
             {
@@ -152,9 +155,9 @@ namespace MrRobot.Entity
         // Показывать циферки со скачанными свечными данными
         public bool WithHistory { get; set; } = false;
         TextBlock TB { get; set; }
-        string Name { get => TB.Name; }
+        string Name => TB.Name;
         string NoSelTxt { get; set; }
-        public string PosPrefix { get => $"{Name}."; }
+        public string PosPrefix => $"{Name}.";
 
         TextBlock X { get; set; }
         // Вставка красного крестика для отмены выбора инструмента
@@ -173,7 +176,7 @@ namespace MrRobot.Entity
         // Текст строки поиска
         string FindTxt
         {
-            get => position.Val($"{PosPrefix}FindTxt", "");
+            get => position.Val($"{PosPrefix}FindTxt");
             set => position.Set($"{PosPrefix}FindTxt", value);
         }
 
@@ -204,8 +207,8 @@ namespace MrRobot.Entity
             get => position.Val($"{PosPrefix}ChosenId", 0);
             set
             {
-                position.Set($"{PosPrefix}ChosenId", value);
-                ChosenApply();
+                   position.Set($"{PosPrefix}ChosenId", value);
+                   ChosenApply();
             }
         }
         // Применение выбранного инструмента
@@ -218,6 +221,6 @@ namespace MrRobot.Entity
             Changed();
         }
 
-        public InstrumentUnit IUnit { get => Instrument.Unit(ChosenId); }
+        public InstrumentUnit IUnit => Instrument.Unit(ChosenId);
     }
 }

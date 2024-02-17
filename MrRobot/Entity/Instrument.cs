@@ -12,7 +12,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Количество доступных инструментов
         /// </summary>
-        public static int Count { get => InstrumentList.Count; }
+        public static int Count => InstrumentList.Count;
 
         /// <summary>
         /// Ассоциативный массив ID и данных об инструменте (для быстрого поиска)
@@ -180,7 +180,7 @@ namespace MrRobot.Entity
 
         public double TickSize { get; set; }    // Шаг цены
         public int NolCount { get; set; }       // Количество нулей после запятой. Получение из TickSize
-        public ulong Exp { get { return format.Exp(NolCount); } } // Cтепень числа 10
+        public ulong Exp => format.Exp(NolCount); // Cтепень числа 10
         public string Status { get; set; }      // Статус инструмента:
                                                 //      "1" - активен
                                                 //      "0" - не активен

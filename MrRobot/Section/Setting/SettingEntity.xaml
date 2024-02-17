@@ -79,7 +79,7 @@
         </Style>
         <!-- Шаблон единицы Биржи -->
         <DataTemplate x:Key="DataMarketItemTmp">
-            <WrapPanel>
+            <WrapPanel Margin="0,4">
                 <Label Content="{Binding Id}"
                        Width="20"
                        Padding="0,0,5,0"
@@ -88,9 +88,18 @@
                        HorizontalContentAlignment="Right"
                        VerticalContentAlignment="Center"/>
                 <TextBox Text="{Binding Name}"
-                         Width="150"
-                         Margin="0,4"
-                         Padding="4,3"
+                         Width="130"
+                         Padding="4"
+                         FontSize="14"/>
+                <TextBox Text="{Binding Prefix}"
+                         Width="80"
+                         Margin="5,0,0,0"
+                         Padding="4"
+                         FontSize="14"/>
+                <TextBox Text="{Binding Url}"
+                         Width="230"
+                         Margin="5,0,0,0"
+                         Padding="4"
                          FontSize="14"/>
             </WrapPanel>
         </DataTemplate>
@@ -119,10 +128,14 @@
 
             <!-- Биржи -->
             <StackPanel Name="DataPanel0" Margin="10,7" HorizontalAlignment="Left" Visibility="Visible">
-                <Label Content="Доступные биржи:" FontSize="13" Foreground="#555" Padding="0"/>
+                <Label Content="Доступные биржи:"
+                       FontSize="15"
+                       Foreground="#555"
+                       Padding="0"
+                       Margin="22,5,0,0"/>
                 <ListBox Name="MarketBox"
                          Margin="0,5,0,0"
-                         Width="200"
+                         Width="500"
                          BorderThickness="0"
                          Background="Transparent"
                          ItemTemplate="{StaticResource DataMarketItemTmp}"

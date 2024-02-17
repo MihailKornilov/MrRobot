@@ -31,31 +31,24 @@ namespace MrRobot.inc
         /// </summary>
         /// 
         /// Входящий вид `date`: 01.03.2023 11:20:00
-        public static int UnixFromDate(string date)
+        ///                      2023-03.01 11:20:00
+        public static int UnixFromDate(string dt)
         {
-            int year = Convert.ToInt32(date.Substring(6, 4));
-            int mon  = Convert.ToInt32(date.Substring(3, 2));
-            int day  = Convert.ToInt32(date.Substring(0, 2));
-
-            int H  = Convert.ToInt32(date.Substring(11, 2));
-            int M  = Convert.ToInt32(date.Substring(14, 2));
-            int S  = Convert.ToInt32(date.Substring(17, 2));
-
-            DateTimeOffset dt = new DateTime(year, mon, day, H, M, S);
-
-            return (int)dt.ToUnixTimeSeconds();
+            DateTimeOffset dtime = Convert.ToDateTime(dt);
+            return (int)dtime.ToUnixTimeSeconds();
         }
         /// <summary>
         /// Получение даты и времени в формате 12.05.2022 12:44
         /// </summary>
         ///
         /// Входящий вид `date`: 12.05.2022 12:44:44
-        public static string DateOne(string date)
-        {
-            return date.Substring(0, 16);
-        }
+        public static string DateOne(string date) => date.Substring(0, 16);
 
 
+        /// <summary>
+        /// Текущее время в виде 12.05.2022 12:45:34
+        /// </summary>
+        public static string DTimeNow() => DateTime.Now.ToString();
         /// <summary>
         /// Получение даты и времени в формате `12.05.2022 12:44:00` по местному времени
         /// </summary>
@@ -80,13 +73,6 @@ namespace MrRobot.inc
             return DTimeFromUnix(unix).Substring(11, 8);
         }
 
-        /// <summary>
-        /// Текущее время в виде 12.05.2022 12:45:34
-        /// </summary>
-        public static string DTimeNow()
-        {
-            return DateTime.Now.ToString();
-        }
 
         /// <summary>
         /// Текущее время в виде 12:45:34
@@ -380,26 +366,6 @@ namespace MrRobot.inc
             byte B = Convert.ToByte(str.Substring(4, 2), 16);
 
             return new SolidColorBrush(Color.FromArgb(255, R, G, B));
-        }
-
-
-
-        private static Dictionary<int, string> Market;
-        /// <summary>
-        /// Получение названия биржи по ID
-        /// </summary>
-        public static string MarketName(int id)
-        {
-            if (Market == null)
-            {
-                string sql = "SELECT `id`,`name` FROM `_market`";
-                Market = mysql.IntStringAss(sql);
-            }
-
-            if (!Market.ContainsKey(id))
-                return "-";
-
-            return Market[id];
         }
     }
 }

@@ -17,8 +17,6 @@ namespace MrRobot.Entity
 
         public MainMenu()
         {
-            G.MW.Loaded += Go;
-
             // Создание главного меню
             var GridMain = G.MW.Content as Panel;
             var grid = GridMain.Children[0] as Panel;
@@ -38,9 +36,18 @@ namespace MrRobot.Entity
             lb.SelectionChanged += Change;
             SP.Children.Add(lb);
             LB = lb;
+            Go();
+
+            //InitAllSections();
         }
 
         static ListBox LB { get; set; }
+
+        void InitAllSections()
+        {
+            for (int i = 1; i <= Enum.GetNames(typeof(SECT)).Length; i++)
+                Init(i);
+        }
 
         /// <summary>
         /// Клик по кнопке меню

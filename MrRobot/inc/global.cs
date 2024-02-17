@@ -3,8 +3,13 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Threading;
 using System.Diagnostics;
+using System.Globalization;
 using static System.Console;
+
+using CefSharp;
+using CefSharp.Wpf;
 
 using MrRobot.Section;
 using MrRobot.Entity;
@@ -13,31 +18,31 @@ namespace MrRobot.inc
 {
     public class G
     {
-        /// <summary>
-        /// Флаги инициализации страниц и всего приложения
-        /// </summary>
-        public static bool[] InitPage { get; set; } = new bool[9];
-        public static bool IsInited(int page = 0)
+        // Глобальные установки
+        public static void Settings()
         {
-            if (InitPage[page])
-                return true;
-            if (page > 0 && position.MainMenu() != page)
-                return true;
+            // Формат даны в виде 03.12.2023 (для календаря)
+            var dtInfo = new DateTimeFormatInfo()
+            {
+                ShortDatePattern = "dd.MM.yyyy",
+                ShortTimePattern = "hh:mm:ss tt",
+                DateSeparator = ".",
+                TimeSeparator = ":"
+            };
+            // Точка вместо запятой в дробных числах
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us")
+            {
+                DateTimeFormat = dtInfo
+            };
 
-            return false;
-        }
-        public static void Inited(int page = 0)
-        {
-            InitPage[page] = true;
-            string pg = page > 0 ? page + "." : "";
+            // Установка каталога кеша для Веб-браузера
+            var Settings = new CefSettings();
+            Settings.CachePath = Directory.GetCurrentDirectory() + @"\CefSharpCache";
+            Cef.Initialize(Settings);
         }
 
-        public static void SectionInited(int id)
-        {
+        public static void SectionInited(int id) =>
             WriteLine($"{id}.{Enum.GetName(typeof(SECT), id)} INITED");
-        }
-
-
 
         // Флаг запущенного АвтоПрогона
         public static bool IsAutoProgon => AutoProgon.Active;

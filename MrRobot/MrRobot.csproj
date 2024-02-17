@@ -617,6 +617,9 @@
     <Content Include="Browser\History\Chart.tmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Browser\MoexIssQueries.tmp.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Browser\Pattern\Chart.tmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

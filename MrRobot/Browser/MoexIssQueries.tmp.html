@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
+    <title>MOEX ISS Queries</title>
+    <style>
+       *{padding:0;margin:0}
+       body{margin: 40px;font-family:'trebuchet ms',sans-serif}
+       a{display:inline-block;font-size:25px;color:mediumblue;text-decoration:none}
+       a:hover{color:blue;text-decoration:underline}
+    </style>
+</head>
+<body>
+    <H1>ISS Queries [security]</H1>
+<br>
+    <a href='https://iss.moex.com/iss/securities.json' target='_blank'>/iss/securities</a>
+    <div>Список бумаг торгуемых на московской бирже.</div>
+<br>
+    <a href='https://iss.moex.com/iss/securities/[security].json' target='_blank'>/iss/securities/[security]</a>
+    <div>Получить спецификацию инструмента.</div>
+<br>
+    <a href='https://iss.moex.com/iss/securities/[security]/indices.json' target='_blank'>/iss/securities/[security]/indices</a>
+    <div>Список индексов в которые входит бумага</div>
+<br>
+    <a href='https://iss.moex.com/iss/securities/[security]/aggregates.json' target='_blank'>/iss/securities/[security]/aggregates</a>
+    <div>Агрегированные итоги торгов за дату по рынкам</div>
+<br>
+    <a href='https://iss.moex.com/iss/index.json' target='_blank'>/iss/index</a>
+    <div>Получить глобальные справочники ISS.</div>
+<br>
+    <a href='https://iss.moex.com/iss/turnovers.json' target='_blank'>/iss/turnovers</a>
+    <div>Получить сводные обороты по рынкам.</div>
+<br>
+    <a href='https://iss.moex.com/iss/turnovers/columns.json' target='_blank'>/iss/turnovers/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/turnovers/columns.json' target='_blank'>/iss/engines/[engine]/turnovers/columns</a>
+    <div>Получить описание полей для запросов оборотов по рынку/торговой системе.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/secstats.json' target='_blank'>/iss/engines/[engine]/markets/[market]/secstats</a>
+    <div>Промежуточные "Итоги дня". Только для фондового рынка</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/turnovers.json' target='_blank'>/iss/engines/[engine]/turnovers</a>
+    <div>Получить текущее значение оборотов торговой сессии по рынкам торговой системы</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/turnovers.json' target='_blank'>/iss/engines/[engine]/markets/[market]/turnovers</a>
+    <div>Получить текущее значение оборота по рынку</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/zcyc.json' target='_blank'>/iss/engines/[engine]/markets/zcyc</a>
+    <div>Получить данные по кривой бескупонной доходности (Прекращены расчеты с 2018-01-03)</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/zcyc.json' target='_blank'>/iss/engines/[engine]/zcyc</a>
+<br>
+    <a href='https://iss.moex.com/iss/history/otc/providers/nsd/markets.json' target='_blank'>/iss/history/otc/providers/nsd/markets</a>
+    <div>Обобщенные данные ОТС ПФИ и РЕПО - список рынков.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/otc/providers/nsd/markets/[market]/daily.json' target='_blank'>/iss/history/otc/providers/nsd/markets/[market]/daily</a>
+    <div>Ежедневные обобщенные данные ОТС ПФИ и РЕПО.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/otc/providers/nsd/markets/[market]/monthly.json' target='_blank'>/iss/history/otc/providers/nsd/markets/[market]/monthly</a>
+    <div>Ежедневные обобщенные данные ОТС ПФИ и РЕПО.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines.json' target='_blank'>/iss/engines</a>
+    <div>Получить доступные торговые системы.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine].json' target='_blank'>/iss/engines/[engine]</a>
+    <div>Получить описание и режим работы торговой системы.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/columns.json' target='_blank'>/iss/engines/[engine]/markets/[market]/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/orderbook/columns.json' target='_blank'>/iss/engines/[engine]/markets/[market]/orderbook/columns</a>
+    <div>Получить описание полей для запросов стакана котировок для рынка.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/columns.json' target='_blank'>/iss/engines/[engine]/markets/[market]/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/securities/columns.json' target='_blank'>/iss/engines/[engine]/markets/[market]/securities/columns</a>
+    <div>Получить описание полей для запросов публикуемых бумаг для рынка.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets.json' target='_blank'>/iss/engines/[engine]/markets</a>
+    <div>Получить список рынков торговой системы. Например: https://iss.moex.com/iss/engines/stock/markets.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/columns.json' target='_blank'>/iss/engines/[engine]/markets/[market]/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/trades/columns.json' target='_blank'>/iss/engines/[engine]/markets/[market]/trades/columns</a>
+    <div>Получить описание полей для запроса сделок по рынку.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market].json' target='_blank'>/iss/engines/[engine]/markets/[market]</a>
+    <div>Получить описание: словарь доступных режимов торгов, описание полей публикуемых таблиц данных и т.д.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/securities.json' target='_blank'>/iss/engines/[engine]/markets/[market]/securities</a>
+    <div>Получить таблицу инструментов торговой сессии по рынку в целом. Например: https://iss.moex.com/iss/engines/stock/markets/shares/securities.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/securities/[security].json' target='_blank'>/iss/engines/[engine]/markets/[market]/securities/[security]</a>
+    <div>Получить данные по конкретному инструменту рынка. Например: https://iss.moex.com/iss/engines/stock/markets/shares/securities/AFLT.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/securities/[security]/trades.json' target='_blank'>/iss/engines/[engine]/markets/[market]/securities/[security]/trades</a>
+    <div>Получить сделки по инструменту. Например: https://iss.moex.com/iss/engines/stock/markets/shares/securities/AFLT/trades.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/securities/[security]/orderbook.json' target='_blank'>/iss/engines/[engine]/markets/[market]/securities/[security]/orderbook</a>
+    <div>Получить стакан заявок по инструменту. Например: https://iss.moex.com/iss/engines/stock/markets/shares/securities/AFLT/orderbook.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/trades.json' target='_blank'>/iss/engines/[engine]/markets/[market]/trades</a>
+    <div>Получить все сделки рынка. Например: https://iss.moex.com/iss/engines/stock/markets/shares/trades.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/orderbook.json' target='_blank'>/iss/engines/[engine]/markets/[market]/orderbook</a>
+    <div>Получить стаканы заявок всех инструментов рынка. Например: https://iss.moex.com/iss/engines/stock/markets/shares/orderbook.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards</a>
+    <div>Получить справочник режимов торгов рынка. Например: https://iss.moex.com/iss/engines/stock/markets/shares/boards.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board].json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards/[board]</a>
+    <div>Получить описание режима торгов. Например: https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/securities.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards/[board]/securities</a>
+    <div>Получить таблицу инструментов по режиму торгов. Например: https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.xml</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security].json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]</a>
+    <div>Получить данные по указанному инструменту на выбранном режиме торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/trades.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/trades</a>
+    <div>Получить все сделки указанного инструмента по выбранному режиму торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/orderbook.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/orderbook</a>
+    <div>Получить стакан котировок указанного инструмента по выбранному режиму торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/securities/[security]/candles.json' target='_blank'>/iss/engines/[engine]/markets/[market]/securities/[security]/candles</a>
+    <div>Получить свечи указанного инструмента по дефолтной группе режимов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/securities/[security]/candleborders.json' target='_blank'>/iss/engines/[engine]/markets/[market]/securities/[security]/candleborders</a>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/candleborders.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/candleborders</a>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/candles.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/candles</a>
+    <div>Получить свечи указанного инструмента по выбранной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/candles.json' target='_blank' style="color: mediumseagreen; font-weight: 700">
+        /iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/candles
+    </a>
+    <div>Получить свечи указанного инструмента по выбранному режиму торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/candleborders.json' target='_blank' style="color: mediumseagreen; font-weight: 700">
+        /iss/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/candleborders
+    </a>
+    <div>Получить период дат рассчитанных свечей.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/trades.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards/[board]/trades</a>
+    <div>Получить все сделки по выбранному режиму торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boards/[board]/orderbook.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boards/[board]/orderbook</a>
+    <div>Получить все лучшие котировки по выбранному режиму торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups</a>
+    <div>Получить справочник групп режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup].json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]</a>
+    <div>Получить описание группы режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities</a>
+    <div>Получить список всех инструментов, торгуемых на выбранной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security].json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]</a>
+    <div>Получить данные по указанному инструменту, торгуемому на выбранной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/trades.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/trades</a>
+    <div>Получить сделки выбранного инструмента, торгуемого на выбранной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/orderbook.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/orderbook</a>
+    <div>Получить лучшие заявки выбранного инструмента, торгуемого на выбранной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/trades.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/trades</a>
+    <div>Получить сделки инструментов, торгуемых на выбранной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/orderbook.json' target='_blank'>/iss/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/orderbook</a>
+    <div>Получить лучшие заявки всех инструментов, торгуемых на выбранной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/columns.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/listing/columns.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/listing/columns</a>
+    <div>Получить описание полей для запросов торгуемости бумаг (листинга)</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/listing.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/listing</a>
+    <div>Список неторгуемых инструментов с указанием интервалов торгуемости по режимам</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boards/[board]/listing.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boards/[board]/listing</a>
+    <div>Получить данные по листингу бумаг в историческом разрезе по указанному режиму</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/listing.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/listing</a>
+    <div>Получить данные по листингу бумаг в историческом разрезе по указанной группе режимов</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/sessions.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/sessions</a>
+    <div>Список сессий доступных в итогах торгов. Только для фондового рынка!</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/sessions/[session]/securities.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/sessions/[session]/securities</a>
+    <div>Получить историю по всем бумагам на рынке за одну дату.</div>
+    <div>Например: https://iss.moex.com/iss/history/engines/stock/markets/index/securities.xml?date=2010-11-22</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/sessions/[session]/securities/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/sessions/[session]/securities/[security]</a>
+    <div>Получить историю по одной бумаге на рынке за интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/session/[session]/boardgroups/[boardgroup]/securities.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/session/[session]/boardgroups/[boardgroup]/securities</a>
+    <div>Получить историю торгов для всех бумаг на указанной группе режимов торгов за указанную дату.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/sessions/[session]/boardgroups/[boardgroup]/securities/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/sessions/[session]/boardgroups/[boardgroup]/securities/[security]</a>
+    <div>Получить историю торгов для указанной бумаги на выбранной группе режимов торгов за указанный интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/sessions/[session]/boards/[board]/securities.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/sessions/[session]/boards/[board]/securities</a>
+    <div>Получить историю торгов для всех бумаг на указанном режиме торгов отфильтрованных по дате.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/sessions/[session]/boards/[board]/securities/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/sessions/[session]/boards/[board]/securities/[security]</a>
+    <div>Получить историю торгов для указанной бумаги на указанном режиме торгов за указанный интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/columns.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/[securities]/columns.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/[securities]/columns</a>
+    <div>Получить описание полей для запросов исторических данных по бумагам для рынка.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/stock/markets/shares/securities/changeover.json' target='_blank'>/iss/history/engines/stock/markets/shares/securities/changeover</a>
+    <div>Информация по техническому изменению торговых кодов</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/stock/zcyc.json' target='_blank'>/iss/history/engines/stock/zcyc</a>
+    <div>История изменения параметров КБД (Кривая Бескупоной Доходности).</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/securities.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/securities</a>
+    <div>Получить историю по всем бумагам на рынке за одну дату.</div>
+    <div>Например: https://iss.moex.com/iss/history/engines/stock/markets/index/securities.xml?date=2010-11-22</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/yields.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/yields</a>
+    <div>Получить историю рассчитанных доходностей для всех бумаг на указанном режиме торгов отфильтрованных по дате.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/dates.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/dates</a>
+    <div>Получить даты, за которые доступны данные на указанных рынке и торговой системе.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/securities/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/securities/[security]</a>
+    <div>Получить историю по одной бумаге на рынке за интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/yields/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/yields/[security]</a>
+    <div>Получить историю доходностей по одной бумаге на рынке за интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/securities/[security]/dates.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/securities/[security]/dates</a>
+    <div>Получить интервал дат в истории для указанного рынка и бумаги.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boards/[board]/dates.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boards/[board]/dates</a>
+    <div>Получить интервал дат, доступных в истории для рынка по заданному режиму торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boards/[board]/securities.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boards/[board]/securities</a>
+    <div>Получить историю торгов для всех бумаг на указанном режиме торгов отфильтрованных по дате.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boards/[board]/yields.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boards/[board]/yields</a>
+    <div>Получить историю доходностей для всех бумаг на указанном режиме торгов отфильтрованных по дате.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boards/[board]/securities/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boards/[board]/securities/[security]</a>
+    <div>Получить историю торгов для указанной бумаги на указанном режиме торгов за указанный интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boards/[board]/yields/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boards/[board]/yields/[security]</a>
+    <div>Получить историю доходностей для указанной бумаги на указанном режиме торгов за указанный интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/dates.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boards/[board]/securities/[security]/dates</a>
+    <div>Получить интервал дат в истории, за которые доступна указанная бумага на рынке на указанном режиме торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/dates.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/dates</a>
+    <div>Получить интервал дат для указанной группы режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities</a>
+    <div>Получить историю аукционов даркпул отфильтрованных по дате.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]</a>
+    <div>Получить историю аукционов даркпул за интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities</a>
+    <div>Получить историю торгов для всех бумаг на указанной группе режимов торгов за указанную дату.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/yields.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/yields</a>
+    <div>Получить доходности торгов для всех бумаг на указанной группе режимов торгов за указанную дату.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]</a>
+    <div>Получить историю торгов для указанной бумаги на выбранной группе режимов торгов за указанный интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/yields/[security].json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/yields/[security]</a>
+    <div>Получить историю доходностей для указанной бумаги на выбранной группе режимов торгов за указанный интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/dates.json' target='_blank'>/iss/history/engines/[engine]/markets/[market]/boardgroups/[boardgroup]/securities/[security]/dates</a>
+    <div>Получить интервал дат для указанной бумаги на заданной группе режимов торгов.</div>
+<br>
+    <a href='https://iss.moex.com/iss/archives/engines/[engine]/markets/[market]/[datatype]/years.json' target='_blank'>/iss/archives/engines/[engine]/markets/[market]/[datatype]/years</a>
+    <div>Список годов, за которые существуют ссылки на файлы с архивом сделок и исторической биржевой информацией. datatype может принимать значения securities или trades.</div>
+<br>
+    <a href='https://iss.moex.com/iss/archives/engines/[engine]/markets/[market]/[datatype]/[period].json' target='_blank'>/iss/archives/engines/[engine]/markets/[market]/[datatype]/[period]</a>
+    <div>Получить список ccылок на годовые/месячные/дневные файлы с архивом сделок и исторической биржевой информацией. datatype может принимать значения securities или trades. period может принимать значения yearly, monthly или daily. Помесячные данные доступны только за последние 30 дней.</div>
+<br>
+    <a href='https://iss.moex.com/iss/archives/engines/[engine]/markets/[market]/[datatype]/years/[year]/months.json' target='_blank'>/iss/archives/engines/[engine]/markets/[market]/[datatype]/years/[year]/months</a>
+    <div>Список месяцев в году, за которые существуют ссылки на файлы с архивом сделок и исторической биржевой информацией. datatype может принимать значения securities или trades.</div>
+<br>
+    <a href='https://iss.moex.com/iss/securitygroups.json' target='_blank'>/iss/securitygroups</a>
+    <div>Группы ценных бумаг</div>
+<br>
+    <a href='https://iss.moex.com/iss/securitygroups/[securitygroup].json' target='_blank'>/iss/securitygroups/[securitygroup]</a>
+    <div>Группа ценных бумаг</div>
+<br>
+    <a href='https://iss.moex.com/iss/securitygroups/[securitygroup]/collections.json' target='_blank'>/iss/securitygroups/[securitygroup]/collections</a>
+    <div>Коллекции ценных бумаг входящие в группу</div>
+<br>
+    <a href='https://iss.moex.com/iss/securitygroups/[securitygroup]/collections/[collection].json' target='_blank'>/iss/securitygroups/[securitygroup]/collections/[collection]</a>
+    <div>Коллекция ценных бумаг входящие в группу</div>
+<br>
+    <a href='https://iss.moex.com/iss/securitygroups/[securitygroup]/collections/[collection]/securities.json' target='_blank'>/iss/securitygroups/[securitygroup]/collections/[collection]/securities</a>
+    <div>Описание инструментов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/assets.json' target='_blank'>/iss/statistics/engines/futures/markets/options/assets</a>
+    <div>Опционные серии</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/assets/[asset].json' target='_blank'>/iss/statistics/engines/futures/markets/options/assets/[asset]</a>
+    <div>Опционные серии</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/assets/[asset]/volumes.json' target='_blank'>/iss/statistics/engines/futures/markets/options/assets/[asset]/volumes</a>
+    <div>Объем торгов для опционной серии</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/assets/[asset]/optionboard.json' target='_blank'>/iss/statistics/engines/futures/markets/options/assets/[asset]/optionboard</a>
+    <div>Доска опционов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/assets/[asset]/openpositions.json' target='_blank'>/iss/statistics/engines/futures/markets/options/assets/[asset]/openpositions</a>
+    <div>Открытые позиции по опционной серии</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/assets/[asset]/turnovers.json' target='_blank'>/iss/statistics/engines/futures/markets/options/assets/[asset]/turnovers</a>
+    <div>Объем торгов для опционной серии</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/forts/series.json' target='_blank'>/iss/statistics/engines/futures/markets/forts/series</a>
+    <div>Список фьючерсов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/series.json' target='_blank'>/iss/statistics/engines/futures/markets/options/series</a>
+    <div>Опционные серии</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/options/series/[series_name]/securities.json' target='_blank'>/iss/statistics/engines/futures/markets/options/series/[series_name]/securities</a>
+    <div>Опционные серии</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/complex/securities.json' target='_blank'>/iss/statistics/complex/securities</a>
+    <div>Маркировка сложных финансовых инструментов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/complex/securities/[security].json' target='_blank'>/iss/statistics/complex/securities/[security]</a>
+    <div>Маркировка сложных финансовых инструментов - Инструмент</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/shares/correlations.json' target='_blank'>/iss/statistics/engines/stock/markets/shares/correlations</a>
+    <div>Коэффициенты корелляции фондового рынка</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/currency/markets/selt/rates.json' target='_blank'>/iss/statistics/engines/currency/markets/selt/rates</a>
+    <div>Курсы ЦБРФ</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/splits.json' target='_blank'>/iss/statistics/engines/stock/splits</a>
+    <div>Справочник дроблений и консолидаций бумаг фондового рынка</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/splits/[security].json' target='_blank'>/iss/statistics/engines/stock/splits/[security]</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/state/markets/repo/mirp.json' target='_blank'>/iss/statistics/engines/state/markets/repo/mirp</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/state/markets/repo/dealers.json' target='_blank'>/iss/statistics/engines/state/markets/repo/dealers</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/state/markets/repo/cboper.json' target='_blank'>/iss/statistics/engines/state/markets/repo/cboper</a>
+    <div>Средневзвешенные ставки по операциям центрального банка</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/deviationcoeffs.json' target='_blank'>/iss/statistics/engines/stock/deviationcoeffs</a>
+    <div>Показатели для определения критериев существенного отклонения</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/quotedsecurities.json' target='_blank'>/iss/statistics/engines/stock/quotedsecurities</a>
+    <div>Cписок акций, по которым рассчитывается рыночная котировка</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/currentprices.json' target='_blank'>/iss/statistics/engines/stock/currentprices</a>
+    <div>Текущие цены бумаг</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/bonds/monthendaccints.json' target='_blank'>/iss/statistics/engines/stock/markets/bonds/monthendaccints</a>
+    <div>НКД на конец месяца</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/columns.json' target='_blank'>/iss/statistics/engines/stock/markets/index/analytics/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/index/bulletins.json' target='_blank'>/iss/statistics/engines/stock/markets/index/bulletins</a>
+    <div>Бюллетени для индексов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/index/rusfar.json' target='_blank'>/iss/statistics/engines/stock/markets/index/rusfar</a>
+    <div>RUSFAR расшифровка показателей</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/securitieslisting.json' target='_blank'>/iss/statistics/engines/stock/securitieslisting</a>
+    <div>Таблица соответствия торгуемых ценных бумаг по режимам торгов</div>
+<br>
+    <a href='https://iss.moex.com/iss/sitenews.json' target='_blank'>/iss/sitenews</a>
+    <div>Новости биржи</div>
+<br>
+    <a href='https://iss.moex.com/iss/sitenews/[news_id].json' target='_blank'>/iss/sitenews/[news_id]</a>
+    <div>Новость сайта</div>
+<br>
+    <a href='https://iss.moex.com/iss/events.json' target='_blank'>/iss/events</a>
+    <div>Мероприятия биржи</div>
+<br>
+    <a href='https://iss.moex.com/iss/events/[event_id].json' target='_blank'>/iss/events/[event_id]</a>
+    <div>Контент мероприятия биржи</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/bonds/aggregates.json' target='_blank'>/iss/statistics/engines/stock/markets/bonds/aggregates</a>
+    <div>Агрегированные показатели рынка облигаций</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/bonds/aggregates/columns.json' target='_blank'>/iss/statistics/engines/stock/markets/bonds/aggregates/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics.json' target='_blank'>/iss/statistics/engines/stock/markets/index/analytics</a>
+    <div>Индексы фондового рынка</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/[indexid].json' target='_blank'>/iss/statistics/engines/stock/markets/index/analytics/[indexid]</a>
+    <div>Аналитические показатели за дату</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/[indexid]/tickers.json' target='_blank'>/iss/statistics/engines/stock/markets/index/analytics/[indexid]/tickers</a>
+    <div>Список тикеров за все время торгов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/[indexid]/tickers/[ticker].json' target='_blank'>/iss/statistics/engines/stock/markets/index/analytics/[indexid]/tickers/[ticker]</a>
+    <div>Информация по тикеру</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/stock/capitalization.json' target='_blank'>/iss/statistics/engines/stock/capitalization</a>
+    <div>Капитализация фондового рынка</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/stock/totals/boards.json' target='_blank'>/iss/history/engines/stock/totals/boards</a>
+    <div>Список режимов обобщенной информации по фондовому рынку</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/stock/totals/securities.json' target='_blank'>/iss/history/engines/stock/totals/securities</a>
+    <div>Обобщенная информация по фондовому рынку</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/stock/totals/boards/[board]/securities.json' target='_blank'>/iss/history/engines/stock/totals/boards/[board]/securities</a>
+    <div>Обобщенная информация по фондовому рынку по выбранному режиму</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/engines/stock/totals/boards/[board]/securities/[security].json' target='_blank'>/iss/history/engines/stock/totals/boards/[board]/securities/[security]</a>
+    <div>Обобщенная информация по фондовому рынку по выбранному режиму и инструменту</div>
+<br>
+    <a href='https://iss.moex.com/iss/rms/engines/[engine]/objects/irr.json' target='_blank'>/iss/rms/engines/[engine]/objects/irr</a>
+    <div>Индикаторы риска</div>
+<br>
+    <a href='https://iss.moex.com/iss/rms/engines/[engine]/objects/irr/filters.json' target='_blank'>/iss/rms/engines/[engine]/objects/irr/filters</a>
+    <div>Доступные параметры фильтрации для индикаторов рисков</div>
+<br>
+    <a href='https://iss.moex.com/iss/rms/engines/[engine]/objects/settlementscalendar.json' target='_blank'>/iss/rms/engines/[engine]/objects/settlementscalendar</a>
+    <div>Календарь расчетных дней</div>
+<br>
+    <a href='https://iss.moex.com/iss/rms/engines/[engine]/objects/[object].json' target='_blank'>/iss/rms/engines/[engine]/objects/[object]</a>
+    <div>Минимальные ограничительные уровни ставок обеспечения и лимиты концентрации на срочном рынке</div>
+<br>
+    <a href='https://iss.moex.com/iss/rms/engines/[engine]/objects/[object].json' target='_blank'>/iss/rms/engines/[engine]/objects/[object]</a>
+    <div>Статические параметры</div>
+<br>
+    <a href='https://iss.moex.com/iss/rms/engines/[engine]/objects/[object].json' target='_blank'>/iss/rms/engines/[engine]/objects/[object]</a>
+    <div>Статические параметры по ключевым срокам</div>
+<br>
+    <a href='https://iss.moex.com/iss/rms/engines/[engine]/objects/[object].json' target='_blank'>/iss/rms/engines/[engine]/objects/[object]</a>
+    <div>Параметры процентных фьючерсов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/state/rates.json' target='_blank'>/iss/statistics/engines/state/rates</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/state/rates/columns.json' target='_blank'>/iss/statistics/engines/state/rates/columns</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/[engine]/derivatives/[report_name].json' target='_blank'>/iss/statistics/engines/[engine]/derivatives/[report_name]</a>
+    <div>Еженедельные отчеты по валютным деривативам: numtrades - Информация о количестве договоров по инструментам, являющимся производными финансовыми инструментами (по валютным парам) participants - Информация о количестве лиц, имеющих открытые позиции по инструментам, являющимся производными финансовыми инструментами (по валютным парам) openpositions - Информация об открытых позициях по инструментам, являющимся производными финансовыми инструментами (по валютным парам) expirationparticipants - Информация о количестве лиц, имеющих открытые позиции по договорам, являющимся производными финансовыми инструментами (по срокам экспирации) expirationopenpositions - Информация об объеме открытых позиций по договорам, являющимся производными финансовыми инструментами (по срокам экспирации)</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/[engine]/monthly/[report_name].json' target='_blank'>/iss/statistics/engines/[engine]/monthly/[report_name]</a>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/currency/markets/fixing/[security].json' target='_blank'>/iss/statistics/engines/currency/markets/fixing/[security]</a>
+    <div>Фиксинги Московской биржи</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/indicativerates/securities.json' target='_blank'>/iss/statistics/engines/futures/markets/indicativerates/securities</a>
+    <div>Индикативные курсы валют срочного рынка</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/futures/markets/indicativerates/securities/[security].json' target='_blank'>/iss/statistics/engines/futures/markets/indicativerates/securities/[security]</a>
+    <div>Индикативный курс валют срочного рынка</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/currency/markets/fixing.json' target='_blank'>/iss/statistics/engines/currency/markets/fixing</a>
+    <div>Фиксинги Московской биржи</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/[engine]/markets/[market].json' target='_blank'>/iss/statistics/engines/[engine]/markets/[market]</a>
+    <div>Курсы переоценки коллатеральных инструментов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/[engine]/markets/[market]/securities.json' target='_blank'>/iss/statistics/engines/[engine]/markets/[market]/securities</a>
+    <div>Курсы переоценки коллатеральных инструментов</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/engines/[engine]/markets/[market]/securities/[security].json' target='_blank'>/iss/statistics/engines/[engine]/markets/[market]/securities/[security]</a>
+    <div>Курсы переоценки коллатеральных инструментов. Инструмент за интервал дат.</div>
+<br>
+    <a href='https://iss.moex.com/iss/analyticalproducts/netflow2/securities.json' target='_blank'>/iss/analyticalproducts/netflow2/securities</a>
+<br>
+    <a href='https://iss.moex.com/iss/analyticalproducts/netflow2/securities/[security].json' target='_blank'>/iss/analyticalproducts/netflow2/securities/[security]</a>
+<br>
+    <a href='https://iss.moex.com/iss/analyticalproducts/futoi/securities.json' target='_blank'>/iss/analyticalproducts/futoi/securities</a>
+<br>
+    <a href='https://iss.moex.com/iss/analyticalproducts/futoi/securities/[security].json' target='_blank'>/iss/analyticalproducts/futoi/securities/[security]</a>
+<br>
+    <a href='https://iss.moex.com/iss/analyticalproducts/curves/securities.json' target='_blank'>/iss/analyticalproducts/curves/securities</a>
+    <div>Будущие ставки для ценообразования нестандартных инструментов (деривативов)</div>
+<br>
+    <a href='https://iss.moex.com/iss/analyticalproducts/curves/securities/[security].json' target='_blank'>/iss/analyticalproducts/curves/securities/[security]</a>
+    <div>Будущие ставки для ценообразования нестандартных инструментов (деривативов)</div>
+<br>
+    <a href='https://iss.moex.com/iss/history/statistics/markup/[markup_name]/[markup_type].json' target='_blank'>/iss/history/statistics/markup/[markup_name]/[markup_type]</a>
+    <div>Сложные финансовые инструменты исторический срез.</div>
+<br>
+    <a href='https://iss.moex.com/iss/statistics/markup/[markup_name]/[markup_type]/[markup_view].json' target='_blank'>/iss/statistics/markup/[markup_name]/[markup_type]/[markup_view]</a>
+    <div>Сложные финансовые инструменты срез на текущую дату</div>
+<br>
+    <a href='https://iss.moex.com/iss/sdfi/curves/securities.json' target='_blank'>/iss/sdfi/curves/securities</a>
+    <div>Своп-кривые на рынке СПФИ</div>
+</body>
+</html>

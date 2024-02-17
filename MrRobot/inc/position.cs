@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using static System.Console;
 
 namespace MrRobot.inc
@@ -44,8 +43,6 @@ namespace MrRobot.inc
 		/// </summary>
 		public static void Set(string key, string val)
 		{
-			if (!G.IsInited())
-				return;
 			if (Insert(key, val))
 				return;
 			if (ASS[key] == val)
@@ -57,7 +54,7 @@ namespace MrRobot.inc
 
 			ASS[key] = val;
 		}
-		public static void Set(string key, int val) => Set(key, val.ToString());
+		public static void Set(string key, int val)  => Set(key, val.ToString());
 		public static void Set(string key, bool val) => Set(key, val ? "1" : "0");
 
 
@@ -67,7 +64,6 @@ namespace MrRobot.inc
 		public static string Val(string key, string val="")
 		{
 			Insert(key, val);
-
 			return ASS[key];
 		}
 		public static int Val(string key, int val)

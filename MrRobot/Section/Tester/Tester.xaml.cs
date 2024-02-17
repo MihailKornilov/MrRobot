@@ -55,13 +55,13 @@ namespace MrRobot.Section
             if (position.MainMenu() != (int)SECT.Tester)
                 return;
 
-            RobotPanel.Visibility = CDIpanel.CdiId == 0 ? Visibility.Hidden : Visibility.Visible;
+            G.Vis(RobotPanel, CDIpanel.CdiId > 0);
             RobotsListBox.SelectedIndex = 0;
 
             if (CDIpanel.CdiId == 0)
                 return;
 
-            UseTF1Check.Visibility = CDIpanel.CdiUnit().ConvertedFromId == 0 ? Visibility.Collapsed : Visibility.Visible;
+            G.Vis(UseTF1Check, CDIpanel.CdiUnit().ConvertedFromId > 0);
 
             if (!G.IsAutoProgon)
                 EChart.CDI("Tester", CDIpanel.CdiUnit());
@@ -83,7 +83,7 @@ namespace MrRobot.Section
         /// </summary>
         public void RobotLogWidthSet(object sender, SizeChangedEventArgs e)
         {
-            if (position.MainMenu() != 4)
+            if (position.MainMenu() != (int)SECT.Tester)
                 return;
 
             if (RobotLogList.ActualWidth == 0)
@@ -115,12 +115,9 @@ namespace MrRobot.Section
         /// </summary>
         void VisualChecked(object sender, RoutedEventArgs e)
         {
-            if (!G.IsInited())
-                return;
-
             Visualization = (bool)VisualCheck.IsChecked;
             position.Set("4_VisualCheck.IsChecked", Visualization);
-            NoVisualButton.Visibility = Visualization ? Visibility.Collapsed : Visibility.Visible;
+            NoVisualButton.Visibility = G.Vis(!Visualization);
             GlobalInit();
         }
     }
