@@ -151,7 +151,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Connector\ByBit.cs" />
+    <Compile Include="Connector\BYBIT.cs" />
     <Compile Include="Entity\AdvChart.cs" />
     <Compile Include="Entity\CDIselectPanel.xaml.cs">
       <DependentUpon>CDIselectPanel.xaml</DependentUpon>
@@ -169,6 +169,7 @@
     <Compile Include="Connector\MOEX.cs" />
     <Compile Include="Entity\Patterns.cs" />
     <Compile Include="inc\HttpServer.cs" />
+    <Compile Include="Interface\IIunit.cs" />
     <Compile Include="Section\Converter\Converter.xaml.cs">
       <DependentUpon>Converter.xaml</DependentUpon>
     </Compile>

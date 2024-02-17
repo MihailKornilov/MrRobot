@@ -324,16 +324,13 @@ namespace MrRobot.Section
                 return;
 
             CandlesDuplicate.Text = format.Num(param.FoundCount);
-            IterationsCount.Text = format.Num(param.Iterations);
+            IterationsCount.Text  = format.Num(param.Iterations);
             IterationsTime.Text = param.Duration;
         }
         /// <summary>
         /// Нажатие на кнопку `Отмена`
         /// </summary>
-        void SearchCancel(object sender, RoutedEventArgs e)
-        {
-            SPARAM.IsProcess = false;
-        }
+        void SearchCancel(object s, RoutedEventArgs e) => SPARAM.IsProcess = false;
 
         /// <summary>
         /// Подготовка найденных паттернов перед внесением в базу

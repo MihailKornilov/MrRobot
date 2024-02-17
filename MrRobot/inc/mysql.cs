@@ -27,6 +27,10 @@ namespace MrRobot.inc
         static Dur dur;             // Измерение скорости запроса
 
 
+        public delegate void dlgt(MySqlDataReader rs);
+        public static dlgt OutMethod = (MySqlDataReader rs) => { };
+
+
         public mysql(string sql, bool isRes = false)
         {
             try
@@ -521,6 +525,24 @@ namespace MrRobot.inc
             PARAM.ProсessInfo = "";
 
             return PatternList;
+        }
+
+
+
+
+
+
+
+
+        /// <summary>
+        /// Запрос списка с использованием делегата
+        /// </summary>
+        public static void List(string sql)
+        {
+            new mysql(sql, true);
+            while (res.Read())
+                OutMethod(res);
+            Finish(sql);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace MrRobot.Entity
 
             sql = "SELECT*" +
                   "FROM`_instrument`" +
-                  "WHERE`marketId`=1 " +
+                  "WHERE`exchangeId`=1 " +
                   "ORDER BY`quoteCoin`,`baseCoin`";
             foreach (Dictionary<string, string> v in mysql.QueryList(sql))
             {
@@ -44,15 +44,14 @@ namespace MrRobot.Entity
                 var Unit = new InstrumentUnit
                 {
                     Id = Id,
-                    MarketId = Convert.ToInt32(v["marketId"]),
+                    MarketId = Convert.ToInt32(v["exchangeId"]),
                     Symbol = v["symbol"],
                     BasePrecision = Convert.ToDouble(v["basePrecision"]),
-                    QuotePrecision = Convert.ToDouble(v["quotePrecision"]),
                     MinOrderQty = Convert.ToDouble(v["minOrderQty"]),
                     HistoryBegin = format.DateOne(v["historyBegin"]),
                     CdiCount = ASS.ContainsKey(Id) ? ASS[Id] : 0,
                     TickSize = Convert.ToDouble(v["tickSize"]),
-                    Status = v["status"],
+                    Status = v["isTrading"],
 
                     BaseCoin = v["baseCoin"],
                     QuoteCoin = v["quoteCoin"]
@@ -109,11 +108,6 @@ namespace MrRobot.Entity
 
             return null;
         }
-        public static InstrumentUnit Unit(string IdS)
-        {
-            int id = Convert.ToInt32(IdS);
-            return Unit(id);
-        }
 
         /// <summary>
         /// Один инструмент по Symbol в виде "BTC/USDT"
@@ -145,32 +139,34 @@ namespace MrRobot.Entity
     public class InstrumentUnit
     {
         public string Num { get; set; }
-
-        // ID инструмента
-        public int Id { get; set; }
-
+        public int Id { get; set; }             // ID инструмента
         public int MarketId { get; set; }       // ID биржи из `_market`
-        public string Name => $"{BaseCoin}/{QuoteCoin}";       // Название инструмента в виде "BTC/USDT"
-        public string Symbol { get; set; }      // Название инструмента в виде "BTCUSDT"
 
-        public double BasePrecision { get; set; }
-        public double QuotePrecision { get; set; }
-        public double MinOrderQty { get; set; }
-        public string HistoryBegin { get; set; }// Дата начала истории инструмента
+        public string Name => $"{BaseCoin}/{QuoteCoin}";       // Название инструмента в виде "BTC/USDT"
+
         public int CdiCount { get; set; }       // Количество скачанных свечных данных (графиков)
         public SolidColorBrush CdiCountColor => format.RGB(CdiCount > 0 ? "#777777" : "#FFFFFF");
 
-        public double TickSize { get; set; }    // Шаг цены
         public int Decimals => format.Decimals(TickSize);  // Количество нулей после запятой
         public string Status { get; set; }      // Статус инструмента:
                                                 //      "1" - активен
                                                 //      "0" - не активен
+        public string HistoryBegin { get; set; }// Дата начала истории инструмента
+
+
+
+
+
+        public string BaseCoin { get; set; }    // Название базовой монеты
+        public string QuoteCoin { get; set; }   // Название котировочной монеты
+        public string Symbol { get; set; }      // Название инструмента в виде "BTCUSDT"
+        public double BasePrecision { get; set; }
+        public double MinOrderQty { get; set; }
+        public double TickSize { get; set; }    // Шаг цены
 
 
 
         // ---=== ДЛЯ РОБОТА ===---
-        public string BaseCoin { get; set; }    // Название базовой монеты
-        public string QuoteCoin { get; set; }   // Название котировочной монеты
         public double BaseBalance {  get; set; }// Баланс базовой монеты
         public double QuoteBalance {  get; set; }// Баланс котировочной монеты
         public double BaseCommiss { get; set; } // Сумма комиссий исполненных ордеров базовой монеты

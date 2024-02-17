@@ -120,8 +120,8 @@ namespace MrRobot.Section
             Instrument.CdiCountUpd(SourceUnit.InstrumentId);
 
 
-            ConvertGoButton.Visibility = Visibility.Visible;
-            ProcessPanel.Visibility = Visibility.Collapsed;
+            G.Vis(ConvertGoButton);
+            G.Hid(ProcessPanel);
             TFpanel.IsEnabled = true;
             ResultListCreate();
 

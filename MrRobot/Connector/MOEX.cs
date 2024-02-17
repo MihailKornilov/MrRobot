@@ -9,9 +9,8 @@ using static System.Console;
 
 using Newtonsoft.Json;
 using MrRobot.inc;
-using MrRobot.Section;
-using static MrRobot.Connector.MOEX;
 using MrRobot.Entity;
+using MrRobot.Section;
 
 namespace MrRobot.Connector
 {

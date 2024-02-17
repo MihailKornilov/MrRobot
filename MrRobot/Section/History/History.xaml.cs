@@ -263,10 +263,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Отмена процесса загрузки
         /// </summary>
-        void DownloadCancel(object sender, RoutedEventArgs e)
-        {
-            DownloadParam.IsProcess = false;
-        }
+        void DownloadCancel(object s, RoutedEventArgs e) => DownloadParam.IsProcess = false;
 
         #endregion
 
@@ -276,7 +273,6 @@ namespace MrRobot.Section
         /// <summary>
         /// Список загруженных свечных данных по конкретному инструменту
         /// </summary>
-        /// iid - ID инструмента из `_instrument`
         public void DownloadedListCreate()
         {
             if (IUnit == null)

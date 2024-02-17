@@ -20,8 +20,8 @@ namespace MrRobot.Section
         static bool IsWork = false;
 
         static string Symbol;// Выбранный инструмент
-        static int bp;       // Количество нулей после запятой в базовой монете (BasePrecision)
-        static int qp;       // Количество нулей после запятой в котировочной монете (NolCount)
+        static int bp { get; set; }// Количество нулей после запятой в базовой монете (BasePrecision)
+        static int qp { get; set; }// Количество нулей после запятой в котировочной монете (NolCount)
 
         static int DepthRows = 9;  // Количество строк, выводимых в стакане
         static int TradeRows = 100;// Количество строк, выводимых в сделках

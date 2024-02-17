@@ -517,7 +517,7 @@ namespace MrRobot.Entity
         public int Num { get; set; }            // Порядковый номер
         public int Id { get; set; }             // ID инфо свечных данных из `_candle_data_info`
         public int MarketId { get; set; }       // ID биржи
-        public int InstrumentId { get; set; }   // ID инструмента из `_instrument`
+        public int InstrumentId { get; set; }   // ID инструмента
         InstrumentUnit IUnit => Instrument.Unit(InstrumentId);   // Данные об инструменте
         public string Symbol => IUnit.Symbol;   // Название инструмента в виде "BTCUSDT"
         public string Name => IUnit.Name;       // Название инструмента в виде "BTC/USDT"

@@ -26,10 +26,10 @@ namespace MrRobot.Section
 
             InitializeComponent();
 
-            ApiKey.Text = ByBit.ApiKey;
-            ApiKey.TextChanged += ByBit.ApiKeyChanged;
-            ApiSecret.Password = ByBit.ApiSecret;
-            ApiSecret.PasswordChanged += ByBit.ApiSecretChanged;
+            ApiKey.Text = BYBIT.ApiKey;
+            ApiKey.TextChanged += BYBIT.ApiKeyChanged;
+            ApiSecret.Password = BYBIT.ApiSecret;
+            ApiSecret.PasswordChanged += BYBIT.ApiSecretChanged;
             ApiQueryTB.Text = ApiQuery;
 
             new ISunit(TradeIS);

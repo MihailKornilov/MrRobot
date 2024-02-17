@@ -78,7 +78,6 @@ namespace MrRobot.Section
                 {
                     var unit = mass[symbol];
                     InstrumentValueCheck(unit, "basePrecision", unit.BasePrecision, lsf.basePrecision);
-                    InstrumentValueCheck(unit, "quotePrecision", unit.QuotePrecision, lsf.quotePrecision);
                     InstrumentValueCheck(unit, "minOrderQty", unit.MinOrderQty, lsf.minOrderQty);
                     InstrumentValueCheck(unit, "tickSize", unit.TickSize, v.priceFilter.tickSize);
                     InstrumentValueCheck(unit, "status", unit.Status, v.status == "Trading" ? "1" : "0");
@@ -94,9 +93,7 @@ namespace MrRobot.Section
                                 "`baseCoin`," +
                                 "`quoteCoin`," +
                                 "`basePrecision`," +
-                                "`quotePrecision`," +
                                 "`minOrderQty`," +
-                                "`minOrderAmt`," +
                                 "`tickSize`" +
                              ")VALUES(" +
                                $"{marketId}," +
@@ -104,9 +101,7 @@ namespace MrRobot.Section
                                $"'{v.baseCoin}'," +
                                $"'{v.quoteCoin}'," +
                                $"{lsf.basePrecision}," +
-                               $"{lsf.quotePrecision}," +
                                $"{lsf.minOrderQty}," +
-                               $"{lsf.minOrderAmt}," +
                                $"{v.priceFilter.tickSize}" +
                               ")";
                 var instr = new InstrumentUnit

@@ -7,9 +7,7 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
-using MrRobot.Section;
 using MrRobot.Connector;
-using System.Threading.Tasks;
 
 namespace MrRobot
 {
@@ -28,6 +26,7 @@ namespace MrRobot
             new Candle();
             new Robots();
             new CDIpanel();
+            new BYBIT();
             new MOEX();
             new HttpServer();
 

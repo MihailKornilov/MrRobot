@@ -123,17 +123,6 @@ namespace MrRobot.inc
             var nfi = new NumberFormatInfo { NumberGroupSeparator = " " };
             return num.ToString("N0", nfi);
         }
-        public static string Num(double num)
-        {
-            var nfi = new NumberFormatInfo { NumberGroupSeparator = " " };
-            return num.ToString("N0", nfi);
-        }
-        public static string Num(object num)
-        {
-            double v = Convert.ToDouble(num);
-            var nfi = new NumberFormatInfo { NumberGroupSeparator = " " };
-            return v.ToString("N0", nfi);
-        }
 
 
         public static string Coin(double num)
@@ -210,8 +199,6 @@ namespace MrRobot.inc
 
             return ass;
         }
-
-
         /// <summary>
         /// Перевод таймфрейма из минут в текст
         /// </summary>
@@ -224,7 +211,6 @@ namespace MrRobot.inc
 
             return ass[key];
         }
-
         /// <summary>
         /// Перевод таймфрейма из текстовых минут в числовые
         /// </summary>
@@ -241,6 +227,7 @@ namespace MrRobot.inc
 
             return ass[key];
         }
+
 
         /// <summary>
         /// Откидывание лишних нулей справа в дробных числах
