@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Windows.Media;
 using MrRobot.inc;
 
 namespace MrRobot.Entity
@@ -29,7 +29,7 @@ namespace MrRobot.Entity
                             "COUNT(`id`)" +
                          "FROM`_candle_data_info`" +
                          "GROUP BY`instrumentId`";
-            var CountAss = mysql.IntStringAss(sql);
+            var ASS = mysql.IntAss(sql);
 
             InstrumentList = new List<InstrumentUnit>();
             IdUnitAss = new Dictionary<int, InstrumentUnit>();
@@ -45,15 +45,13 @@ namespace MrRobot.Entity
                 {
                     Id = Id,
                     MarketId = Convert.ToInt32(v["marketId"]),
-                    Name = v["baseCoin"] + "/" + v["quoteCoin"],
                     Symbol = v["symbol"],
                     BasePrecision = Convert.ToDouble(v["basePrecision"]),
                     QuotePrecision = Convert.ToDouble(v["quotePrecision"]),
                     MinOrderQty = Convert.ToDouble(v["minOrderQty"]),
                     HistoryBegin = format.DateOne(v["historyBegin"]),
-                    CandleDataCount = CountAss.ContainsKey(Id) ? CountAss[Id] : "",
+                    CdiCount = ASS.ContainsKey(Id) ? ASS[Id] : 0,
                     TickSize = Convert.ToDouble(v["tickSize"]),
-                    NolCount = format.NolCount(v["tickSize"]),
                     Status = v["status"],
 
                     BaseCoin = v["baseCoin"],
@@ -78,7 +76,7 @@ namespace MrRobot.Entity
             {
                 if (isTxt && !v.Name.Contains(txt.ToUpper()))
                     continue;
-                if (isHist && v.CandleDataCount.Length == 0)
+                if (isHist && v.CdiCount == 0)
                     continue;
 
                 v.Num = num++ + ".";
@@ -137,26 +135,9 @@ namespace MrRobot.Entity
 
 
         /// <summary>
-        /// Прибавление количества свечных данных инструмента
+        /// Обновление количества свечных данных инструмента
         /// </summary>
-        public static void DataCountPlus(int id, int add = 1)
-        {
-            var unit = Unit(id);
-            int count = add;
-            if(unit.CandleDataCount != "")
-                count = Convert.ToInt32(unit.CandleDataCount) + add;
-            unit.CandleDataCount = count.ToString();
-        }
-
-        /// <summary>
-        /// Убавление количества свечных данных инструмента
-        /// </summary>
-        public static void DataCountMinus(int id)
-        {
-            var unit = Unit(id);
-            int count = Convert.ToInt32(unit.CandleDataCount) - 1;
-            unit.CandleDataCount = count > 0 ? count.ToString() : "";
-        }
+        public static void CdiCountUpd(int id) => Unit(id).CdiCount = Candle.CdiCount(id);
     }
 
 
@@ -169,18 +150,18 @@ namespace MrRobot.Entity
         public int Id { get; set; }
 
         public int MarketId { get; set; }       // ID биржи из `_market`
-        public string Name { get; set; }        // Название инструмента в виде "BTC/USDT"
+        public string Name => $"{BaseCoin}/{QuoteCoin}";       // Название инструмента в виде "BTC/USDT"
         public string Symbol { get; set; }      // Название инструмента в виде "BTCUSDT"
 
         public double BasePrecision { get; set; }
         public double QuotePrecision { get; set; }
         public double MinOrderQty { get; set; }
         public string HistoryBegin { get; set; }// Дата начала истории инструмента
-        public string CandleDataCount { get; set; }// Количество скачанных свечных данных (графиков)
+        public int CdiCount { get; set; }       // Количество скачанных свечных данных (графиков)
+        public SolidColorBrush CdiCountColor => format.RGB(CdiCount > 0 ? "#777777" : "#FFFFFF");
 
         public double TickSize { get; set; }    // Шаг цены
-        public int NolCount { get; set; }       // Количество нулей после запятой. Получение из TickSize
-        public ulong Exp => format.Exp(NolCount); // Cтепень числа 10
+        public int Decimals => format.Decimals(TickSize);  // Количество нулей после запятой
         public string Status { get; set; }      // Статус инструмента:
                                                 //      "1" - активен
                                                 //      "0" - не активен
@@ -196,9 +177,9 @@ namespace MrRobot.Entity
         public double QuoteCommiss { get; set; }// Сумма комиссий исполненных ордеров базовой котировочной монеты
 
         public int CdiId { get; set; }          // ID свечных данных
-        public string Table { get { return Candle.Unit(CdiId).Table; } }        // Имя таблицы со свечами
-        public int RowsCount { get { return Candle.Unit(CdiId).RowsCount; } }   // Количество свечей в графике (в таблице)
-        public int TimeFrame { get { return Candle.Unit(CdiId).TimeFrame; } }   // Таймферйм
-        public string TF { get { return Candle.Unit(CdiId).TF; } } // Таймфрейм 10m
+        public string Table => Candle.Unit(CdiId).Table;        // Имя таблицы со свечами
+        public int RowsCount => Candle.Unit(CdiId).RowsCount;   // Количество свечей в графике (в таблице)
+        public int TimeFrame => Candle.Unit(CdiId).TimeFrame;   // Таймферйм
+        public string TF => Candle.Unit(CdiId).TF; // Таймфрейм 10m
     }
 }

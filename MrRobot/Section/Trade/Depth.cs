@@ -65,8 +65,8 @@ namespace MrRobot.Section
             Bid = new SortedDictionary<double, double>();
 
             var Instr = Instrument.UnitOnSymbol(Symbol);
-            bp = format.NolCount(Instr.BasePrecision);
-            qp = Instr.NolCount;
+            bp = format.Decimals(Instr.BasePrecision);
+            qp = Instr.Decimals;
 
             G.Trade.DepthHeadPrice.Content = $"Цена({Instr.QuoteCoin})";
             G.Trade.DepthHeadQty.Content = $"Кол-во({Instr.BaseCoin})";

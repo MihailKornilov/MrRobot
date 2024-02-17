@@ -124,7 +124,7 @@ namespace MrRobot.Section
                 TimeFrame = format.TimeFrame((string)TFitem.Content),
                 UnixStart = format.UnixFromDay(SetupDateBegin.Text),
                 UnixFinish = UnixFinish(),
-                NolCount = format.NolCount(IUnit.TickSize),
+                NolCount = IUnit.Decimals,
                 CC = 0
             };
 
@@ -143,7 +143,7 @@ namespace MrRobot.Section
                 return;
 
             new Candle();
-            Instrument.DataCountPlus(IUnit.Id);
+            Instrument.CdiCountUpd(IUnit.Id);
 
             AutoProgon.Converter();
         }

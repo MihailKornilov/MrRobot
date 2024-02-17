@@ -17,11 +17,11 @@
                        HorizontalContentAlignment="Right"
                        Foreground="#999"/>
                 <Label Content="{Binding Name}" Width="135" Padding="0,2"/>
-                <Label Content="{Binding CandleDataCount}"
+                <Label Content="{Binding CdiCount}"
                        Width="30"
                        Padding="0,2"
                        FontWeight="Medium"
-                       Foreground="#777"
+                       Foreground="{Binding CdiCountColor}"
                        Visibility="{Binding ElementName=CDIcheck,Path=Visibility}"
                        HorizontalContentAlignment="Center"/>
             </StackPanel>

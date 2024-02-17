@@ -101,7 +101,7 @@ namespace MrRobot.Section
             {
                 Id = SourceUnit.Id,
                 Symbol = SourceUnit.Symbol,
-                NolCount = SourceUnit.NolCount,
+                NolCount = SourceUnit.Decimals,
                 ConvertedIds = new int[CheckedTF.Length],
                 Progress = new Progress<decimal>(v =>
                 {
@@ -117,7 +117,8 @@ namespace MrRobot.Section
             await Task.Run(() => ConvertProcess(ConvertParam, CheckedTF));
 
             new Candle();
-            Instrument.DataCountPlus(SourceUnit.InstrumentId, CheckedTF.Length);
+            Instrument.CdiCountUpd(SourceUnit.InstrumentId);
+
 
             ConvertGoButton.Visibility = Visibility.Visible;
             ProcessPanel.Visibility = Visibility.Collapsed;

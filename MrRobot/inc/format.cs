@@ -258,7 +258,7 @@ namespace MrRobot.inc
         /// <summary>
         /// Количество нулей после запятой
         /// </summary>
-        public static int NolCount(string num)
+        public static int Decimals(string num)
         {
             num = NolDrop(num);
             string[] split = num.Split('.');
@@ -268,7 +268,7 @@ namespace MrRobot.inc
 
             return split[1].Length;
         }
-        public static int NolCount(double num)
+        public static int Decimals(double num)
         {
             string[] split = E(num).Split('.');
 
@@ -276,10 +276,6 @@ namespace MrRobot.inc
                 return 0;
 
             return split[1].Length;
-        }
-        public static int NolCount(decimal num)
-        {
-            return NolCount(Convert.ToDouble(num));
         }
 
         /// <summary>

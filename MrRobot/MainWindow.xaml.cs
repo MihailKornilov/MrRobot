@@ -38,7 +38,7 @@ namespace MrRobot
             Loaded += MouseHookInit;
             Loaded += G.ISPanel.Init;
             Loaded += (s, e) => new MainMenu();
-            SizeChanged += Depth.SizeChanged;
+            //SizeChanged += Depth.SizeChanged;
             SizeChanged += G.Tester.RobotLogWidthSet;
             Closed += HttpServer.Stop;
 

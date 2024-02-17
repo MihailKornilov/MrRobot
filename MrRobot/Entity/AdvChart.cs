@@ -33,8 +33,8 @@ namespace MrRobot.Entity
         }
 
 
-        string PathTmp  { get => Path.GetFullPath($"Browser/AdvChart/index.tmp.html"); }
-        string PathHtml { get => Path.GetFullPath($"Browser/AdvChart/index.html"); }
+        string PathTmp  => Path.GetFullPath($"Browser/AdvChart/index.tmp.html");
+        string PathHtml => Path.GetFullPath($"Browser/AdvChart/index.html");
 
         bool PageCreate(CDIunit unit)
         {
@@ -60,7 +60,7 @@ namespace MrRobot.Entity
                 line = line.Replace("TIME_FRAME", unit.TimeFrame.ToString());
                 line = line.Replace("CANDLES_COUNT", Candle.CountTxt(unit.RowsCount, false));
                 line = line.Replace("EXP", unit.Exp.ToString());
-                line = line.Replace("NOL_COUNT", unit.NolCount.ToString());
+                line = line.Replace("NOL_COUNT", unit.Decimals.ToString());
                 write.WriteLine(line);
             }
             read.Close();

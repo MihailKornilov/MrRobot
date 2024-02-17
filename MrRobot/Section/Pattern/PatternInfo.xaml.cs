@@ -63,7 +63,7 @@ namespace MrRobot.Section
                         //$"{cList[0].Unix} " +
                         $"{format.DTimeFromUnix(cList[0].Unix)}  " +
                         $"Size: {patt.Size}\n" +
-                        $"{CandleList(cList, CDI.NolCount)}" +
+                        $"{CandleList(cList, CDI.Decimals)}" +
                         $"\n";
             }
 

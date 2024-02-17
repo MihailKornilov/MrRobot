@@ -447,7 +447,7 @@ namespace MrRobot.Section
             int Width = (int)FoundLinePanel.ActualWidth;
             int Height = (int)FoundLinePanel.ActualHeight;
 
-            for(int i = 0; i < found.UnixList.Count; i++)
+            for (int i = 0; i < found.UnixList.Count; i++)
             {
                 int unix = found.UnixList[i];
                 double dist = (unix - CDI.UnixBegin) / 60 / CDI.TimeFrame;

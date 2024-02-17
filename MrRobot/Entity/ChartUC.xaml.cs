@@ -131,7 +131,7 @@ namespace MrRobot.Entity
                 line = line.Replace("VOLUME_DATA",  $"[\n{data[1]}]");
 
                 line = line.Replace("TICK_SIZE", CdiUnit.TickSize.ToString());
-                line = line.Replace("NOL_COUNT", CdiUnit.NolCount.ToString());
+                line = line.Replace("NOL_COUNT", CdiUnit.Decimals.ToString());
                 write.WriteLine(line);
             }
             read.Close();
@@ -201,7 +201,7 @@ namespace MrRobot.Entity
             {
                 line = line.Replace("TITLE", Title);
                 line = line.Replace("TICK_SIZE", CdiUnit.TickSize.ToString());
-                line = line.Replace("NOL_COUNT", CdiUnit.NolCount.ToString());
+                line = line.Replace("NOL_COUNT", CdiUnit.Decimals.ToString());
                 line = line.Replace("CANDLES_DATA", candlesData);
                 line = line.Replace("RANGE_BEGIN", rangeBegin.ToString());
                 line = line.Replace("RANGE_END", rangeEnd.ToString());
@@ -237,7 +237,7 @@ namespace MrRobot.Entity
             {
                 line = line.Replace("TITLE", Title);
                 line = line.Replace("TICK_SIZE", CdiUnit.TickSize.ToString());
-                line = line.Replace("NOL_COUNT", CdiUnit.NolCount.ToString());
+                line = line.Replace("NOL_COUNT", CdiUnit.Decimals.ToString());
                 line = line.Replace("CANDLES_DATA", candlesData);
                 line = line.Replace("RANGE_BEGIN", rangeBegin.ToString());
                 line = line.Replace("RANGE_END", rangeEnd.ToString());
@@ -289,15 +289,12 @@ namespace MrRobot.Entity
             var read = new StreamReader(PathTmp);
             var write = new StreamWriter(PathHtml);
 
-            string tickSize = CdiUnit.TickSize.ToString();
-            string nolCount = CdiUnit.NolCount.ToString();
-
             string line;
             while ((line = read.ReadLine()) != null)
             {
                 line = line.Replace("TITLE", Title);
-                line = line.Replace("TICK_SIZE", tickSize);
-                line = line.Replace("NOL_COUNT", nolCount);
+                line = line.Replace("TICK_SIZE", CdiUnit.TickSize.ToString());
+                line = line.Replace("NOL_COUNT", CdiUnit.Decimals.ToString());
                 write.WriteLine(line);
             }
             read.Close();
@@ -343,7 +340,7 @@ namespace MrRobot.Entity
                 line = line.Replace("CANDLES_DATA", CANDLES_DATA);
                 line = line.Replace("VOLUMES_DATA", VOLUMES_DATA);
                 line = line.Replace("TICK_SIZE", unit.TickSize.ToString());
-                line = line.Replace("NOL_COUNT", unit.NolCount.ToString());
+                line = line.Replace("NOL_COUNT", unit.Decimals.ToString());
                 write.WriteLine(line);
             }
             read.Close();

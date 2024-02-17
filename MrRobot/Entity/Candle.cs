@@ -43,12 +43,12 @@ namespace MrRobot.Entity
                     Id = Convert.ToInt32(v["id"]),
                     MarketId = Convert.ToInt32(v["marketId"]),
                     InstrumentId = Convert.ToInt32(v["instrumentId"]),
+                    Table = v["table"],
+                    TimeFrame = Convert.ToInt32(v["timeFrame"]),
+                    RowsCount = Convert.ToInt32(v["rowsCount"]),
                     DateBegin = v["begin"].Substring(0, 10),
                     DateEnd = v["end"].Substring(0, 10),
                     UnixBegin = format.UnixFromDate(v["begin"]),
-                    TimeFrame = Convert.ToInt32(v["timeFrame"]),
-                    Table = v["table"],
-                    RowsCount = Convert.ToInt32(v["rowsCount"]),
                     ConvertedFromId = Convert.ToInt32(v["convertedFromId"])
                 };
                 CDIlist.Add(Unit);
@@ -78,7 +78,7 @@ namespace MrRobot.Entity
         /// <summary>
         /// Получение группы свечных данных
         /// </summary>
-        public static List<CDIunit> ListGroup(string txt = "")
+        public static List<CDIunit> ListGroup()
         {
             var ass = new Dictionary<string, int>();
             var send = new List<CDIunit>();
@@ -206,6 +206,15 @@ namespace MrRobot.Entity
             return mysql.CandlesDataCache(sql);
         }
 
+        // Количество свечных данных для конкретного инструмента
+        public static int CdiCount(int iid)
+        {
+            int count = 0;
+            foreach(var cdi in CDIlist)
+                if(cdi.InstrumentId == iid)
+                    count++;
+            return count;
+        }
 
         /// <summary>
         /// Удаление единицы свечных данных из списка
@@ -237,8 +246,8 @@ namespace MrRobot.Entity
             sql = $"DELETE FROM`_pattern_search`WHERE`cdiId`={id}";
             mysql.Query(sql);
 
-            Instrument.DataCountMinus(unit.InstrumentId);
             new Candle();
+            Instrument.CdiCountUpd(unit.InstrumentId);
         }
 
 
@@ -524,8 +533,8 @@ namespace MrRobot.Entity
 
 
         public double TickSize => IUnit.TickSize;    // Шаг цены
-        public int NolCount => IUnit.NolCount;       // Количество нулей после запятой
-        public ulong Exp => format.Exp(NolCount);
+        public int Decimals => IUnit.Decimals;       // Количество нулей после запятой
+        public ulong Exp => format.Exp(Decimals);
     }
 
     /// <summary>
