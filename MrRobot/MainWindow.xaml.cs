@@ -7,6 +7,7 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
+using MrRobot.Section;
 using MrRobot.Connector;
 
 namespace MrRobot
@@ -30,32 +31,27 @@ namespace MrRobot
             new MOEX();
             new HttpServer();
 
-            InitializeComponent();
+			WriteLine($"BYBIT: {BYBIT.Instrument.Unit(10).SymbolName}");
+
+
+			InitializeComponent();
             G.MW = this;
             DataContext = new MWsizeDC();
 
             Loaded += MouseHookInit;
             Loaded += G.ISPanel.Init;
-            Loaded += (s, e) => new MainMenu();
-            //SizeChanged += Depth.SizeChanged;
-            SizeChanged += G.Tester.RobotLogWidthSet;
+            Loaded += (s, e) =>
+            {
+                new MainMenu();
+				SizeChanged += Depth.SizeChanged;
+				SizeChanged += G.Tester.RobotLogWidthSet;
+			};
             Closed += HttpServer.Stop;
 
             string txt = $"Загружено за {dur.Second()} сек.";
             G.LogWrite(txt);
              WriteLine(txt);
         }
-
-
-        //async void EntityLoad()
-        //{
-        //    WriteLine("EntityLoad");
-        //    var dr = new Dur();
-        //    await Task.Run(() =>
-        //    {
-        //   });
-        //    dr.SecondCWL();
-        //}
 
 
         void AppLoadControl()

@@ -2,13 +2,10 @@
 using System.Text;
 using System.Net.Http;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Controls;
 using System.Security.Cryptography;
-using System.Collections.Generic;
 using static System.Console;
 
-using MySqlConnector;
 using Newtonsoft.Json;
 
 using MrRobot.inc;
@@ -18,15 +15,42 @@ namespace MrRobot.Connector
 {
     public class BYBIT
     {
-        public const int ExchangeId = 1;        // ID биржи ByBit
+        const int ExchangeId = 1;        // ID биржи ByBit
 
-        public BYBIT()
+        public static _Instrument Instrument { get; set; }
+
+		public BYBIT()
         {
-            new Instrument();
+			string sql = "SELECT*" +
+			             "FROM`_instrument`" +
+			            $"WHERE`exchangeId`={ExchangeId} " +
+			             "ORDER BY`quoteCoin`,`baseCoin`";
+			Instrument = new _Instrument(sql);
         }
 
+		public class _Instrument : Spisok
+        {
+            public override SpisokUnit UnitSubInit(SpisokUnit unit, dynamic res)
+            {
+				unit.Symbol        = res.GetString("symbol");
+				unit.BaseCoin      = res.GetString("baseCoin");
+				unit.QuoteCoin     = res.GetString("quoteCoin");
+				unit.HistoryBegin  = res.GetMySqlDateTime("historyBegin").ToString();
+				unit.BasePrecision = res.GetDouble("basePrecision");
+				unit.MinOrderQty   = res.GetDouble("minOrderQty");
+				unit.TickSize      = res.GetDouble("tickSize");
+				unit.IsTrading     = res.GetInt16("isTrading") == 1;
+				return unit;
+            }
+			public _Instrument(string sql) : base(sql) { }
+		}
 
-        public static string ApiKey
+
+
+
+		#region API
+
+		public static string ApiKey
         {
             get => position.Val("5_ApiKey_Text");
             set => position.Set("5_ApiKey_Text", value);
@@ -75,85 +99,8 @@ namespace MrRobot.Connector
             return json;
         }
 
-
-
-        public class Instrument
-        {
-            static List<InstrumentUnit> UnitList { get; set; }
-            static Dictionary<int, InstrumentUnit> ID_UNIT { get; set; }
-            public Instrument()
-            {
-                UnitList = new List<InstrumentUnit>();
-                ID_UNIT = new Dictionary<int, InstrumentUnit>();
-
-                string sql = "SELECT*" +
-                             "FROM`_instrument`" +
-                            $"WHERE`exchangeId`={ExchangeId} " +
-                             "ORDER BY`quoteCoin`,`baseCoin`";
-                mysql.OutMethod += UnitAdd;
-                mysql.List(sql);
-                mysql.OutMethod -= UnitAdd;
-            }
-            // Внесение инструмента из базы в список через делегат
-            public static void UnitAdd(MySqlDataReader res)
-            {
-                var unit = new InstrumentUnit(res);
-                UnitList.Add(unit);
-                ID_UNIT.Add(unit.Id, unit);
-            }
-        }
-    }
-
-
-    // Данные об инструменте
-    public class InstrumentUnit : IIunit, IIunitBYBIT
-    {
-        public InstrumentUnit(MySqlDataReader res)
-        {
-            Id = res.GetInt32("id");
-            Symbol = res.GetString("symbol");
-            BaseCoin = res.GetString("baseCoin");
-            QuoteCoin = res.GetString("quoteCoin");
-            HistoryBegin = res.GetMySqlDateTime("historyBegin").ToString();
-            IsTrading = res.GetInt16("isTrading") == 1;
-            BasePrecision = res.GetDouble("basePrecision");
-            MinOrderQty = res.GetDouble("minOrderQty");
-            TickSize = res.GetDouble("tickSize");
-        }
-
-
-        public string Num { get; set; }             // Порядковый номер для вывода в списке
-        public int Id { get; set; }                 // ID инструмента
-        public string Name                          //Название инструмента в виде "BTC/USDT"
-        {
-            get => $"{BaseCoin}/{QuoteCoin}";
-            set { }
-        }
-        public string Symbol { get; set; }          // Название инструмента в виде "BTCUSDT"
-
-        public string HistoryBegin { get; set; }    // Дата начала истории свечных данных
-        public int Decimals                         // Количество нулей после запятой
-        {
-            get => format.Decimals(TickSize);
-            set { }
-        }           
-        public bool IsTrading { get; set; }         // Инструмент торгуется или нет
-
-        public int CdiCount { get; set; }           // Количество скачанных свечных данных
-        public SolidColorBrush CdiCountColor        // Скрытие количества, если 0
-        {
-            get => format.RGB(CdiCount > 0 ? "#777777" : "#FFFFFF");
-            set { }
-        }
-
-
-
-        public string BaseCoin { get; set; }        // Название базовой монеты
-        public string QuoteCoin { get; set; }       // Название котировочной монеты
-        public double BasePrecision { get; set; }   // Точность базовой монеты
-        public double MinOrderQty { get; set; }     // Минимальная сумма ордера
-        public double TickSize { get; set; }        // Шаг цены
-    }
+		#endregion
+	}
 }
 
 

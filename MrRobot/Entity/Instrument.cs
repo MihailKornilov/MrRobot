@@ -7,12 +7,9 @@ namespace MrRobot.Entity
 {
     public class Instrument
     {
-        static List<InstrumentUnit> InstrumentList { get; set; }
+		#region реализовано
 
-        /// <summary>
-        /// Количество доступных инструментов
-        /// </summary>
-        public static int Count => InstrumentList.Count;
+		static List<InstrumentUnit> InstrumentList { get; set; }
 
         /// <summary>
         /// Ассоциативный массив ID и данных об инструменте (для быстрого поиска)
@@ -24,7 +21,8 @@ namespace MrRobot.Entity
         /// </summary>
         public Instrument()
         {
-            string sql = "SELECT" +
+
+			string sql = "SELECT" +
                             "`instrumentId`," +
                             "COUNT(`id`)" +
                          "FROM`_candle_data_info`" +
@@ -60,12 +58,30 @@ namespace MrRobot.Entity
                 InstrumentList.Add(Unit);
                 IdUnitAss.Add(Id, Unit);
             }
-        }
+		}
 
-        /// <summary>
-        /// Список инструментов с учётом поиска
-        /// </summary>
-        public static List<InstrumentUnit> ListBox(string txt = "")
+		/// <summary>
+		/// Один инструмент по ID
+		/// </summary>
+		public static InstrumentUnit Unit(int Id)
+		{
+			if (IdUnitAss.ContainsKey(Id))
+				return IdUnitAss[Id];
+
+			return null;
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Количество доступных инструментов
+		/// </summary>
+		public static int Count => InstrumentList.Count;
+
+		/// <summary>
+		/// Список инструментов с учётом поиска
+		/// </summary>
+		public static List<InstrumentUnit> ListBox(string txt = "")
         {
             var list = new List<InstrumentUnit>();
             bool isHist = txt == "/HISTORY";
@@ -98,16 +114,6 @@ namespace MrRobot.Entity
 
 
 
-        /// <summary>
-        /// Один инструмент по ID
-        /// </summary>
-        public static InstrumentUnit Unit(int Id)
-        {
-            if (IdUnitAss.ContainsKey(Id))
-                return IdUnitAss[Id];
-
-            return null;
-        }
 
         /// <summary>
         /// Один инструмент по Symbol в виде "BTC/USDT"

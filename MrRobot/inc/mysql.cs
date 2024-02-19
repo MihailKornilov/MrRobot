@@ -28,7 +28,6 @@ namespace MrRobot.inc
 
 
         public delegate void dlgt(MySqlDataReader rs);
-        public static dlgt OutMethod = (MySqlDataReader rs) => { };
 
 
         public mysql(string sql, bool isRes = false)
@@ -74,10 +73,25 @@ namespace MrRobot.inc
         }
 
 
-        /// <summary>
-        /// Получение названия таблицы из запроса
-        /// </summary>
-        static string TableName(string sql)
+
+		/// <summary>
+		/// Запрос списка с использованием делегата
+		/// </summary>
+		public static void Delegat(string sql, dlgt method)
+		{
+			new mysql(sql, true);
+			while (res.Read())
+				method(res);
+			Finish(sql);
+		}
+
+
+
+
+		/// <summary>
+		/// Получение названия таблицы из запроса
+		/// </summary>
+		static string TableName(string sql)
         {
             bool isFrom = false;
             foreach (string str in sql.ToLower().Split('`'))
@@ -525,24 +539,6 @@ namespace MrRobot.inc
             PARAM.ProсessInfo = "";
 
             return PatternList;
-        }
-
-
-
-
-
-
-
-
-        /// <summary>
-        /// Запрос списка с использованием делегата
-        /// </summary>
-        public static void List(string sql)
-        {
-            new mysql(sql, true);
-            while (res.Read())
-                OutMethod(res);
-            Finish(sql);
         }
     }
 }

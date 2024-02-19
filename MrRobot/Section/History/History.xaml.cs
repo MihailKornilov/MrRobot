@@ -23,7 +23,7 @@ namespace MrRobot.Section
         {
             G.History = this;
             MainMenu.Init += Init;
-        }
+		}
 
         void Init(int id)
         {
