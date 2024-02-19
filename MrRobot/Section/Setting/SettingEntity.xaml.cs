@@ -3,6 +3,7 @@ using System.Windows.Controls;
 
 using MrRobot.inc;
 using MrRobot.Entity;
+using MrRobot.Interface;
 
 namespace MrRobot.Section
 {
@@ -54,12 +55,12 @@ namespace MrRobot.Section
         /////////// БИРЖИ ///////////////////////////////////////////////////
         void Data_Market()
         {
-            MarketBox.ItemsSource = Market.ListAll();
+            MarketBox.ItemsSource = G.Exchange.ListAll;
             MarketSaveButton.Click += (s, e) =>
             {
                 for(int i = 0; i < MarketBox.Items.Count; i++)
                 {
-                    var unit = MarketBox.Items[i] as MarketUnit;
+                    var unit = MarketBox.Items[i] as SpisokUnit;
 
                     if (unit.Name.Trim().Length == 0)
                         continue;
@@ -74,7 +75,7 @@ namespace MrRobot.Section
 
                 G.Hid(MarketSaveButton);
                 G.Vis(MarketSaveOk);
-                new Market();
+                new Exchange();
             };
             MarketSaveOkTB.MouseLeftButtonDown += (s, e) =>
             {

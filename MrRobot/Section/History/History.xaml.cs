@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 using MrRobot.inc;
 using MrRobot.Entity;
+using MrRobot.Connector;
 
 namespace MrRobot.Section
 {
@@ -56,7 +57,7 @@ namespace MrRobot.Section
         /// Вывод количества инструментов в заголовке
         /// </summary>
         void HeadCountWrite() =>
-            IHeadCount.Text = $"{Instrument.Count} инструмент{format.End(Instrument.Count, "", "а", "ов")}";
+            IHeadCount.Text = $"{BYBIT.Instrument.Count} инструмент{format.End(BYBIT.Instrument.Count, "", "а", "ов")}";
 
         /// <summary>
         /// Выбран инструмент в списке

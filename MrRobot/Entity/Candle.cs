@@ -329,7 +329,7 @@ namespace MrRobot.Entity
             if (!mysql.CandleDataCheck(table))
                 WriteLine($"Ошибка в последовательности таблицы `{table}`.");
 
-            int ExchangeId = Market.UnitOnPrefix(prefix).Id;
+            int ExchangeId = G.Exchange.UnitOnPrefix(prefix).Id;
             int iid = 0;
             switch (ExchangeId)
             {

@@ -248,7 +248,7 @@
     </Compile>
     <Compile Include="Entity\Candle.cs" />
     <Compile Include="Entity\Instrument.cs" />
-    <Compile Include="Entity\Market.cs" />
+    <Compile Include="Entity\Exchange.cs" />
     <Compile Include="Entity\Robots.cs" />
     <Compile Include="inc\format.cs" />
     <Compile Include="inc\global.cs" />

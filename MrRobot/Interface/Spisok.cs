@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
@@ -8,30 +9,57 @@ namespace MrRobot.Interface
 {
     public class Spisok
     {
+		public delegate void DLGT();
+		public DLGT Updated { get; set; }
+
 		/// <summary>
 		/// Список 
 		/// </summary>
 		List<SpisokUnit> UnitList { get; set; }
 
 		/// <summary>
+		/// Количество доступных единиц списка
+		/// </summary>
+		public int Count => UnitList.Count;
+
+		/// <summary>
+		/// Весь список
+		/// </summary>
+		public List<SpisokUnit> ListAll => UnitList;
+
+		/// <summary>
 		/// Ассоциативный массив списка по ID
 		/// </summary>
 		Dictionary<int, SpisokUnit> ID_UNIT { get; set; }
 
-		public virtual SpisokUnit UnitSubInit(SpisokUnit unit, dynamic res) => unit;
+		/// <summary>
+		/// Основной запрос для получения списка (обязательно для переопределения)
+		/// </summary>
+		public virtual string SQL { get; }
 
-		public Spisok(string sql)
+		/// <summary>
+		/// Виртуальный метод для инициализации единицы списка (переопределять не обязательно)
+		/// </summary>
+		public virtual SpisokUnit UnitInitSecond(SpisokUnit unit, dynamic res) => unit;
+
+		public Spisok()
 		{
+			// !!! Переделать на выплывающее сообщение в приложении
+			if(SQL == null)
+				throw new Exception("Свойство SQL должно быть обязательно переопределено.");
+
 			UnitList = new List<SpisokUnit>();
 			ID_UNIT = new Dictionary<int, SpisokUnit>();
 
-			mysql.Delegat(sql, res =>
+			mysql.Delegat(SQL, res =>
 			{
 				var unit = new SpisokUnit(res);
-				unit = UnitSubInit(unit, res);
+				unit = UnitInitSecond(unit, res);
 				UnitList.Add(unit);
 				ID_UNIT.Add(unit.Id, unit);
 			});
+
+			Updated?.Invoke();
 		}
 
 		/// <summary>
@@ -73,5 +101,11 @@ namespace MrRobot.Interface
 		public double TickSize { get; set; }        // Шаг цены
 		public int Decimals =>						// Количество нулей после запятой
 			format.Decimals(TickSize);
+
+
+		// ---=== Exchange ===---
+		public string Name { get; set; }            // Имя единицы списка
+		public string Prefix { get; set; }			// Префикс для таблиц в базе
+		public string Url { get; set; }				// Адрес сайта биржи
 	}
 }

@@ -21,16 +21,17 @@ namespace MrRobot.Connector
 
 		public BYBIT()
         {
-			string sql = "SELECT*" +
-			             "FROM`_instrument`" +
-			            $"WHERE`exchangeId`={ExchangeId} " +
-			             "ORDER BY`quoteCoin`,`baseCoin`";
-			Instrument = new _Instrument(sql);
+			Instrument = new _Instrument();
         }
 
 		public class _Instrument : Spisok
         {
-            public override SpisokUnit UnitSubInit(SpisokUnit unit, dynamic res)
+			public override string SQL =>
+                "SELECT*" +
+				"FROM`_instrument`" +
+			   $"WHERE`exchangeId`={ExchangeId} " +
+				"ORDER BY`quoteCoin`,`baseCoin`";
+            public override SpisokUnit UnitInitSecond(SpisokUnit unit, dynamic res)
             {
 				unit.Symbol        = res.GetString("symbol");
 				unit.BaseCoin      = res.GetString("baseCoin");
@@ -42,7 +43,6 @@ namespace MrRobot.Connector
 				unit.IsTrading     = res.GetInt16("isTrading") == 1;
 				return unit;
             }
-			public _Instrument(string sql) : base(sql) { }
 		}
 
 

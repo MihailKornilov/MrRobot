@@ -162,7 +162,7 @@ namespace MrRobot.Section
             var SubBar = new ProBar(SourceData.Count);
             PARAM.Progress.Report(0);
 
-            string TableName = Candle.DataTableCreate(Market.Unit(SourceUnit.MarketId).Name,
+            string TableName = Candle.DataTableCreate(G.Exchange.Unit(SourceUnit.MarketId).Name,
                                                       PARAM.Symbol,
                                                       PARAM.TimeFrame,
                                                       PARAM.NolCount);

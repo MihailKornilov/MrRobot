@@ -22,7 +22,7 @@ namespace MrRobot
             G.Settings();
 
             new position();
-            new Market();
+			G.Exchange = new Exchange();
             new Instrument();
             new Candle();
             new Robots();

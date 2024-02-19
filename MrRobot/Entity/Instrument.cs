@@ -10,11 +10,11 @@ namespace MrRobot.Entity
 		#region реализовано
 
 		static List<InstrumentUnit> InstrumentList { get; set; }
-
+		
         /// <summary>
-        /// Ассоциативный массив ID и данных об инструменте (для быстрого поиска)
-        /// </summary>
-        static Dictionary<int, InstrumentUnit> IdUnitAss { get; set; } = null;
+		/// Ассоциативный массив ID и данных об инструменте (для быстрого поиска)
+		/// </summary>
+		static Dictionary<int, InstrumentUnit> IdUnitAss { get; set; } = null;
 
         /// <summary>
         /// Загрузка списка инструментов из базы
@@ -73,10 +73,6 @@ namespace MrRobot.Entity
 
 		#endregion
 
-		/// <summary>
-		/// Количество доступных инструментов
-		/// </summary>
-		public static int Count => InstrumentList.Count;
 
 		/// <summary>
 		/// Список инструментов с учётом поиска

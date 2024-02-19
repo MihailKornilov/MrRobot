@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 
 using MrRobot.inc;
-using MrRobot.Entity;
+using MrRobot.Interface;
 
 namespace MrRobot.Section
 {
@@ -15,23 +15,23 @@ namespace MrRobot.Section
         /// </summary>
         void MenuCreate()
         {
-            MarketBox.ItemsSource = Market.ListAll();
+            MarketBox.ItemsSource = G.Exchange.ListAll;
             MarketBox.SelectionChanged += (s, e) =>
             {
                 int sel = MarketBox.SelectedIndex;
-                MarketUnit unit;
+                SpisokUnit unit;
                 for (int i = 0; i < MarketBox.Items.Count; i++)
                 {
-                    unit = MarketBox.Items[i] as MarketUnit;
+                    unit = MarketBox.Items[i] as SpisokUnit;
                     var FN = FindName($"MarketPanel{unit.Id}");
                     G.Vis(FN as Panel, i == sel);
                     G.Vis(FN as UserControl, i == sel);
                 }
-                unit = MarketBox.SelectedItem as MarketUnit;
+                unit = MarketBox.SelectedItem as SpisokUnit;
                 position.Set("1.MarketMenu.Index", unit.Id);
                 MenuMethod(unit.Id);
             };
-            MarketBox.SelectedItem = Market.Unit(position.Val("1.MarketMenu.Index", 1));
+            MarketBox.SelectedItem = G.Exchange.Unit(position.Val("1.MarketMenu.Index", 1));
         }
     }
 }

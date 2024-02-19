@@ -76,9 +76,13 @@ namespace MrRobot.inc
         public static Visibility Hid(FrameworkElement elem) => elem.Visibility = Visibility.Collapsed;
 
 
+		// ---=== Entities приложения ===---
+        public static Exchange Exchange { get; set; }
 
 
-        public static MainWindow MW     { get; set; }
+
+		// ---=== UserControl's всего приложения ===---
+		public static MainWindow MW     { get; set; }
 
         public static History History   { get; set; }
         public static HistoryMoex HistoryMoex { get; set; }

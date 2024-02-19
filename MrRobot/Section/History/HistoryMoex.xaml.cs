@@ -6,9 +6,6 @@ using static System.Console;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
-using CefSharp.DevTools.CSS;
-using System.Net;
-using System.Text;
 
 namespace MrRobot.Section
 {
@@ -24,7 +21,7 @@ namespace MrRobot.Section
             InitializeComponent();
 
             DataContext = new MoexDC();
-            Market.Updated += () => DataContext = new MoexDC();
+			G.Exchange.Updated += () => DataContext = new MoexDC();
 
             // Установка фокуса на Быстрый поиск, если был переход на страницу МосБиржи
             History.MenuMethod += (id) => {
@@ -168,7 +165,7 @@ namespace MrRobot.Section
             FoundCount = MOEX.Security.FoundCount();
         }
         // Название Московской биржи из базы в заголовке
-        public static string HdName { get => Market.Unit(2).Name; }
+        public static string HdName { get => G.Exchange.Unit(2).Name; }
         // Количество бумаг в заголовке
         public static string HdSecurityCount { get => MOEX.Security.CountStr(); }
 
