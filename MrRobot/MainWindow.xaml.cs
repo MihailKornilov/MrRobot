@@ -14,7 +14,7 @@ namespace MrRobot
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+		public MainWindow()
         {
             var dur = new Dur();
 
@@ -22,8 +22,7 @@ namespace MrRobot
             G.Settings();
 
             new position();
-			G.Exchange = new Exchange();
-            new Instrument();
+			new Exchange();
             new Candle();
             new Robots();
             new CDIpanel();
@@ -31,13 +30,11 @@ namespace MrRobot
             new MOEX();
             new HttpServer();
 
-			WriteLine($"BYBIT: {BYBIT.Instrument.Unit(10).SymbolName}");
-
-
 			InitializeComponent();
-            G.MW = this;
-            DataContext = new MWsizeDC();
 
+            DataContext = new MWsizeDC();
+			G.MW = this;
+            
             Loaded += MouseHookInit;
             Loaded += G.ISPanel.Init;
             Loaded += (s, e) =>
@@ -45,6 +42,7 @@ namespace MrRobot
                 new MainMenu();
 				SizeChanged += Depth.SizeChanged;
 				SizeChanged += G.Tester.RobotLogWidthSet;
+				SizeChanged += MWsizeDC.WindowState;
 			};
             Closed += HttpServer.Stop;
 
@@ -54,7 +52,7 @@ namespace MrRobot
         }
 
 
-        void AppLoadControl()
+		void AppLoadControl()
         {
             G.LogWrite();
             G.LogWrite("MrRobot загружается...");
@@ -135,7 +133,16 @@ namespace MrRobot
     // Положение и размеры окна через DataContext
     class MWsizeDC
     {
-        public static int Width
+        public static WindowState State
+		{
+            get => position.Val("MainWindow.Maximized", false)
+                    ? System.Windows.WindowState.Maximized
+                    : System.Windows.WindowState.Normal;
+			set => position.Set("MainWindow.Maximized", value == System.Windows.WindowState.Maximized);
+		}
+		public static void WindowState(object s, SizeChangedEventArgs e) => State = G.MW.WindowState;
+
+		public static int Width
         {
             get => position.Val("MainWindow.Width", 1366);
             set => position.Set("MainWindow.Width", value);

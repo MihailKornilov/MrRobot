@@ -8,6 +8,7 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
+using MrRobot.Connector;
 
 namespace MrRobot.Section
 {
@@ -117,7 +118,7 @@ namespace MrRobot.Section
             await Task.Run(() => ConvertProcess(ConvertParam, CheckedTF));
 
             new Candle();
-            Instrument.CdiCountUpd(SourceUnit.InstrumentId);
+            BYBIT.Instrument.CdiCountUpd(SourceUnit.InstrumentId);
 
 
             G.Vis(ConvertGoButton);
@@ -162,7 +163,7 @@ namespace MrRobot.Section
             var SubBar = new ProBar(SourceData.Count);
             PARAM.Progress.Report(0);
 
-            string TableName = Candle.DataTableCreate(G.Exchange.Unit(SourceUnit.MarketId).Name,
+            string TableName = Candle.DataTableCreate(G.Exchange.Unit(SourceUnit.ExchangeId).Name,
                                                       PARAM.Symbol,
                                                       PARAM.TimeFrame,
                                                       PARAM.NolCount);

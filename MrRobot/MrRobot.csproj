@@ -247,7 +247,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entity\Candle.cs" />
-    <Compile Include="Entity\Instrument.cs" />
     <Compile Include="Entity\Exchange.cs" />
     <Compile Include="Entity\Robots.cs" />
     <Compile Include="inc\format.cs" />

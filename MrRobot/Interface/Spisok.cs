@@ -1,21 +1,22 @@
 ﻿using System;
+using System.Windows.Media;
 using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
-using System.Windows.Media;
+using MrRobot.Entity;
 
 namespace MrRobot.Interface
 {
-    public class Spisok
-    {
+	public class Spisok
+	{
 		public delegate void DLGT();
 		public DLGT Updated { get; set; }
 
 		/// <summary>
 		/// Список 
 		/// </summary>
-		List<SpisokUnit> UnitList { get; set; }
+		protected List<SpisokUnit> UnitList { get; set; }
 
 		/// <summary>
 		/// Количество доступных единиц списка
@@ -40,7 +41,7 @@ namespace MrRobot.Interface
 		/// <summary>
 		/// Виртуальный метод для инициализации единицы списка (переопределять не обязательно)
 		/// </summary>
-		public virtual SpisokUnit UnitInitSecond(SpisokUnit unit, dynamic res) => unit;
+		public virtual SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res) => unit;
 
 		public Spisok()
 		{
@@ -54,12 +55,10 @@ namespace MrRobot.Interface
 			mysql.Delegat(SQL, res =>
 			{
 				var unit = new SpisokUnit(res);
-				unit = UnitInitSecond(unit, res);
+				unit = UnitFieldsFill(unit, res);
 				UnitList.Add(unit);
 				ID_UNIT.Add(unit.Id, unit);
 			});
-
-			Updated?.Invoke();
 		}
 
 		/// <summary>
@@ -73,12 +72,33 @@ namespace MrRobot.Interface
 			// !!! Сделать возврат пустой единицы списка
 			return null;
 		}
+
+		/// <summary>
+		/// Ассоциативный массив по указанному свойству
+		/// </summary>
+		public Dictionary<string, SpisokUnit> FieldASS(string field)
+		{
+			var send = new Dictionary<string, SpisokUnit>();
+
+			if (Count == 0)
+				return send;
+
+			var info = UnitList[0].GetType().GetProperty(field);
+			foreach (var unit in UnitList)
+			{
+				string str = info.GetValue(unit).ToString().Trim();
+				if(str.Length > 0)
+					send.Add(str, unit);
+			}
+			return send;
+		}
 	}
 
 	public class SpisokUnit
-    {
-		public SpisokUnit(dynamic res) =>
-			Id = res.GetInt32("id");
+	{
+		public SpisokUnit(int id) => Id = id;
+		// Конструктор с запросом из БД
+		public SpisokUnit(dynamic res) => Id = res.GetInt32("id");
 
 		public string Num { get; set; }             // Порядковый номер для вывода в списке
 		public int Id { get; set; }                 // ID единицы списка
@@ -106,6 +126,21 @@ namespace MrRobot.Interface
 		// ---=== Exchange ===---
 		public string Name { get; set; }            // Имя единицы списка
 		public string Prefix { get; set; }			// Префикс для таблиц в базе
-		public string Url { get; set; }				// Адрес сайта биржи
+		public string Url { get; set; }             // Адрес сайта биржи
+
+
+
+		// ---=== ДЛЯ РОБОТА ===---
+		public double BaseBalance { get; set; }		// Баланс базовой монеты
+		public double QuoteBalance { get; set; }	// Баланс котировочной монеты
+		public double BaseCommiss { get; set; }		// Сумма комиссий исполненных ордеров базовой монеты
+		public double QuoteCommiss { get; set; }	// Сумма комиссий исполненных ордеров базовой котировочной монеты
+
+		public int CdiId { get; set; }				// ID свечных данных
+		CDIunit CDI => Candle.Unit(CdiId);			// Свечные данные
+		public string Table => CDI.Table;			// Имя таблицы со свечами
+		public int RowsCount => CDI.RowsCount;		// Количество свечей в графике (в таблице)
+		public int TimeFrame => CDI.TimeFrame;		// Таймферйм
+		public string TF => CDI.TF;					// Таймфрейм 10m
 	}
 }

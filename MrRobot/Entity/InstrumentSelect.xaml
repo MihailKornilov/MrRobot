@@ -16,7 +16,7 @@
                        Padding="0,2,5,0"
                        HorizontalContentAlignment="Right"
                        Foreground="#999"/>
-                <Label Content="{Binding Name}" Width="135" Padding="0,2"/>
+                <Label Content="{Binding SymbolName}" Width="135" Padding="0,2"/>
                 <Label Content="{Binding CdiCount}"
                        Width="30"
                        Padding="0,2"

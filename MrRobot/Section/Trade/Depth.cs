@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using static System.Console;
 
-using CefSharp;
 using Newtonsoft.Json;
-using MrRobot.Entity;
 using MrRobot.inc;
+using MrRobot.Entity;
+using MrRobot.Connector;
 
 namespace MrRobot.Section
 {
@@ -64,7 +64,7 @@ namespace MrRobot.Section
             Ask = new SortedDictionary<double, double>();
             Bid = new SortedDictionary<double, double>();
 
-            var Instr = Instrument.UnitOnSymbol(Symbol);
+            var Instr = BYBIT.Instrument.UnitOnSymbol(Symbol);
             bp = format.Decimals(Instr.BasePrecision);
             qp = Instr.Decimals;
 

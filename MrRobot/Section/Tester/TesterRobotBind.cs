@@ -10,9 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using static System.Console;
 
+using static RobotAPI.Robot;
 using MrRobot.inc;
 using MrRobot.Entity;
-using static RobotAPI.Robot;
+using MrRobot.Connector;
 
 namespace MrRobot.Section
 {
@@ -67,7 +68,7 @@ namespace MrRobot.Section
         void InstrumentSet()
         {
             var item = CDIpanel.CdiUnit();
-            INSTRUMENT = Instrument.Unit(item.InstrumentId);
+            INSTRUMENT = BYBIT.Instrument.Unit(item.InstrumentId);
             INSTRUMENT.CdiId = item.Id;
 
             INSTRUMENT.BaseBalance = BaseBalance;

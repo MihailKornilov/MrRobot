@@ -6,15 +6,16 @@
 		xmlns:Section="clr-namespace:MrRobot.Section"
         xmlns:Entity="clr-namespace:MrRobot.Entity"
 		mc:Ignorable="d"
-		Title="Mr.Robot v0.0.1"
-		Background="#FFF"
+        Title="Mr.Robot v0.0.1"
+        Background="#FFF"
         MinWidth="1175"
 		MinHeight="700"
         
-        Width="{Binding Width}"
+        WindowState="{Binding State}"
+        Width ="{Binding Width}"
         Height="{Binding Height}"
-        Left="{Binding Left}"
-        Top="{Binding Top}">
+        Left  ="{Binding Left}"
+        Top   ="{Binding Top}">
 	
 	<Grid>
 		<Grid.ColumnDefinitions>

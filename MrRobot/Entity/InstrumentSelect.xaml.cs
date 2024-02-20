@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
+using MrRobot.Interface;
+using MrRobot.Connector;
 
 namespace MrRobot.Entity
 {
@@ -52,7 +54,31 @@ namespace MrRobot.Entity
             QuoteCoinBox.SelectedIndex = -1;
         }
 
-        /*
+		/// <summary>
+		/// Список инструментов с учётом поиска
+		/// </summary>
+		public List<SpisokUnit> FoundList(string txt = "")
+		{
+			var list = new List<SpisokUnit>();
+			bool isHist = txt == "/HISTORY";
+			bool isTxt = txt.Length > 0 && !isHist;
+			int num = 1;
+			foreach (var v in BYBIT.Instrument.ListAll)
+			{
+				if (isTxt && !v.SymbolName.Contains(txt.ToUpper()))
+					continue;
+				if (isHist && v.CdiCount == 0)
+					continue;
+
+				v.Num = num++ + ".";
+				list.Add(v);
+			}
+
+			return list;
+		}
+
+
+		/*
                 /// <summary>
                 /// Выбран инструмент
                 /// </summary>
@@ -72,12 +98,12 @@ namespace MrRobot.Entity
                 }
 
         */
-    }
+	}
 
-    /// <summary>
-    /// Шаблон для котировочных монет (для быстрого поиска инструментов)
-    /// </summary>
-    public class QCoinCount
+	/// <summary>
+	/// Шаблон для котировочных монет (для быстрого поиска инструментов)
+	/// </summary>
+	public class QCoinCount
     {
         public QCoinCount(string coin, string count)
         {
@@ -108,7 +134,7 @@ namespace MrRobot.Entity
         {
             FindBox.TextChanged += (s, e) =>
             {
-                var items = Instrument.ListBox(ISU.FindTxt = FindBox.Text);
+                var items = G.ISPanel.FoundList(ISU.FindTxt = FindBox.Text);
                 ISBox.ItemsSource = items;
                 bool isTxt = FindBox.Text.Length > 0;
                 FoundCount.Content = isTxt ? $"найдено: {items.Count}" : "";
@@ -127,7 +153,7 @@ namespace MrRobot.Entity
                     return;
 
                 GridBack.Remove();
-                var unit = ISBox.SelectedItem as InstrumentUnit;
+                var unit = ISBox.SelectedItem as SpisokUnit;
                 ISU.ChosenId = unit.Id;
             };
         }
@@ -155,7 +181,7 @@ namespace MrRobot.Entity
         // Показывать циферки со скачанными свечными данными
         public bool WithHistory { get; set; } = false;
         TextBlock TB { get; set; }
-        string Name => TB.Name;
+        string Name => TB.Name; // Имя TextBlock
         string NoSelTxt { get; set; }
         public string PosPrefix => $"{Name}.";
 
@@ -184,7 +210,7 @@ namespace MrRobot.Entity
         void Open(object sender, MouseButtonEventArgs e)
         {
             ISU = ISlist[Name];
-            ISBox.ItemsSource = Instrument.ListBox(FindTxt);
+            ISBox.ItemsSource = G.ISPanel.FoundList(FindTxt);
 
             var win = G.MW.PointToScreen(new Point(0, 0));
             var el = TB.PointToScreen(new Point(0, 0));
@@ -215,12 +241,12 @@ namespace MrRobot.Entity
         void ChosenApply()
         {
             bool isSel = ChosenId > 0;
-            TB.Text = isSel ? Instrument.Unit(ChosenId).Name : NoSelTxt;
+            TB.Text = isSel ? BYBIT.Instrument.Unit(ChosenId).SymbolName : NoSelTxt;
             TB.Style = Application.Current.Resources[$"TBLink{(isSel ? "Sel" : "")}"] as Style;
             G.Vis(X, isSel);
             Changed();
         }
 
-        public InstrumentUnit IUnit => Instrument.Unit(ChosenId);
+        public SpisokUnit IUnit => BYBIT.Instrument.Unit(ChosenId);
     }
 }

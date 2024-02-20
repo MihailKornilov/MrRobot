@@ -66,35 +66,35 @@ namespace RobotAPI
             Order.CommissionStr = format.E(Order.Commission);
             Order.CommissCoin = isBUY ? Order.BaseCoin : Order.QuoteCoin;
 
-            //Line(Order.Side.ToLower(), PRICE);
+			//Line(Order.Side.ToLower(), PRICE);
 
 
-            //string sql = "INSERT INTO `_order_spot` (" +
-            //                "`marketId`," +
-            //                "`instrumentId`," +
-            //                "`type`," +
-            //                "`side`," +
-            //                "`dtimeExec`," +
-            //                "`price`," +
-            //                "`qty`," +
-            //                "`cost`," +
-            //                "`commissionBase`," +
-            //                "`commissionQuote`" +
-            //             ") VALUES (" +
-            //                "1," +
-            //               $"{INSTRUMENT.Id}," +
-            //               $"'{Order.Type}'," +
-            //               $"'{Order.Side}'," +
-            //                "CURRENT_TIMESTAMP," +
-            //               $"{PRICE}," +
-            //               $"{Order.Qty}," +
-            //               $"{Order.Cost}," +
-            //               $"{(isBUY ? Order.Commission : 0)}," +
-            //               $"{(!isBUY ? Order.Commission : 0)}" +
-            //             ")";
+			//string sql = "INSERT INTO `_order_spot` (" +
+			//                "`exchangeId`," +
+			//                "`instrumentId`," +
+			//                "`type`," +
+			//                "`side`," +
+			//                "`dtimeExec`," +
+			//                "`price`," +
+			//                "`qty`," +
+			//                "`cost`," +
+			//                "`commissionBase`," +
+			//                "`commissionQuote`" +
+			//             ") VALUES (" +
+			//                "1," +
+			//               $"{INSTRUMENT.Id}," +
+			//               $"'{Order.Type}'," +
+			//               $"'{Order.Side}'," +
+			//                "CURRENT_TIMESTAMP," +
+			//               $"{PRICE}," +
+			//               $"{Order.Qty}," +
+			//               $"{Order.Cost}," +
+			//               $"{(isBUY ? Order.Commission : 0)}," +
+			//               $"{(!isBUY ? Order.Commission : 0)}" +
+			//             ")";
 
 
-            Order.Id = ORDERS.Count + 1;
+			Order.Id = ORDERS.Count + 1;
             Order.Num = "#" + Order.Id;
 
             ORDERS.Add(Order);

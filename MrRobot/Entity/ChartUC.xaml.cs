@@ -9,6 +9,7 @@ using static System.Console;
 
 using CefSharp;
 using MrRobot.inc;
+using MrRobot.Interface;
 
 namespace MrRobot.Entity
 {
@@ -310,11 +311,11 @@ namespace MrRobot.Entity
         /// <summary>
         /// Актуальные свечи для графика по конкретному инструменту
         /// </summary>
-        public List<object> TradeCandlesActual(InstrumentUnit unit)
+        public List<object> TradeCandlesActual(SpisokUnit unit)
         {
             Section = "Trade";
             PageName = "ChartActual";
-            Symbol(unit.Name);
+            Symbol(unit.SymbolName);
 
             var CandleList = Candle.WCkline(unit.Symbol);
             var Candles = new List<string>();
@@ -350,6 +351,5 @@ namespace MrRobot.Entity
 
             return CandleList;
         }
-
     }
 }

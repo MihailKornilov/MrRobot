@@ -65,7 +65,7 @@ namespace MrRobot.Section
                     if (unit.Name.Trim().Length == 0)
                         continue;
 
-                    string sql = "UPDATE`_market`" +
+                    string sql = "UPDATE`_exchange`" +
                                 $"SET`name`='{unit.Name.Trim()}'," +
                                    $"`prefix`='{unit.Prefix.Trim()}'," +
                                    $"`url`='{unit.Url.Trim()}'" +

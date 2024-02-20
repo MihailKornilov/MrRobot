@@ -1,6 +1,4 @@
-﻿using System.Windows.Media;
-
-namespace MrRobot.Interface
+﻿namespace MrRobot.Interface
 {
     // Информация об инструменте: поля для МосБиржи
     interface IIunitMOEX

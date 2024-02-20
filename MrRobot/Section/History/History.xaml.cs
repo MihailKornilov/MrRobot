@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
+using MrRobot.Interface;
 
 namespace MrRobot.Section
 {
@@ -51,7 +52,7 @@ namespace MrRobot.Section
 
 
         ISunit IS { get; set; }
-        InstrumentUnit IUnit => IS.IUnit;
+        SpisokUnit IUnit => IS.IUnit;
 
         /// <summary>
         /// Вывод количества инструментов в заголовке
@@ -144,7 +145,7 @@ namespace MrRobot.Section
                 return;
 
             new Candle();
-            Instrument.CdiCountUpd(IUnit.Id);
+            BYBIT.Instrument.CdiCountUpd(IUnit.Id);
 
             AutoProgon.Converter();
         }

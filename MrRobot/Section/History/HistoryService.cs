@@ -8,6 +8,8 @@ using static System.Console;
 using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Entity;
+using MrRobot.Connector;
+using MrRobot.Interface;
 
 namespace MrRobot.Section
 {
@@ -28,7 +30,7 @@ namespace MrRobot.Section
                 InstrumentUpdateBarText.Content = v + "%";
             });
             await Task.Run(() => InstrumentUpdateProcess(progress));
-            new Instrument();
+            new BYBIT();
             HeadCountWrite();
 
             await Task.Run(() => Candle.DataControl(prgs: progress));
@@ -56,7 +58,7 @@ namespace MrRobot.Section
              */
 
             // Ассоциативный массив инструментов по Symbol
-            var mass = Instrument.SymbolUnitAss();
+            var mass = BYBIT.Instrument.FieldASS("Symbol");
 
             var wc = new WebClient();
             string json = wc.DownloadString("https://api.bybit.com/v5/market/instruments-info?category=spot");
@@ -80,15 +82,14 @@ namespace MrRobot.Section
                     InstrumentValueCheck(unit, "basePrecision", unit.BasePrecision, lsf.basePrecision);
                     InstrumentValueCheck(unit, "minOrderQty", unit.MinOrderQty, lsf.minOrderQty);
                     InstrumentValueCheck(unit, "tickSize", unit.TickSize, v.priceFilter.tickSize);
-                    InstrumentValueCheck(unit, "status", unit.Status, v.status == "Trading" ? "1" : "0");
+                    InstrumentValueCheck(unit, "isTrading", unit.IsTrading, v.status == "Trading" ? "1" : "0");
                     InstrumentHistoryBeginUpdate(unit);
                     continue;
                 }
 
                 //Если отсутствует, внесение нового инструмента в базу
-                int marketId = 1;
                 string sql = "INSERT INTO`_instrument`(" +
-                                "`marketId`," +
+								"`exchangeId`," +
                                 "`symbol`," +
                                 "`baseCoin`," +
                                 "`quoteCoin`," +
@@ -96,7 +97,7 @@ namespace MrRobot.Section
                                 "`minOrderQty`," +
                                 "`tickSize`" +
                              ")VALUES(" +
-                               $"{marketId}," +
+                               $"{BYBIT.ExchangeId}," +
                                $"'{symbol}'," +
                                $"'{v.baseCoin}'," +
                                $"'{v.quoteCoin}'," +
@@ -104,12 +105,8 @@ namespace MrRobot.Section
                                $"{lsf.minOrderQty}," +
                                $"{v.priceFilter.tickSize}" +
                               ")";
-                var instr = new InstrumentUnit
-                {
-                    Id = Convert.ToInt32(mysql.Query(sql)),
-                    MarketId = marketId,
-                    Symbol = symbol
-                };
+                var instr = new SpisokUnit(mysql.Query(sql));
+                instr.Symbol = symbol;
                 InstrumentLogInsert(instr, "Новый инструмент", "", (v.baseCoin + "/" + v.quoteCoin).ToString());
                 InstrumentHistoryBeginUpdate(instr);
             }
@@ -118,7 +115,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Проверка и обновление изменённых параметров в инструменте
         /// </summary>
-        void InstrumentValueCheck(InstrumentUnit unit, string param, dynamic oldV, dynamic newV)
+        void InstrumentValueCheck(SpisokUnit unit, string param, dynamic oldV, dynamic newV)
         {
             string oldS = format.E(oldV);
             string newS = format.E(newV);
@@ -137,16 +134,16 @@ namespace MrRobot.Section
         /// <summary>
         /// Внесение лога изменения в инструменте
         /// </summary>
-        void InstrumentLogInsert(InstrumentUnit unit, string about, string oldV, string newV)
+        void InstrumentLogInsert(SpisokUnit unit, string about, string oldV, string newV)
         {
             string sql = "INSERT INTO `_instrument_log`(" +
-                            "`marketId`," +
+							"`exchangeId`," +
                             "`instrumentId`," +
                             "`about`," +
                             "`old`," +
                             "`new`" +
                          ") VALUES (" +
-                            $"{unit.MarketId}," +
+                            $"{BYBIT.ExchangeId}," +
                             $"{unit.Id}," +
                             $"'{about}'," +
                             $"'{oldV}'," +
@@ -158,7 +155,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Обновление начала истории по каждому инструменту ByBit
         /// </summary>
-        void InstrumentHistoryBeginUpdate(InstrumentUnit unit)
+        void InstrumentHistoryBeginUpdate(SpisokUnit unit)
         {
             if (unit.HistoryBegin != null && !unit.HistoryBegin.Contains("0001"))
                 return;

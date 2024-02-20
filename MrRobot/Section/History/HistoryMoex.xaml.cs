@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
-using MrRobot.Entity;
 using MrRobot.Connector;
 
 namespace MrRobot.Section
@@ -18,10 +17,10 @@ namespace MrRobot.Section
 
         public void Init()
         {
-            InitializeComponent();
-
-            DataContext = new MoexDC();
+			DataContext = new MoexDC();
 			G.Exchange.Updated += () => DataContext = new MoexDC();
+			
+            InitializeComponent();
 
             // Установка фокуса на Быстрый поиск, если был переход на страницу МосБиржи
             History.MenuMethod += (id) => {

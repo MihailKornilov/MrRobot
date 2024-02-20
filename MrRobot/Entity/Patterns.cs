@@ -40,7 +40,7 @@ namespace MrRobot.Entity
                     FoundRepeatMin = Convert.ToInt32(row["foundRepeatMin"]),
                     FoundCount = Convert.ToInt32(row["foundCount"]),
                     Duration = row["duration"],
-                    Dtime = format.DateOne(row["dtimeAdd"]),
+                    Dtime = format.DateOne(row["added"]),
                     TestedCount = Convert.ToInt32(row["testedCount"])
                 };
 
@@ -233,7 +233,7 @@ namespace MrRobot.Entity
     public class SearchUnit
     {
         public int Id { get; set; }             // ID поиска
-        public int CdiId { get; set; }          // ID свечных данных из `_candle_data_info`
+        public int CdiId { get; set; }          // ID свечных данных
 
         public int PatternLength { get; set; }  // Длина паттерна
         public int PrecisionPercent { get; set; }// Точность в процентах
@@ -476,7 +476,7 @@ namespace MrRobot.Entity
 
 
         // ---=== ИНФОРМАЦИЯ О СВЕЧНЫХ ДАННЫХ ===---
-        // ID свечных данных из `_candle_data_info`
+        // ID свечных данных
         public int CdiId { get { return Patterns.SUnit(SearchId).CdiId; } }
         // Название инструмента
         public string Symbol { get { return Candle.Unit(CdiId).Symbol; } }
