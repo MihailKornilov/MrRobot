@@ -10,14 +10,14 @@ using MrRobot.Connector;
 
 namespace MrRobot.Entity
 {
+    /// <summary>
+    /// Выпадающий список для выбора инструмента
+    /// </summary>
     public partial class InstrumentSelect : UserControl
     {
-        public InstrumentSelect()
-        {
-            G.ISPanel = this;
-        }
+        public InstrumentSelect() => G.ISPanel = this;
 
-        public void Init(object s, RoutedEventArgs e)
+        public void Init()
         {
             InitializeComponent();
             QuoteCoin();

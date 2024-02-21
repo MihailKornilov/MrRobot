@@ -8,43 +8,33 @@ using MrRobot.Entity;
 
 namespace MrRobot.Section
 {
-    public partial class LogFile : UserControl
-    {
-        public LogFile()
-        {
-            G.LogFile = this;
-            MainMenu.Init += Init;
-        }
+	public partial class LogFile : UserControl
+	{
+		public LogFile() => G.LogFile = this;
 
-        void Init(int id)
-        {
-            if (id != (int)SECT.LogFile)
-                return;
+		public void Init()
+		{
+			InitializeComponent();
+			MainMenu.Changed += FileRead;
+		}
 
-            InitializeComponent();
-            MainMenu.Changed += FileRead;
+		public void FileRead(object s, RoutedEventArgs e) => FileRead();
+		void FileRead()
+		{
+			if (position.MainMenu() != 7)
+				return;
 
-            MainMenu.Init -= Init;
-            G.SectionInited(id);
-        }
+			var file = new StreamReader("log.txt");
 
-        public void FileRead(object s, RoutedEventArgs e) => FileRead();
-        void FileRead()
-        {
-            if (position.MainMenu() != 7)
-                return;
+			string content = "";
+			string line;
+			while ((line = file.ReadLine()) != null)
+				content += $"{line}\n";
 
-            var file = new StreamReader("log.txt");
+			file.Close();
 
-            string content = "";
-            string line;
-            while ((line = file.ReadLine()) != null)
-                content += $"{line}\n";
-
-            file.Close();
-
-            Log1.Text = content;
-            Log1.ScrollToEnd();
-        }
-    }
+			Log1.Text = content;
+			Log1.ScrollToEnd();
+		}
+	}
 }

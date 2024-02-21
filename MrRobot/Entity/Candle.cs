@@ -359,12 +359,12 @@ namespace MrRobot.Entity
 			if (!mysql.CandleDataCheck(table))
 				WriteLine($"Ошибка в последовательности таблицы `{table}`.");
 
-			int ExchangeId = G.Exchange.UnitOnPrefix(prefix).Id;
+			int ExchangeId = G.Exchange.UnitOnField("Prefix", prefix).Id;
 			int iid = 0;
 			switch (ExchangeId)
 			{
-				case 1: iid = BYBIT.Instrument.UnitOnSymbol(symbol).Id; break;
-				case 2: iid = MOEX.Security.UnitOnSecId(symbol).Id; break;
+				case 1: iid = BYBIT.Instrument.UnitOnField("Symbol", symbol).Id; break;
+				case 2: iid =  MOEX.Instrument.UnitOnField("Symbol", symbol).Id; break;
 			}
 
 			return CDIqueryInsert(0, ExchangeId, iid, table, tf, count, data["begin"], data["end"], ConvertedFromId);
@@ -417,7 +417,7 @@ namespace MrRobot.Entity
 				int tf = Convert.ToInt32(sp[2]);
 
 				// Получение данных об инструменте по его названию
-				var Instr = BYBIT.Instrument.UnitOnSymbol(symbol);
+				var Instr = BYBIT.Instrument.UnitOnField("Symbol", symbol);
 
 				// Проверка на наличие заголовка истории
 				sql = "SELECT*" +

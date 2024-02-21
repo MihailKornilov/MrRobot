@@ -18,7 +18,11 @@ namespace MrRobot.Entity
     /// </summary>
     public partial class ChartUC : UserControl
     {
-        public ChartUC() => InitializeComponent();
+        public ChartUC()
+        {
+            InitializeComponent();
+            WriteLine("------ ChartUC");
+        }
 
         // Раздел (каталог), в котором размещаются страницы графиков: шаблон (.tmp) и реальный (.html)
         string Section { get; set; }

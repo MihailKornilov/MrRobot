@@ -12,9 +12,9 @@ namespace MrRobot.Entity
         public CDIselectLink()
         {
             InitializeComponent();
-        }
+		}
 
-        void OpenPanel(object sender, MouseButtonEventArgs e)
+		void OpenPanel(object sender, MouseButtonEventArgs e)
         {
             var win = G.MW.PointToScreen(new Point(0, 0));
             var el = TBLink.PointToScreen(new Point(0, 0));

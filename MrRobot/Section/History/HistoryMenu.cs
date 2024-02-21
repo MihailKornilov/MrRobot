@@ -8,7 +8,7 @@ namespace MrRobot.Section
     public partial class History : UserControl
     {
         public delegate void Dlgt(int id);
-        public static Dlgt MenuMethod = (int id) => { };
+        public static Dlgt MenuMethod { get; set; }
 
         /// <summary>
         /// Меню: выбор биржи
@@ -29,7 +29,7 @@ namespace MrRobot.Section
                 }
                 unit = MarketBox.SelectedItem as SpisokUnit;
                 position.Set("1.MarketMenu.Index", unit.Id);
-                MenuMethod(unit.Id);
+                MenuMethod?.Invoke(unit.Id);
             };
             MarketBox.SelectedItem = G.Exchange.Unit(position.Val("1.MarketMenu.Index", 1));
         }

@@ -69,24 +69,6 @@ namespace MrRobot.Connector
 			/// Обновление количества свечных данных инструмента
 			/// </summary>
 			public void CdiCountUpd(int id) => Unit(id).CdiCount = Candle.CdiCount(id);
-
-			/// <summary>
-			/// Один инструмент по Symbol в виде "BTC/USDT"
-			/// </summary>
-			public SpisokUnit UnitOnSymbol(string symbol)
-			{
-				if (symbol.Contains("/"))
-				{
-					string[] spl = symbol.Split('/');
-					symbol = spl[0] + spl[1];
-				}
-
-				foreach (var unit in UnitList)
-					if (unit.Symbol == symbol)
-						return unit;
-
-				return null;
-			}
 		}
 
 

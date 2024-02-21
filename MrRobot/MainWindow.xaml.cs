@@ -1,99 +1,20 @@
 ﻿using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Interop;
-using System.Diagnostics;
 using static System.Console;
 
 using MrRobot.inc;
-using MrRobot.Entity;
-using MrRobot.Section;
-using MrRobot.Connector;
 
 namespace MrRobot
 {
     public partial class MainWindow : Window
     {
-		public MainWindow()
+        public MainWindow()
         {
-            var dur = new Dur();
-
-            AppLoadControl();
-            G.Settings();
-
-            new position();
-			new Exchange();
-            new Candle();
-            new Robots();
-            new CDIpanel();
-            new BYBIT();
-            new MOEX();
-            new HttpServer();
-
-			InitializeComponent();
-
-            DataContext = new MWsizeDC();
-			G.MW = this;
-            
-            Loaded += MouseHookInit;
-            Loaded += G.ISPanel.Init;
-            Loaded += (s, e) =>
-            {
-                new MainMenu();
-				SizeChanged += Depth.SizeChanged;
-				SizeChanged += G.Tester.RobotLogWidthSet;
-				SizeChanged += MWsizeDC.WindowState;
-			};
-            Closed += HttpServer.Stop;
-
-            string txt = $"Загружено за {dur.Second()} сек.";
-            G.LogWrite(txt);
-             WriteLine(txt);
+            InitializeComponent();
         }
 
-
-		void AppLoadControl()
-        {
-            G.LogWrite();
-            G.LogWrite("MrRobot загружается...");
-
-            AppExceptionLog();
-            Control_Mysqld();
-        }
-
-        void AppExceptionLog()
-        {
-            AppDomain.CurrentDomain.FirstChanceException += (s, e) =>
-                G.LogWrite($"Обработанное исключение: {e.Exception}", "error.txt");
-
-            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-                G.LogWrite($"Необработанное исключение: {e.ExceptionObject}", "error.txt");
-        }
-
-
-        /// <summary>
-        /// Проверка запущен ли сервер mysqld
-        /// </summary>
-        void Control_Mysqld()
-        {
-            if (Process.GetProcessesByName("mysqld").Length > 0)
-                return;
-
-            string ProcessName = "mysqld_robot";
-            if (Process.GetProcessesByName(ProcessName).Length > 0)
-                return;
-
-            G.LogWrite($"Запуск процесса `{ProcessName}`...");
-            var mysqld = Process.Start(Path.GetFullPath($"mysql\\server\\bin\\{ProcessName}.exe"));
-            G.LogWrite($"Процесс `{ProcessName}` запущен. ID: {mysqld.Id}");
-            //Environment.Exit(0);
-        }
-
-
-
-
-
-        void MouseHookInit(object sender, RoutedEventArgs e)
+        public void MouseHookInit(object sender, RoutedEventArgs e)
         {
             var hwnd = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(hwnd).AddHook(MouseHook);

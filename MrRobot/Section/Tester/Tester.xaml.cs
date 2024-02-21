@@ -12,17 +12,10 @@ namespace MrRobot.Section
     /// </summary>
     public partial class Tester : UserControl
     {
-        public Tester()
-        {
-            G.Tester = this;
-            MainMenu.Init += TesterInit;
-        }
+        public Tester() => G.Tester = this;
 
-        public void TesterInit(int id)
+        public void TesterInit()
         {
-            if (id != (int)SECT.Tester)
-                return;
-
             InitializeComponent();
 
             CDIpanel.Page(4).TBLink = SelectLink.TBLink;
@@ -40,9 +33,6 @@ namespace MrRobot.Section
             LogMenu.SelectedIndex = position.Val("4_LogMenu_SelectedIndex", 0);
 
             SourceChanged();
-
-            MainMenu.Init -= TesterInit;
-            G.SectionInited(id);
         }
 
 

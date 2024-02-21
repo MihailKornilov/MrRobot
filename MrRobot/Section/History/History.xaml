@@ -174,10 +174,10 @@
                         </WrapPanel>
 
                         <WrapPanel Name="ProgressPanel" Margin="0,10,0,0" Visibility="Collapsed">
-                            <ProgressBar Name="DownloadProgressBar"
-                                        Width="315"
-                                        Height="22"
-                                        HorizontalAlignment="Left"/>
+                            <ProgressBar Name="ProBar"
+                                         Width="315"
+                                         Height="22"
+                                         HorizontalAlignment="Left"/>
                             <Button Content="Отмена"
                                 Width="80"
                                 Margin="10,0,0,0"

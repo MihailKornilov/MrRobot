@@ -5,15 +5,13 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Connector;
+using MrRobot.Interface;
 
 namespace MrRobot.Section
 {
     public partial class HistoryMoex : UserControl
     {
-        public HistoryMoex()
-        {
-            G.HistoryMoex = this;
-        }
+        public HistoryMoex() => G.HistoryMoex = this;
 
         public void Init()
         {
@@ -70,8 +68,8 @@ namespace MrRobot.Section
                 if (SecurityBox.SelectedIndex == -1)
                     return;
 
-                var unit = SecurityBox.SelectedItem as SecurityUnit;
-                var arr = MOEX.SecurityInfoBoards(unit.SecId);
+                var unit = SecurityBox.SelectedItem as SpisokUnit;
+                var arr = MOEX.SecurityInfoBoards(unit.Symbol);
 
                 SecurityInfoBox.ItemsSource = arr[0];
                 var first = SecurityInfoBox.Items[0];
@@ -139,7 +137,7 @@ namespace MrRobot.Section
             };
         }
 
-        void EngineIss(object sender, RoutedEventArgs e)
+        void IssUpdate(object sender, RoutedEventArgs e)
         {
             //MOEX.Engine.iss();
             //MOEX.Market.iss();
@@ -148,7 +146,7 @@ namespace MrRobot.Section
             //MOEX.SecurityGroup.iss();
             //MOEX.SecurityType.iss();
             //MOEX.SecurityСollections.iss();
-            //MOEX.Security.iss();
+            MOEX.Security.iss();
         }
     }
 
@@ -161,12 +159,12 @@ namespace MrRobot.Section
         {
             MOEX.Engine.CountFilter();
             MOEX.Market.CountFilter();
-            FoundCount = MOEX.Security.FoundCount();
+            FoundCount = MOEX.Instrument.FoundCount();
         }
         // Название Московской биржи из базы в заголовке
         public static string HdName { get => G.Exchange.Unit(2).Name; }
         // Количество бумаг в заголовке
-        public static string HdSecurityCount { get => MOEX.Security.CountStr(); }
+        public static string HdSecurityCount { get => MOEX.Instrument.CountStr(); }
 
 
         // Видимость крестика отмены быстрого поиска
@@ -188,7 +186,7 @@ namespace MrRobot.Section
             {
                 if (FoundCount == 0)
                     return "Бумаг не найдено.";
-                return $"Показан{format.End(FoundCount, "а", "о")} {MOEX.Security.CountStr(FoundCount)}";
+                return $"Показан{format.End(FoundCount, "а", "о")} {MOEX.Instrument.CountStr(FoundCount)}";
             }
         }
 
@@ -196,7 +194,7 @@ namespace MrRobot.Section
         // Видимость списка бумаг
         public static Visibility SecurityListVis { get => G.Vis(FoundCount > 0); }
         // Список бумаг
-        public static List<SecurityUnit> SecurityList { get => MOEX.Security.ListFilter(); }
+        public static List<SpisokUnit> SecurityList { get => MOEX.Instrument.ListFilter(); }
     }
 
     /// <summary>
@@ -205,24 +203,24 @@ namespace MrRobot.Section
     public class SecurityFilter
     {
         // Фильтрация единицы бумаги для вывода списка
-        public static bool IsAllow(SecurityUnit unit)
+        public static bool IsAllow(SpisokUnit unit)
         {
-            if (MarketId > 0 && unit.MarketId != MarketId)
-                return false;
-            if (EngineId > 0 && unit.EngineId != EngineId)
-                return false;
+            //if (MarketId > 0 && unit.MarketId != MarketId)
+            //    return false;
+            //if (EngineId > 0 && unit.EngineId != EngineId)
+            //    return false;
             if (!IsAllowFast(unit))
                 return false;
             return true;
         }
         // Обработка текста Быстрого поиска
-        public static bool IsAllowFast(SecurityUnit unit)
+        public static bool IsAllowFast(SpisokUnit unit)
         {
             if (FastTxt.Length == 0)
                 return true;
             //if (unit.Id.ToString() == FastTxt)
             //    return true;
-            if (unit.SecId.ToLower().Contains(FastTxt))
+            if (unit.Symbol.ToLower().Contains(FastTxt))
                 return true;
             if (unit.Name.ToLower().Contains(FastTxt))
                 return true;

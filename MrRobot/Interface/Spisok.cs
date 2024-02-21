@@ -74,7 +74,43 @@ namespace MrRobot.Interface
 		}
 
 		/// <summary>
-		/// Ассоциативный массив по указанному свойству
+		/// Данные единицы списка по Свойству
+		/// </summary>
+		public SpisokUnit UnitOnField(string field, string val)
+		{
+			if (Count == 0)
+				return null;
+
+			var info = UnitList[0].GetType().GetProperty(field);
+			foreach (var unit in UnitList)
+			{
+				string value = info.GetValue(unit).ToString().Trim();
+				if (value.Length == 0)
+					continue;
+				if (value == val)
+					return unit;
+			}
+
+			return null;
+		}
+		public int IdOnField(string field, int val)
+		{
+			if (Count == 0)
+				return 0;
+
+			var info = UnitList[0].GetType().GetProperty(field);
+			foreach (var unit in UnitList)
+			{
+				int value = Convert.ToInt32(info.GetValue(unit));
+				if (value == val)
+					return unit.Id;
+			}
+
+			return 0;
+		}
+
+		/// <summary>
+		/// Ассоциативный массив данных списка по Свойству
 		/// </summary>
 		public Dictionary<string, SpisokUnit> FieldASS(string field)
 		{
@@ -86,9 +122,9 @@ namespace MrRobot.Interface
 			var info = UnitList[0].GetType().GetProperty(field);
 			foreach (var unit in UnitList)
 			{
-				string str = info.GetValue(unit).ToString().Trim();
-				if(str.Length > 0)
-					send.Add(str, unit);
+				string value = info.GetValue(unit).ToString().Trim();
+				if(value.Length > 0)
+					send.Add(value, unit);
 			}
 			return send;
 		}
@@ -102,6 +138,8 @@ namespace MrRobot.Interface
 
 		public string Num { get; set; }             // Порядковый номер для вывода в списке
 		public int Id { get; set; }                 // ID единицы списка
+		public string Name { get; set; }            // Имя единицы списка
+		public string Symbol { get; set; }          // Идентификатор инструмента в виде "BTCUSDT"
 		public string HistoryBegin { get; set; }    // Дата начала истории свечных данных
 		public bool IsTrading { get; set; }         // Инструмент торгуется или нет
 		public int CdiCount { get; set; }           // Количество скачанных свечных данных
@@ -110,9 +148,10 @@ namespace MrRobot.Interface
 
 
 
+
+		// ---=== BYBIT ===---
 		public string BaseCoin { get; set; }        // Название базовой монеты
 		public string QuoteCoin { get; set; }       // Название котировочной монеты
-		public string Symbol { get; set; }          // Название инструмента в виде "BTCUSDT"
 		public string SymbolName =>					// Название инструмента в виде "BTC/USDT"
 			$"{BaseCoin}/{QuoteCoin}"; 
 
@@ -123,10 +162,18 @@ namespace MrRobot.Interface
 			format.Decimals(TickSize);
 
 
+
 		// ---=== Exchange ===---
-		public string Name { get; set; }            // Имя единицы списка
 		public string Prefix { get; set; }			// Префикс для таблиц в базе
 		public string Url { get; set; }             // Адрес сайта биржи
+
+
+
+		// ---=== MOEX ===---
+		public int MoexId { get; set; }				// ID инструмениа
+		public int GroupId { get; set; }            // ID группы
+		public int TypeId { get; set; }             // ID вида инструмента
+		public string ShortName { get; set; }       // Краткое наименование
 
 
 

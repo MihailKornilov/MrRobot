@@ -8,21 +8,18 @@ using MrRobot.inc;
 
 namespace MrRobot.Entity
 {
-    /// <summary>
-    /// Логика взаимодействия для CDIselect.xaml
-    /// </summary>
     public partial class CDIselectPanel : UserControl
     {
         public CDIselectPanel()
         {
-            InitializeComponent();
             G.CDIselectPanel = this;
-        }
+            InitializeComponent();
+		}
 
-        /// <summary>
-        /// Быстрый поиск
-        /// </summary>
-        void FindChanged(object sender, TextChangedEventArgs e)
+		/// <summary>
+		/// Быстрый поиск
+		/// </summary>
+		void FindChanged(object sender, TextChangedEventArgs e)
         {
             LabelFound.Content = CDIpanel.LabelFound;
             FoundCancel.Visibility = LabelFound.Content.ToString().Length > 0 ? Visibility.Visible : Visibility.Hidden;

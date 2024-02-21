@@ -227,7 +227,7 @@ select id from _instrument where quoteCoin='usdt' and historyBegin<'2022-01-01 0
             }
 
             // Выбор инструмента
-            ISunit.Chose("HistoryIS", BYBIT.Instrument.UnitOnSymbol(PARAM.Symbol).Id);
+            ISunit.Chose("HistoryIS", BYBIT.Instrument.UnitOnField("Symbol", PARAM.Symbol).Id);
 
             // Запуск скачивания - нажатие на кнопку
             ButtonClick(G.History.DownloadGoButton);

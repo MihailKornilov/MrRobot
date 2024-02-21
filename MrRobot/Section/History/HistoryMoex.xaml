@@ -31,7 +31,7 @@
         <!-- Шаблон для списка бумаг -->
         <DataTemplate x:Key="SecurityUnit">
             <StackPanel Width="290">
-                <Label Content="{Binding Id}"
+                <Label Content="{Binding MoexId}"
                        Width="65"
                        Foreground="#999"
                        FontWeight="Medium"
@@ -39,7 +39,7 @@
                        Padding="0,3"
                        Margin="0,0,10,0"
                        Visibility="Collapsed"/>
-                <Label Content="{Binding SecId}"
+                <Label Content="{Binding Symbol}"
                        Padding="0,4,0,0"
                        Margin="0"
                        FontWeight="Medium"/>
@@ -124,6 +124,12 @@
                 <TextBlock Text="{Binding HdName}" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
                 <TextBlock Text=":" Margin="0,3,0,0" FontSize="22" Foreground="#444"/>
                 <TextBlock Text="{Binding HdSecurityCount}" Margin="5,3,0,0" FontSize="22" Foreground="#999"/>
+                <Button Content="Обновить"
+                        Width="80"
+                        Height="20"
+                        Margin="20,0,0,0"
+                        VerticalAlignment="Center"
+                        Click="IssUpdate"/>
             </StackPanel>
         </Border>
 
@@ -215,14 +221,6 @@
                     </StackPanel>
                 </Grid>
             </StackPanel>
-
-                <!--<Button Grid.Column="1"
-                    Content="Скачать"
-                    Width="100"
-                    Height="25"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Click="EngineIss"/>-->
         </Grid>
 
         <StackPanel Grid.Row="2" Name="LoadPanel" Margin="10,0" Visibility="Collapsed">

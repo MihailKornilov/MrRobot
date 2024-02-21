@@ -16,301 +16,280 @@ using MrRobot.Interface;
 
 namespace MrRobot.Section
 {
-    /// <summary>
-    /// Логика взаимодействия для History.xaml
-    /// </summary>
-    public partial class History : UserControl
-    {
-        public History()
-        {
-            G.History = this;
-            MainMenu.Init += Init;
+	/// <summary>
+	/// Логика взаимодействия для History.xaml
+	/// </summary>
+	public partial class History : UserControl
+	{
+		public History() => G.History = this;
+
+		public void Init()
+		{
+			InitializeComponent();
+
+			MenuCreate();
+			HeadCountWrite();
+
+			IS = new ISunit(HistoryIS);
+			IS.WithHistory = true;
+			IS.Changed = InstrumentChanged;
+			InstrumentChanged();
+
+			Candle.Updated += DownloadedListCreate;
+
+			G.HistoryMoex.Init();
 		}
 
-        void Init(int id)
-        {
-            if (id != (int)SECT.History)
-                return;
 
-            InitializeComponent();
+		ISunit IS { get; set; }
+		SpisokUnit IUnit => IS.IUnit;
 
-            MenuCreate();
-            HeadCountWrite();
+		/// <summary>
+		/// Вывод количества инструментов в заголовке
+		/// </summary>
+		void HeadCountWrite() =>
+			IHeadCount.Text = $"{BYBIT.Instrument.Count} инструмент{format.End(BYBIT.Instrument.Count, "", "а", "ов")}";
 
-            IS = new ISunit(HistoryIS);
-            IS.WithHistory = true;
-            IS.Changed = InstrumentChanged;
-            InstrumentChanged();
+		/// <summary>
+		/// Выбран инструмент в списке
+		/// </summary>
+		void InstrumentChanged()
+		{
+			G.Vis(InfoPanel, IUnit != null);
+			G.Vis(DownloadPanel, IUnit != null);
 
-            Candle.Updated += DownloadedListCreate;
+			if (IUnit == null)
+				return;
 
-            G.HistoryMoex.Init();
+			ByBitInstrumentPrecision.Text = format.E(IUnit.BasePrecision);
+			ByBitInstrumentMinOrder.Text = format.E(IUnit.MinOrderQty);
+			ByBitInstrumentTickSize.Text = format.E(IUnit.TickSize);
+			ByBitInstrumentHistoryBegin.Text = IUnit.HistoryBegin;
 
-            MainMenu.Init -= Init;
-            G.SectionInited(id);
-        }
+			DownloadedListCreate();
 
+			string[] data = IUnit.HistoryBegin.Split(' ');
+			string[] sp = data[0].Split('.');
+			if (sp.Length < 3)
+				return;
+			if (sp[2] == "0000")
+				return;
 
-        ISunit IS { get; set; }
-        SpisokUnit IUnit => IS.IUnit;
-
-        /// <summary>
-        /// Вывод количества инструментов в заголовке
-        /// </summary>
-        void HeadCountWrite() =>
-            IHeadCount.Text = $"{BYBIT.Instrument.Count} инструмент{format.End(BYBIT.Instrument.Count, "", "а", "ов")}";
-
-        /// <summary>
-        /// Выбран инструмент в списке
-        /// </summary>
-        void InstrumentChanged()
-        {
-            G.Vis(InfoPanel, IUnit != null);
-            G.Vis(DownloadPanel, IUnit != null);
-
-            if (IUnit == null)
-                return;
-
-            ByBitInstrumentPrecision.Text = format.E(IUnit.BasePrecision);
-            ByBitInstrumentMinOrder.Text = format.E(IUnit.MinOrderQty);
-            ByBitInstrumentTickSize.Text = format.E(IUnit.TickSize);
-            ByBitInstrumentHistoryBegin.Text = IUnit.HistoryBegin;
-
-            DownloadedListCreate();
-
-            string[] data = IUnit.HistoryBegin.Split(' ');
-            string[] sp = data[0].Split('.');
-            if (sp.Length < 3)
-                return;
-            if (sp[2] == "0000")
-                return;
-
-            int year = int.Parse(sp[2]);
-            int mon = int.Parse(sp[1]);
-            int day = int.Parse(sp[0]);
-            SetupDateBegin.SelectedDate = new DateTime(year, mon, day);
-        }
+			int year = int.Parse(sp[2]);
+			int mon = int.Parse(sp[1]);
+			int day = int.Parse(sp[0]);
+			SetupDateBegin.SelectedDate = new DateTime(year, mon, day);
+		}
 
 
 
 
 
-        #region Download Process
+		#region Download Process
 
-        CDIparam DownloadParam;
+		CDIparam PARAM;
 
-        /// <summary>
-        /// Установка UNIX-даты окончания загрузки
-        /// </summary>
-        int UnixFinish()
-        {
-            var item = SetupPeriod.SelectedItem as ComboBoxItem;
-            if (item.TabIndex > 0)
-                return format.UnixFromDay(SetupDateBegin.Text) + item.TabIndex * 24 * 60 * 60;
+		/// <summary>
+		/// Установка UNIX-даты окончания загрузки
+		/// </summary>
+		int UnixFinish()
+		{
+			var item = SetupPeriod.SelectedItem as ComboBoxItem;
+			if (item.TabIndex > 0)
+				return format.UnixFromDay(SetupDateBegin.Text) + item.TabIndex * 24 * 60 * 60;
 
-            // По сегодняшний день
-            return format.UnixNow();
-        }
+			// По сегодняшний день
+			return format.UnixNow();
+		}
 
-        /// <summary>
-        /// Старт загрузки истории
-        /// </summary>
-        async void DownloadGo(object sender, RoutedEventArgs e)
-        {
-            // Таймфрейм
-            var TFitem = SetupTimeFrame.SelectedItem as ComboBoxItem;
+		/// <summary>
+		/// Старт загрузки истории
+		/// </summary>
+		async void DownloadGo(object sender, RoutedEventArgs e)
+		{
+			// Таймфрейм
+			var TFitem = SetupTimeFrame.SelectedItem as ComboBoxItem;
 
-            DownloadParam = new CDIparam()
-            {
-                Symbol = IUnit.Symbol,
-                TimeFrame = format.TimeFrame((string)TFitem.Content),
-                UnixStart = format.UnixFromDay(SetupDateBegin.Text),
-                UnixFinish = UnixFinish(),
-                NolCount = IUnit.Decimals,
-                CC = 0
-            };
+			PARAM = new CDIparam()
+			{
+				Symbol = IUnit.Symbol,
+				TimeFrame = format.TimeFrame((string)TFitem.Content),
+				UnixStart = format.UnixFromDay(SetupDateBegin.Text),
+				UnixFinish = UnixFinish(),
+				NolCount = IUnit.Decimals,
+				CC = 0,
+				Progress = new Progress<decimal>(v =>
+				{
+					ProBar.Value = (double)v;
+					ProcessText.Text = $"{format.DayFromUnix(PARAM.UnixStart)}: " +
+									   $"загружено свечей: {PARAM.CC}" +
+									   $"   ({v}%)" +
+									   $"   {PARAM.Bar.TimeLeft}";
+				})
+			};
 
-            DownloadElemDisable();
-            var progress = new Progress<decimal>(v => {
-                DownloadProgressBar.Value = (double)v;
-                ProcessText.Text = $"{format.DayFromUnix(DownloadParam.UnixStart)}: " +
-                                   $"загружено свечей: {DownloadParam.CC}" +
-                                   $"   ({v}%)" +
-                                   $"   {DownloadParam.Bar.TimeLeft}";
-            });
-            await Task.Run(() => DownloadProcess(DownloadParam, progress));
-            DownloadElemEnable();
+			DownloadElemDisable();
+			await Task.Run(DownloadProcess);
+			DownloadElemEnable();
 
-            if (DownloadParam.Id == 0)
-                return;
+			if (PARAM.Id == 0)
+				return;
 
-            new Candle();
-            BYBIT.Instrument.CdiCountUpd(IUnit.Id);
+			new Candle();
+			BYBIT.Instrument.CdiCountUpd(IUnit.Id);
 
-            AutoProgon.Converter();
-        }
+			AutoProgon.Converter();
+		}
 
-        /// <summary>
-        /// Процесс скачивания исторических данных в фоновом режиме
-        /// </summary>
-        void DownloadProcess(CDIparam PARAM, IProgress<decimal> Progress)
-        {
-            PARAM.Table = Candle.DataTableCreate("bybit", PARAM.Symbol, PARAM.TimeFrame, PARAM.NolCount);
 
-            DownloadCheck12(PARAM);
+		/// <summary>
+		/// Процесс скачивания исторических данных в фоновом режиме
+		/// </summary>
+		void DownloadProcess()
+		{
+			var wc = new WebClient();
+			DownloadCheck12(wc);
 
-            var wc = new WebClient();
-            PARAM.Bar = new ProBar((PARAM.UnixFinish - PARAM.UnixStart) / PARAM.TimeFrame / 60 / 1000, 1000);
-            Progress.Report(0);
-            int barIndex = 0;
-            var insert = new List<string>();
-            bool isFinish = false;
-            while (!isFinish)
-            {
-                if (!PARAM.IsProcess)
-                    return;
+			PARAM.Table = Candle.DataTableCreate("bybit", PARAM.Symbol, PARAM.TimeFrame, PARAM.NolCount);
+			PARAM.Bar = new ProBar((PARAM.UnixFinish - PARAM.UnixStart) / PARAM.TimeFrame / 60 / 1000, 1000);
+			
+			int barIndex = 0;
+			var insert = new List<string>();
+			bool isFinish = false;
+			while (!isFinish)
+			{
+				if (!PARAM.IsProcess)
+					return;
 
-                //Формирование запроса
-                string url = "https://api.bybit.com/v5/market/kline?category=spot" +
-                            "&symbol=" + PARAM.Symbol +
-                            "&interval=" + PARAM.TimeFrame +
-                           $"&start={PARAM.UnixStart}000" +
-                            "&limit=1000";
-                string json = wc.DownloadString(url);
+				//Формирование запроса
+				string url = "https://api.bybit.com/v5/market/kline?category=spot" +
+								$"&symbol={PARAM.Symbol}" +
+								$"&interval={PARAM.TimeFrame}" +
+								$"&start={PARAM.UnixStart}000" +
+								 "&limit=1000";
+				string str = wc.DownloadString(url);
 
-                WriteLine($"{url}   {format.DTimeFromUnix(PARAM.UnixStart)}");
+				WriteLine($"{url}   {format.DTimeFromUnix(PARAM.UnixStart)}");
 
-                PARAM.Bar.isUpd(barIndex++);
-                Progress.Report(PARAM.Bar.Value);
+				PARAM.Bar.Val(barIndex++, PARAM.Progress);
 
-                dynamic arr = JsonConvert.DeserializeObject(json);
-                if (arr.retMsg == null)
-                    break;
-                if (arr.retMsg != "OK")
-                    break;
+				dynamic json = JsonConvert.DeserializeObject(str);
+				var list = json.result.list;
+				if (list.Count < 2)
+					break;
 
-                var list = arr.result.list;
-                if (list.Count < 2)
-                    break;
+				int Unix = 0;
+				for (int k = list.Count - 2; k >= 0; k--)
+				{
+					var unit = new CandleUnit(list[k]);
+					Unix = unit.Unix;
+					if (Unix > PARAM.UnixFinish)
+					{
+						isFinish = true;
+						break;
+					}
+					insert.Add(unit.Insert);
+				}
 
-                int Unix = 0;
-                for (int k = list.Count - 2; k >= 0; k--)
-                {
-                    var unit = new CandleUnit(list[k]);
-                    Unix = unit.Unix;
-                    if (Unix > PARAM.UnixFinish)
-                    {
-                        isFinish = true;
-                        break;
-                    }
-                    insert.Add(unit.Insert);
-                }
+				PARAM.CC += insert.Count;
+				Candle.DataInsert(PARAM.Table, insert);
+				PARAM.UnixStart = Unix;
+			}
 
-                PARAM.CC += insert.Count;
-                Candle.DataInsert(PARAM.Table, insert);
-                PARAM.UnixStart = Unix;
-            }
+			PARAM.Id = Candle.InfoCreate(PARAM.Table);
+		}
 
-            PARAM.Id = Candle.InfoCreate(PARAM.Table);
-        }
+		/// <summary>
+		/// Проверка на первую половину суток для минутного таймфрейма (если время загрузки начинается после 16:00)
+		/// </summary>
+		void DownloadCheck12(WebClient wc)
+		{
+			if (PARAM.TimeFrame != 1)
+				return;
 
-        /// <summary>
-        /// Проверка на первую половину суток для минутного таймфрейма (если время загрузки начинается после 16:00)
-        /// </summary>
-        void DownloadCheck12(CDIparam PARAM)
-        {
-            if (PARAM.TimeFrame != 1)
-                return;
+			string url = "https://api.bybit.com/v5/market/kline?category=spot" +
+							$"&symbol={PARAM.Symbol}" +
+							"&interval=1" +
+							$"&start={PARAM.UnixStart}000" +
+							"&limit=1000";
 
-            var wc = new WebClient();
-            string url = "https://api.bybit.com/v5/market/kline?category=spot" +
-                        "&symbol=" + PARAM.Symbol +
-                        "&interval=1" +
-                        "&start=" + PARAM.UnixStart + "000" +
-                        "&limit=1000";
+			string str = wc.DownloadString(url);
+			dynamic json = JsonConvert.DeserializeObject(str);
+			if (json.result.list.Count > 0)
+				return;
 
-            string json = wc.DownloadString(url);
-            dynamic arr = JsonConvert.DeserializeObject(json);
+			PARAM.UnixStart += 43_200; //прибавление 12 часов
+		}
 
-            if (arr.retMsg == null)
-                return;
-            if (arr.retMsg != "OK")
-                return;
-            if (arr.result.list.Count > 0)
-                return;
+		/// <summary>
+		/// Блокировка элементов настроек скачивания данных при начале загрузки
+		/// </summary>
+		void DownloadElemDisable()
+		{
+			ProBar.Value = 0;
+			SetupPanel.IsEnabled = false;
+			G.Vis(ProgressPanel);
+			G.Hid(DownloadedPanel);
+		}
 
-            PARAM.UnixStart += 43_200; //прибавление 12 часов
-        }
+		/// <summary>
+		/// Разблокировка элементов настроек скачивания данных при начале загрузки
+		/// </summary>
+		void DownloadElemEnable()
+		{
+			SetupPanel.IsEnabled = true;
+			G.Hid(ProgressPanel);
+		}
 
-        /// <summary>
-        /// Блокировка элементов настроек скачивания данных при начале загрузки
-        /// </summary>
-        void DownloadElemDisable()
-        {
-            DownloadProgressBar.Value = 0;
-            SetupPanel.IsEnabled = false;
-            ProgressPanel.Visibility = Visibility.Visible;
-            DownloadedPanel.Visibility = Visibility.Hidden;
-        }
+		/// <summary>
+		/// Отмена процесса загрузки
+		/// </summary>
+		void DownloadCancel(object s, RoutedEventArgs e) => PARAM.IsProcess = false;
 
-        /// <summary>
-        /// Разблокировка элементов настроек скачивания данных при начале загрузки
-        /// </summary>
-        void DownloadElemEnable()
-        {
-            SetupPanel.IsEnabled = true;
-            ProgressPanel.Visibility = Visibility.Collapsed;
-        }
-
-        /// <summary>
-        /// Отмена процесса загрузки
-        /// </summary>
-        void DownloadCancel(object s, RoutedEventArgs e) => DownloadParam.IsProcess = false;
-
-        #endregion
+		#endregion
 
 
 
 
-        /// <summary>
-        /// Список загруженных свечных данных по конкретному инструменту
-        /// </summary>
-        public void DownloadedListCreate()
-        {
-            if (IUnit == null)
-                return;
+		/// <summary>
+		/// Список загруженных свечных данных по конкретному инструменту
+		/// </summary>
+		public void DownloadedListCreate()
+		{
+			if (IUnit == null)
+				return;
 
-            var list = Candle.ListOnIID(IUnit.Id);
-            DownloadedList.ItemsSource = list;
+			var list = Candle.ListOnIID(IUnit.Id);
+			DownloadedList.ItemsSource = list;
 
-            G.Vis(DownloadedPanel, list.Count > 0);
+			G.Vis(DownloadedPanel, list.Count > 0);
 
-            if (list.Count > 0 && DownloadedList.SelectedIndex == -1)
-                DownloadedList.SelectedIndex = 0;
-        }
+			if (list.Count > 0 && DownloadedList.SelectedIndex == -1)
+				DownloadedList.SelectedIndex = 0;
+		}
 
-        /// <summary>
-        /// Выбор из списка загруженных свечных данных
-        /// </summary>
-        void DowloadedListChanged(object s, SelectionChangedEventArgs e)
-        {
-            var box = s as ListBox;
+		/// <summary>
+		/// Выбор из списка загруженных свечных данных
+		/// </summary>
+		void DowloadedListChanged(object s, SelectionChangedEventArgs e)
+		{
+			var box = s as ListBox;
 
-            if (box.Items.Count > 0 && box.SelectedIndex == -1)
-            {
-                box.SelectedIndex = 0;
-                return;
-            }
+			if (box.Items.Count > 0 && box.SelectedIndex == -1)
+			{
+				box.SelectedIndex = 0;
+				return;
+			}
 
-            if (G.IsAutoProgon)
-                return;
+			if (G.IsAutoProgon)
+				return;
 
-            EChart.CDI("History", box.SelectedItem as CDIunit);
-        }
+			EChart.CDI("History", box.SelectedItem as CDIunit);
+		}
 
-        /// <summary>
-        /// Нажатие на крестик удаления загруженной истории
-        /// </summary>
-        void DownloadedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
-    }
+		/// <summary>
+		/// Нажатие на крестик удаления загруженной истории
+		/// </summary>
+		void DownloadedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
+	}
 }

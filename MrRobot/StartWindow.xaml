@@ -1,0 +1,50 @@
+﻿<Window x:Class="MrRobot.StartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Mr.Robot v0.0.1"
+        Background="#ECF3F8"
+        Width="640"
+        Height="700">
+
+    <Window.Resources>
+        <DataTemplate x:Key="StartLogUnit">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding Msg}"
+                       Width="450"
+                       Padding="0"
+                       FontSize="14"/>
+                <Label Content="{Binding Msec}"
+                       Width="100"
+                       Padding="0"
+                       FontSize="14"
+                       FontWeight="{Binding MsecWeight}"
+                       HorizontalContentAlignment="Right"/>
+                <Label Content="ms"
+                       Width="30"
+                       Padding="4,0,0,0"
+                       FontSize="14"
+                       Foreground="#AAA"/>
+            </StackPanel>
+        </DataTemplate>
+        <Style x:Key="StartLogUnitStyle" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="{Binding BG}"/>
+            <Setter Property="Padding" Value="10,3,0,3"/>
+            <Setter Property="Margin" Value="0,0,0,1"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </Window.Resources>
+
+    <StackPanel>
+        <Separator Background="#DCE2E7" Margin="0"/>
+        <ListBox Name="StartLogBox"
+                 Margin="15"
+                 BorderThickness="0"
+                 Background="#C8DBEC"
+                 ItemTemplate="{StaticResource StartLogUnit}"
+                 ItemContainerStyle="{StaticResource StartLogUnitStyle}"/>
+    </StackPanel>
+
+</Window>

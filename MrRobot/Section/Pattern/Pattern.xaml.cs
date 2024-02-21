@@ -18,17 +18,10 @@ namespace MrRobot.Section
     /// </summary>
     public partial class Pattern : UserControl
     {
-        public Pattern()
-        {
-            G.Pattern = this;
-            MainMenu.Init += Init;
-        }
+        public Pattern() => G.Pattern = this;
 
-        void Init(int id)
+        public void Init()
         {
-            if (id != (int)SECT.Pattern)
-                return;
-
             InitializeComponent();
             CDIpanel.Page(3).TBLink = SelectLink.TBLink;
             CDIpanel.Page(3).OutMethod += SourceChanged;
@@ -44,9 +37,6 @@ namespace MrRobot.Section
             SourceChanged();
 
             G.PatternArchive.Init();
-
-            MainMenu.Init -= Init;
-            G.SectionInited(id);
         }
 
 

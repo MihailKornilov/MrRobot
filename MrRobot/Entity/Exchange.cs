@@ -21,20 +21,5 @@ namespace MrRobot.Entity
 			Updated = G.Exchange?.Updated;
 			G.Exchange = this;
 		}
-
-		/// <summary>
-		/// Единица биржм на основании Prefix
-		/// </summary>
-		public SpisokUnit UnitOnPrefix(string prefix)
-		{
-			if (prefix.Length == 0)
-				return null; // !!! Сделать возврат пустой биржи
-
-			foreach (var unit in ListAll)
-				if (unit.Prefix == prefix)
-					return unit;
-
-			return null;
-		}
 	}
 }

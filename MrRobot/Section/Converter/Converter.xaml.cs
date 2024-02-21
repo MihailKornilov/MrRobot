@@ -14,25 +14,15 @@ namespace MrRobot.Section
 {
     public partial class Converter : UserControl
     {
-        public Converter()
-        {
-            G.Converter = this;
-            MainMenu.Init += Init;
-        }
+        public Converter() => G.Converter = this;
 
-        void Init(int id)
+		public void Init()
         {
-            if (id != (int)SECT.Converter)
-                return;
-
             InitializeComponent();
             CDIpanel.Page(2).TBLink = SelectLink.TBLink;
             CDIpanel.Page(2).OutMethod += SourceChanged;
             SourceChanged();
             Candle.Updated += ResultListCreate;
-
-            MainMenu.Init -= Init;
-            G.SectionInited(id);
         }
 
 

@@ -18,6 +18,9 @@ namespace MrRobot.inc
 {
     public class G
     {
+        public static Dur dur { get; set; }
+        public G() => dur = new Dur();
+
         // Глобальные установки
         public static void Settings()
         {
@@ -34,14 +37,20 @@ namespace MrRobot.inc
             {
                 DateTimeFormat = dtInfo
             };
-
-            // Установка каталога кеша для Веб-браузера
-            var Settings = new CefSettings();
-            Settings.CachePath = Directory.GetCurrentDirectory() + @"\CefSharpCache";
-            Cef.Initialize(Settings);
         }
 
-        public static void SectionInited(int id) =>
+		// Установка каталога кеша для Веб-браузера
+		public static void CefSettings()
+        {
+			var Settings = new CefSettings();
+			Settings.CachePath = Directory.GetCurrentDirectory() + @"\CefSharpCache";
+			Cef.Initialize(Settings);
+		}
+
+
+
+
+		public static void SectionInited(int id) =>
             WriteLine($"{id}.{Enum.GetName(typeof(SECT), id)} INITED");
 
         // Флаг запущенного АвтоПрогона
@@ -140,15 +149,8 @@ namespace MrRobot.inc
             WriteLine(msg + Second());
         }
 
-        public int TotalSeconds()
-        {
-            int sec = (int)(SW.ElapsedMilliseconds / 1000);
-            return sec;
-        }
-        public long ElapsedMS()
-        {
-            return SW.ElapsedMilliseconds;
-        }
+        public int TotalSeconds() => (int)(SW.ElapsedMilliseconds / 1000);
+        public long ElapsedMS => SW.ElapsedMilliseconds;
     }
 
 
@@ -234,7 +236,7 @@ namespace MrRobot.inc
             Value = Math.Round(Percent, format.Round(StepCount));
             Percent += PercentStep;
 
-            MilliSecondPass = dur.ElapsedMS();
+            MilliSecondPass = dur.ElapsedMS;
             MilliSecondLeft = MilliSecondPass / count * All - MilliSecondPass;
 
             return true;

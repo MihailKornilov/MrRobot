@@ -64,7 +64,7 @@ namespace MrRobot.Section
             Ask = new SortedDictionary<double, double>();
             Bid = new SortedDictionary<double, double>();
 
-            var Instr = BYBIT.Instrument.UnitOnSymbol(Symbol);
+            var Instr = BYBIT.Instrument.UnitOnField("Symbol", Symbol);
             bp = format.Decimals(Instr.BasePrecision);
             qp = Instr.Decimals;
 
