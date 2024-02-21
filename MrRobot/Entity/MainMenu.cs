@@ -9,11 +9,8 @@ namespace MrRobot.Entity
 {
     public class MainMenu
     {
-        public delegate void Dlgt();
-        public static Dlgt Changed { get; set; }
-        // Инициализация страниц после загрузки приложения
-        public delegate void DlgtInit(int id);
-        public static DlgtInit Init = (int id) => WriteLine($"MM: {id}");
+        public delegate void DLGT();
+        public static DLGT Changed { get; set; }
 
         public MainMenu()
         {
@@ -37,17 +34,9 @@ namespace MrRobot.Entity
             SP.Children.Add(lb);
             LB = lb;
             Go();
-
-            //InitAllSections();
         }
 
         static ListBox LB { get; set; }
-
-        void InitAllSections()
-        {
-            for (int i = 1; i <= Enum.GetNames(typeof(SECT)).Length; i++)
-                Init?.Invoke(i);
-        }
 
         /// <summary>
         /// Клик по кнопке меню
@@ -79,7 +68,6 @@ namespace MrRobot.Entity
                 index++;
             }
 
-            Init?.Invoke(unit.Index);
             Changed?.Invoke();
         }
     }

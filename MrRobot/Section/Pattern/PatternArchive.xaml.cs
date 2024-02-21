@@ -13,10 +13,7 @@ namespace MrRobot.Section
     /// </summary>
     public partial class PatternArchive : UserControl
     {
-        public PatternArchive()
-        {
-            G.PatternArchive = this;
-        }
+        public PatternArchive() => G.PatternArchive = this;
 
         public void Init()
         {

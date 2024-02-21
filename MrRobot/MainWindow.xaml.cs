@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Interop;
 using static System.Console;
@@ -7,83 +8,95 @@ using MrRobot.inc;
 
 namespace MrRobot
 {
-    public partial class MainWindow : Window
-    {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
-        public void MouseHookInit(object sender, RoutedEventArgs e)
-        {
-            var hwnd = new WindowInteropHelper(this).Handle;
-            HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
-        }
-        IntPtr MouseHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            const int WM_ENTERSIZEMOVE = 0x0231;
-            const int WM_EXITSIZEMOVE = 0x0232;
-
-            // Левая кнопка мыши была нажата в области заголовка или изменения размера окна
-            if (msg == WM_ENTERSIZEMOVE)
-            {
-            }
-
-
-            // Разрешение экрана
-            //Rect scr = SystemParameters.WorkArea;
-            //WriteLine("scr.Width = " + scr.Width);
-            //WriteLine("scr.Height = " + scr.Height);
-
-
-            // Левая кнопка мыши была отпущена в области заголовка или изменения размера окна
-            if (msg == WM_EXITSIZEMOVE)
-            {
-                MWsizeDC.Width  = (int)Width;
-                MWsizeDC.Height = (int)Height;
-                MWsizeDC.Left   = (int)Left;
-                MWsizeDC.Top    = (int)Top;
-
-                G.Pattern.FoundLine();
-            }
-
-            return IntPtr.Zero;
-        }
-    }
-
-    // Положение и размеры окна через DataContext
-    class MWsizeDC
-    {
-        public static WindowState State
+	public partial class MainWindow : Window
+	{
+		public MainWindow()
 		{
-            get => position.Val("MainWindow.Maximized", false)
-                    ? System.Windows.WindowState.Maximized
-                    : System.Windows.WindowState.Normal;
-			set => position.Set("MainWindow.Maximized", value == System.Windows.WindowState.Maximized);
-		}
-		public static void WindowState(object s, SizeChangedEventArgs e) => State = G.MW.WindowState;
+			DataContext = new MWsizeDC();
+			WindowState = MWsizeDC.State;
 
-		public static int Width
-        {
-            get => position.Val("MainWindow.Width", 1366);
-            set => position.Set("MainWindow.Width", value);
-        }
-        public static int Height
-        {
-            get => position.Val("MainWindow.Height", 700);
-            set => position.Set("MainWindow.Height", value);
-        }
-        public static int Left
-        {
-            get => position.Val("MainWindow.Left", 100);
-            set => position.Set("MainWindow.Left", value);
-        }
-        public static int Top
-        {
-            get => position.Val("MainWindow.Top", 100);
-            set => position.Set("MainWindow.Top", value);
-        }
-    }
+			InitializeComponent();
+			Loaded += MouseHookInit;
+		}
+
+		public void MouseHookInit(object sender, RoutedEventArgs e)
+		{
+			WriteLine("************** MW LOADED");
+			var hwnd = new WindowInteropHelper(this).Handle;
+			HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
+		}
+		IntPtr MouseHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			const int WM_ENTERSIZEMOVE = 0x0231;
+			const int WM_EXITSIZEMOVE = 0x0232;
+
+			// Левая кнопка мыши была нажата в области заголовка или изменения размера окна
+			if (msg == WM_ENTERSIZEMOVE)
+			{
+			}
+
+
+			// Разрешение экрана
+			//Rect scr = SystemParameters.WorkArea;
+			//WriteLine("scr.Width = " + scr.Width);
+			//WriteLine("scr.Height = " + scr.Height);
+
+
+			// Левая кнопка мыши была отпущена в области заголовка или изменения размера окна
+			if (msg == WM_EXITSIZEMOVE)
+			{
+				MWsizeDC.Upd($"{Width} {Height} {Left} {Top}", true);
+				G.Pattern.FoundLine();
+			}
+
+			return IntPtr.Zero;
+		}
+	}
+
+	// Положение и размеры окна через DataContext
+	class MWsizeDC
+	{
+		public MWsizeDC()
+		{
+			if (Arr != null)
+				return;
+			if (!File.Exists(FileName))
+				 File.Create(FileName);
+			Upd(File.ReadAllText(FileName));
+		}
+
+		static string FileName => "MainWindowSize.txt";
+		public static void Upd(string size, bool isSave = false)
+		{
+			if (size == null || size.Length == 0)
+				size = "1200 700 100 100 0";
+			if (isSave)
+				size += $" {Arr[4]}";
+			Arr = Array.ConvertAll(size.Split(' '), x => int.Parse(x));
+			SizeSave(isSave);
+		}
+		static void SizeSave(bool isSave)
+		{
+			if (!isSave)
+				return;
+			File.WriteAllText(FileName, $"{Width} {Height} {Left} {Top} {Arr[4]}");
+		}
+		static int[] Arr { get; set; }
+		public static int Width  => Arr[0];
+		public static int Height => Arr[1];
+		public static int Left   => Arr[2];
+		public static int Top    => Arr[3];
+		// Вовесь экран
+		public static WindowState State =>
+			Arr[4] == 1
+				? System.Windows.WindowState.Maximized
+				: System.Windows.WindowState.Normal;
+		public static void WindowState(object s, SizeChangedEventArgs e)
+		{
+			Arr[4] = G.MW.WindowState == System.Windows.WindowState.Maximized ? 1 : 0;
+			SizeSave(true);
+		}
+	}
 }
 
 

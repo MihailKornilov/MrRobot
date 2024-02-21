@@ -39,7 +39,7 @@ namespace MrRobot.Section
                 return;
 
             ResultListCreate();
-            new AdvChart(ChartPanel, SourceUnit);
+			new AdvChart(ChartPanel, SourceUnit);
         }
 
 

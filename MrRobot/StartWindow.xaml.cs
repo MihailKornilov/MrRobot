@@ -10,6 +10,7 @@ using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
 using MrRobot.Connector;
+using System.Threading;
 
 namespace MrRobot
 {
@@ -18,10 +19,18 @@ namespace MrRobot
 		public StartWindow()
 		{
 			new G();
-
-			InitializeComponent();	StartLog("Инициализация стартового окна");
-
+			DataContext = new MWsizeDC();
+			WindowState = MWsizeDC.State;
+			InitializeComponent();	StartLog($"Инициализация стартового окна...");
+			MainMenu.Changed += SWclose;
 			LoadProcess();
+		}
+
+		async void SWclose()
+		{
+			await Task.Run(() => Thread.Sleep(500));
+			Close();
+			MainMenu.Changed -= SWclose;
 		}
 
 		void StartLog(string msg, bool isFinish = false) =>
@@ -29,23 +38,21 @@ namespace MrRobot
 
 		async void LoadProcess()
 		{
-			await Task.Run(AppExceptionLog);	StartLog("Подключение событий для необработанных исключений...");
-			await Task.Run(Control_Mysqld);		StartLog("Проверка наличия сервера Базы данных...");
-			await Task.Run(G.Settings);			StartLog("Применение глобальных настроек");
-			await Task.Run(G.CefSettings);		StartLog("Настройка встроенного Веб-браузера");
+			await Task.Run(AppExceptionLog);StartLog("Подключение событий для необработанных исключений...");
+			await Task.Run(Control_Mysqld);	StartLog("Проверка наличия сервера Базы данных...");
+			G.CefSettings();				StartLog("Настройка встроенного Веб-браузера");
 
 			await Task.Run(() => new position());	StartLog("Загрузка параметров приложения");
 			await Task.Run(() => new Exchange());	StartLog("Загрузка списка Бирж");
 			await Task.Run(() => new Candle());		StartLog("Загрузка информации о Свечных данных");
 			await Task.Run(() => new Robots());		StartLog("Загрузка Роботов");
-			await Task.Run(() => new CDIpanel());	StartLog("Инициализация выпадающего списка для выбора Свечных данных");
 			await Task.Run(() => new BYBIT());		StartLog("Загрузка данных биржи ByBit");
 			await Task.Run(() => new MOEX());		StartLog("Загрузка данных МосБиржи");
+			await Task.Run(() => new CDIpanel());	StartLog("Инициализация выпадающего списка для выбора Свечных данных");
 			await Task.Run(() => new HttpServer());	StartLog("Запуск Http-сервера");
 			
 			G.MW = new MainWindow();StartLog("Инициализация главного окна");
-
-			G.ISPanel.Init();		StartLog("Инициализация выпадающего списка для выбора Инструментов...");
+			G.MW.Show();
 
 			G.History.Init();		StartLog("Секция History: инициализация...");
 			G.Converter.Init();		StartLog("Секция Converter: инициализация...");
@@ -56,18 +63,15 @@ namespace MrRobot
 			G.LogFile.Init();		StartLog("Секция LogFile: инициализация...");
 			G.Manual.Init();		StartLog("Секция Manual: инициализация...");
 
-			new MainMenu();			StartLog("Создание кнопок главного меню");
+			G.ISPanel.Init();		StartLog("Инициализация выпадающего списка для выбора Инструментов...");
 
-			G.MW.DataContext = new MWsizeDC();
-			G.MW.Loaded += G.MW.MouseHookInit;
+			new MainMenu();			StartLog("Создание кнопок главного меню...");
+
 			G.MW.SizeChanged += Depth.SizeChanged;
 			G.MW.SizeChanged += G.Tester.RobotLogWidthSet;
 			G.MW.SizeChanged += MWsizeDC.WindowState;
 			G.MW.Closed += HttpServer.Stop;
 			StartLog("Установка событий для главного окна...");
-
-			G.MW.Show();
-
 			StartLog("Общее время загрузки:", true);
 		}
 
@@ -104,6 +108,7 @@ namespace MrRobot
 		}
 	}
 
+
 	public class StartLogUnit
 	{
 		public StartLogUnit(string msg, bool isfinish)
@@ -113,6 +118,7 @@ namespace MrRobot
 			if (IsFinish = isfinish)
 			{
 				Msec = G.dur.Second();
+				G.LogWrite($"Загружено за {Msec} сек.");
 				return;
 			}
 

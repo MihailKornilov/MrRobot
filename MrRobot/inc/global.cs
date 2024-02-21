@@ -19,10 +19,14 @@ namespace MrRobot.inc
     public class G
     {
         public static Dur dur { get; set; }
-        public G() => dur = new Dur();
+        public G()
+        {
+            dur = new Dur();
+            Settings();
+		}
 
         // Глобальные установки
-        public static void Settings()
+        void Settings()
         {
             // Формат даны в виде 03.12.2023 (для календаря)
             var dtInfo = new DateTimeFormatInfo()
@@ -48,10 +52,6 @@ namespace MrRobot.inc
 		}
 
 
-
-
-		public static void SectionInited(int id) =>
-            WriteLine($"{id}.{Enum.GetName(typeof(SECT), id)} INITED");
 
         // Флаг запущенного АвтоПрогона
         public static bool IsAutoProgon => AutoProgon.Active;
