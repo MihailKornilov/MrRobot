@@ -45,7 +45,7 @@ namespace MrRobot.Entity
         {
             if (unit == null)
                 return;
-            if (!mysql.IsTableExist(unit.Table))
+			if (!my.Main.HasRows(unit.Table))
                 return;
 
             Section = section;
@@ -119,20 +119,28 @@ namespace MrRobot.Entity
             var read = new StreamReader(PathTmp);
             var write = new StreamWriter(PathHtml);
 
-            int Limit = 1000;
+			var Candles = new List<string>();
+			var Volumes = new List<string>();
+
+			int Limit = 1000;
             string sql = "SELECT*" +
                         $"FROM`{CdiUnit.Table}`" +
-                         "ORDER BY`unix`DESC " +
+                         "ORDER BY`unix`" +
                         $"LIMIT {Limit}";
-            var data = mysql.ChartCandles(sql);
+            my.Main.Delegat(sql, res =>
+            {
+				var cndl = new CandleUnit(res);
+				Candles.Add(cndl.CandleToChart());
+				Volumes.Add(cndl.VolumeToChart());
+			});
 
-            string line;
+			string line;
             while ((line = read.ReadLine()) != null)
             {
                 line = line.Replace("TITLE", Title);
 
-                line = line.Replace("CANDLES_DATA", $"[\n{data[0]}]");
-                line = line.Replace("VOLUME_DATA",  $"[\n{data[1]}]");
+                line = line.Replace("CANDLES_DATA", $"[\n{string.Join(",\n", Candles.ToArray())}]");
+                line = line.Replace("VOLUME_DATA",  $"[\n{string.Join(",\n", Volumes.ToArray())}]");
 
                 line = line.Replace("TICK_SIZE", CdiUnit.TickSize.ToString());
                 line = line.Replace("NOL_COUNT", CdiUnit.Decimals.ToString());

@@ -92,7 +92,7 @@ namespace MrRobot.Section
             {
                 Id = SourceUnit.Id,
                 Symbol = SourceUnit.Symbol,
-                NolCount = SourceUnit.Decimals,
+				Decimals = SourceUnit.Decimals,
                 ConvertedIds = new int[CheckedTF.Length],
                 Progress = new Progress<decimal>(v =>
                 {
@@ -156,7 +156,7 @@ namespace MrRobot.Section
             string TableName = Candle.DataTableCreate(G.Exchange.Unit(SourceUnit.ExchangeId).Name,
                                                       PARAM.Symbol,
                                                       PARAM.TimeFrame,
-                                                      PARAM.NolCount);
+                                                      PARAM.Decimals);
 
             // Определение начала первой свечи согласно таймфрейму
             int iBegin;

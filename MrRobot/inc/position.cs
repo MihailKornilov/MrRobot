@@ -15,7 +15,7 @@ namespace MrRobot.inc
 		public position()
 		{
             string sql = "SELECT `key`,`val` FROM `_position`";
-            ASS = mysql.StringAss(sql);
+            ASS = my.Main.StringAss(sql);
         }
 
 		/// <summary>

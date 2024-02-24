@@ -167,7 +167,7 @@ namespace MrRobot.Section
             var CDI = Candle.Unit(SPARAM.CdiId);
 
             string sql = $"SELECT COUNT(*)FROM`{CDI.Table}`";
-            int count = mysql.Count(sql);
+            int count = my.Main.Count(sql);
 
             sql = $"SELECT*FROM`{CDI.Table}`";
             var MASS = mysql.PatternSearchMass(sql, SPARAM, count);

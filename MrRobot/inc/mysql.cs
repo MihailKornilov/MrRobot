@@ -96,32 +96,6 @@ namespace MrRobot.inc
 
 
 
-        /// <summary>
-        /// Проверка существования таблицы
-        /// </summary>
-        public static bool IsTableExist(string tableName)
-        {
-            string sql = $"SHOW TABLES LIKE'{tableName}'";
-            new mysql(sql, true);
-            return res.HasRows;
-        }
-
-
-
-        /// <summary>
-        /// Количество
-        /// </summary>
-        public static int Count(string sql)
-        {
-            new mysql(sql, true);
-
-            res.Read();
-            int count = res.GetInt32(0);
-
-            Finish(sql);
-
-            return count;
-        }
 
         /// <summary>
         /// Получение списка, состоящего из одного стоблца
@@ -147,29 +121,6 @@ namespace MrRobot.inc
             return mass;
         }
 
-        /// <summary>
-        /// Идентификаторы через запятую
-        /// </summary>
-        public static string Ids(string sql)
-        {
-            new mysql(sql, true);
-
-            if (!res.HasRows)
-            {
-                Finish(sql);
-                return "0";
-            }
-
-            var list = new List<string>();
-            while (res.Read())
-                list.Add(res.GetValue(0).ToString());
-
-            string send = string.Join(",", list.ToArray());
-
-            Finish(sql);
-
-            return send;
-        }
 
         /// <summary>
         /// Получение списка из базы в виде словаря с ключами и значениями
@@ -212,154 +163,9 @@ namespace MrRobot.inc
             return send;
         }
 
-        /// <summary>
-        /// Получение одного текстового поля из базы
-        /// </summary>
-        public static string QueryString(string sql)
-        {
-            new mysql(sql);
-            string send = cmd.ExecuteScalar()?.ToString();
-            Finish(sql);
-            return send;
-        }
-
-        /// <summary>
-        /// Получение ассоциативного массива на основании id
-        /// В запросе должно быть обязательно указано только два поля
-        /// Например: SELECT `id`,`name` FROM `table`
-        /// </summary>
-        public static Dictionary<int, int> IntAss(string sql)
-        {
-            new mysql(sql, true);
-
-            var send = new Dictionary<int, int>();
-
-            while (res.Read())
-            {
-                int id = res.GetInt32(0);
-                int val = res.GetInt32(1);
-                send.Add(id, val);
-            }
-
-            Finish(sql);
-
-            return send;
-        }
-
-        /// <summary>
-        /// Получение ассоциативного массива на основании id
-        /// В запросе должно быть обязательно указано только два поля
-        /// Например: SELECT `id`,`name` FROM `table`
-        /// </summary>
-        public static Dictionary<int, string> IntStringAss(string sql)
-        {
-            new mysql(sql, true);
-
-            var send = new Dictionary<int, string>();
-
-            while (res.Read())
-            {
-                int id = res.GetInt32(0);
-                string val = res.GetValue(1).ToString();
-                send.Add(id, val);
-            }
-
-            Finish(sql);
-
-            return send;
-        }
-        /// <summary>
-        /// Получение ассоциативного массива на основании id
-        /// В запросе должно быть обязательно указано только два поля
-        /// Например: SELECT `id`,`name` FROM `table`
-        /// </summary>
-        public static Dictionary<string, int> StringIntAss(string sql)
-        {
-            new mysql(sql, true);
-
-            var send = new Dictionary<string, int>();
-
-            while (res.Read())
-            {
-                string id = res.GetValue(0).ToString();
-                int val = res.GetInt32(1);
-                send.Add(id, val);
-            }
-
-            Finish(sql);
-
-            return send;
-        }
-
-        /// <summary>
-        /// Получение ассоциативного массива на основании двух произвольных полей в базе
-        /// В запросе должно быть обязательно указано только два поля
-        /// Например: SELECT `name`,`value` FROM `table`
-        /// </summary>
-        public static Dictionary<string, string> StringAss(string sql)
-        {
-            new mysql(sql, true);
-
-            var send = new Dictionary<string, string>();
-            while (res.Read())
-                send.Add(res.GetString(0), res.GetString(1));
-
-            Finish(sql);
-
-            return send;
-        }
-
-        /// <summary>
-        /// Словарь, который получает строку по ID
-        /// </summary>
-        public static Dictionary<int, object> IdRowAss(string sql)
-        {
-            new mysql(sql, true);
-
-            var send = new Dictionary<int, object>();
-            while (res.Read())
-            {
-                var row = new Dictionary<string, string>();
-
-                for (int i = 0; i < res.FieldCount; i++)
-                    row.Add(res.GetName(i), res.GetValue(i).ToString());
-
-                send.Add(res.GetInt32("id"), row);
-            }
-
-            Finish(sql);
-
-            return send;
-        }
 
 
 
-        /// <summary>
-        /// Получение данных о свечах для графика
-        /// </summary>
-        public static List<string> ChartCandles(string sql, bool msec = false)
-        {
-            new mysql(sql, true);
-
-            var CandlesData = new List<string>();
-            var VolumesData = new List<string>();
-            while (res.Read())
-            {
-                var cndl = new CandleUnit(res);
-                CandlesData.Add(cndl.CandleToChart(msec: msec));
-                VolumesData.Add(cndl.VolumeToChart());
-            }
-
-            CandlesData.Reverse();
-            VolumesData.Reverse();
-
-            Finish(sql);
-
-            return new List<string>() {
-                string.Join(",\n", CandlesData.ToArray()),
-                string.Join(",\n", VolumesData.ToArray())
-            };
-        }
         /// <summary>
         /// Получение данных о свечах для Робота
         /// </summary>
@@ -412,8 +218,6 @@ namespace MrRobot.inc
 
             return true;
         }
-
-
 
 
         static Dictionary<int, List<CandleUnit>> ConvertCandles_Cache;

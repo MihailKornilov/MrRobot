@@ -28,26 +28,21 @@ namespace MrRobot.Entity
                 new RobotUnit { Name = "Не выбран" }
             };
 
-            string sql = "SELECT*FROM`_robot`ORDER BY`name`";
-            var mass = mysql.QueryList(sql);
-            if (mass.Count == 0)
-                return;
-
-            int num = 1;
-            foreach (Dictionary<string, string> v in mass)
+			int num = 1;
+			string sql = "SELECT*FROM`_robot`ORDER BY`name`";
+			my.Main.Delegat(sql, res =>
+            {
                 RobotList.Add(new RobotUnit
                 {
-                    Id = Convert.ToInt32(v["id"]),
+                    Id = res.GetInt32("id"),
                     Num = $"{num++}.",
-                    Name = v["name"],
-                    Path = v["path"]
+                    Name = res.GetString("name"),
+                    Path = res.GetString("path")
                 });
+			});
         }
 
-        public static List<RobotUnit> ListBox()
-        {
-            return RobotList;
-        }
+        public static List<RobotUnit> ListBox() => RobotList;
 
         /// <summary>
         /// Выбор файла робота и проверка на корректность
@@ -129,7 +124,7 @@ namespace MrRobot.Entity
             string sql = "SELECT COUNT(*)" +
                          "FROM`_robot`" +
                         $"WHERE`name`='{name}'";
-            if (mysql.Count(sql) > 0)
+            if (my.Main.Count(sql) > 0)
             {
                 error.Msg($"Робот '{name}' уже присутствует в списке.");
                 return 0;
@@ -155,14 +150,10 @@ namespace MrRobot.Entity
         public int Id { get; set; }
         public string Num { get; set; }     // Порядковый номер для отображения в списке
         // Ширина порядкового номера по условию
-        public int NumWidth {
-            get { return Id == 0 ? 0 : 23; }
-        }
+        public int NumWidth => Id == 0 ? 0 : 23;
         public string Name { get; set; }    // Имя, а также название сборки и класса
         // Цвет названия по условию
-        public string NameColor {
-            get { return Id == 0 ? "#999" : "#000"; }
-        }
+        public string NameColor => Id == 0 ? "#999" : "#000";
         public string Path { get; set; }    // Полный путь к роботу на диске
     }
 }

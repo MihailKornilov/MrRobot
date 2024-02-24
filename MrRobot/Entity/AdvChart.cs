@@ -6,6 +6,8 @@ using static System.Console;
 using CefSharp;
 using CefSharp.Wpf;
 using MrRobot.inc;
+using System.Collections.Generic;
+using System.Security.AccessControl;
 
 namespace MrRobot.Entity
 {
@@ -38,23 +40,30 @@ namespace MrRobot.Entity
 
 		bool PageCreate(CDIunit unit)
 		{
-			if(!mysql.IsTableExist(unit.Table))
+			if (!my.Main.HasRows(unit.Table))
 				return false;
 
 			var read = new StreamReader(PathTmp);
 			var write = new StreamWriter(PathHtml);
 
+			var Candles = new List<string>();
+
 			int Limit = 500;
 			string sql = "SELECT*" +
 						$"FROM`{unit.Table}`" +
-						 "ORDER BY`unix`DESC " +
+						 "ORDER BY`unix`" +
 						$"LIMIT {Limit}";
-			var data = mysql.ChartCandles(sql, true);
+			my.Main.Delegat(sql, res =>
+			{
+				var cndl = new CandleUnit(res);
+				Candles.Add(cndl.CandleToChart(msec: true));
+			});
 
 			string line;
 			while ((line = read.ReadLine()) != null)
 			{
-				line = line.Replace("CANDLES_DATA", $"[\n{data[0]}]");
+				line = line.Replace("TITLE", $"{unit.Name} {unit.TF}");
+				line = line.Replace("CANDLES_DATA", $"[\n{string.Join(",\n", Candles.ToArray())}]");
 				line = line.Replace("SYMBOL", unit.Symbol);
 				line = line.Replace("NAME", unit.Name);
 				line = line.Replace("TIME_FRAME", unit.TimeFrame.ToString());
@@ -68,6 +77,5 @@ namespace MrRobot.Entity
 
 			return true;
 		}
-
 	}
 }

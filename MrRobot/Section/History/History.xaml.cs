@@ -112,11 +112,13 @@ namespace MrRobot.Section
 
 			PARAM = new CDIparam()
 			{
+				ExchangeId = BYBIT.ExchangeId,
+				InstrumentId = IUnit.Id,
 				Symbol = IUnit.Symbol,
 				TimeFrame = format.TimeFrame((string)TFitem.Content),
 				UnixStart = format.UnixFromDay(SetupDateBegin.Text),
 				UnixFinish = UnixFinish(),
-				NolCount = IUnit.Decimals,
+				Decimals = IUnit.Decimals,
 				CC = 0,
 				Progress = new Progress<decimal>(v =>
 				{
@@ -150,7 +152,7 @@ namespace MrRobot.Section
 			var wc = new WebClient();
 			DownloadCheck12(wc);
 
-			PARAM.Table = Candle.DataTableCreate("bybit", PARAM.Symbol, PARAM.TimeFrame, PARAM.NolCount);
+			Candle.InfoCreate(PARAM);
 			PARAM.Bar = new ProBar((PARAM.UnixFinish - PARAM.UnixStart) / PARAM.TimeFrame / 60 / 1000, 1000);
 			
 			int barIndex = 0;
@@ -196,7 +198,7 @@ namespace MrRobot.Section
 				PARAM.UnixStart = Unix;
 			}
 
-			PARAM.Id = Candle.InfoCreate(PARAM.Table);
+//			PARAM.Id = Candle.InfoCreate(PARAM.Table);
 		}
 
 		/// <summary>

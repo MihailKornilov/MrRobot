@@ -9,6 +9,9 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Connector;
 using MrRobot.Interface;
+using System.Security.Cryptography;
+using System.Windows.Documents;
+using System.Windows.Controls;
 
 namespace MrRobot.Entity
 {
@@ -218,7 +221,7 @@ namespace MrRobot.Entity
 
 			// Удаление Архива поисков паттернов
 			sql = $"SELECT`id`FROM`_pattern_search`WHERE`cdiId`={id}";
-			string ids = mysql.Ids(sql);
+			string ids = my.Main.Ids(sql);
 
 			sql = $"DELETE FROM`_pattern_found`WHERE`searchId`IN({ids})";
 			my.Main.Query(sql);
@@ -243,6 +246,25 @@ namespace MrRobot.Entity
 		/// <summary>
 		/// Создание таблицы со свечными данными, если не существует
 		/// </summary>
+		public static void TableCreate(CDIparam prm)
+		{
+			string sql = $"DROP TABLE IF EXISTS`{prm.Table}`";
+			my.Main.Query(sql);
+
+			sql = $"DELETE FROM`_candle_data_info`WHERE`id`={prm.Id}";
+			my.Main.Query(sql);
+
+			sql = $"CREATE TABLE`{prm.Table}`(" +
+						"`unix` INT UNSIGNED DEFAULT 0 NOT NULL," +
+					   $"`high` DECIMAL(20,{prm.Decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
+					   $"`open` DECIMAL(20,{prm.Decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
+					   $"`close`DECIMAL(20,{prm.Decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
+					   $"`low`  DECIMAL(20,{prm.Decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
+						"`vol`  DECIMAL(30,8) UNSIGNED DEFAULT 0 NOT NULL," +
+						"PRIMARY KEY(`unix`)" +
+				  $")ENGINE=MyISAM DEFAULT CHARSET=cp1251";
+			my.Main.Query(sql);
+		}
 		public static string DataTableCreate(string exchange, string symbol, int tf, int decimals)
 		{
 			string TableName = $"{exchange}_{symbol.ToLower()}_{tf}";
@@ -270,14 +292,14 @@ namespace MrRobot.Entity
 		/// <summary>
 		/// Внесение в базу сформированных свечных записей
 		/// </summary>
-		public static void DataInsert(string TableName, List<string> insert, int CountMin = 0)
+		public static void DataInsert(string table, List<string> insert, int CountMin = 0)
 		{
 			if (insert.Count == 0)
 				return;
 			if (CountMin > 0 && insert.Count < CountMin)
 				return;
 
-			string sql = $"INSERT INTO`{TableName}`" +
+			string sql = $"INSERT INTO`{table}`" +
 						  "(`unix`,`high`,`open`,`close`,`low`,`vol`)" +
 						 $"VALUES{string.Join(",", insert.ToArray())}";
 			my.Main.Query(sql);
@@ -290,19 +312,21 @@ namespace MrRobot.Entity
 		static int CDIqueryInsert(int id,
 								  int exchangeId,
 								  int instrumentId,
-								  string table,
 								  int tf,
-								  int rowsCount,
-								  string begin,
-								  string end,
+								  int decimals,
+								  string table="",
+								  int rowsCount=0,
+								  string begin = "",
+								  string end = "",
 								  int convertedFromId = 0)
 		{
 			string sql = "INSERT INTO`_candle_data_info`(" +
 							"`id`," +
 							"`exchangeId`," +
 							"`instrumentId`," +
-							"`table`," +
 							"`timeFrame`," +
+							"`table`," +
+							"`decimals`," +
 							"`rowsCount`," +
 							"`begin`," +
 							"`end`," +
@@ -311,8 +335,9 @@ namespace MrRobot.Entity
 							$"{id}," +
 							$"{exchangeId}," +
 							$"{instrumentId}," +
-							$"'{table}'," +
 							$"{tf}," +
+							$"{decimals}," +
+							$"'{table}'," +
 							$"{rowsCount}," +
 							$"'{begin}'," +
 							$"'{end}'," +
@@ -326,6 +351,11 @@ namespace MrRobot.Entity
 		/// <summary>
 		/// Внесение заголовка свечных данных
 		/// </summary>
+		public static void InfoCreate(CDIparam prm)
+		{
+			prm.Id = CDIqueryInsert(0, prm.ExchangeId, prm.InstrumentId, prm.TimeFrame, prm.Decimals);
+			TableCreate(prm);
+		}
 		public static int InfoCreate(string table, int ConvertedFromId = 0)
 		{
 			string sql = "SELECT " +
@@ -356,9 +386,10 @@ namespace MrRobot.Entity
 				case 2: iid =  MOEX.Instrument.UnitOnField("Symbol", symbol).Id; break;
 			}
 
-			return CDIqueryInsert(0, ExchangeId, iid, table, tf, count, data["begin"], data["end"], ConvertedFromId);
-		}
+			//int CdiId = CDIqueryInsert(0, ExchangeId, iid, tf, table, count, data["begin"], data["end"], ConvertedFromId);
 
+			return 0;
+		}
 		/// <summary>
 		/// Проверка соответствия скачанных данных с заголовками
 		/// </summary>
@@ -416,9 +447,11 @@ namespace MrRobot.Entity
 				int id = res.Count != 0 ? Convert.ToInt32(res["id"]) : 0;
 
 				// Внесение заголовка истории
-				CDIqueryInsert(id, 1, Instr.Id, tableName, tf, count, begin, end);
+				//CDIqueryInsert(id, 1, Instr.Id, tf, tableName, count, begin, end);
 			}
 		}
+
+
 
 		/// <summary>
 		/// Количество свечей в виде текста: "1 234 свечи"
@@ -509,7 +542,7 @@ namespace MrRobot.Entity
 		public int Id { get; set; }             // ID свечных данных
 		public int ExchangeId { get; set; }     // ID биржи
 		public int InstrumentId { get; set; }   // ID инструмента
-		SpisokUnit IUnit						// Данные об инструменте
+		public SpisokUnit IUnit						// Данные об инструменте
 		{
 			get
 			{
@@ -557,10 +590,19 @@ namespace MrRobot.Entity
 	{
 		public bool IsProcess { get; set; } = true; // Флаг выполнения фонового процесса
 		public int Id { get; set; }                 // ID свечных данных
-		public string Table { get; set; }
+		public int ExchangeId { get; set; }			// ID биржи
+		public int InstrumentId { get; set; }		// ID инструмента
+		public string Table							// Имя таблицы со свечными данными
+		{
+			get
+			{
+				string prefix = G.Exchange.Unit(ExchangeId).Prefix;
+				return $"{prefix}_{Id}";
+			}
+		}
 		public string Symbol { get; set; }
 		public int TimeFrame { get; set; }
-		public int NolCount { get; set; }
+		public int Decimals { get; set; }			// Нулей после запятой
 		public IProgress<decimal> Progress { get; set; }
 		public ProBar Bar { get; set; }             // Основная линия Прогресс-бара
 

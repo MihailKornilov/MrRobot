@@ -34,7 +34,7 @@ namespace MrRobot.Connector
 						 "FROM`_candle_data_info`" +
 						$"WHERE`exchangeId`={ExchangeId} " +
 						 "GROUP BY`instrumentId`";
-			CCASS = mysql.IntAss(sql);
+			CCASS = my.Main.IntAss(sql);
 		}
 
 		public BYBIT()

@@ -29,57 +29,57 @@ namespace MrRobot.Section
         {
             // Всего поисков
             string sql = "SELECT COUNT(*)FROM`_pattern_search`";
-            SearchAll.Content = mysql.Count(sql).ToString();
+            SearchAll.Content = my.Main.Count(sql).ToString();
 
             // Поиски с результатами
             sql = "SELECT COUNT(*)" +
                   "FROM`_pattern_search`" +
                   "WHERE`foundCount`";
-            SearchWithResult.Content = mysql.Count(sql).ToString();
+            SearchWithResult.Content = my.Main.Count(sql).ToString();
 
             // Всего паттернов
             sql = "SELECT COUNT(*)FROM`_pattern_found`";
-            PatternAll.Content = mysql.Count(sql).ToString();
+            PatternAll.Content = my.Main.Count(sql).ToString();
 
             // Прибыльные паттерны
             sql = "SELECT COUNT(*)" +
                   "FROM`_pattern_found`" +
                   "WHERE`profitCount`>`lossCount`";
-            PatternProfit.Content = mysql.Count(sql).ToString();
+            PatternProfit.Content = my.Main.Count(sql).ToString();
 
             // Прибыльные паттерны 50%
             sql = "SELECT COUNT(*)" +
                   "FROM`_pattern_found`" +
                   "WHERE`profitCount`>`lossCount`" +
                     "AND 100-`lossCount`/`profitCount`*100>=50";
-            PatternProfit50.Content = mysql.Count(sql).ToString();
+            PatternProfit50.Content = my.Main.Count(sql).ToString();
 
             // Прибыльные паттерны 60%
             sql = "SELECT COUNT(*)" +
                   "FROM`_pattern_found`" +
                   "WHERE`profitCount`>`lossCount`" +
                     "AND 100-`lossCount`/`profitCount`*100>=60";
-            PatternProfit60.Content = mysql.Count(sql).ToString();
+            PatternProfit60.Content = my.Main.Count(sql).ToString();
 
             // Прибыльные паттерны 70%
             sql = "SELECT COUNT(*)" +
                   "FROM`_pattern_found`" +
                   "WHERE`profitCount`>`lossCount`" +
                     "AND 100-`lossCount`/`profitCount`*100>=70";
-            PatternProfit70.Content = mysql.Count(sql).ToString();
+            PatternProfit70.Content = my.Main.Count(sql).ToString();
 
             // Убыточные паттерны
             sql = "SELECT COUNT(*)" +
                   "FROM`_pattern_found`" +
                   "WHERE`profitCount`<`lossCount`";
-            PatternLoss.Content = mysql.Count(sql).ToString();
+            PatternLoss.Content = my.Main.Count(sql).ToString();
 
             // Не проверенные паттерны
             sql = "SELECT COUNT(*)" +
                   "FROM`_pattern_found`" +
                   "WHERE!`profitCount`" +
                     "AND!`lossCount`";
-            PatternNotTested.Content = mysql.Count(sql).ToString();
+            PatternNotTested.Content = my.Main.Count(sql).ToString();
         }
 
         /// <summary>
