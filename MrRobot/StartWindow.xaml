@@ -7,8 +7,8 @@
 
         Title="Mr.Robot v0.0.1"
 		Background="AliceBlue"
-        MinWidth="1175"
-		MinHeight="700"
+        MinWidth="495"
+		MinHeight="455"
 
 		Width ="{Binding Width}"
 		Height="{Binding Height}"
@@ -35,18 +35,12 @@
 					   Foreground="#AAA"/>
 			</StackPanel>
 		</DataTemplate>
-		<Style x:Key="StartLogUnitStyle" TargetType="ListBoxItem">
-			<Setter Property="Background" Value="{Binding BG}"/>
-			<Setter Property="Padding" Value="10,3,0,3"/>
-			<Setter Property="Margin" Value="0,0,0,1"/>
-			<Setter Property="BorderThickness" Value="0"/>
-		</Style>
 	</Window.Resources>
 
 	<StackPanel>
 		<Separator Background="#DCE2E7" Margin="0"/>
 		<ListBox Name="StartLogBox"
-				 Margin="15,5"
+				 Margin="15,5,0,0"
 				 BorderThickness="0"
                  Background="Transparent"
 				 ItemTemplate="{StaticResource StartLogUnit}"

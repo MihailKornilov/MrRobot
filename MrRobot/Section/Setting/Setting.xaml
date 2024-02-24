@@ -28,6 +28,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
+            <!-- Меню настроек -->
             <Grid Grid.Column="0">
                 <Grid Background="#DCE2E7" Margin="10" Height="200" VerticalAlignment="Top">
                     <Grid Margin="1,1,1,1" Background="#ECF3F8">
@@ -47,7 +48,7 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Background="#D2DDE5">
-                        <TextBlock Name="MenuHead" Text="Общие" Padding="10,3" FontSize="15" Foreground="#555"/>
+                        <TextBlock Name="MenuHead" Padding="10,3" FontSize="15" Foreground="#555"/>
                         <Separator Background="#C8D2DA" Margin="0"/>
                     </StackPanel>
 

@@ -40,7 +40,7 @@ namespace MrRobot.Section
 				SettingMenuBox.Items.Add(new SettingMenuUnit(v));
 
 			SettingMenuBox.SelectionChanged += (s, e) => MenuChange();
-			SettingMenuBox.SelectedIndex = 1;
+			SettingMenuBox.SelectedIndex = position.Val("6.SettingMenu", 1);
 		}
 		/// <summary>
 		/// Выбран новый раздел меню
@@ -51,17 +51,18 @@ namespace MrRobot.Section
 			MenuHead.Text = unit.Name;
 
 			int sel = SettingMenuBox.SelectedIndex;
+			position.Set("6.SettingMenu", sel);
 			for (int i = 0; i < MenuUnits.Length; i++)
 			{
 				var panel = (FindName($"Setting{i}") as Panel);
 				if (panel != null)
 				{
-					panel.Visibility = i == sel ? Visibility.Visible : Visibility.Collapsed;
+					G.Vis(panel, i == sel);
 					continue;
 				}
 
 				var uc = (FindName($"Setting{i}") as UserControl);
-				uc.Visibility = i == sel ? Visibility.Visible : Visibility.Collapsed;
+				G.Vis(uc, i == sel);
 			}
 		}
 	}

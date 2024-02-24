@@ -28,8 +28,18 @@ namespace MrRobot
 
 		async void SWclose()
 		{
-			await Task.Run(() => Thread.Sleep(500));
-			Close();
+			if (!position.Val("6.1.StartWinCheck", false))
+			{
+				await Task.Run(() => Thread.Sleep(500));
+				Close();
+			}
+			else
+			{
+				Topmost = false;
+				Width = MinHeight;
+				Height = MinHeight;
+			}
+
 			MainMenu.Changed -= SWclose;
 		}
 
@@ -71,6 +81,7 @@ namespace MrRobot
 			G.MW.SizeChanged += G.Tester.RobotLogWidthSet;
 			G.MW.SizeChanged += MWsizeDC.WindowState;
 			G.MW.Closed += HttpServer.Stop;
+			G.MW.Closed += (s, e) => Close();
 			StartLog("Установка событий для главного окна...");
 			StartLog("Общее время загрузки:", true);
 		}

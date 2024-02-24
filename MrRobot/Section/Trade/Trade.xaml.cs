@@ -1,10 +1,14 @@
 ﻿using System.Windows;
+using System.Windows.Data;
 using System.Windows.Controls;
 using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
+using System.Threading.Tasks;
+using System.Threading;
+using System;
 
 namespace MrRobot.Section
 {
@@ -30,7 +34,6 @@ namespace MrRobot.Section
 			RobotsListBox.ItemsSource = Robots.ListBox();
 			RobotsListBox.SelectedIndex = position.Val("5.RobotsListBox.Index", 0);
 		}
-
 
 
 		string ApiQuery

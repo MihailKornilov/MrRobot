@@ -33,15 +33,22 @@ namespace MrRobot.inc
 		{
 			Listener = new TcpListener(IPAddress.Loopback, Port);
 			Listener.Start();
-			while (true)
-				try
+
+			try
+			{
+				while (true)
 				{
-					var s = Listener.AcceptTcpClient();
-					var thread = new Thread(() => Processor.HandleClient(s));
+					var client = Listener.AcceptTcpClient();
+					var thread = new Thread(() => Processor.HandleClient(client));
 					thread.Start();
 					Thread.Sleep(1);
 				}
-				catch { break; }
+				
+			}
+			catch(SocketException e)
+			{
+				Console.WriteLine($"SocketException: {e}");
+			}
 		}
 
 		public static void Stop(object s, EventArgs e) => Listener.Stop();

@@ -19,18 +19,21 @@ namespace MrRobot.Connector
 	public class MOEX
 	{
 		public const int ExchangeId = 2;        // ID МосБиржи
+		public static Engine _Engine { get; set; }
+		public static SecGroup SGroup { get; set; }
+		public static SecType SType { get; set; }
 		public static Security Instrument { get; set; }
 
 		public MOEX()
 		{
-			new Engine();
 			new Market();
 			new BoardGroup();
 			new Board();
-			new SecurityGroup();
-			new SecurityType();
 			new SecurityСollections();
 
+			new Engine();
+			new SecGroup();
+			new SecType();
 			new Security();
 		}
 
@@ -209,70 +212,22 @@ namespace MrRobot.Connector
 		/// <summary>
 		/// Торговая система
 		/// </summary>
-		public class Engine
+
+		public class Engine : Spisok
 		{
-			static List<MoexUnit> UnitList { get; set; }
-			static Dictionary<int, MoexUnit> ID_UNIT { get; set; }
-			public Engine()
-			{
-				UnitList = new List<MoexUnit>();
-				ID_UNIT = new Dictionary<int, MoexUnit>();
+			public override string SQL =>
+				"SELECT*" +
+				"FROM`_moex_engines`" +
+				"ORDER BY`title`";
 
-				string sql = "SELECT*FROM`_moex_engines`";
-				foreach (Dictionary<string, string> row in mysql.QueryList(sql))
-				{
-					var unit = new MoexUnit(row);
-					UnitList.Add(unit);
-					ID_UNIT.Add(unit.Id, unit);
-				}
+			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
+			{
+				unit.Name = res.GetString("name");
+				unit.Title = res.GetString("title");
+				return unit;
 			}
 
-			// Весь список
-			public static List<MoexUnit> ListAll() => UnitList;
-			// Список с бумагами
-			public static List<MoexUnit> ListActual()
-			{
-				var send = new List<MoexUnit>();
-				for (int i = 0; i < UnitList.Count; i++)
-				{
-					var unit = UnitList[i];
-					if (unit.SecurityCount > 0)
-						send.Add(unit);
-				}
-				return send;
-			}
-
-			// Единица на основании ID
-			public static MoexUnit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
-
-			// Порядковый номер в списке
-			public static int FilterIndex()
-			{
-				var list = ListActual();
-				for (int i = 0; i < list.Count; i++)
-					if (list[i].Id == SecurityFilter.EngineId)
-						return i;
-				return -1;
-			}
-
-			// Обновление количеств бумаг на основании фильтра
-			public static void CountFilter()
-			{
-				// Обнуление количеств бумаг
-				foreach (var unit in ListActual())
-					unit.SecurityCountFilter = 0;
-
-				//foreach (var sec in Instrument.ListAll)
-				//{
-				//	if (!SecurityFilter.IsAllowFast(sec))
-				//		continue;
-
-				//	var unit = Unit(sec.EngineId);
-				//	if (unit != null)
-				//		unit.SecurityCountFilter++;
-				//}
-			}
-
+			public Engine() : base() => _Engine = this;
 
 
 			// Загрузка данных с биржи
@@ -297,7 +252,6 @@ namespace MrRobot.Connector
 				new Engine();
 			}
 		}
-
 
 
 		/// <summary>
@@ -523,7 +477,7 @@ namespace MrRobot.Connector
 				if (engineId == 0)
 					return "";
 
-				var unit = Engine.Unit(engineId);
+				var unit = _Engine.Unit(engineId);
 				if (unit == null)
 					return "";
 
@@ -614,34 +568,61 @@ namespace MrRobot.Connector
 
 
 
+		#endregion
 
 
 		/// <summary>
 		/// Группы бумаг
 		/// </summary>
-		public class SecurityGroup
+		public class SecGroup : Spisok
 		{
-			static List<MoexUnit> UnitList { get; set; }
-			static Dictionary<int, MoexUnit> ID_UNIT { get; set; }
-			static Dictionary<string, int> NAME_ID { get; set; }
-			public SecurityGroup()
-			{
-				UnitList = new List<MoexUnit>();
-				ID_UNIT = new Dictionary<int, MoexUnit>();
-				NAME_ID = new Dictionary<string, int>();
+			public override string SQL =>
+				"SELECT*" +
+				"FROM`_moex_securitygroups`" +
+				"ORDER BY`title`";
 
-				string sql = "SELECT*FROM`_moex_securitygroups`ORDER BY`title`";
-				foreach (Dictionary<string, string> row in mysql.QueryList(sql))
-				{
-					var unit = new MoexUnit(row);
-					UnitList.Add(unit);
-					ID_UNIT.Add(unit.Id, unit);
-					NAME_ID.Add(unit.Name, unit.Id);
-				}
+			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
+			{
+				unit.Name = res.GetString("name");
+				unit.Title = res.GetString("title");
+				return unit;
 			}
 
-			public static int IdOnName(string name) => NAME_ID.ContainsKey(name) ? NAME_ID[name] : 0;
+			public SecGroup() : base() => SGroup = this;
 
+
+
+			// Записи, в которых есть бумаги
+			public List<SpisokUnit> ListActual()
+			{
+				var send = new List<SpisokUnit>();
+				foreach (var unit in AllWithNull("любая"))
+					//if (unit.Id == 0 || unit.SecCount > 0)
+						send.Add(unit);
+				return send;
+			}
+
+			// Порядковый номер в списке
+			public int FilterIndex()
+			{
+				var list = ListActual();
+				for (int i = 0; i < list.Count; i++)
+					if (list[i].Id == SecurityFilter.GroupId)
+						return i;
+				return 0;
+			}
+
+			// Обновление количеств бумаг на основании фильтра
+			public void CountFilter()
+			{
+				// Обнуление количеств бумаг
+				foreach (var unit in ListActual())
+					unit.Count1 = 0;
+
+				foreach (var sec in Instrument.ListAll)
+					if (SecurityFilter.IsAllowFast(sec))
+						Unit(sec.GroupId).Count1++;
+			}
 
 
 
@@ -657,52 +638,44 @@ namespace MrRobot.Connector
 					values[i] = "(" +
 									$"{v[0]}," +
 									$"'{v[1]}'," +  // name
-									$"'{v[2]}'," +  // title
-									$"{v[3]}" +     // isHidden
+									$"'{v[2]}'" +  // title
 								")";
 				}
 
 				string sql = "INSERT INTO`_moex_securitygroups`(" +
 								"`id`," +
 								"`name`," +
-								"`title`," +
-								"`isHidden`" +
+								"`title`" +
 							$")VALUES{string.Join(",\n", values)}" +
 							 "ON DUPLICATE KEY UPDATE" +
 							 "`name`=VALUES(`name`)," +
-							 "`title`=VALUES(`title`)," +
-							 "`isHidden`=VALUES(`isHidden`)";
+							 "`title`=VALUES(`title`)";
 				mysql.Query(sql);
 
-				new SecurityGroup();
+				new SecGroup();
 			}
 		}
 
 		/// <summary>
 		/// Виды бумаг
 		/// </summary>
-		public class SecurityType
+		public class SecType : Spisok
 		{
-			static List<MoexUnit> UnitList { get; set; }
-			static Dictionary<int, MoexUnit> ID_UNIT { get; set; }
-			static Dictionary<string, int> NAME_ID { get; set; }
-			public SecurityType()
-			{
-				UnitList = new List<MoexUnit>();
-				ID_UNIT = new Dictionary<int, MoexUnit>();
-				NAME_ID = new Dictionary<string, int>();
+			public override string SQL =>
+				"SELECT*" +
+				"FROM`_moex_securitytypes`" +
+				"ORDER BY`engineId`,`id`";
 
-				string sql = "SELECT*FROM`_moex_securitytypes`ORDER BY`engineId`,`id`";
-				foreach (Dictionary<string, string> row in mysql.QueryList(sql))
-				{
-					var unit = new MoexUnit(row);
-					UnitList.Add(unit);
-					ID_UNIT.Add(unit.Id, unit);
-					NAME_ID.Add(unit.Name, unit.Id);
-				}
+			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
+			{
+				unit.EngineId = res.GetInt32("engineId");
+				unit.GroupId  = res.GetInt32("groupId");
+				unit.Name	  = res.GetString("name");
+				unit.Title	  = res.GetString("title");
+				return unit;
 			}
 
-			public static int IdOnName(string name) => NAME_ID.ContainsKey(name) ? NAME_ID[name] : 0;
+			public SecType() : base() => SType = this;
 
 			// Загрузка данных с биржи
 			public static void iss()
@@ -715,7 +688,7 @@ namespace MrRobot.Connector
 					values[i] = "(" +
 									$"{v[0]}," +
 									$"{v[1]}," +    // engineId
-									$"{SecurityGroup.IdOnName(v[6].ToString())}," +    // securityGroupId
+									$"{SGroup.FieldToId("Name", v[6].ToString())}," +    // groupId
 									$"'{v[4]}'," +  // name
 									$"'{v[5]}'" +   // title
 								")";
@@ -724,18 +697,18 @@ namespace MrRobot.Connector
 				string sql = "INSERT INTO`_moex_securitytypes`(" +
 								"`id`," +
 								"`engineId`," +
-								"`securityGroupId`," +
+								"`groupId`," +
 								"`name`," +
 								"`title`" +
 							$")VALUES{string.Join(",", values)}" +
 							 "ON DUPLICATE KEY UPDATE" +
 							 "`engineId`=VALUES(`engineId`)," +
-							 "`securityGroupId`=VALUES(`securityGroupId`)," +
+							 "`groupId`=VALUES(`groupId`)," +
 							 "`name`=VALUES(`name`)," +
 							 "`title`=VALUES(`title`)";
 				mysql.Query(sql);
 
-				new SecurityType();
+				new SecType();
 			}
 		}
 
@@ -792,7 +765,6 @@ namespace MrRobot.Connector
 			}
 		}
 
-		#endregion
 
 		/// <summary>
 		/// Бумаги
@@ -899,9 +871,9 @@ namespace MrRobot.Connector
 					for (int i = 0; i < data.Count; i++)
 					{
 						var v = data[i];
-						int id = Instrument.IdOnField("MoexId", Convert.ToInt32(v[0]));
-						int groupId = SecurityGroup.IdOnName(v[1].ToString());
-						int typeId  = SecurityType.IdOnName(v[2].ToString());
+						int id = Instrument.FieldToId("MoexId", Convert.ToInt32(v[0]));
+						int groupId = SGroup.FieldToId("Name", v[1].ToString());
+						int typeId  = SType.FieldToId("Name", v[2].ToString());
 						string shortName = v[4].ToString().Replace("'", ""),
 									name = v[5].ToString().Replace("'", "");
 						values[i] = "(" +
@@ -977,7 +949,6 @@ namespace MrRobot.Connector
 
 		public int SecurityCount { get; set; }      // Количество бумаг в определённой группе
 		public int SecurityCountFilter { get; set; }// Количество бумаг в определённой группе на основании фильтра
-		public Visibility SecurityCountVis { get => G.Vis(SecurityCountFilter > 0); }
 	}
 
 

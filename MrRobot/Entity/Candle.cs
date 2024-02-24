@@ -14,8 +14,8 @@ namespace MrRobot.Entity
 {
 	public class Candle
 	{
-		public delegate void Dlgt();
-		public static Dlgt Updated = () => { };
+		public delegate void DLGT();
+		public static DLGT Updated { get; set; }
 
 		/// <summary>
 		/// Список доступных скачанных свечных данных
@@ -37,26 +37,15 @@ namespace MrRobot.Entity
 			string sql = "SELECT*" +
 						 "FROM`_candle_data_info`" +
 						 "ORDER BY`exchangeId`,`timeFrame`";
-			foreach (Dictionary<string, string> v in mysql.QueryList(sql))
+			mysql.Delegat(sql, res =>
 			{
-				var Unit = new CDIunit
-				{
-					Id = Convert.ToInt32(v["id"]),
-					ExchangeId = Convert.ToInt32(v["exchangeId"]),
-					InstrumentId = Convert.ToInt32(v["instrumentId"]),
-					Table = v["table"],
-					TimeFrame = Convert.ToInt32(v["timeFrame"]),
-					RowsCount = Convert.ToInt32(v["rowsCount"]),
-					DateBegin = v["begin"].Substring(0, 10),
-					DateEnd = v["end"].Substring(0, 10),
-					UnixBegin = format.UnixFromDate(v["begin"]),
-					ConvertedFromId = Convert.ToInt32(v["convertedFromId"])
-				};
-				CDIlist.Add(Unit);
-				ID_UNIT.Add(Unit.Id, Unit);
-			}
+				var unit = new CDIunit(res);
+				CDIlist.Add(unit);
+				ID_UNIT.Add(unit.Id, unit);
+			});
+
 			new Patterns();
-			Updated();
+			Updated?.Invoke();
 		}
 
 		/// <summary>
@@ -495,20 +484,56 @@ namespace MrRobot.Entity
 		}
 	}
 
-	
+
 
 	/// <summary>
 	/// Единица информации свечных данных: Candle Data Info
 	/// </summary>
 	public class CDIunit
 	{
+		public CDIunit(dynamic res)
+		{
+			string begin = res.GetMySqlDateTime("begin").ToString();
+			Id				= res.GetInt32("id");
+			ExchangeId		= res.GetInt32("exchangeId");
+			InstrumentId	= res.GetInt32("instrumentId");
+			Table			= res.GetString("table");
+			TimeFrame		= res.GetInt32("timeFrame");
+			RowsCount		= res.GetInt32("rowsCount");
+			DateBegin		= begin.Substring(0, 10);
+			DateEnd			= res.GetMySqlDateTime("end").ToString().Substring(0, 10);
+			UnixBegin		= format.UnixFromDate(begin);
+			ConvertedFromId	= res.GetInt32("convertedFromId");
+		}
 		public int Num { get; set; }            // Порядковый номер
 		public int Id { get; set; }             // ID свечных данных
 		public int ExchangeId { get; set; }     // ID биржи
 		public int InstrumentId { get; set; }   // ID инструмента
-		SpisokUnit IUnit => BYBIT.Instrument.Unit(InstrumentId);   // Данные об инструменте
+		SpisokUnit IUnit						// Данные об инструменте
+		{
+			get
+			{
+				switch (ExchangeId)
+				{
+					default:
+					case 1: return BYBIT.Instrument.Unit(InstrumentId);
+					case 2: return  MOEX.Instrument.Unit(InstrumentId);
+				}
+			}
+		}
 		public string Symbol => IUnit.Symbol;   // Название инструмента в виде "BTCUSDT"
-		public string Name => IUnit.SymbolName; // Название инструмента в виде "BTC/USDT"
+		public string Name						// Название инструмента в виде "BTC/USDT"
+		{
+			get
+			{
+				switch (ExchangeId)
+				{
+					default:
+					case 1: return IUnit.SymbolName;
+					case 2: return IUnit.Symbol;
+				}
+			}
+		}
 		public string Table { get; set; }       // Имя таблицы со свечами
 		public int TimeFrame { get; set; }      // Таймфрейм в виде 15
 		public string TF => format.TF(TimeFrame); // Таймфрейм в виде "15m"
@@ -520,8 +545,8 @@ namespace MrRobot.Entity
 		public int ConvertedFromId { get; set; }// ID минутного таймфрейма, с которого была произведена конвертация
 
 
-		public double TickSize => IUnit.TickSize;    // Шаг цены
-		public int Decimals => IUnit.Decimals;       // Количество нулей после запятой
+		public double TickSize => IUnit.TickSize;// Шаг цены
+		public int Decimals => IUnit.Decimals;	 // Количество нулей после запятой
 		public ulong Exp => format.Exp(Decimals);
 	}
 

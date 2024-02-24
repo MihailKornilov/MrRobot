@@ -21,8 +21,6 @@ namespace MrRobot.Entity
 			if (!PageCreate(cdi))
 				return;
 
-			WriteLine($"PANEL IS_LOADED: {panel.IsLoaded}");
-
 			if (panel.Children.Count == 0)
 			{
 				var browser = new ChromiumWebBrowser();

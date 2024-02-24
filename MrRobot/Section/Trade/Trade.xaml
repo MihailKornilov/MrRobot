@@ -114,8 +114,8 @@
                                 <TextBox Name="ApiQueryTB" Width="250" Padding="4"/>
                             </WrapPanel>
                             <Button Name="ApiQueryButton"
-                                    Content="Go"
-                                    Width="50"
+                                    Content="{Binding Name}"
+                                    Width="100"
                                     Height="25"
                                     Margin="72,6,0,0"
                                     HorizontalAlignment="Left"

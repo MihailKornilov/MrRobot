@@ -21,7 +21,6 @@ namespace MrRobot
 
 		public void MouseHookInit(object sender, RoutedEventArgs e)
 		{
-			WriteLine("************** MW LOADED");
 			var hwnd = new WindowInteropHelper(this).Handle;
 			HwndSource.FromHwnd(hwnd).AddHook(MouseHook);
 		}
@@ -86,6 +85,7 @@ namespace MrRobot
 		public static int Height => Arr[1];
 		public static int Left   => Arr[2];
 		public static int Top    => Arr[3];
+		public static string Name { get; set; }
 		// Вовесь экран
 		public static WindowState State =>
 			Arr[4] == 1

@@ -322,13 +322,8 @@ namespace MrRobot.inc
             new mysql(sql, true);
 
             var send = new Dictionary<string, string>();
-
             while (res.Read())
-            {
-                string name = res.GetValue(0).ToString();
-                string val = res.GetValue(1).ToString();
-                send.Add(name, val);
-            }
+                send.Add(res.GetString(0), res.GetString(1));
 
             Finish(sql);
 

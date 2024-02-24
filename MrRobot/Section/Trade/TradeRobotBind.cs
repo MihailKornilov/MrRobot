@@ -168,9 +168,9 @@ namespace MrRobot.Section
         static bool IsWorked { get; set; }
 
         public delegate void Dcall(string txt);
-        public static Dcall OutMethod;
+        public static Dcall OutMethod { get; set; }
 
-        public TradeChartTimer()
+		public TradeChartTimer()
         {
             if (IsWorked)
                 return;

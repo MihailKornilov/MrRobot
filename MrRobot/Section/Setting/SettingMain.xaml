@@ -4,9 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             Background="#E0EBF4"
              d:DesignWidth="800"
              d:DesignHeight="600">
-    <Grid>
-        <TextBlock Text="Настройки: общие" Margin="20" FontSize="20"/>
+
+    <Grid Margin="10">
+        <CheckBox Name="StartWinNoClose" Content="Не закрывать загрузочное окно"/>
     </Grid>
+
 </UserControl>

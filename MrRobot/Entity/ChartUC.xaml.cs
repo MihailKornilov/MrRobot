@@ -21,7 +21,6 @@ namespace MrRobot.Entity
         public ChartUC()
         {
             InitializeComponent();
-            WriteLine("------ ChartUC");
         }
 
         // Раздел (каталог), в котором размещаются страницы графиков: шаблон (.tmp) и реальный (.html)

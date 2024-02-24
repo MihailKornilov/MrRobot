@@ -5,6 +5,7 @@ using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
+using System.Windows;
 
 namespace MrRobot.Interface
 {
@@ -13,20 +14,12 @@ namespace MrRobot.Interface
 		public delegate void DLGT();
 		public DLGT Updated { get; set; }
 
+
+
 		/// <summary>
 		/// Список 
 		/// </summary>
 		protected List<SpisokUnit> UnitList { get; set; }
-
-		/// <summary>
-		/// Количество доступных единиц списка
-		/// </summary>
-		public int Count => UnitList.Count;
-
-		/// <summary>
-		/// Весь список
-		/// </summary>
-		public List<SpisokUnit> ListAll => UnitList;
 
 		/// <summary>
 		/// Ассоциативный массив списка по ID
@@ -61,16 +54,46 @@ namespace MrRobot.Interface
 			});
 		}
 
+
+
+
 		/// <summary>
-		/// Данные единицы списка по ID
+		/// Количество доступных единиц списка
 		/// </summary>
-		public SpisokUnit Unit(int id)
+		public int Count => UnitList.Count;
+
+		/// <summary>
+		/// Весь список
+		/// </summary>
+		public List<SpisokUnit> ListAll => UnitList;
+
+		/// <summary>
+		/// Весь список с нулевой записью
+		/// </summary>
+		public List<SpisokUnit> AllWithNull(string title = "не выбрано")
 		{
-			if(ID_UNIT.ContainsKey(id))
-				return ID_UNIT[id];
-			
-			// !!! Сделать возврат пустой единицы списка
-			return null;
+			var list = new List<SpisokUnit> { UnitNull(title) };
+			foreach (var unit in UnitList)
+				list.Add(unit);
+			return list;
+		}
+
+
+		/// <summary>
+		/// Данные записи по ID
+		/// </summary>
+		public SpisokUnit Unit(int id) =>
+			ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : UnitNull();
+
+		/// <summary>
+		/// Пустая запись
+		/// </summary>
+		public SpisokUnit UnitNull(string title = "Пустая запись")
+		{
+			var unit = new SpisokUnit(0);
+			unit.Name  = title;
+			unit.Title = title;
+			return unit;
 		}
 
 		/// <summary>
@@ -79,7 +102,7 @@ namespace MrRobot.Interface
 		public SpisokUnit UnitOnField(string field, string val)
 		{
 			if (Count == 0)
-				return null;
+				return UnitNull();
 
 			var info = UnitList[0].GetType().GetProperty(field);
 			foreach (var unit in UnitList)
@@ -91,9 +114,9 @@ namespace MrRobot.Interface
 					return unit;
 			}
 
-			return null;
+			return UnitNull();
 		}
-		public int IdOnField(string field, int val)
+		public int FieldToId(string field, int val)
 		{
 			if (Count == 0)
 				return 0;
@@ -102,6 +125,21 @@ namespace MrRobot.Interface
 			foreach (var unit in UnitList)
 			{
 				int value = Convert.ToInt32(info.GetValue(unit));
+				if (value == val)
+					return unit.Id;
+			}
+
+			return 0;
+		}
+		public int FieldToId(string field, string val)
+		{
+			if (Count == 0)
+				return 0;
+
+			var info = UnitList[0].GetType().GetProperty(field);
+			foreach (var unit in UnitList)
+			{
+				string value = info.GetValue(unit).ToString();
 				if (value == val)
 					return unit.Id;
 			}
@@ -145,6 +183,11 @@ namespace MrRobot.Interface
 		public int CdiCount { get; set; }           // Количество скачанных свечных данных
 		public SolidColorBrush CdiCountColor =>		// Скрытие количества свечных данных в выводе, если 0
 			format.RGB(CdiCount > 0 ? "#777777" : "#FFFFFF");
+		public SolidColorBrush NullColor =>			// Цвет для нулевой записи
+			format.RGB(Id > 0 ? "#000000" : "#999999");
+		public int Count1 { get; set; }				// Количество записей в определённой группе
+		public virtual Visibility Vis1 =>			// Видимость количества по условию [1]
+			G.Vis(Count1 > 0);
 
 
 
@@ -171,9 +214,11 @@ namespace MrRobot.Interface
 
 		// ---=== MOEX ===---
 		public int MoexId { get; set; }				// ID инструмениа
+		public int EngineId { get; set; }			// ID торговой системы
 		public int GroupId { get; set; }            // ID группы
 		public int TypeId { get; set; }             // ID вида инструмента
 		public string ShortName { get; set; }       // Краткое наименование
+		public string Title { get; set; }           // Описание
 
 
 
