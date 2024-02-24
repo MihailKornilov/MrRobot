@@ -37,7 +37,7 @@ namespace MrRobot.Entity
 			string sql = "SELECT*" +
 						 "FROM`_candle_data_info`" +
 						 "ORDER BY`exchangeId`,`timeFrame`";
-			mysql.Delegat(sql, res =>
+			my.Main.Delegat(sql, res =>
 			{
 				var unit = new CDIunit(res);
 				CDIlist.Add(unit);
@@ -211,20 +211,20 @@ namespace MrRobot.Entity
 			var unit = ID_UNIT[id];
 			
 			string sql = $"DROP TABLE IF EXISTS`{unit.Table}`";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 
 			sql = $"DELETE FROM`_candle_data_info`WHERE`id`={id}";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 
 			// Удаление Архива поисков паттернов
 			sql = $"SELECT`id`FROM`_pattern_search`WHERE`cdiId`={id}";
 			string ids = mysql.Ids(sql);
 
 			sql = $"DELETE FROM`_pattern_found`WHERE`searchId`IN({ids})";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 
 			sql = $"DELETE FROM`_pattern_search`WHERE`cdiId`={id}";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 
 			new Candle();
 			BYBIT.Instrument.CdiCountUpd(unit.InstrumentId);
@@ -248,10 +248,10 @@ namespace MrRobot.Entity
 			string TableName = $"{exchange}_{symbol.ToLower()}_{tf}";
 
 			string sql = $"DROP TABLE IF EXISTS`{TableName}`";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 			
 			sql = $"DELETE FROM`_candle_data_info`WHERE`table`='{TableName}'";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 
 			sql = $"CREATE TABLE`{TableName}`(" +
 						"`unix` INT UNSIGNED DEFAULT 0 NOT NULL," +
@@ -262,7 +262,7 @@ namespace MrRobot.Entity
 						"`vol`  DECIMAL(30,8) UNSIGNED DEFAULT 0 NOT NULL," +
 						"PRIMARY KEY(`unix`)" +
 				  $")ENGINE=MyISAM DEFAULT CHARSET=cp1251";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 
 			return TableName;
 		}
@@ -280,7 +280,7 @@ namespace MrRobot.Entity
 			string sql = $"INSERT INTO`{TableName}`" +
 						  "(`unix`,`high`,`open`,`close`,`low`,`vol`)" +
 						 $"VALUES{string.Join(",", insert.ToArray())}";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 			insert.Clear();
 		}
 
@@ -321,7 +321,7 @@ namespace MrRobot.Entity
 							"`rowsCount`=VALUES(`rowsCount`)," +
 							"`begin`=VALUES(`begin`)," +
 							"`end`=VALUES(`end`)";
-			return mysql.Query(sql);
+			return my.Main.Query(sql);
 		}
 		/// <summary>
 		/// Внесение заголовка свечных данных
@@ -392,10 +392,10 @@ namespace MrRobot.Entity
 				if (count == 0)
 				{
 					sql = $"DROP TABLE`{tableName}`";
-					mysql.Query(sql);
+					my.Main.Query(sql);
 
 					sql = $"DELETE FROM`_candle_data_info`WHERE`table`='{tableName}'";
-					mysql.Query(sql);
+					my.Main.Query(sql);
 
 					continue;
 				}

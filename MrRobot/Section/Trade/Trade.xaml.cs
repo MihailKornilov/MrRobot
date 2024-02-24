@@ -1,14 +1,10 @@
 ﻿using System.Windows;
-using System.Windows.Data;
 using System.Windows.Controls;
 using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
 
 namespace MrRobot.Section
 {

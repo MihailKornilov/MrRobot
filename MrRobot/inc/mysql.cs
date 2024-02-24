@@ -27,7 +27,7 @@ namespace MrRobot.inc
         static Dur dur;             // Измерение скорости запроса
 
 
-        public delegate void dlgt(MySqlDataReader rs);
+        public delegate void DLGT(MySqlDataReader rs);
 
 
         public mysql(string sql, bool isRes = false)
@@ -58,7 +58,7 @@ namespace MrRobot.inc
             cmd = null;
             res = null;
 
-            //return;
+            return;
 
             long Unix = format.UnixNow_MilliSec();
             if (Unix - UnixLast > 1000)
@@ -74,16 +74,6 @@ namespace MrRobot.inc
 
 
 
-		/// <summary>
-		/// Запрос списка с использованием делегата
-		/// </summary>
-		public static void Delegat(string sql, dlgt method)
-		{
-			new mysql(sql, true);
-			while (res.Read())
-				method(res);
-			Finish(sql);
-		}
 
 
 
@@ -117,17 +107,6 @@ namespace MrRobot.inc
         }
 
 
-        /// <summary>
-        /// Внесение INSERT, удаление DELETE, обновление UPDATE данных
-        /// </summary>
-        public static int Query(string sql)
-        {
-            new mysql(sql);
-            cmd.ExecuteNonQuery();
-            int InsertedId = Convert.ToInt32(cmd.LastInsertedId);
-            Finish(sql);
-            return InsertedId;
-        }
 
         /// <summary>
         /// Количество

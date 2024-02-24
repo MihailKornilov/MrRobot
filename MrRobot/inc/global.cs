@@ -79,10 +79,10 @@ namespace MrRobot.inc
 
 
 		public static Visibility Vis(bool isVis = true) => isVis ? Visibility.Visible : Visibility.Collapsed;
-		public static Visibility Vis(FrameworkElement elem) => elem.Visibility = Visibility.Visible;
+		public static void Vis(FrameworkElement elem) => elem.Visibility = Visibility.Visible;
 		public static Visibility Vis(UserControl uc, bool isVis = true) => uc != null ? uc.Visibility = Vis(isVis) : Vis(false);
 		public static Visibility Vis(FrameworkElement elem, bool isVis = true) => elem != null ? elem.Visibility = Vis(isVis) : Vis(false);
-		public static Visibility Hid(FrameworkElement elem) => elem.Visibility = Visibility.Collapsed;
+		public static void Hid(FrameworkElement elem) => elem.Visibility = Visibility.Collapsed;
 
 
 		// ---=== Entities приложения ===---
@@ -119,7 +119,7 @@ namespace MrRobot.inc
 	/// </summary>
 	public class Dur
 	{
-		private Stopwatch SW;
+		Stopwatch SW;
 		public Dur()
 		{
 			SW = new Stopwatch();
@@ -151,6 +151,28 @@ namespace MrRobot.inc
 
 		public int TotalSeconds() => (int)(SW.ElapsedMilliseconds / 1000);
 		public long ElapsedMS => SW.ElapsedMilliseconds;
+
+
+
+		/// <summary>
+		/// Статическая схема
+		/// </summary>
+		static Dur dur;
+		public static Dur Start() => dur = new Dur();
+		public static string Interval(bool isWL = false)
+		{
+			TimeSpan ts = dur.SW.Elapsed;
+			string elaps = string.Format("{0}:{1:000}", ts.Seconds, ts.Milliseconds);
+			if(isWL)
+				WriteLine(elaps);
+			return elaps;
+		}
+		public static string Stop(bool isWL = false)
+		{
+			string elaps = Interval(isWL);
+			dur.SW.Stop();
+			return elaps;
+		}
 	}
 
 
@@ -253,6 +275,9 @@ namespace MrRobot.inc
 	}
 
 
+	/// <summary>
+	/// Задний фон для выпадающего списка
+	/// </summary>
 	class GridBack
 	{
 		delegate void Dcall();

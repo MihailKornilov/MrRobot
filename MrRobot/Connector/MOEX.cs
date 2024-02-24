@@ -247,7 +247,7 @@ namespace MrRobot.Connector
 							 "ON DUPLICATE KEY UPDATE" +
 							 "`name`=VALUES(`name`)," +
 							 "`title`=VALUES(`title`)";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				new Engine();
 			}
@@ -354,7 +354,7 @@ namespace MrRobot.Connector
 							 "`engineId`=VALUES(`engineId`)," +
 							 "`name`=VALUES(`name`)," +
 							 "`title`=VALUES(`title`)";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				new Market();
 			}
@@ -430,7 +430,7 @@ namespace MrRobot.Connector
 							 "`isDefault`=VALUES(`isDefault`)," +
 							 "`isOrderDriven`=VALUES(`isOrderDriven`)," +
 							 "`category`=VALUES(`category`)";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				new BoardGroup();
 			}
@@ -558,7 +558,7 @@ namespace MrRobot.Connector
 							 "`isTraded`=VALUES(`isTraded`)," +
 							 "`hasCandles`=VALUES(`hasCandles`)," +
 							 "`isPrimary`=VALUES(`isPrimary`)";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				new Board();
 			}
@@ -650,7 +650,7 @@ namespace MrRobot.Connector
 							 "ON DUPLICATE KEY UPDATE" +
 							 "`name`=VALUES(`name`)," +
 							 "`title`=VALUES(`title`)";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				new SecGroup();
 			}
@@ -706,7 +706,7 @@ namespace MrRobot.Connector
 							 "`groupId`=VALUES(`groupId`)," +
 							 "`name`=VALUES(`name`)," +
 							 "`title`=VALUES(`title`)";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				new SecType();
 			}
@@ -759,7 +759,7 @@ namespace MrRobot.Connector
 								"`name`=VALUES(`name`)," +
 								"`title`=VALUES(`title`)," +
 								"`securityGroupId`=VALUES(`securityGroupId`)";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				new SecurityСollections();
 			}
@@ -839,7 +839,7 @@ namespace MrRobot.Connector
 				string sql = "UPDATE`_instrument`" +
 							 "SET`isTrading`=0 " +
 							$"WHERE`exchangeId`={ExchangeId}";
-				mysql.Query(sql);
+				my.Main.Query(sql);
 
 				var wc = new WebClient();
 				wc.Encoding = Encoding.UTF8;
@@ -907,7 +907,7 @@ namespace MrRobot.Connector
 								"`shortName`=VALUES(`shortName`)," +
 								"`name`=VALUES(`name`)," +
 								"`isTrading`=VALUES(`isTrading`)";
-					mysql.Query(sql);
+					my.Main.Query(sql);
 
 					start += 100;
 				}

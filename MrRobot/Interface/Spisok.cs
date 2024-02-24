@@ -45,7 +45,7 @@ namespace MrRobot.Interface
 			UnitList = new List<SpisokUnit>();
 			ID_UNIT = new Dictionary<int, SpisokUnit>();
 
-			mysql.Delegat(SQL, res =>
+			my.Main.Delegat(SQL, res =>
 			{
 				var unit = new SpisokUnit(res);
 				unit = UnitFieldsFill(unit, res);

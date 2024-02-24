@@ -33,11 +33,11 @@ namespace MrRobot.Entity
                             "`quoteCoin`," +
                             "COUNT(*)`count`" +
                          "FROM`_instrument`" +
+                         "WHERE`exchangeId`=1 " +
                          "GROUP BY`quoteCoin`" +
                          "ORDER BY`count`DESC";
-            var list = mysql.QueryList(sql);
-            foreach (dynamic row in list)
-                QuoteCoinBox.Items.Add(new QCoinCount(row["quoteCoin"], row["count"]));
+			my.Main.Delegat(sql, res =>
+				QuoteCoinBox.Items.Add(new QCoinCount(res)));
         }
         /// <summary>
         /// Поиск по котировочной монете
@@ -105,21 +105,21 @@ namespace MrRobot.Entity
 	/// </summary>
 	public class QCoinCount
     {
-        public QCoinCount(string coin, string count)
+        public QCoinCount(dynamic res)
         {
-            Coin = coin;
-            Count = count;
+            Coin  = res.GetString("quoteCoin");
+            Count = res.GetInt32("count");
         }
 
         public string Coin { get; set; }
-        public string Count { get; set; }
+        public int Count { get; set; }
     }
 
 
     class ISunit
     {
         public delegate void Dlg();
-        public Dlg Changed = () => { };
+        public Dlg Changed { get; set; }
 
         // Ассоциативный массив созданных ссылок
         static Dictionary<string, ISunit> ISlist { get; set; } = new Dictionary<string, ISunit>();
@@ -244,7 +244,7 @@ namespace MrRobot.Entity
             TB.Text = isSel ? BYBIT.Instrument.Unit(ChosenId).SymbolName : NoSelTxt;
             TB.Style = Application.Current.Resources[$"TBLink{(isSel ? "Sel" : "")}"] as Style;
             G.Vis(X, isSel);
-            Changed();
+            Changed?.Invoke();
         }
 
         public SpisokUnit IUnit => BYBIT.Instrument.Unit(ChosenId);

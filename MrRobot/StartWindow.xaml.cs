@@ -50,8 +50,9 @@ namespace MrRobot
 		{
 			await Task.Run(AppExceptionLog);StartLog("Подключение событий для необработанных исключений...");
 			await Task.Run(Control_Mysqld);	StartLog("Проверка наличия сервера Базы данных...");
-			G.CefSettings();				StartLog("Настройка встроенного Веб-браузера");
+			G.CefSettings();				StartLog("Настройка встроенного Веб-браузера...");
 
+			await Task.Run(() => new my());			StartLog("Подключение к базе данных...");
 			await Task.Run(() => new position());	StartLog("Загрузка параметров приложения");
 			await Task.Run(() => new Exchange());	StartLog("Загрузка списка Бирж");
 			await Task.Run(() => new Candle());		StartLog("Загрузка информации о Свечных данных");
@@ -81,6 +82,7 @@ namespace MrRobot
 			G.MW.SizeChanged += G.Tester.RobotLogWidthSet;
 			G.MW.SizeChanged += MWsizeDC.WindowState;
 			G.MW.Closed += HttpServer.Stop;
+			G.MW.Closed += my.Close;
 			G.MW.Closed += (s, e) => Close();
 			StartLog("Установка событий для главного окна...");
 			StartLog("Общее время загрузки:", true);

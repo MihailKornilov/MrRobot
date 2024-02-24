@@ -104,10 +104,10 @@ namespace MrRobot.Entity
                 return;
 
             string sql = $"DELETE FROM`_pattern_found`WHERE`searchId`={id}";
-            mysql.Query(sql);
+            my.Main.Query(sql);
 
             sql = $"DELETE FROM`_pattern_search`WHERE`id`={id}";
-            mysql.Query(sql);
+            my.Main.Query(sql);
 
             new Patterns();
         }
@@ -521,7 +521,7 @@ namespace MrRobot.Entity
                         $"SET`profitCount`={ProfitCount}," +
                            $"`lossCount`={LossCount} " +
                         $"WHERE`id`={Id}";
-            mysql.Query(sql);
+            my.Main.Query(sql);
 
             sql = "UPDATE`_pattern_search`" +
                   "SET`testedCount`=(" +
@@ -531,7 +531,7 @@ namespace MrRobot.Entity
                                     "  AND(`profitCount`OR`lossCount`)" +
                                    ") " +
                  $"WHERE`id`={SearchId}";
-            mysql.Query(sql);
+            my.Main.Query(sql);
 
             new Patterns();
             G.Pattern.PatternArchive.SearchList();

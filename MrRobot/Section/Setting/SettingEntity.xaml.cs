@@ -70,7 +70,7 @@ namespace MrRobot.Section
                                    $"`prefix`='{unit.Prefix.Trim()}'," +
                                    $"`url`='{unit.Url.Trim()}'" +
                                 $"WHERE`id`={unit.Id}";
-                    mysql.Query(sql);
+                    my.Main.Query(sql);
                 }
 
                 G.Hid(MarketSaveButton);

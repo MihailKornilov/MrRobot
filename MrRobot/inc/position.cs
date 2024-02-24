@@ -30,7 +30,7 @@ namespace MrRobot.inc
 						 "(`key`,`val`)" +
 						 "VALUES" +
 						$"('{key}','{val}')";
-			mysql.Query(sql);
+			my.Main.Query(sql);
 
 			ASS.Add(key, val);
 
@@ -50,7 +50,7 @@ namespace MrRobot.inc
 
 			string sql = $"UPDATE`_position`SET`val`='{val}'WHERE`key`='{key}'";
             if (!G.IsAutoProgon)
-                mysql.Query(sql);
+                my.Main.Query(sql);
 
 			ASS[key] = val;
 		}

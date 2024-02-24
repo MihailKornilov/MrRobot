@@ -32,7 +32,7 @@ namespace MrRobot.Section
 
 			IS = new ISunit(HistoryIS);
 			IS.WithHistory = true;
-			IS.Changed = InstrumentChanged;
+			IS.Changed += InstrumentChanged;
 			InstrumentChanged();
 
 			Candle.Updated += DownloadedListCreate;

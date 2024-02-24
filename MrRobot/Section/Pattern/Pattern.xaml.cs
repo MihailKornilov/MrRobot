@@ -379,7 +379,7 @@ namespace MrRobot.Section
                            $"{SPARAM.FoundCount}," +
                            $"'{SPARAM.Duration}'" +
                          ")";
-            SPARAM.SearchId = mysql.Query(sql);
+            SPARAM.SearchId = my.Main.Query(sql);
 
             if (SPARAM.FoundCount == 0)
             {
@@ -402,7 +402,7 @@ namespace MrRobot.Section
                         "`repeatCount`," +
                         "`unixList`" +
                         ")VALUES" + string.Join(",", insert.ToArray());
-                mysql.Query(sql);
+                my.Main.Query(sql);
 
                 insert.Clear();
             }

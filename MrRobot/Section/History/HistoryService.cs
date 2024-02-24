@@ -105,7 +105,7 @@ namespace MrRobot.Section
                                $"{lsf.minOrderQty}," +
                                $"{v.priceFilter.tickSize}" +
                               ")";
-                var instr = new SpisokUnit(mysql.Query(sql));
+                var instr = new SpisokUnit(my.Main.Query(sql));
                 instr.Symbol = symbol;
                 InstrumentLogInsert(instr, "Новый инструмент", "", (v.baseCoin + "/" + v.quoteCoin).ToString());
                 InstrumentHistoryBeginUpdate(instr);
@@ -126,7 +126,7 @@ namespace MrRobot.Section
             string sql = "UPDATE`_instrument`" +
                         $"SET`{param}`='{newS}'" +
                         $"WHERE`id`={unit.Id}";
-            mysql.Query(sql);
+            my.Main.Query(sql);
 
             InstrumentLogInsert(unit, $"Изменился параметр \"{param}\"", oldS, newS);
         }
@@ -149,7 +149,7 @@ namespace MrRobot.Section
                             $"'{oldV}'," +
                             $"'{newV}'" +
                          ")";
-            mysql.Query(sql);
+            my.Main.Query(sql);
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace MrRobot.Section
             string sql = "UPDATE `_instrument`" +
                         $"SET `historyBegin`=FROM_UNIXTIME({last})" +
                         $"WHERE `id`={unit.Id}";
-            mysql.Query(sql);
+            my.Main.Query(sql);
         }
     }
 }

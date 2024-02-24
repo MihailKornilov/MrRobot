@@ -137,7 +137,7 @@ namespace MrRobot.Entity
 
             path = path.Replace('\\', '/');
             sql = $"INSERT INTO`_robot`(`name`,`path`)VALUES('{name}','{path}')";
-            return mysql.Query(sql);
+            return my.Main.Query(sql);
         }
 
         static RobotUnit Unit(int Id)
