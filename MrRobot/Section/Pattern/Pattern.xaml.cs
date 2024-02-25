@@ -149,7 +149,7 @@ namespace MrRobot.Section
             if (PatternSearchExist(SPARAM))
                 return;
 
-            await Task.Run(() => SearchProcess());
+            await Task.Run(SearchProcess);
 
             if (!PatternFoundBaseInsert())
                 return;
@@ -158,20 +158,62 @@ namespace MrRobot.Section
             if (!AutoProgon.PatternSearch())
                 PatternSearchExist(SPARAM);
         }
-        /// <summary>
-        /// Поиск свечных паттернов без разброса в процентах
-        /// </summary>
-        void SearchProcess()
+
+
+		/// <summary>
+		/// Загрузка свечей и формирование массива паттернов для поиска паттернов
+		/// </summary>
+		public List<PatternUnit> PatternMass()
+		{
+            SPARAM.ProсessInfo = "Загрузка свечных данных...";
+			SPARAM.PBar.Report(0);
+
+			var CDI = Candle.Unit(SPARAM.CdiId);
+			var bar = new ProBar(CDI.RowsCount);
+			int i = 0;
+
+			var CandleList = new List<CandleUnit>();
+			var PatternList = new List<PatternUnit>();
+			int PatternLength = SPARAM.PatternLength;
+
+			string sql = $"SELECT*FROM`{CDI.Table}`";
+            my.Main.Delegat(sql, res =>
+            {
+				if (bar.isUpd(i++))
+				{
+					if (!SPARAM.IsProcess)
+						return false;
+
+					SPARAM.PBar.Report(bar.Value);
+				}
+
+				CandleList.Add(new CandleUnit(res));
+
+				if (CandleList.Count > PatternLength)
+					CandleList.RemoveRange(0, 1);
+
+                if (CandleList.Count == PatternLength)
+                {
+					var patt = new PatternUnit(CandleList, SPARAM.CdiId, SPARAM.PrecisionPercent);
+					if (patt.Size > 0)
+						PatternList.Add(patt);
+				}
+
+				return true;
+			});
+
+			SPARAM.ProсessInfo = "";
+
+			return PatternList;
+		}
+
+		/// <summary>
+		/// Поиск свечных паттернов без разброса в процентах
+		/// </summary>
+		void SearchProcess()
         {
             var dur = new Dur();
-            var CDI = Candle.Unit(SPARAM.CdiId);
-
-            string sql = $"SELECT COUNT(*)FROM`{CDI.Table}`";
-            int count = my.Main.Count(sql);
-
-            sql = $"SELECT*FROM`{CDI.Table}`";
-            var MASS = mysql.PatternSearchMass(sql, SPARAM, count);
-
+            var MASS = PatternMass();
             int PatternLength = SPARAM.PatternLength;
             int CountSearch = MASS.Count - PatternLength * 2 + 1;   // Общее количество свечей на графике с учётом длины паттерна
             var FNDass = new Dictionary<string, int>();

@@ -22,7 +22,8 @@ namespace MrRobot.inc
 		public static my Main { get; set; }
 		public static my Data { get; set; }
 
-		public delegate void DLGT(MySqlDataReader rs);
+		public delegate void VOID(MySqlDataReader rs);
+		public delegate bool BOOL(MySqlDataReader rs);
 
 		MySqlCommand Cmd { get; set; }
 
@@ -76,13 +77,22 @@ namespace MrRobot.inc
 			return Convert.ToInt32(Cmd.LastInsertedId);
 		}
 		/// <summary>
-		/// Запрос списка с использованием делегата
+		/// Запрос списка с использованием делегата -> без возврата значения
 		/// </summary>
-		public void Delegat(string sql, DLGT method)
+		public void Delegat(string sql, VOID method)
 		{
 			var res = Res(sql);
 			while (res.Read())
 				method(res);
+			res.Close();
+		}
+		/// <summary>
+		/// Запрос списка с использованием делегата -> возврат BOOLEAN
+		/// </summary>
+		public void Delegat(string sql, BOOL method)
+		{
+			var res = Res(sql);
+			while (res.Read() && method(res));
 			res.Close();
 		}
 		/// <summary>

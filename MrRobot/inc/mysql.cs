@@ -78,48 +78,10 @@ namespace MrRobot.inc
 
 
 
-		/// <summary>
-		/// Получение названия таблицы из запроса
-		/// </summary>
-		static string TableName(string sql)
-        {
-            bool isFrom = false;
-            foreach (string str in sql.ToLower().Split('`'))
-            {
-                if (isFrom)
-                    return str;
-                if(str.Contains("from"))
-                    isFrom = true;
-            }
-            return "";
-        }
 
 
 
 
-        /// <summary>
-        /// Получение списка, состоящего из одного стоблца
-        /// </summary>
-        public static string[] QueryColOne(string sql)
-        {
-            new mysql(sql, true);
-
-            if (!res.HasRows)
-                return new string[0];
-
-            var list = new List<string>();
-            while (res.Read())
-                list.Add(res.GetValue(0).ToString());
-
-            int i = 0;
-            string[] mass = new string[list.Count];
-            foreach (string v in list)
-                mass[i++] = v;
-
-            Finish(sql);
-
-            return mass;
-        }
 
 
         /// <summary>
@@ -192,32 +154,6 @@ namespace MrRobot.inc
 
             return Data;
         }
-        /// <summary>
-        /// Проверка свечных данных выбранного таймфрейма, чтобы присутствовала каждая свеча одна за другой
-        /// </summary>
-        public static bool CandleDataCheck(string TableName)
-        {
-            int tf = Convert.ToInt32(TableName.Split('_')[2]);
-            int step = tf * 60;
-
-            string sql = "SELECT`unix`" +
-                        $"FROM`{TableName}`" +
-                         "ORDER BY`unix`";
-            new mysql(sql, true);
-
-            res.Read();
-            int unix = res.GetInt32(0) + step;
-            while (res.Read())
-            {
-                if (unix != res.GetInt32(0))
-                    return false;
-                unix += step;
-            }
-            
-            Finish(sql);
-
-            return true;
-        }
 
 
         static Dictionary<int, List<CandleUnit>> ConvertCandles_Cache;
@@ -269,54 +205,6 @@ namespace MrRobot.inc
             Finish(sql);
 
             return Data;
-        }
-
-
-
-        /// <summary>
-        /// Загрузка свечей и формирование массивов для поиска паттернов
-        /// </summary>
-        public static List<PatternUnit> PatternSearchMass(string sql, PatternSearchParam PARAM, int count)
-        {
-            PARAM.ProсessInfo = "Загрузка свечных данных...";
-            PARAM.PBar.Report(0);
-
-            var bar = new ProBar(count);
-            int i = 0;
-
-            new mysql(sql, true);
-
-            var CandleList = new List<CandleUnit>();
-            var PatternList = new List<PatternUnit>();
-            int PatternLength = PARAM.PatternLength;
-
-            while (res.Read())
-            {
-                if (bar.isUpd(i++))
-                {
-                    if (!PARAM.IsProcess)
-                        break;
-
-                    PARAM.PBar.Report(bar.Value);
-                }
-
-                CandleList.Add(new CandleUnit(res));
-
-                if (CandleList.Count > PatternLength)
-                    CandleList.RemoveRange(0, 1);
-                if (CandleList.Count != PatternLength)
-                    continue;
-
-                var patt = new PatternUnit(CandleList, PARAM.CdiId, PARAM.PrecisionPercent);
-                if(patt.Size > 0)
-                    PatternList.Add(patt);
-            }
-
-            Finish(sql);
-
-            PARAM.ProсessInfo = "";
-
-            return PatternList;
         }
     }
 }

@@ -57,9 +57,8 @@ namespace MrRobot.Section
 			my.Main.Delegat(sql, res =>
 			{
 				string tab = res.GetString(0);
-				if (tab.Substring(0, 1) == "_")
-					return;
-				tables.Add(tab);
+				if (tab.Substring(0, 1) != "_")
+					tables.Add(tab);
 			});
 
 			var ASS = new Dictionary<string, CDIunit>();

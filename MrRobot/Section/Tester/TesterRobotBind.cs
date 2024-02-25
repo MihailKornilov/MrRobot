@@ -128,7 +128,7 @@ namespace MrRobot.Section
                     }
 
             SetupGrid.IsEnabled = true;
-            CDIdownloadPanel.Visibility = Visibility.Collapsed;
+            G.Hid(CDIdownloadPanel);
             InitParam.IsProcess = false;
         }
 
@@ -175,7 +175,7 @@ namespace MrRobot.Section
             Init.Invoke(ObjInstance, new object[] { new string[]{} });
             LOGG.Output();
 
-            RobotSetupButton.Visibility = SETUP.Items.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+            G.Vis(RobotSetupButton, SETUP.Items.Count > 0);
             OrderExecutedView();
             TesterChartInit();
             TesterBar.Value = 0;

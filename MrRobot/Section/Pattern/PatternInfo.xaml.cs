@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using System.Collections.Generic;
 
 using MrRobot.inc;
 using MrRobot.Entity;
-using System.Collections.Generic;
 
 namespace MrRobot.Section
 {
@@ -34,21 +33,26 @@ namespace MrRobot.Section
 
         List<PatternUnit> PatternList(PatternUnit found)
         {
-            var CandleList = new List<CandleUnit>();
+			var CDI = Candle.Unit(found.CdiId);
+			var CandleList = new List<CandleUnit>();
             var PatternList = new List<PatternUnit>();
-            foreach (var cndl in Candle.Data(found.CdiId))
+
+			string sql = $"SELECT*FROM`{CDI.Table}`";
+			my.Main.Delegat(sql, res =>
             {
-                if (CandleList.Count == 0 && !found.UnixList.Contains(cndl.Unix))
-                    continue;
+                int unix = res.GetInt32("unix");
+				if (CandleList.Count == 0 && !found.UnixList.Contains(unix))
+					return;
 
-                CandleList.Add(cndl);
+				CandleList.Add(new CandleUnit(res));
 
-                if (CandleList.Count < found.Length)
-                    continue;
+				if (CandleList.Count < found.Length)
+					return;
 
-                PatternList.Add(new PatternUnit(CandleList, found.CdiId, found.PrecisionPercent));
-                CandleList.Clear();
-            }
+				PatternList.Add(new PatternUnit(CandleList, found.CdiId, found.PrecisionPercent));
+				CandleList.Clear();
+			});
+
             return PatternList;
         }
         string FoundList(PatternUnit found)

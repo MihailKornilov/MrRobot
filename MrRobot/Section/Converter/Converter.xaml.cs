@@ -198,7 +198,8 @@ namespace MrRobot.Section
         /// <summary>
         /// Отмена процесса конвертации
         /// </summary>
-        void ConvertCancel(object s, RoutedEventArgs e) => ConvertParam.IsProcess = false;
+        void ConvertCancel(object s, RoutedEventArgs e) =>
+            ConvertParam.IsProcess = false;
 
         #endregion
 
@@ -207,10 +208,8 @@ namespace MrRobot.Section
         /// <summary>
         /// Список таймфреймов с результатами конвертации
         /// </summary>
-        public void ResultListCreate()
-        {
+        public void ResultListCreate() =>
             ResultListBox.ItemsSource = IsSourceChosen ? Candle.ListOnIID(SourceUnit.InstrumentId, false) : null;
-        }
 
         /// <summary>
         /// Показ графика результата конвертации
@@ -227,6 +226,7 @@ namespace MrRobot.Section
         /// <summary>
         /// Удаление результата конвертации
         /// </summary>
-        void ConvertedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
+        void ConvertedX(object sender, MouseButtonEventArgs e) =>
+            Candle.UnitDel((sender as Label).TabIndex);
     }
 }

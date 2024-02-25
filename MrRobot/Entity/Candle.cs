@@ -180,15 +180,6 @@ namespace MrRobot.Entity
 			return UnitOnSymbol(name, tf) != null;
 		}
 
-		/// <summary>
-		/// Свечные данные из базы
-		/// </summary>
-		public static List<CandleUnit> Data(int Id)
-		{
-			string sql = $"SELECT*FROM`{Unit(Id).Table}`";
-			return mysql.CandlesDataCache(sql);
-		}
-
 		// Количество свечных данных для конкретного инструмента
 		public static int CdiCount(int iid)
 		{
@@ -375,9 +366,6 @@ namespace MrRobot.Entity
 			string symbol = spl[1].ToUpper();
 			int tf = Convert.ToInt32(spl[2]);
 
-			if (!mysql.CandleDataCheck(table))
-				WriteLine($"Ошибка в последовательности таблицы `{table}`.");
-
 			int ExchangeId = G.Exchange.UnitOnField("Prefix", prefix).Id;
 			int iid = 0;
 			switch (ExchangeId)
@@ -395,14 +383,15 @@ namespace MrRobot.Entity
 		/// </summary>
 		public static void DataControl(string tableLike = "bybit_", IProgress<decimal> prgs = null)
 		{
+			var mass = new List<string>();
 			string sql = $"SHOW TABLES LIKE '{tableLike}%'";
-			string[] mass = mysql.QueryColOne(sql);
+			my.Main.Delegat(sql, res => mass.Add(res.GetString(0)));
 
-			if (mass.Length == 0)
+			if (mass.Count == 0)
 				return;
 
-			var bar = new ProBar(mass.Length);
-			for (int i = 0; i < mass.Length; i++)
+			var bar = new ProBar(mass.Count);
+			for (int i = 0; i < mass.Count; i++)
 			{
 				string tableName = mass[i];
 
