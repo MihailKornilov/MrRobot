@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Windows;
+using System.Linq;
 using System.Windows.Media;
 using System.Collections.Generic;
 using static System.Console;
@@ -12,7 +12,6 @@ using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
 using MrRobot.Interface;
-using System.Linq;
 
 namespace MrRobot.Connector
 {
@@ -20,18 +19,18 @@ namespace MrRobot.Connector
 	{
 		public const int ExchangeId = 2;        // ID МосБиржи
 		public static Engine _Engine { get; set; }
+		public static Market _Market { get; set; }
 		public static SecGroup SGroup { get; set; }
 		public static SecType SType { get; set; }
 		public static Security Instrument { get; set; }
 
 		public MOEX()
 		{
-			new Market();
 			new BoardGroup();
 			new Board();
-			new SecurityСollections();
 
 			new Engine();
+			new Market();
 			new SecGroup();
 			new SecType();
 			new Security();
@@ -257,81 +256,74 @@ namespace MrRobot.Connector
 		/// <summary>
 		/// Рынки
 		/// </summary>
-		public class Market
+		public class Market : Spisok
 		{
-			static List<MoexUnit> UnitList { get; set; }
-			static Dictionary<int, MoexUnit> ID_UNIT { get; set; }
-			public Market()
-			{
-				UnitList = new List<MoexUnit>();
-				ID_UNIT = new Dictionary<int, MoexUnit>();
+			public override string SQL =>
+				"SELECT*" +
+				"FROM`_moex_markets`" +
+				"ORDER BY`engineId`,`id`";
 
-				string sql = "SELECT*FROM`_moex_markets`ORDER BY`engineId`,`id`";
-				foreach (Dictionary<string, string> row in mysql.QueryList(sql))
-				{
-					var unit = new MoexUnit(row);
-					UnitList.Add(unit);
-					ID_UNIT.Add(unit.Id, unit);
-				}
+			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
+			{
+				unit.EngineId = res.GetInt32("engineId");
+				unit.Name = res.GetString("name");
+				unit.Title = res.GetString("title");
+				return unit;
 			}
 
-			// Весь список
-			public static List<MoexUnit> ListAll => UnitList;
+			public Market() : base() => _Market = this;
 
-			// Единица на основании ID
-			public static MoexUnit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
 
 			// Список рынков с учётом фильтра
-			public static List<MoexUnit> ListEngine()
-			{
-				var send = new List<MoexUnit>();
+			//public List<SpisokUnit> ListEngine()
+			//{
+			//	var send = new List<MoexUnit>();
 
-				if(SecurityFilter.EngineId == 0)
-					return send;
+			//	if(SecurityFilter.EngineId == 0)
+			//		return send;
 
-				for (int i = 0; i < UnitList.Count; i++)
-				{
-					var unit = UnitList[i];
-					if (unit.EngineId == SecurityFilter.EngineId)
-						if(unit.SecurityCount > 0)
-							send.Add(unit);
-				}
-				return send;
-			}
+			//	for (int i = 0; i < UnitList.Count; i++)
+			//	{
+			//		var unit = UnitList[i];
+			//		if (unit.EngineId == SecurityFilter.EngineId)
+			//			if(unit.SecurityCount > 0)
+			//				send.Add(unit);
+			//	}
+			//	return send;
+			//}
 
-			// Обновление количеств бумаг на основании фильтра
-			public static void CountFilter()
-			{
-				if (SecurityFilter.EngineId == 0)
-					return;
+			//// Обновление количеств бумаг на основании фильтра
+			//public static void CountFilter()
+			//{
+			//	if (SecurityFilter.EngineId == 0)
+			//		return;
 
-				// Обнуление количеств бумаг
-				foreach (var unit in ListEngine())
-					unit.SecurityCountFilter = 0;
+			//	// Обнуление количеств бумаг
+			//	foreach (var unit in ListEngine())
+			//		unit.SecurityCountFilter = 0;
 
-				//foreach (var sec in Instrument.ListAll)
-				//{
-				//	if (sec.EngineId != SecurityFilter.EngineId)
-				//		continue;
-				//	if (!SecurityFilter.IsAllowFast(sec))
-				//		continue;
+			//	foreach (var sec in Instrument.ListAll)
+			//	{
+			//		if (sec.EngineId != SecurityFilter.EngineId)
+			//			continue;
+			//		if (!SecurityFilter.IsAllowFast(sec))
+			//			continue;
 
-				//	var unit = Unit(sec.MarketId);
-				//	if (unit != null)
-				//		unit.SecurityCountFilter++;
-				//}
-			}
+			//		var unit = Unit(sec.MarketId);
+			//		if (unit != null)
+			//			unit.SecurityCountFilter++;
+			//	}
+			//}
 
 			// Порядковый номер в списке
-			public static int FilterIndex()
-			{
-				var list = ListEngine();
-				for (int i = 0; i < list.Count; i++)
-					if (list[i].Id == SecurityFilter.MarketId)
-						return i;
-				return -1;
-			}
-
+			//public int FilterIndex()
+			//{
+			//	var list = ListEngine();
+			//	for (int i = 0; i < list.Count; i++)
+			//		if (list[i].Id == SecurityFilter.MarketId)
+			//			return i;
+			//	return 0;
+			//}
 
 
 
@@ -494,7 +486,7 @@ namespace MrRobot.Connector
 				if (marketId == 0)
 					return "";
 
-				var unit = Market.Unit(marketId);
+				var unit = _Market.Unit(marketId);
 				if (unit == null)
 					return "";
 
@@ -712,58 +704,6 @@ namespace MrRobot.Connector
 			}
 		}
 
-		/// <summary>
-		/// Коллекции бумаг
-		/// </summary>
-		public class SecurityСollections
-		{
-			static List<MoexUnit> UnitList { get; set; }
-			static Dictionary<int, MoexUnit> ID_UNIT { get; set; }
-			public SecurityСollections()
-			{
-				UnitList = new List<MoexUnit>();
-				ID_UNIT = new Dictionary<int, MoexUnit>();
-
-				string sql = "SELECT*FROM`_moex_securitycollections`ORDER BY`id`";
-				foreach (Dictionary<string, string> row in mysql.QueryList(sql))
-				{
-					var unit = new MoexUnit(row);
-					UnitList.Add(unit);
-					ID_UNIT.Add(unit.Id, unit);
-				}
-			}
-
-			// Загрузка данных с биржи
-			public static void iss()
-			{
-				var data = WsIssData("securitycollections");
-				string[] values = new string[data.Count];
-				for (int i = 0; i < data.Count; i++)
-				{
-					var v = data[i];
-					values[i] = "(" +
-									$"{v[0]}," +
-									$"'{v[1]}'," +  // name
-									$"'{v[2]}'," +  // title
-									$"{v[3]}" +     // securityGroupId
-								")";
-				}
-
-				string sql = "INSERT INTO`_moex_securitycollections`(" +
-								"`id`," +
-								"`name`," +
-								"`title`," +
-								"`securityGroupId`" +
-							$")VALUES{string.Join(",", values)}" +
-							 "ON DUPLICATE KEY UPDATE" +
-								"`name`=VALUES(`name`)," +
-								"`title`=VALUES(`title`)," +
-								"`securityGroupId`=VALUES(`securityGroupId`)";
-				my.Main.Query(sql);
-
-				new SecurityСollections();
-			}
-		}
 
 
 		/// <summary>

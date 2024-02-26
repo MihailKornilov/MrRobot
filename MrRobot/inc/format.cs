@@ -42,7 +42,8 @@ namespace MrRobot.inc
 		/// </summary>
 		///
 		/// Входящий вид `date`: 12.05.2022 12:44:44
-		public static string DateOne(string date) => date.Substring(0, 16);
+		public static string DateOne(string date) =>
+			date.Substring(0, 16);
 
 
 		/// <summary>

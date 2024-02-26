@@ -300,7 +300,7 @@ namespace MrRobot.Section
                          $" AND`patternLength`={param.PatternLength}" +
                          $" AND`scatterPercent`={param.PrecisionPercent} " +
                         $"LIMIT 1";
-            var row = mysql.QueryOne(sql);
+            var row = my.Main.Row(sql);
 
             if (row.Count == 0)
             {

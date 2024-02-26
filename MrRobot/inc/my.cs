@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using static System.Console;
 
 using MySqlConnector;
-using System.Collections.Generic;
 
 namespace MrRobot.inc
 {
@@ -21,11 +21,6 @@ namespace MrRobot.inc
 
 		public static my Main { get; set; }
 		public static my Data { get; set; }
-
-		public delegate void VOID(MySqlDataReader rs);
-		public delegate bool BOOL(MySqlDataReader rs);
-
-		MySqlCommand Cmd { get; set; }
 
 		public my()
 		{
@@ -47,11 +42,15 @@ namespace MrRobot.inc
 			}
 		}
 
+		MySqlCommand Cmd { get; set; }
 		MySqlDataReader Res(string sql)
 		{
 			Cmd.CommandText = sql;
 			return Cmd.ExecuteReader();
 		}
+
+		public delegate void VOID(MySqlDataReader rs);
+		public delegate bool BOOL(MySqlDataReader rs);
 
 		/// <summary>
 		/// Закрытие соединения с Базой данных
@@ -116,16 +115,18 @@ namespace MrRobot.inc
 		{
 			var res = Res(sql);
 			if (!res.HasRows)
+			{
+				res.Close();
 				return "0";
+			}
 
 			var list = new List<string>();
 			while (res.Read())
 				list.Add(res.GetValue(0).ToString());
 
-			string ids = string.Join(",", list.ToArray());
 			res.Close();
 
-			return ids;
+			return string.Join(",", list.ToArray());
 		}
 		/// <summary>
 		/// Получение ассоциативного массива на основании id
@@ -162,13 +163,27 @@ namespace MrRobot.inc
 		/// <summary>
 		/// Проверка существования строк
 		/// </summary>
-		public bool HasRows(string tableName)
+		public bool HasRows(string table)
 		{
-			string sql = $"SHOW TABLES LIKE'{tableName}'";
+			string sql = $"SHOW TABLES LIKE'{table}'";
 			var res = Res(sql);
 			bool HasRows = res.HasRows;
 			res.Close();
 			return HasRows;
 		}
+		/// <summary>
+		/// Получение одной строки из базы
+		/// </summary>
+		public Dictionary<string, string> Row(string sql)
+		{
+			var send = new Dictionary<string, string>();
+			var res = Res(sql);
+			if (res.Read())
+				for (int i = 0; i < res.FieldCount; i++)
+					send.Add(res.GetName(i), res.GetValue(i).ToString());
+			res.Close();
+			return send;
+		}
+
 	}
 }

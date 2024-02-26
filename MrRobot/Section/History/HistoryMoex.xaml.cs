@@ -51,27 +51,6 @@ namespace MrRobot.Section
 				DataContext = new MoexDC();
 			};
 
-			// Фильтр "Торговая система"
-			//EngineBox.SelectedIndex = MOEX.Engine.FilterIndex();
-			//EngineBox.SelectionChanged += (s, e) =>
-			//{
-			//	if (EngineBox.SelectedIndex == -1)
-			//		return;
-			//	SecurityFilter.EngineId = (EngineBox.SelectedItem as SpisokUnit).Id;
-			//	DataContext = new MoexDC();
-			//};
-
-			// Фильтр "Рынки"
-			//MarketBox.SelectedIndex = MOEX.Market.FilterIndex();
-			//MarketBox.SelectionChanged += (s, e) =>
-			//{
-			//	if (MarketBox.SelectedIndex == -1)
-			//		return;
-			//	SecurityFilter.MarketId = (MarketBox.SelectedItem as MoexUnit).Id;
-			//	DataContext = new MoexDC();
-			//};
-
-
 			// Выбрана Бумага
 			SecurityBox.SelectionChanged += (s, e) =>
 			{
@@ -168,8 +147,6 @@ namespace MrRobot.Section
 		public MoexDC()
 		{
 			MOEX.SGroup.CountFilter();
-			//MOEX.Engine.CountFilter();
-			//MOEX.Market.CountFilter();
 			FoundCount = MOEX.Instrument.FoundCount();
 		}
 		// Название Московской биржи из базы в заголовке
@@ -182,14 +159,8 @@ namespace MrRobot.Section
 		public static Visibility FastCancelVis  { get => G.Vis(SecurityFilter.FastTxt.Length > 0); }
 
 
-		public static List<SpisokUnit> EngineList { get => MOEX._Engine.ListAll; }
 		public static List<SpisokUnit> GroupList { get => MOEX.SGroup.ListActual(); }
 		public static List<SpisokUnit> TypeList { get => MOEX.SType.AllWithNull("не выбран"); }
-
-
-		// Видимость списка рынков
-		public static Visibility MarketVis { get => G.Vis(SecurityFilter.EngineId > 0); }
-		public static List<MoexUnit> MarketList { get => MOEX.Market.ListEngine(); }
 
 
 		// Количество найденных бумаг

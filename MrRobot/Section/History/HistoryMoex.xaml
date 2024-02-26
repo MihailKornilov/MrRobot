@@ -183,22 +183,6 @@
 				<ColumnDefinition Width="413"/>
 			</Grid.ColumnDefinitions>
 
-			<!-- Фильтры -->
-			<!--<StackPanel Grid.Column="0" Margin="0,1,10,0">
-				<Label Content="Торговая система:" Margin="0,10,0,2" Style="{StaticResource LabelMedium}"/>
-				<ListBox Name="EngineBox"
-                         ItemsSource="{Binding EngineList}"
-                         ItemTemplate="{StaticResource FilterUnit}"/>
-
-				<StackPanel Margin="0,10,0,2" Visibility="{Binding MarketVis}">
-					<Label Content="Рынок:" Style="{StaticResource LabelMedium}"/>
-					<ListBox Name="MarketBox"
-							 MaxHeight="250"
-							 ItemsSource="{Binding MarketList}"
-							 ItemTemplate="{StaticResource FilterUnit}"/>
-				</StackPanel>
-			</StackPanel>-->
-
 			<!-- Список бумаг -->
 			<StackPanel Grid.Column="0">
 				<Label Name="FoundCount"

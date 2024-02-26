@@ -5,7 +5,6 @@ using static System.Console;
 using MySqlConnector;
 
 using MrRobot.Entity;
-using MrRobot.Section;
 
 namespace MrRobot.inc
 {
@@ -91,7 +90,7 @@ namespace MrRobot.inc
         {
             new mysql(sql, true);
 
-            List<object> mass = new List<object>();
+            var mass = new List<object>();
             while (res.Read())
             {
                 var row = new Dictionary<string, string>();
@@ -105,54 +104,6 @@ namespace MrRobot.inc
             Finish(sql);
 
             return mass;
-        }
-
-        /// <summary>
-        /// Получение одной строки из базы
-        /// </summary>
-        public static Dictionary<string, string> QueryOne(string sql)
-        {
-            new mysql(sql, true);
-
-            var send = new Dictionary<string, string>();
-
-            if (res.Read())
-                for (int i = 0; i < res.FieldCount; i++)
-                    send.Add(res.GetName(i), res.GetValue(i).ToString());
-
-            Finish(sql);
-
-            return send;
-        }
-
-
-
-
-        /// <summary>
-        /// Получение данных о свечах для Робота
-        /// </summary>
-        public static List<object> CandlesData(string sql, CDIparam param = null)
-        {
-            ProBar bar = null;
-            if (param != null)
-            {
-                var CDI = Candle.Unit(param.Id);
-                bar = new ProBar(CDI.RowsCount);
-            }
-
-            new mysql(sql, true);
-            var Data = new List<object>();
-            while (res.Read())
-            {
-                Data.Add(new CandleUnit(res));
-
-                if (param != null)
-                    bar.Val(Data.Count, param.Progress);
-            }
-
-            Finish(sql);
-
-            return Data;
         }
 
 

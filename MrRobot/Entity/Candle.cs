@@ -355,7 +355,7 @@ namespace MrRobot.Entity
 							"MAX(FROM_UNIXTIME(`unix`))`end`" +
 						 $"FROM`{table}`" +
 						  "LIMIT 1";
-			var data = mysql.QueryOne(sql);
+			var data = my.Main.Row(sql);
 			int count = Convert.ToInt32(data["count"]);
 
 			if (count == 0)
@@ -400,7 +400,7 @@ namespace MrRobot.Entity
 							$"MIN(FROM_UNIXTIME(`unix`))`begin`," +
 							$"MAX(FROM_UNIXTIME(`unix`))`end`" +
 					  $"FROM`{tableName}`";
-				var res = mysql.QueryOne(sql);
+				var res = my.Main.Row(sql);
 
 				int count = Convert.ToInt32(res["count"]);
 				string begin = res["begin"];
@@ -432,7 +432,7 @@ namespace MrRobot.Entity
 				sql = "SELECT*" +
 					  "FROM`_candle_data_info`" +
 					 $"WHERE`table`='{tableName}'";
-				res = mysql.QueryOne(sql);
+				res = my.Main.Row(sql);
 				int id = res.Count != 0 ? Convert.ToInt32(res["id"]) : 0;
 
 				// Внесение заголовка истории
