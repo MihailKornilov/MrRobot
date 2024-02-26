@@ -12,6 +12,7 @@ using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;
 using MrRobot.Interface;
+using static MrRobot.Connector.MOEX;
 
 namespace MrRobot.Connector
 {
@@ -20,62 +21,61 @@ namespace MrRobot.Connector
 		public const int ExchangeId = 2;        // ID МосБиржи
 		public static Engine _Engine { get; set; }
 		public static Market _Market { get; set; }
+		public static BoardGroup _BoardGroup { get; set; }
+		public static Board _Board { get; set; }
 		public static SecGroup SGroup { get; set; }
 		public static SecType SType { get; set; }
 		public static Security Instrument { get; set; }
 
 		public MOEX()
 		{
-			new BoardGroup();
-			new Board();
-
 			new Engine();
 			new Market();
+			new BoardGroup();
+			new Board();
 			new SecGroup();
 			new SecType();
 			new Security();
 		}
 
-		#region СКРЫТО ВРЕМЕННО
-
 		// Формирование страницы со всеми запросами ISS
-		public static void IssQueriesPage(BoardUnit board)
-		{
-			string name = "MoexIssQueries";
-			string src = Path.GetFullPath($"Browser/{name}.tmp.html");
-			string dst = Path.GetFullPath($"Browser/{name}.html");
+//		public static void IssQueriesPage(SpisokUnit board)
+//		{
+//			string name = "MoexIssQueries";
+//			string src = Path.GetFullPath($"Browser/{name}.tmp.html");
+//			string dst = Path.GetFullPath($"Browser/{name}.html");
 
-			var read  = new StreamReader(src);
-			var write = new StreamWriter(dst);
+//			var read  = new StreamReader(src);
+//			var write = new StreamWriter(dst);
 
-			string line;
-			while ((line = read.ReadLine()) != null)
-			{
-/*
-				if (line.Contains("        /iss"))
-				{
-					line = line.Replace("        ", "");
-					line = $"    <a href='https://iss.moex.com{line}.json' target='_blank'>{line}</a>";
-				}
-				else if (line.Contains("        "))
-				{
-					line = line.Replace("        ", "");
-					line = $"    <div>{line}</div>";
-				}
-				else if (line.Length == 0)
-					line = "<br>";
-*/
-				line = line.Replace("[engine]", board.EngineName);
-				line = line.Replace("[market]", board.MarketName);
-				line = line.Replace("[board]",  board.Name);
-				line = line.Replace("[boardgroup]",  board.Group);
-				line = line.Replace("[security]", board.SecId);
+//			string line;
+//			while ((line = read.ReadLine()) != null)
+//			{
+///*
+//				if (line.Contains("        /iss"))
+//				{
+//					line = line.Replace("        ", "");
+//					line = $"    <a href='https://iss.moex.com{line}.json' target='_blank'>{line}</a>";
+//				}
+//				else if (line.Contains("        "))
+//				{
+//					line = line.Replace("        ", "");
+//					line = $"    <div>{line}</div>";
+//				}
+//				else if (line.Length == 0)
+//					line = "<br>";
+//*/
+//				line = line.Replace("[engine]", board.EngineName);
+//				line = line.Replace("[market]", board.MarketName);
+//				line = line.Replace("[board]",  board.Name);
+//				line = line.Replace("[boardgroup]",  board.Group);
+//				line = line.Replace("[security]", board.SecId);
 
-				write.WriteLine(line);
-			}
-			read.Close();
-			write.Close();
-		}
+//				write.WriteLine(line);
+//			}
+//			read.Close();
+//			write.Close();
+//		}
 
 		// Информация о Бумаге и Режимы торгов
 		public static dynamic[] SecurityInfoBoards(string secid)
@@ -359,26 +359,22 @@ namespace MrRobot.Connector
 		/// <summary>
 		/// Группы режимов торгов
 		/// </summary>
-		public class BoardGroup
+		public class BoardGroup : Spisok
 		{
-			static List<MoexUnit> UnitList { get; set; }
-			static Dictionary<int, MoexUnit> ID_UNIT { get; set; }
-			public BoardGroup()
-			{
-				UnitList = new List<MoexUnit>();
-				ID_UNIT = new Dictionary<int, MoexUnit>();
+			public override string SQL =>
+				"SELECT*FROM`_moex_boardgroups`";
 
-				string sql = "SELECT*FROM`_moex_boardgroups`";
-				foreach (Dictionary<string, string> row in mysql.QueryList(sql))
-				{
-					var unit = new MoexUnit(row);
-					UnitList.Add(unit);
-					ID_UNIT.Add(unit.Id, unit);
-				}
+			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
+			{
+				unit.EngineId  = res.GetInt32("engineId");
+				unit.MarketId  = res.GetInt32("marketId");
+				unit.Name	   = res.GetString("name");
+				unit.Title	   = res.GetString("title");
+				unit.IsTrading = res.GetInt16("isTrading") == 1;
+				return unit;
 			}
 
-			// Единица на основании ID
-			public static MoexUnit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
+			public BoardGroup() : base() => _BoardGroup = this;
 
 			// Загрузка данных с биржи
 			public static void iss()
@@ -388,17 +384,13 @@ namespace MrRobot.Connector
 				for (int i = 0; i < data.Count; i++)
 				{
 					var v = data[i];
-					int isOrderDriven = v[11] == null ? 0 : v[11];
 					values[i] = "(" +
 									$"{v[0]}," +
 									$"{v[1]}," +    // engineId
 									$"{v[4]}," +    // marketId
 									$"'{v[6]}'," +  // name
 									$"'{v[7]}'," +  // title
-									$"{v[8]}," +    // isDefault
-									$"{v[10]}," +   // isTraded
-									$"{isOrderDriven}," +
-									$"'{v[12]}'" +  // category
+									$"{v[10]}" +    // isTrading
 								")";
 				}
 
@@ -408,20 +400,14 @@ namespace MrRobot.Connector
 								"`marketId`," +
 								"`name`," +
 								"`title`," +
-								"`isDefault`," +
-								"`isTraded`," +
-								"`isOrderDriven`," +
-								"`category`" +
+								"`isTrading`" +
 							$")VALUES{string.Join(",", values)}" +
 							 "ON DUPLICATE KEY UPDATE" +
 							 "`engineId`=VALUES(`engineId`)," +
 							 "`marketId`=VALUES(`marketId`)," +
 							 "`name`=VALUES(`name`)," +
 							 "`title`=VALUES(`title`)," +
-							 "`isTraded`=VALUES(`isTraded`)," +
-							 "`isDefault`=VALUES(`isDefault`)," +
-							 "`isOrderDriven`=VALUES(`isOrderDriven`)," +
-							 "`category`=VALUES(`category`)";
+							 "`isTrading`=VALUES(`isTrading`)";
 				my.Main.Query(sql);
 
 				new BoardGroup();
@@ -431,81 +417,55 @@ namespace MrRobot.Connector
 		/// <summary>
 		/// Режимы торгов
 		/// </summary>
-		public class Board
+		public class Board : Spisok
 		{
-			static List<MoexUnit> UnitList { get; set; }
-			static Dictionary<int, MoexUnit> ID_UNIT { get; set; }
-			static Dictionary<string, int> NAME_ID { get; set; }
-			public Board()
-			{
-				UnitList = new List<MoexUnit>();
-				ID_UNIT = new Dictionary<int, MoexUnit>();
-				NAME_ID = new Dictionary<string, int>();
+			public override string SQL =>
+				"SELECT*FROM`_moex_boards`";
 
-				string sql = "SELECT*FROM`_moex_boards`";
-				foreach (Dictionary<string, string> row in mysql.QueryList(sql))
-				{
-					var unit = new MoexUnit(row);
-					UnitList.Add(unit);
-					ID_UNIT.Add(unit.Id, unit);
-					NAME_ID.Add(unit.Name, unit.Id);
-				}
+			Dictionary<string, int> NAME_ID { get; set; } = new Dictionary<string, int>();
+
+			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
+			{
+				unit.EngineId = res.GetInt32("engineId");
+				unit.MarketId = res.GetInt32("marketId");
+				unit.GroupId = res.GetInt32("groupId");
+				unit.Name = res.GetString("name");
+				unit.Title = res.GetString("title");
+				unit.IsTrading = res.GetInt16("isTrading") == 1;
+				NAME_ID.Add(unit.Name, unit.Id);
+				return unit;
 			}
 
-			// Единица на основании ID
-			public static MoexUnit Unit(int id) => ID_UNIT.ContainsKey(id) ? ID_UNIT[id] : null;
+			public Board() : base() => _Board = this;
+
 
 			// ID режима торгов по названию
-			public static int IdOnName(string name) => NAME_ID.ContainsKey(name) ? NAME_ID[name] : 0;
-
-
+			public int IdOnName(string name) =>
+				NAME_ID.ContainsKey(name) ? NAME_ID[name] : 0;
 
 			// ID Торговой системы по ID режима торгов
-			public static int EngineId(int boardId) => ID_UNIT.ContainsKey(boardId) ? ID_UNIT[boardId].EngineId : 0;
+			int EngineId(int boardId) =>
+				ID_UNIT.ContainsKey(boardId) ? ID_UNIT[boardId].EngineId : 0;
+
 			// Название Торговой системы по ID режима торгов
-			public static string EngineName(int boardId)
-			{
-				int engineId = EngineId(boardId);
-				if (engineId == 0)
-					return "";
-
-				var unit = _Engine.Unit(engineId);
-				if (unit == null)
-					return "";
-
-				return unit.Name;
-			}
+			public string EngineName(int boardId) =>
+				_Engine.Unit(EngineId(boardId)).Name;
 
 
 			// ID Рынка по ID режима торгов
-			public static int MarketId(int boardId) => ID_UNIT.ContainsKey(boardId) ? ID_UNIT[boardId].MarketId : 0;
+			int MarketId(int boardId) =>
+				ID_UNIT.ContainsKey(boardId) ? ID_UNIT[boardId].MarketId : 0;
+
 			// Название Рынка по ID режима торгов
-			public static string MarketName(int boardId)
-			{
-				int marketId = MarketId(boardId);
-				if (marketId == 0)
-					return "";
-
-				var unit = _Market.Unit(marketId);
-				if (unit == null)
-					return "";
-
-				return unit.Name;
-			}
+			public string MarketName(int boardId) =>
+				_Market.Unit(MarketId(boardId)).Name;
 
 
 			// Название Группы режима по ID режима торгов
-			public static string Group(int boardId)
+			public string Group(int boardId)
 			{
-				var board = Unit(boardId);
-				if (board == null)
-					return "";
-
-				var unit = BoardGroup.Unit(board.GroupId);
-				if (unit == null)
-					return "";
-
-				return unit.Name;
+				int GroupId = Unit(boardId).GroupId;
+				return _BoardGroup.Unit(GroupId).Name;
 			}
 
 
@@ -524,9 +484,7 @@ namespace MrRobot.Connector
 									$"{v[3]}," +
 									$"'{v[4]}'," +
 									$"'{v[5]}'," +
-									$"{v[6]}," +
-									$"{v[7]}," +
-									$"{v[8]}" +
+									$"{v[6]}" +
 								")";
 				}
 
@@ -537,9 +495,7 @@ namespace MrRobot.Connector
 								"`marketId`," +
 								"`name`," +
 								"`title`," +
-								"`isTraded`," +
-								"`hasCandles`," +
-								"`isPrimary`" +
+								"`isTrading`" +
 							$")VALUES{string.Join(",", values)}" +
 							 "ON DUPLICATE KEY UPDATE" +
 							 "`groupId`=VALUES(`groupId`)," +
@@ -547,9 +503,7 @@ namespace MrRobot.Connector
 							 "`marketId`=VALUES(`marketId`)," +
 							 "`name`=VALUES(`name`)," +
 							 "`title`=VALUES(`title`)," +
-							 "`isTraded`=VALUES(`isTraded`)," +
-							 "`hasCandles`=VALUES(`hasCandles`)," +
-							 "`isPrimary`=VALUES(`isPrimary`)";
+							 "`isTrading`=VALUES(`isTrading`)";
 				my.Main.Query(sql);
 
 				new Board();
@@ -559,8 +513,6 @@ namespace MrRobot.Connector
 
 
 
-
-		#endregion
 
 
 		/// <summary>
@@ -647,7 +599,6 @@ namespace MrRobot.Connector
 				new SecGroup();
 			}
 		}
-
 		/// <summary>
 		/// Виды бумаг
 		/// </summary>
@@ -703,9 +654,6 @@ namespace MrRobot.Connector
 				new SecType();
 			}
 		}
-
-
-
 		/// <summary>
 		/// Бумаги
 		/// </summary>
@@ -857,42 +805,6 @@ namespace MrRobot.Connector
 		}
 	}
 
-	/// <summary>
-	/// Единица данных для Engine, Market, Board, BoardGroup, SecurityGroup, SecurityType
-	/// </summary>
-	public class MoexUnit
-	{
-		public MoexUnit(Dictionary<string, string> row)
-		{
-			Id = Convert.ToInt32(row["id"]);
-			Name = row["name"];
-			Title = row["title"];
-
-			GroupId  = KeyInt(row, "groupId");
-			EngineId = KeyInt(row, "engineId");
-			MarketId = KeyInt(row, "marketId");
-			SecurityGroupId = KeyInt(row, "securityGroupId");
-		}
-
-		int KeyInt(Dictionary<string, string> row, string key) =>
-			row.ContainsKey(key) ? Convert.ToInt32(row[key]) : 0;
-		bool KeyBool(Dictionary<string, string> row, string key) =>
-			row.ContainsKey(key) && row[key] != "0";
-
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string Title { get; set; }
-		public int GroupId  { get; set; }
-		public int EngineId { get; set; }
-		public int MarketId { get; set; }
-		public int SecurityGroupId { get; set; }
-
-		public int SecurityCount { get; set; }      // Количество бумаг в определённой группе
-		public int SecurityCountFilter { get; set; }// Количество бумаг в определённой группе на основании фильтра
-	}
-
-
-
 
 
 	/// <summary>
@@ -937,12 +849,12 @@ namespace MrRobot.Connector
 		}
 		public string Num { get; set; }
 		public string SecId { get; set; }
-		public string EngineName => MOEX.Board.EngineName(Id);
-		public string MarketName => MOEX.Board.MarketName(Id);
-		public int Id => MOEX.Board.IdOnName(Name);
+		public string EngineName => _Board.EngineName(Id);
+		public string MarketName => _Board.MarketName(Id);
+		public int Id => _Board.IdOnName(Name);
 		public string Name { get; set; }
 		public string NameWeight => IsPrimary ? "Bold" : "Normal";
-		public string Group => MOEX.Board.Group(Id);
+		public string Group => _Board.Group(Id);
 		public string Title { get; set; }
 		public string ListedFrom { get; set; }
 		public string ListedTill { get; set; }

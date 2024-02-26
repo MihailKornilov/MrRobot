@@ -255,7 +255,6 @@
     <Compile Include="Entity\Robots.cs" />
     <Compile Include="inc\format.cs" />
     <Compile Include="inc\global.cs" />
-    <Compile Include="inc\mysql.cs" />
     <Compile Include="inc\position.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

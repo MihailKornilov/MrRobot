@@ -40,7 +40,7 @@ namespace MrRobot.Entity
 
 		bool PageCreate(CDIunit unit)
 		{
-			if (!my.Main.HasRows(unit.Table))
+			if (!my.Main.HasTable(unit.Table))
 				return false;
 
 			var read = new StreamReader(PathTmp);

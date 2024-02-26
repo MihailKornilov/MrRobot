@@ -9,7 +9,10 @@
              d:DesignHeight="600">
 
     <Grid Margin="10">
-        <CheckBox Name="StartWinNoClose" Content="Не закрывать загрузочное окно"/>
+        <WrapPanel Orientation="Vertical">
+            <CheckBox Name="StartWinNoClose" Content="Не закрывать загрузочное окно"/>
+            <CheckBox Name="SqlLog" Content="Вести лог SQL-запросов" Margin="0,5,0,0"/>
+        </WrapPanel>
     </Grid>
 
 </UserControl>

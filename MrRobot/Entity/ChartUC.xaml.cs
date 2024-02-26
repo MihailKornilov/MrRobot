@@ -45,7 +45,7 @@ namespace MrRobot.Entity
 		{
 			if (unit == null)
 				return;
-			if (!my.Main.HasRows(unit.Table))
+			if (!my.Main.HasTable(unit.Table))
 				return;
 
 			Section = section;

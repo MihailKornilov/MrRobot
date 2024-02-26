@@ -134,7 +134,6 @@ namespace MrRobot.Section
 			//MOEX.BoardGroup.iss();
 			//MOEX.SecGroup.iss();
 			//MOEX.SecType.iss();
-			//MOEX.SecurityСollections.iss();
 			//MOEX.Security.iss();
 		}
 	}

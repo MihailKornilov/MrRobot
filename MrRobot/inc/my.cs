@@ -42,12 +42,48 @@ namespace MrRobot.inc
 			}
 		}
 
+
 		MySqlCommand Cmd { get; set; }
-		MySqlDataReader Res(string sql)
+		MySqlDataReader Res { get; set; }
+		void   DataReader(string sql)
 		{
+			Log(sql);
 			Cmd.CommandText = sql;
-			return Cmd.ExecuteReader();
+			Res = Cmd.ExecuteReader();
 		}
+		void   DataReaderClose(string sql)
+		{
+			Res.Close();
+			Log(sql);
+		}
+		bool   DataReaderClose(string sql, bool val)
+		{
+			DataReaderClose(sql);
+			return val;
+		}
+		int	   DataReaderClose(string sql, int val)
+		{
+			DataReaderClose(sql);
+			return val;
+		}
+		string DataReaderClose(string sql, string val)
+		{
+			DataReaderClose(sql);
+			return val;
+		}
+		Dictionary<int, int> DataReaderClose(string sql, Dictionary<int, int> val)
+		{
+			DataReaderClose(sql);
+			return val;
+		}
+		Dictionary<string, string> DataReaderClose(string sql, Dictionary<string, string> val)
+		{
+			DataReaderClose(sql);
+			return val;
+		}
+
+
+
 
 		public delegate void VOID(MySqlDataReader rs);
 		public delegate bool BOOL(MySqlDataReader rs);
@@ -65,14 +101,43 @@ namespace MrRobot.inc
 
 
 
+		#region СТАТИСТИКА ЗАПРОСОВ
+		public static bool IS_LOG = false;
+		static int SQL_COUNT = 0;   // Общее количество SQL-запросов
+		Dur dur { get; set; }       // Измерение скорости запроса
+		// Подсчёт количества запросов и скорости выполнения
+		void Log(string sql)
+		{
+			if (!IS_LOG)
+				return;
+
+			if (dur == null)
+			{
+				dur = new Dur();
+				return;
+			}
+			string txt = $"SQL.{++SQL_COUNT}: {dur.Second()} {sql}";
+			if (txt.Length > 500)
+				txt = txt.Substring(0, 500);
+			WriteLine(txt);
+			G.LogWrite(txt);
+
+			dur = null;
+		}
+		#endregion
+
+
+
 
 		/// <summary>
 		/// Внесение INSERT, удаление DELETE, обновление UPDATE данных
 		/// </summary>
 		public int Query(string sql)
 		{
+			Log(sql);
 			Cmd.CommandText = sql;
 			Cmd.ExecuteNonQuery();
+			Log(sql);
 			return Convert.ToInt32(Cmd.LastInsertedId);
 		}
 		/// <summary>
@@ -80,53 +145,51 @@ namespace MrRobot.inc
 		/// </summary>
 		public void Delegat(string sql, VOID method)
 		{
-			var res = Res(sql);
-			while (res.Read())
-				method(res);
-			res.Close();
+			DataReader(sql);
+			while (Res.Read())
+				method(Res);
+			DataReaderClose(sql);
 		}
 		/// <summary>
 		/// Запрос списка с использованием делегата -> возврат BOOLEAN
 		/// </summary>
 		public void Delegat(string sql, BOOL method)
 		{
-			var res = Res(sql);
-			while (res.Read() && method(res));
-			res.Close();
+			DataReader(sql);
+			while (Res.Read() && method(Res));
+			DataReaderClose(sql);
 		}
 		/// <summary>
 		/// Количество
 		/// </summary>
 		public int Count(string sql)
 		{
-			var res = Res(sql);
-			if (!res.Read())
-				return 0;
-			
-			int count = res.GetInt32(0);
-			res.Close();
-
-			return count;
+			DataReader(sql);
+			return DataReaderClose(sql, Res.Read() ? Res.GetInt32(0) : 0);
 		}
 		/// <summary>
 		/// Идентификаторы через запятую
 		/// </summary>
 		public string Ids(string sql)
 		{
-			var res = Res(sql);
-			if (!res.HasRows)
-			{
-				res.Close();
-				return "0";
-			}
+			DataReader(sql);
+			if (!Res.HasRows)
+				return DataReaderClose(sql, "0");
 
 			var list = new List<string>();
-			while (res.Read())
-				list.Add(res.GetValue(0).ToString());
+			while (Res.Read())
+				list.Add(Res.GetValue(0).ToString());
 
-			res.Close();
-
-			return string.Join(",", list.ToArray());
+			return DataReaderClose(sql, string.Join(",", list.ToArray()));
+		}
+		/// <summary>
+		/// Проверка существования таблицы
+		/// </summary>
+		public bool HasTable(string table)
+		{
+			string sql = $"SHOW TABLES LIKE'{table}'";
+			DataReader(sql);
+			return DataReaderClose(sql, Res.HasRows);
 		}
 		/// <summary>
 		/// Получение ассоциативного массива на основании id
@@ -135,16 +198,15 @@ namespace MrRobot.inc
 		/// </summary>
 		public Dictionary<int, int> IntAss(string sql)
 		{
+			DataReader(sql);
 			var send = new Dictionary<int, int>();
-			var res = Res(sql);
-			while (res.Read())
+			while (Res.Read())
 			{
-				int id = res.GetInt32(0);
-				int val = res.GetInt32(1);
+				int id = Res.GetInt32(0);
+				int val = Res.GetInt32(1);
 				send.Add(id, val);
 			}
-			res.Close();
-			return send;
+			return DataReaderClose(sql, send);
 		}
 		/// <summary>
 		/// Получение ассоциативного массива на основании двух произвольных полей в базе
@@ -153,37 +215,23 @@ namespace MrRobot.inc
 		/// </summary>
 		public Dictionary<string, string> StringAss(string sql)
 		{
+			DataReader(sql);
 			var send = new Dictionary<string, string>();
-			var res = Res(sql);
-			while (res.Read())
-				send.Add(res.GetString(0), res.GetString(1));
-			res.Close();
-			return send;
-		}
-		/// <summary>
-		/// Проверка существования строк
-		/// </summary>
-		public bool HasRows(string table)
-		{
-			string sql = $"SHOW TABLES LIKE'{table}'";
-			var res = Res(sql);
-			bool HasRows = res.HasRows;
-			res.Close();
-			return HasRows;
+			while (Res.Read())
+				send.Add(Res.GetString(0), Res.GetString(1));
+			return DataReaderClose(sql, send);
 		}
 		/// <summary>
 		/// Получение одной строки из базы
 		/// </summary>
 		public Dictionary<string, string> Row(string sql)
 		{
+			DataReader(sql);
 			var send = new Dictionary<string, string>();
-			var res = Res(sql);
-			if (res.Read())
-				for (int i = 0; i < res.FieldCount; i++)
-					send.Add(res.GetName(i), res.GetValue(i).ToString());
-			res.Close();
-			return send;
+			if (Res.Read())
+				for (int i = 0; i < Res.FieldCount; i++)
+					send.Add(Res.GetName(i), Res.GetValue(i).ToString());
+			return DataReaderClose(sql, send);
 		}
-
 	}
 }

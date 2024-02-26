@@ -24,7 +24,7 @@ namespace MrRobot.Interface
 		/// <summary>
 		/// Ассоциативный массив списка по ID
 		/// </summary>
-		Dictionary<int, SpisokUnit> ID_UNIT { get; set; }
+		protected Dictionary<int, SpisokUnit> ID_UNIT { get; set; }
 
 		/// <summary>
 		/// Основной запрос для получения списка (обязательно для переопределения)
@@ -215,6 +215,7 @@ namespace MrRobot.Interface
 		// ---=== MOEX ===---
 		public int MoexId { get; set; }				// ID инструмениа
 		public int EngineId { get; set; }			// ID торговой системы
+		public int MarketId { get; set; }			// ID рынка
 		public int GroupId { get; set; }            // ID группы
 		public int TypeId { get; set; }             // ID вида инструмента
 		public string ShortName { get; set; }       // Краткое наименование

@@ -54,6 +54,7 @@ namespace MrRobot
 
 			await Task.Run(() => new my());			StartLog("Подключение к базе данных...");
 			await Task.Run(() => new position());	StartLog("Загрузка параметров приложения");
+			my.IS_LOG = position.Val("6.1.SqlLog", false);
 			await Task.Run(() => new Exchange());	StartLog("Загрузка списка Бирж");
 			await Task.Run(() => new Candle());		StartLog("Загрузка информации о Свечных данных");
 			await Task.Run(() => new Robots());		StartLog("Загрузка Роботов");
