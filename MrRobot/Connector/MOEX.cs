@@ -94,6 +94,7 @@ namespace MrRobot.Connector
 									"title," +
 									"is_traded," +
 									"decimals";
+			WriteLine(url);
 			string str = wc.DownloadString(url);
 			dynamic json = JsonConvert.DeserializeObject(str);
 
@@ -149,7 +150,15 @@ namespace MrRobot.Connector
 		// Загрузка свечных данных
 		public static void CandlesLoad(BoardUnit board, int interval, string from, string till)
 		{
-			string table = Candle.DataTableCreate("moex", board.SecId, interval, board.Decimals);
+			var PARAM = new CDIparam()
+			{
+				ExchangeId = ExchangeId,
+				InstrumentId = Instrument.FieldToId("Symbol", board.SecId),
+				TimeFrame = interval,
+				Decimals = board.Decimals
+			};
+
+			Candle.CDIcreate(PARAM);
 
 			var wc = new WebClient();
 			wc.Encoding = Encoding.UTF8;
@@ -184,7 +193,7 @@ namespace MrRobot.Connector
 				for (int i = 0; i < count; i++)
 					insert.Add(new CandleUnit(data[i]).Insert);
 
-				Candle.DataInsert(table, insert);
+				Candle.DataInsert(PARAM.Table, insert);
 
 				if (data.Count < 500)
 					break;
@@ -192,7 +201,7 @@ namespace MrRobot.Connector
 				from = data[count][0];
 			}
 
-			Candle.InfoCreate(table);
+			Candle.CDIupdate(PARAM);
 		}
 
 

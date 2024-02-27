@@ -6,6 +6,7 @@ using static System.Console;
 using MrRobot.inc;
 using MrRobot.Connector;
 using MrRobot.Interface;
+using MrRobot.Entity;
 
 namespace MrRobot.Section
 {
@@ -77,8 +78,8 @@ namespace MrRobot.Section
 				if (BoardsBox.SelectedIndex == -1)
 					return;
 
-				var unit = BoardsBox.SelectedItem as BoardUnit;
-				var src = MOEX.BoardLoad(unit);
+				var board = BoardsBox.SelectedItem as BoardUnit;
+				var src = MOEX.BoardLoad(board);
 
 				G.Vis(LoadPanel, src.Count > 0);
 				G.Vis(LoadNoPanel, src.Count == 0);
@@ -123,6 +124,7 @@ namespace MrRobot.Section
 								 unit.Interval,
 								 begin.Value.ToString("yyyy-MM-dd"),
 								 end.Value.ToString("yyyy-MM-dd 23:59:59"));
+				new Candle();
 			};
 		}
 

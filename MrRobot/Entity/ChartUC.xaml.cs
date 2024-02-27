@@ -13,9 +13,6 @@ using MrRobot.Interface;
 
 namespace MrRobot.Entity
 {
-	/// <summary>
-	/// Логика взаимодействия для Chart.xaml
-	/// </summary>
 	public partial class ChartUC : UserControl
 	{
 		public ChartUC()
@@ -33,7 +30,7 @@ namespace MrRobot.Entity
 		string PageName { get; set; }
 
 		// Заголовок страницы
-		string Title => $"{Section}: {CdiUnit.Name}";
+		string Title => $"{Section}: {CdiUnit.Name} {CdiUnit.TF}";
 
 		// Путь к файлу-шаблону, с которого формируется страница с графиком
 		string PathTmp   => Path.GetFullPath($"Browser/{Section}/{PageName}.tmp");

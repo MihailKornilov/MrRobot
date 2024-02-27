@@ -9,9 +9,6 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Connector;
 using MrRobot.Interface;
-using System.Security.Cryptography;
-using System.Windows.Documents;
-using System.Windows.Controls;
 
 namespace MrRobot.Entity
 {
@@ -233,16 +230,32 @@ namespace MrRobot.Entity
 
 
 
+		/// <summary>
+		/// Внесение информации о свечных данных
+		/// </summary>
+		public static void CDIcreate(CDIparam prm)
+		{
+			string sql = "INSERT INTO`_candle_data_info`(" +
+							"`exchangeId`," +
+							"`instrumentId`," +
+							"`timeFrame`," +
+							"`decimals`" +
+						")VALUES(" +
+							$"{prm.ExchangeId}," +
+							$"{prm.InstrumentId}," +
+							$"{prm.TimeFrame}," +
+							$"{prm.Decimals}" +
+						")";
+			prm.Id = my.Main.Query(sql);
 
+			DataTableCreate(prm);
+		}
 		/// <summary>
 		/// Создание таблицы со свечными данными, если не существует
 		/// </summary>
-		public static void TableCreate(CDIparam prm)
+		static void DataTableCreate(CDIparam prm)
 		{
 			string sql = $"DROP TABLE IF EXISTS`{prm.Table}`";
-			my.Main.Query(sql);
-
-			sql = $"DELETE FROM`_candle_data_info`WHERE`id`={prm.Id}";
 			my.Main.Query(sql);
 
 			sql = $"CREATE TABLE`{prm.Table}`(" +
@@ -256,30 +269,6 @@ namespace MrRobot.Entity
 				  $")ENGINE=MyISAM DEFAULT CHARSET=cp1251";
 			my.Main.Query(sql);
 		}
-		public static string DataTableCreate(string exchange, string symbol, int tf, int decimals)
-		{
-			string TableName = $"{exchange}_{symbol.ToLower()}_{tf}";
-
-			string sql = $"DROP TABLE IF EXISTS`{TableName}`";
-			my.Main.Query(sql);
-			
-			sql = $"DELETE FROM`_candle_data_info`WHERE`table`='{TableName}'";
-			my.Main.Query(sql);
-
-			sql = $"CREATE TABLE`{TableName}`(" +
-						"`unix` INT UNSIGNED DEFAULT 0 NOT NULL," +
-					   $"`high` DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
-					   $"`open` DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
-					   $"`close`DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
-					   $"`low`  DECIMAL(20,{decimals}) UNSIGNED DEFAULT 0 NOT NULL," +
-						"`vol`  DECIMAL(30,8) UNSIGNED DEFAULT 0 NOT NULL," +
-						"PRIMARY KEY(`unix`)" +
-				  $")ENGINE=MyISAM DEFAULT CHARSET=cp1251";
-			my.Main.Query(sql);
-
-			return TableName;
-		}
-
 		/// <summary>
 		/// Внесение в базу сформированных свечных записей
 		/// </summary>
@@ -296,88 +285,32 @@ namespace MrRobot.Entity
 			my.Main.Query(sql);
 			insert.Clear();
 		}
-
 		/// <summary>
-		/// SQL запрос для внесения информации о свечных данных
+		/// Обновление информации о свечных данных
 		/// </summary>
-		static int CDIqueryInsert(int id,
-								  int exchangeId,
-								  int instrumentId,
-								  int tf,
-								  int decimals,
-								  string table="",
-								  int rowsCount=0,
-								  string begin = "",
-								  string end = "",
-								  int convertedFromId = 0)
-		{
-			string sql = "INSERT INTO`_candle_data_info`(" +
-							"`id`," +
-							"`exchangeId`," +
-							"`instrumentId`," +
-							"`timeFrame`," +
-							"`table`," +
-							"`decimals`," +
-							"`rowsCount`," +
-							"`begin`," +
-							"`end`," +
-							"`convertedFromId`" +
-						")VALUES(" +
-							$"{id}," +
-							$"{exchangeId}," +
-							$"{instrumentId}," +
-							$"{tf}," +
-							$"{decimals}," +
-							$"'{table}'," +
-							$"{rowsCount}," +
-							$"'{begin}'," +
-							$"'{end}'," +
-							$"{convertedFromId}" +
-						")ON DUPLICATE KEY UPDATE" +
-							"`rowsCount`=VALUES(`rowsCount`)," +
-							"`begin`=VALUES(`begin`)," +
-							"`end`=VALUES(`end`)";
-			return my.Main.Query(sql);
-		}
-		/// <summary>
-		/// Внесение заголовка свечных данных
-		/// </summary>
-		public static void InfoCreate(CDIparam prm)
-		{
-			prm.Id = CDIqueryInsert(0, prm.ExchangeId, prm.InstrumentId, prm.TimeFrame, prm.Decimals);
-			TableCreate(prm);
-		}
-		public static int InfoCreate(string table, int ConvertedFromId = 0)
+		public static void CDIupdate(CDIparam prm, int convertedFromId = 0)
 		{
 			string sql = "SELECT " +
 							"COUNT(*)`count`," +
 							"MIN(FROM_UNIXTIME(`unix`))`begin`," +
 							"MAX(FROM_UNIXTIME(`unix`))`end`" +
-						 $"FROM`{table}`" +
-						  "LIMIT 1";
+						 $"FROM`{prm.Table}`";
 			var data = my.Main.Row(sql);
-			int count = Convert.ToInt32(data["count"]);
 
-			if (count == 0)
-				return 0;
-
-			string[] spl = table.Split('_');
-			string prefix = spl[0];
-			string symbol = spl[1].ToUpper();
-			int tf = Convert.ToInt32(spl[2]);
-
-			int ExchangeId = G.Exchange.UnitOnField("Prefix", prefix).Id;
-			int iid = 0;
-			switch (ExchangeId)
-			{
-				case 1: iid = BYBIT.Instrument.UnitOnField("Symbol", symbol).Id; break;
-				case 2: iid =  MOEX.Instrument.UnitOnField("Symbol", symbol).Id; break;
-			}
-
-			//int CdiId = CDIqueryInsert(0, ExchangeId, iid, tf, table, count, data["begin"], data["end"], ConvertedFromId);
-
-			return 0;
+			sql = "UPDATE`_candle_data_info`" +
+				 $"SET`table`='{prm.Table}'," +
+					$"`rowsCount`={data["count"]}," +
+					$"`begin`='{data["begin"]}'," +
+					$"`end`='{data["end"]}'," +
+					$"`convertedFromId`={convertedFromId} " +
+				 $"WHERE`id`={prm.Id}";
+			my.Main.Query(sql);
 		}
+
+
+
+
+
 		/// <summary>
 		/// Проверка соответствия скачанных данных с заголовками
 		/// </summary>
@@ -519,8 +452,9 @@ namespace MrRobot.Entity
 			Id				= res.GetInt32("id");
 			ExchangeId		= res.GetInt32("exchangeId");
 			InstrumentId	= res.GetInt32("instrumentId");
-			Table			= res.GetString("table");
 			TimeFrame		= res.GetInt32("timeFrame");
+			Decimals		= res.GetInt32("decimals");
+			Table			= res.GetString("table");
 			RowsCount		= res.GetInt32("rowsCount");
 			DateBegin		= begin.Substring(0, 10);
 			DateEnd			= res.GetMySqlDateTime("end").ToString().Substring(0, 10);
@@ -567,8 +501,8 @@ namespace MrRobot.Entity
 		public int ConvertedFromId { get; set; }// ID минутного таймфрейма, с которого была произведена конвертация
 
 
-		public double TickSize => IUnit.TickSize;// Шаг цены
-		public int Decimals => IUnit.Decimals;	 // Количество нулей после запятой
+		public double TickSize => format.TickSize(Decimals);// Шаг цены
+		public int Decimals { get; set; }	 // Количество нулей после запятой
 		public ulong Exp => format.Exp(Decimals);
 	}
 
@@ -605,7 +539,6 @@ namespace MrRobot.Entity
 		// Для Converter
 		public double ProgressMainValue { get; set; }// Значение, которое будет отображаться Main-прогресс-бар
 		public int TfNum { get; set; }              // Номер конвертации, если было выбрано несколько таймфреймов
-		public int[] ConvertedIds { get; set; }     // ID сконвертированных свечных данных
 	}
 
 	/// <summary>

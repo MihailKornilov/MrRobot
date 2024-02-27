@@ -152,7 +152,7 @@ namespace MrRobot.Section
 			var wc = new WebClient();
 			DownloadCheck12(wc);
 
-			Candle.InfoCreate(PARAM);
+			Candle.CDIcreate(PARAM);
 			PARAM.Bar = new ProBar((PARAM.UnixFinish - PARAM.UnixStart) / PARAM.TimeFrame / 60 / 1000, 1000);
 			
 			int barIndex = 0;
@@ -198,7 +198,7 @@ namespace MrRobot.Section
 				PARAM.UnixStart = Unix;
 			}
 
-//			PARAM.Id = Candle.InfoCreate(PARAM.Table);
+			Candle.CDIupdate(PARAM);
 		}
 
 		/// <summary>

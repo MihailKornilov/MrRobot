@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Media;
 using static System.Console;
@@ -265,6 +266,11 @@ namespace MrRobot.inc
 
 			return split[1].Length;
 		}
+
+
+		public static double TickSize(int decimals) =>
+			1.0 / Exp(decimals);
+
 
 		/// <summary>
 		/// Избавление от E в маленьких числах

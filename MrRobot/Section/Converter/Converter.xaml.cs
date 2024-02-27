@@ -83,8 +83,8 @@ namespace MrRobot.Section
 			if (CheckedTF.Length == 0)
 				return;
 
-			ConvertGoButton.Visibility = Visibility.Collapsed;
-			ProcessPanel.Visibility = Visibility.Visible;
+			G.Hid(ConvertGoButton);
+			G.Vis(ProcessPanel);
 			TFpanel.IsEnabled = false;
 
 			ProgressMain.Value = 0;
@@ -92,10 +92,10 @@ namespace MrRobot.Section
 
 			ConvertParam = new CDIparam()
 			{
-				Id = SourceUnit.Id,
+				ExchangeId = SourceUnit.ExchangeId,
+				InstrumentId = SourceUnit.InstrumentId,
 				Symbol = SourceUnit.Symbol,
 				Decimals = SourceUnit.Decimals,
-				ConvertedIds = new int[CheckedTF.Length],
 				Progress = new Progress<decimal>(v =>
 				{
 					ProgressMain.Value = ConvertParam.ProgressMainValue;
@@ -125,7 +125,7 @@ namespace MrRobot.Section
 		/// </summary>
 		void ConvertProcess(CDIparam PARAM, int[] CheckedTF)
 		{
-			var CDI = Candle.Unit(PARAM.Id);
+			var CDI = SourceUnit;
 			PARAM.Bar = new ProBar((CheckedTF.Length + 1) * CDI.RowsCount);
 
 			// Загрузка из базы исходного минутного таймфрейма
@@ -172,10 +172,7 @@ namespace MrRobot.Section
 			var SubBar = new ProBar(TF1.Count);
 			PARAM.Progress.Report(0);
 
-			string TableName = Candle.DataTableCreate(G.Exchange.Unit(SourceUnit.ExchangeId).Name,
-													  PARAM.Symbol,
-													  PARAM.TimeFrame,
-													  PARAM.Decimals);
+			Candle.CDIcreate(PARAM);
 
 			// Определение начала первой свечи согласно таймфрейму
 			int iBegin;
@@ -199,7 +196,7 @@ namespace MrRobot.Section
 				if (!dst.Upd(src))
 				{
 					insert.Add(dst.Insert);
-					Candle.DataInsert(TableName, insert, 500);
+					Candle.DataInsert(PARAM.Table, insert, 500);
 					dst = new CandleUnit(src, PARAM.TimeFrame);
 				}
 
@@ -211,8 +208,8 @@ namespace MrRobot.Section
 			}
 
 			PARAM.Progress.Report(100);
-			Candle.DataInsert(TableName, insert);
-			PARAM.ConvertedIds[PARAM.TfNum] = Candle.InfoCreate(TableName, PARAM.Id);
+			Candle.DataInsert(PARAM.Table, insert);
+			Candle.CDIupdate(PARAM, SourceId);
 		}
 		/// <summary>
 		/// Отмена процесса конвертации
