@@ -174,6 +174,8 @@ namespace MrRobot.Interface
 		// Конструктор с запросом из БД
 		public SpisokUnit(dynamic res) => Id = res.GetInt32("id");
 
+		public bool IsNull =>						// Пустая запись
+			Id == 0;
 		public string Num { get; set; }             // Порядковый номер для вывода в списке
 		public int Id { get; set; }                 // ID единицы списка
 		public string Name { get; set; }            // Имя единицы списка

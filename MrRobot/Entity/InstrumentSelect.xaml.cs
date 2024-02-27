@@ -247,6 +247,7 @@ namespace MrRobot.Entity
             Changed?.Invoke();
         }
 
-        public SpisokUnit IUnit => BYBIT.Instrument.Unit(ChosenId);
+        public SpisokUnit IUnit =>
+            BYBIT.Instrument.Unit(ChosenId);
     }
 }

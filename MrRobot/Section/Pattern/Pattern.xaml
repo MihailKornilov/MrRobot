@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
              xmlns:Entity="clr-namespace:MrRobot.Entity"
              xmlns:Section="clr-namespace:MrRobot.Section"
              mc:Ignorable="d" 
@@ -109,7 +108,7 @@
                             <Label Content="Настройка поиска:" Margin="10,10,0,0" Style="{StaticResource LabelMedium}"/>
                             <WrapPanel Margin="20,7,0,0">
                                 <Label Content="Длина паттерна:" Width="105" Style="{StaticResource LabelMain}"/>
-                                <TextBox Name="PatternLengthBox"
+                                <TextBox Text="{Binding ElementName=LengthSlider,Path=Value}"
                                          Width="30"
                                          Height="20"
                                          IsReadOnly="True"
@@ -119,15 +118,14 @@
                                         Margin="5,1,0,0"
                                         Minimum="2"
                                         Maximum="7"
-                                        IsSnapToTickEnabled="True"
-                                        ValueChanged="LengthSliderChanged"/>
+                                        IsSnapToTickEnabled="True"/>
                             </WrapPanel>
 
                             <WrapPanel Margin="20,5,0,0">
                                 <Label Content="Точность в %:"
                                        Width="105"
                                        Style="{StaticResource LabelMain}"/>
-                                <TextBox Name="PrecisionPercentBox"
+                                <TextBox Text="{Binding ElementName=PrecisionPercentSlider,Path=Value}"
                                          Width="30"
                                          Height="20"
                                          IsReadOnly="True"
@@ -138,8 +136,7 @@
                                         Minimum="50"
                                         Maximum="100"
                                         TickFrequency="5"
-                                        IsSnapToTickEnabled="True"
-                                        ValueChanged="PrecisionPercentChanged"/>
+                                        IsSnapToTickEnabled="True"/>
                             </WrapPanel>
 
                             <WrapPanel Margin="20,5,0,0">
@@ -284,8 +281,7 @@
                                 IsSnapToTickEnabled="True"
                                 IsMoveToPointEnabled="True"/>
                         <TextBox Grid.Column="2"
-                                 Name="FoundStep"
-                                 Text="1"
+                                 Text="{Binding ElementName=FoundSlider,Path=Value}"
                                  Width="30"
                                  Height="18"
                                  Padding="0,1,0,0"

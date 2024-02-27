@@ -9,8 +9,6 @@ using static System.Console;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
-using System.Windows.Documents;
-using System.Windows.Markup;
 
 namespace MrRobot.Section
 {
@@ -133,7 +131,7 @@ namespace MrRobot.Section
 			var SubBar = new ProBar(CDI.RowsCount);
 			var TF1 = new List<CandleUnit>();
 			string sql = $"SELECT*FROM`{CDI.Table}`";
-			my.Main.Delegat(sql, row =>
+			my.Data.Delegat(sql, row =>
 			{
 				if (!PARAM.IsProcess)
 					return false;

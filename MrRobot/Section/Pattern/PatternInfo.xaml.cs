@@ -38,7 +38,7 @@ namespace MrRobot.Section
             var PatternList = new List<PatternUnit>();
 
 			string sql = $"SELECT*FROM`{CDI.Table}`";
-			my.Main.Delegat(sql, res =>
+			my.Data.Delegat(sql, res =>
             {
                 int unix = res.GetInt32("unix");
 				if (CandleList.Count == 0 && !found.UnixList.Contains(unix))

@@ -39,7 +39,7 @@ namespace MrRobot.Entity
 
 		bool PageCreate(CDIunit unit)
 		{
-			if (!my.Main.HasTable(unit.Table))
+			if (!my.Data.HasTable(unit.Table))
 				return false;
 
 			var read = new StreamReader(PathTmp);
@@ -50,13 +50,15 @@ namespace MrRobot.Entity
 			int Limit = 500;
 			string sql = "SELECT*" +
 						$"FROM`{unit.Table}`" +
-						 "ORDER BY`unix`" +
+						 "ORDER BY`unix` DESC " +
 						$"LIMIT {Limit}";
-			my.Main.Delegat(sql, res =>
+			my.Data.Delegat(sql, res =>
 			{
 				var cndl = new CandleUnit(res);
 				Candles.Add(cndl.CandleToChart(msec: true));
 			});
+
+			Candles.Reverse();
 
 			string line;
 			while ((line = read.ReadLine()) != null)

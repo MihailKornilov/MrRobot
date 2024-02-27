@@ -28,8 +28,10 @@ namespace MrRobot.Section
             MainMenu.Changed += () => ArchiveGo(true);
             MainMenu.Changed += FoundLine;
 
-            LengthSlider.Value = position.Val("3_CandlesCountForSearch", 1);
+            LengthSlider.Value = position.Val("3_CandlesCountForSearch", 3);
+            LengthSlider.ValueChanged += LengthSliderChanged;
             PrecisionPercentSlider.Value = position.Val("3_ScatterPercent", 100);
+            PrecisionPercentSlider.ValueChanged += PrecisionPercentChanged;
             FoundRepeatMin.Text = position.Val("3_FoundRepeatMin", "0");
             FoundButtonBack.Content = "<<<";
             FoundSlider.ValueChanged += (s, e) => PatternFoundStep();
@@ -78,7 +80,6 @@ namespace MrRobot.Section
         void LengthSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             string v = LengthSlider.Value.ToString();
-            PatternLengthBox.Text = v;
             position.Set("3_CandlesCountForSearch", v);
             SearchResultCheck((sender as Slider).IsFocused);
         }
@@ -89,7 +90,6 @@ namespace MrRobot.Section
         void PrecisionPercentChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             string v = PrecisionPercentSlider.Value.ToString();
-            PrecisionPercentBox.Text = v;
             position.Set("3_ScatterPercent", v);
             SearchResultCheck((sender as Slider).IsFocused);
         }
@@ -177,7 +177,7 @@ namespace MrRobot.Section
 			int PatternLength = SPARAM.PatternLength;
 
 			string sql = $"SELECT*FROM`{CDI.Table}`";
-            my.Main.Delegat(sql, res =>
+            my.Data.Delegat(sql, res =>
             {
 				if (bar.isUpd(i++))
 				{
@@ -470,7 +470,7 @@ namespace MrRobot.Section
                 return;
 
 
-            int index = Convert.ToInt32(FoundStep.Text) - 1;
+            int index = (int)FoundSlider.Value - 1;
             var found = FoundListBox.SelectedItem as PatternUnit;
             var CDI = Candle.Unit(found.CdiId);
             int Width = (int)FoundLinePanel.ActualWidth;
@@ -536,7 +536,6 @@ namespace MrRobot.Section
 
             var found = FoundListBox.SelectedItem as PatternUnit;
 
-            FoundStep.Text = index.ToString();
             FoundButtonBack.IsEnabled = index > 1;
             FoundButtonNext.IsEnabled = index < found.Repeat;
 

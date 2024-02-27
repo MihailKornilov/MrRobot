@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text;
 using System.Net.Http;
 using System.Windows;
@@ -76,6 +77,7 @@ namespace MrRobot.Connector
 
 		#region API
 
+		static string API_URL = "https://api.bybit.com";
 		public static string ApiKey
 		{
 			get => position.Val("5_ApiKey_Text");
@@ -86,8 +88,10 @@ namespace MrRobot.Connector
 			get => position.Val("5_ApiSecret_Text");
 			set => position.Set("5_ApiSecret_Text", value);
 		}
-		public static void ApiKeyChanged(object s, TextChangedEventArgs e) => ApiKey = (s as TextBox).Text;
-		public static void ApiSecretChanged(object s, RoutedEventArgs e) => ApiSecret = (s as PasswordBox).Password;
+		public static void ApiKeyChanged(object s, TextChangedEventArgs e) =>
+			ApiKey = (s as TextBox).Text;
+		public static void ApiSecretChanged(object s, RoutedEventArgs e) =>
+			ApiSecret = (s as PasswordBox).Password;
 
 
 		// Защищённые запросы к бирже
@@ -95,8 +99,6 @@ namespace MrRobot.Connector
 		{
 			string API_KEY = ApiKey;
 			string API_SECRET = ApiSecret;
-			string URL = "https://api.bybit.com";
-			//string URL = "https://api-testnet.bybit.com";
 			long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 			long recvWindow = 5000;
 
@@ -114,7 +116,7 @@ namespace MrRobot.Connector
 			client.DefaultRequestHeaders.Add("X-BAPI-RECV-WINDOW", recvWindow.ToString());
 			client.DefaultRequestHeaders.Add("X-BAPI-SIGN", signature);
 
-			var res = client.GetAsync(URL + query).Result;
+			var res = client.GetAsync(API_URL + query).Result;
 			string content = res.Content.ReadAsStringAsync().Result;
 
 			if (content.Length == 0)
@@ -124,6 +126,36 @@ namespace MrRobot.Connector
 
 			return json;
 		}
+
+
+
+		// Получение свечных данных по указанному инструменту
+		public static dynamic Kline(string symbol, int interval, int start) =>
+			Kline(symbol, interval.ToString(), start.ToString());
+		public static dynamic Kline(string symbol, string interval, string start)
+		{
+			var dur = new Dur();
+			string url = $"{API_URL}/v5/market/kline" +
+								$"?category=spot" +
+								$"&symbol={symbol}" +
+								$"&interval={interval}" +
+								$"&start={start}000" +
+								 "&limit=1000";
+			string str = new WebClient().DownloadString(url);
+			if (!str.Contains("spot"))
+			{
+				WriteLine($"{url}   ----   {dur.Second()}");
+				return null;
+			}
+
+			dynamic json = JsonConvert.DeserializeObject(str);
+			dynamic list = json.result.list;
+			WriteLine($"{url}   {list.Count}   {dur.Second()}");
+
+			return list;
+		}
+
+
 
 		#endregion
 	}

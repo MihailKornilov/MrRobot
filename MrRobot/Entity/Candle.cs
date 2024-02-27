@@ -202,7 +202,7 @@ namespace MrRobot.Entity
 			var unit = ID_UNIT[id];
 			
 			string sql = $"DROP TABLE IF EXISTS`{unit.Table}`";
-			my.Main.Query(sql);
+			my.Data.Query(sql);
 
 			sql = $"DELETE FROM`_candle_data_info`WHERE`id`={id}";
 			my.Main.Query(sql);
@@ -256,7 +256,7 @@ namespace MrRobot.Entity
 		static void DataTableCreate(CDIparam prm)
 		{
 			string sql = $"DROP TABLE IF EXISTS`{prm.Table}`";
-			my.Main.Query(sql);
+			my.Data.Query(sql);
 
 			sql = $"CREATE TABLE`{prm.Table}`(" +
 						"`unix` INT UNSIGNED DEFAULT 0 NOT NULL," +
@@ -267,7 +267,7 @@ namespace MrRobot.Entity
 						"`vol`  DECIMAL(30,8) UNSIGNED DEFAULT 0 NOT NULL," +
 						"PRIMARY KEY(`unix`)" +
 				  $")ENGINE=MyISAM DEFAULT CHARSET=cp1251";
-			my.Main.Query(sql);
+			my.Data.Query(sql);
 		}
 		/// <summary>
 		/// Внесение в базу сформированных свечных записей
@@ -282,7 +282,7 @@ namespace MrRobot.Entity
 			string sql = $"INSERT INTO`{table}`" +
 						  "(`unix`,`high`,`open`,`close`,`low`,`vol`)" +
 						 $"VALUES{string.Join(",", insert.ToArray())}";
-			my.Main.Query(sql);
+			my.Data.Query(sql);
 			insert.Clear();
 		}
 		/// <summary>
@@ -295,7 +295,7 @@ namespace MrRobot.Entity
 							"MIN(FROM_UNIXTIME(`unix`))`begin`," +
 							"MAX(FROM_UNIXTIME(`unix`))`end`" +
 						 $"FROM`{prm.Table}`";
-			var data = my.Main.Row(sql);
+			var data = my.Data.Row(sql);
 
 			sql = "UPDATE`_candle_data_info`" +
 				 $"SET`table`='{prm.Table}'," +
@@ -314,62 +314,31 @@ namespace MrRobot.Entity
 		/// <summary>
 		/// Проверка соответствия скачанных данных с заголовками
 		/// </summary>
-		public static void DataControl(string tableLike = "bybit_", IProgress<decimal> prgs = null)
+		public static void DataControl(IProgress<decimal> prgs)
 		{
-			var mass = new List<string>();
-			string sql = $"SHOW TABLES LIKE '{tableLike}%'";
-			my.Main.Delegat(sql, res => mass.Add(res.GetString(0)));
+			var tables = new List<string>();
+			string sql = "SHOW TABLES";
+			my.Data.Delegat(sql, res => tables.Add(res.GetString(0)));
 
-			if (mass.Count == 0)
+			if (tables.Count == 0)
 				return;
 
-			var bar = new ProBar(mass.Count);
-			for (int i = 0; i < mass.Count; i++)
+			var ASS = new Dictionary<string, CDIunit>();
+			foreach (var unit in ListAll())
+				ASS.Add(unit.Table, unit);
+
+			var i = 0;
+			var bar = new ProBar(tables.Count);
+			foreach (var tab in tables)
 			{
-				string tableName = mass[i];
-
-				sql = $"SELECT " +
-							$"COUNT(*)`count`," +
-							$"MIN(FROM_UNIXTIME(`unix`))`begin`," +
-							$"MAX(FROM_UNIXTIME(`unix`))`end`" +
-					  $"FROM`{tableName}`";
-				var res = my.Main.Row(sql);
-
-				int count = Convert.ToInt32(res["count"]);
-				string begin = res["begin"];
-				string end = res["end"];
-
-				if (bar.isUpd(i))
+				if (bar.isUpd(i++))
 					prgs.Report(bar.Value);
 
-				if (count == 0)
+				if (!ASS.ContainsKey(tab))
 				{
-					sql = $"DROP TABLE`{tableName}`";
-					my.Main.Query(sql);
-
-					sql = $"DELETE FROM`_candle_data_info`WHERE`table`='{tableName}'";
-					my.Main.Query(sql);
-
-					continue;
+					sql = $"DROP TABLE`{tab}`";
+					my.Data.Query(sql);
 				}
-
-				// Получение названия инструмента и таймфрейма из названия таблицы
-				string[] sp = tableName.Split('_');
-				string symbol = sp[1].ToUpper();
-				int tf = Convert.ToInt32(sp[2]);
-
-				// Получение данных об инструменте по его названию
-				var Instr = BYBIT.Instrument.UnitOnField("Symbol", symbol);
-
-				// Проверка на наличие заголовка истории
-				sql = "SELECT*" +
-					  "FROM`_candle_data_info`" +
-					 $"WHERE`table`='{tableName}'";
-				res = my.Main.Row(sql);
-				int id = res.Count != 0 ? Convert.ToInt32(res["id"]) : 0;
-
-				// Внесение заголовка истории
-				//CDIqueryInsert(id, 1, Instr.Id, tf, tableName, count, begin, end);
 			}
 		}
 
@@ -404,29 +373,15 @@ namespace MrRobot.Entity
 		/// </summary>
 		public static List<object> WCkline(string symbol, int start = 0)
 		{
-			var dur = new Dur();
-
-			start = start == 0 ? format.UnixNow() - 59_880 : start + 60;
-			string url = "https://api.bybit.com/v5/market/kline?category=spot" +
-						"&symbol=" + symbol +
-						"&interval=1" +
-						"&start=" + start + "000" +
-						"&limit=1000";
-			string json = new WebClient().DownloadString(url);
-			dynamic arr = JsonConvert.DeserializeObject(json);
-
 			var TF1List = new List<object>();
 
-			if (arr.retMsg == null)
-				return TF1List;
-			if (arr.retMsg != "OK")
-				return TF1List;
+			start = start == 0 ? format.UnixNow() - 59_880 : start + 60;
+			var list = BYBIT.Kline(symbol, 1, start);
 
-			var list = arr.result.list;
+			if (list == null)
+				return TF1List;
 			if (list.Count == 0)
 				return TF1List;
-
-			WriteLine($"{url}   {list.Count}   {dur.Second()}");
 
 			for (int k = 0; k < list.Count; k++)
 			{

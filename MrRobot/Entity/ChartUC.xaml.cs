@@ -42,7 +42,7 @@ namespace MrRobot.Entity
 		{
 			if (unit == null)
 				return;
-			if (!my.Main.HasTable(unit.Table))
+			if (!my.Data.HasTable(unit.Table))
 				return;
 
 			Section = section;
@@ -122,14 +122,17 @@ namespace MrRobot.Entity
 			int Limit = 1000;
 			string sql = "SELECT*" +
 						$"FROM`{CdiUnit.Table}`" +
-						 "ORDER BY`unix`" +
+						 "ORDER BY`unix`DESC " +
 						$"LIMIT {Limit}";
-			my.Main.Delegat(sql, res =>
+			my.Data.Delegat(sql, res =>
 			{
 				var cndl = new CandleUnit(res);
 				Candles.Add(cndl.CandleToChart());
 				Volumes.Add(cndl.VolumeToChart());
 			});
+
+			Candles.Reverse();
+			Volumes.Reverse();
 
 			string line;
 			while ((line = read.ReadLine()) != null)
@@ -188,7 +191,7 @@ namespace MrRobot.Entity
 						 "ORDER BY`unix`" +
 						$"LIMIT {unit.Length}";
 			var candles = new List<CandleUnit>();
-			my.Main.Delegat(sql, res => candles.Add(new CandleUnit(res)));
+			my.Data.Delegat(sql, res => candles.Add(new CandleUnit(res)));
 
 			var mass = new List<string>();
 			int unix = format.TimeZone(unit.UnixList[0]);
@@ -271,7 +274,7 @@ namespace MrRobot.Entity
 
 			int len = 0;
 			var mass = new List<string>();
-			my.Main.Delegat(sql, res =>
+			my.Data.Delegat(sql, res =>
 			{
 				var cndl = new CandleUnit(res);
 				if (cndl.Unix == unix)

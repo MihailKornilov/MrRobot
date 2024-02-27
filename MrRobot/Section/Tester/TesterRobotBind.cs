@@ -112,7 +112,7 @@ namespace MrRobot.Section
 								$"FROM`{INSTRUMENT.Table}`" +
 								 "ORDER BY`unix`";
 					CANDLES_DATA = new List<object>();
-					my.Main.Delegat(sql, row =>
+					my.Data.Delegat(sql, row =>
 					{
 						CANDLES_DATA.Add(new CandleUnit(row));
 						bar.Val(CANDLES_DATA.Count, InitParam.Progress);
@@ -132,7 +132,7 @@ namespace MrRobot.Section
 										$"FROM`{TF1.Table}`" +
 										 "ORDER BY`unix`";
 							CANDLES_TF1_DATA = new List<object>();
-							my.Main.Delegat(sql, row =>
+							my.Data.Delegat(sql, row =>
 							{
 								CANDLES_TF1_DATA.Add(new CandleUnit(row));
 								bar.Val(CANDLES_TF1_DATA.Count, InitParam.Progress);

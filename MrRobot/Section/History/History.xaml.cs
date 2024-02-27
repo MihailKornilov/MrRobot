@@ -55,10 +55,10 @@ namespace MrRobot.Section
 		/// </summary>
 		void InstrumentChanged()
 		{
-			G.Vis(InfoPanel, IUnit != null);
-			G.Vis(DownloadPanel, IUnit != null);
+			G.Vis(InfoPanel, !IUnit.IsNull);
+			G.Vis(DownloadPanel, !IUnit.IsNull);
 
-			if (IUnit == null)
+			if (IUnit.IsNull)
 				return;
 
 			ByBitInstrumentPrecision.Text = format.E(IUnit.BasePrecision);
@@ -149,8 +149,7 @@ namespace MrRobot.Section
 		/// </summary>
 		void DownloadProcess()
 		{
-			var wc = new WebClient();
-			DownloadCheck12(wc);
+			DownloadCheck12();
 
 			Candle.CDIcreate(PARAM);
 			PARAM.Bar = new ProBar((PARAM.UnixFinish - PARAM.UnixStart) / PARAM.TimeFrame / 60 / 1000, 1000);
@@ -163,20 +162,10 @@ namespace MrRobot.Section
 				if (!PARAM.IsProcess)
 					return;
 
-				//Формирование запроса
-				string url = "https://api.bybit.com/v5/market/kline?category=spot" +
-								$"&symbol={PARAM.Symbol}" +
-								$"&interval={PARAM.TimeFrame}" +
-								$"&start={PARAM.UnixStart}000" +
-								 "&limit=1000";
-				string str = wc.DownloadString(url);
-
-				WriteLine($"{url}   {format.DTimeFromUnix(PARAM.UnixStart)}");
+				var list = BYBIT.Kline(PARAM.Symbol, PARAM.TimeFrame, PARAM.UnixStart);
 
 				PARAM.Bar.Val(barIndex++, PARAM.Progress);
 
-				dynamic json = JsonConvert.DeserializeObject(str);
-				var list = json.result.list;
 				if (list.Count < 2)
 					break;
 
@@ -204,23 +193,15 @@ namespace MrRobot.Section
 		/// <summary>
 		/// Проверка на первую половину суток для минутного таймфрейма (если время загрузки начинается после 16:00)
 		/// </summary>
-		void DownloadCheck12(WebClient wc)
+		void DownloadCheck12()
 		{
-			if (PARAM.TimeFrame != 1)
+			if (PARAM.TimeFrame > 1)
 				return;
 
-			string url = "https://api.bybit.com/v5/market/kline?category=spot" +
-							$"&symbol={PARAM.Symbol}" +
-							"&interval=1" +
-							$"&start={PARAM.UnixStart}000" +
-							"&limit=1000";
+			var list = BYBIT.Kline(PARAM.Symbol, 1, PARAM.UnixStart);
 
-			string str = wc.DownloadString(url);
-			dynamic json = JsonConvert.DeserializeObject(str);
-			if (json.result.list.Count > 0)
-				return;
-
-			PARAM.UnixStart += 43_200; //прибавление 12 часов
+			// Прибавление 12 часов
+			PARAM.UnixStart += list.Count > 0 ? 0 : 43_200;
 		}
 
 		/// <summary>
