@@ -58,7 +58,7 @@ namespace MrRobot.Connector
 				unit.BaseCoin      = res.GetString("baseCoin");
 				unit.QuoteCoin     = res.GetString("quoteCoin");
 				unit.HistoryBegin  = res.GetMySqlDateTime("historyBegin").ToString();
-				unit.BasePrecision = res.GetDouble("basePrecision");
+				unit.BasePrecision = res.GetDecimal("basePrecision");
 				unit.MinOrderQty   = res.GetDouble("minOrderQty");
 				unit.TickSize      = res.GetDouble("tickSize");
 				unit.IsTrading     = res.GetInt16("isTrading") == 1;
@@ -129,6 +129,72 @@ namespace MrRobot.Connector
 
 
 
+
+		/*
+		"symbol":"DOTUSDT",
+		"contractType":"LinearPerpetual",
+		"status":"Trading",
+		"baseCoin":"DOT",
+		"quoteCoin":"USDT",
+		"launchTime":"1616060040000",
+		"deliveryTime":"0",
+		"deliveryFeeRate":"",
+		"priceScale":"3",
+		"leverageFilter":
+			"minLeverage":"1",
+			"maxLeverage":"50.00",
+			"leverageStep":"0.01"
+		"priceFilter":{
+			"minPrice":"0.001",
+			"maxPrice":"1999.998",
+			"tickSize":"0.001"},
+		"lotSizeFilter":{
+			"maxOrderQty":"91420.0",
+			"minOrderQty":"0.1",
+			"qtyStep":"0.1",
+			"postOnlyMaxOrderQty":"91420.0",
+			"maxMktOrderQty":"32900.0"},
+		"unifiedMarginTrade":true,
+		"fundingInterval":480,
+		"settleCoin":"USDT",
+		"copyTrading":"both",
+		"upperFundingRate":"0.0075",
+		"lowerFundingRate":"-0.0075"
+		 */
+
+
+
+		// Последние цены и объёмы за 24 часа
+		public static dynamic Tickers()
+		{
+/*
+	"symbol":"VEGAUSDT",
+	"bid1Price":"0.921",
+	"bid1Size":"15.58",
+	"ask1Price":"0.9232",
+	"ask1Size":"67.48",
+	"lastPrice":"0.9232",
+	"prevPrice24h":"0.964",
+	"price24hPcnt":"-0.0423",
+	"highPrice24h":"0.9795",
+	"lowPrice24h":"0.8869",
+	"turnover24h":"120369.08654",
+	"volume24h":"128651.67"
+*/
+			var dur = new Dur();
+			string url = $"{API_URL}/v5/market/tickers?category=spot";
+			string str = new WebClient().DownloadString(url);
+			if (!str.Contains("spot"))
+				return null;
+
+			dynamic json = JsonConvert.DeserializeObject(str);
+			dynamic list = json.result.list;
+
+			WriteLine($"{url}   {list.Count}   {dur.Second()}");
+
+			return list;
+		}
+
 		// Получение свечных данных по указанному инструменту
 		public static dynamic Kline(string symbol, int interval, int start) =>
 			Kline(symbol, interval.ToString(), start.ToString());
@@ -136,17 +202,14 @@ namespace MrRobot.Connector
 		{
 			var dur = new Dur();
 			string url = $"{API_URL}/v5/market/kline" +
-								$"?category=spot" +
-								$"&symbol={symbol}" +
-								$"&interval={interval}" +
-								$"&start={start}000" +
-								 "&limit=1000";
+										$"?category=spot" +
+										$"&symbol={symbol}" +
+										$"&interval={interval}" +
+										$"&start={start}000" +
+										 "&limit=1000";
 			string str = new WebClient().DownloadString(url);
 			if (!str.Contains("spot"))
-			{
-				WriteLine($"{url}   ----   {dur.Second()}");
 				return null;
-			}
 
 			dynamic json = JsonConvert.DeserializeObject(str);
 			dynamic list = json.result.list;

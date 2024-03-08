@@ -12,7 +12,8 @@ namespace MrRobot.Section
 {
 	public partial class HistoryMoex : UserControl
 	{
-		public HistoryMoex() => G.HistoryMoex = this;
+		public HistoryMoex() =>
+			G.HistoryMoex = this;
 
 		public void Init()
 		{

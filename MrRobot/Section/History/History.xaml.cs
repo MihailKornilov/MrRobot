@@ -61,10 +61,12 @@ namespace MrRobot.Section
 			if (IUnit.IsNull)
 				return;
 
-			ByBitInstrumentPrecision.Text = format.E(IUnit.BasePrecision);
-			ByBitInstrumentMinOrder.Text = format.E(IUnit.MinOrderQty);
-			ByBitInstrumentTickSize.Text = format.E(IUnit.TickSize);
-			ByBitInstrumentHistoryBegin.Text = IUnit.HistoryBegin;
+			//IUnit.BasePrecision = format.E(IUnit.BasePrecision);
+			//ByBitInstrumentMinOrder.Text = format.E(IUnit.MinOrderQty);
+			//ByBitInstrumentTickSize.Text = format.E(IUnit.TickSize);
+
+			IUnit.Prefix = $"~{IUnit.MinOrderQty*22}$";
+			InfoPanel.DataContext = IUnit;
 
 			DownloadedListCreate();
 
@@ -79,6 +81,7 @@ namespace MrRobot.Section
 			int mon = int.Parse(sp[1]);
 			int day = int.Parse(sp[0]);
 			SetupDateBegin.SelectedDate = new DateTime(year, mon, day);
+			SetupDateBegin.DisplayDateStart = new DateTime(year, mon, day);
 		}
 
 
@@ -274,5 +277,8 @@ namespace MrRobot.Section
 		/// Нажатие на крестик удаления загруженной истории
 		/// </summary>
 		void DownloadedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
+
+		// Открытие окна с подробностями об инструментах BYBIT Spot
+		void MarketsShow(object s, MouseButtonEventArgs e) => new Markets_SPOT().Show();
 	}
 }

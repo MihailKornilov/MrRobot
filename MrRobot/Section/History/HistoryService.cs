@@ -84,9 +84,9 @@ namespace MrRobot.Section
 				{
 					var unit = mass[symbol];
 					InstrumentValueCheck(unit, "basePrecision", unit.BasePrecision, lsf.basePrecision);
-					InstrumentValueCheck(unit, "minOrderQty",	unit.MinOrderQty, lsf.minOrderQty);
-					InstrumentValueCheck(unit, "tickSize",		unit.TickSize, v.priceFilter.tickSize);
-					InstrumentValueCheck(unit, "isTrading",		unit.IsTrading, v.status == "Trading" ? "1" : "0");
+					InstrumentValueCheck(unit, "minOrderQty",	unit.MinOrderQty,	lsf.minOrderQty);
+					InstrumentValueCheck(unit, "tickSize",		unit.TickSize,		v.priceFilter.tickSize);
+					InstrumentValueCheck(unit, "isTrading",		unit.IsTrading,		v.status == "Trading" ? "1" : "0");
 					BeginUpdate(unit);
 					continue;
 				}

@@ -266,6 +266,8 @@ namespace MrRobot.inc
 
 			return split[1].Length;
 		}
+		public static int Decimals(decimal num) =>
+			Decimals((double)num);
 
 
 		public static double TickSize(int decimals) =>

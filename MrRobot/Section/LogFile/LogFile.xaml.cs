@@ -10,7 +10,8 @@ namespace MrRobot.Section
 {
 	public partial class LogFile : UserControl
 	{
-		public LogFile() => G.LogFile = this;
+		public LogFile() =>
+			G.LogFile = this;
 
 		public void Init()
 		{

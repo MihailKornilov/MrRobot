@@ -174,9 +174,11 @@
     <Compile Include="inc\HttpServer.cs" />
     <Compile Include="inc\my.cs" />
     <Compile Include="Interface\Spisok.cs" />
-    <Compile Include="Interface\IIunit.cs" />
     <Compile Include="Section\Converter\Converter.xaml.cs">
       <DependentUpon>Converter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Section\History\BYBIT\Markets_SPOT.xaml.cs">
+      <DependentUpon>Markets_SPOT.xaml</DependentUpon>
     </Compile>
     <Compile Include="Section\History\History.xaml.cs">
       <DependentUpon>History.xaml</DependentUpon>
@@ -261,6 +263,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Section\Converter\Converter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Section\History\BYBIT\Markets_SPOT.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

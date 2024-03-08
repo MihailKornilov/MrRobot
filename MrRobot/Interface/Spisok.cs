@@ -200,7 +200,7 @@ namespace MrRobot.Interface
 		public string SymbolName =>					// Название инструмента в виде "BTC/USDT"
 			$"{BaseCoin}/{QuoteCoin}"; 
 
-		public double BasePrecision { get; set; }   // Точность базовой монеты
+		public decimal BasePrecision { get; set; }   // Точность базовой монеты
 		public double MinOrderQty { get; set; }     // Минимальная сумма ордера
 		public double TickSize { get; set; }        // Шаг цены
 		public int Decimals =>						// Количество нулей после запятой

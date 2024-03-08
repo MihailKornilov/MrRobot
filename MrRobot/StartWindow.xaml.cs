@@ -72,8 +72,8 @@ namespace MrRobot
 			G.Tester.TesterInit();	StartLog("Секция Tester: инициализация...");
 			G.Trade.TradeInit();	StartLog("Секция Trade: инициализация...");
 			G.Setting.Init();		StartLog("Секция Setting: инициализация...");
-			G.LogFile.Init();		StartLog("Секция LogFile: инициализация...");
-			G.Manual.Init();		StartLog("Секция Manual: инициализация...");
+			G.LogFile?.Init();		StartLog("Секция LogFile: инициализация...");
+			G.Manual?.Init();		StartLog("Секция Manual: инициализация...");
 
 			G.ISPanel.Init();		StartLog("Инициализация выпадающего списка для выбора Инструментов...");
 
