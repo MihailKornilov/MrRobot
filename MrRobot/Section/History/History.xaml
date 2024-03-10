@@ -97,7 +97,7 @@
 								   Foreground="#777"
 								   Margin="-76,3,0,0"/>
 						</WrapPanel>
-						<TextBlock  Text="Рынки"
+						<TextBlock  Text="Обзор рынка"
                                     Margin="200,12,0,0"
 									TextDecorations="Underline"
 									Style="{StaticResource TBLink}"

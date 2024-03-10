@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
+using MrRobot.Connector;
 
 namespace MrRobot.Section
 {
@@ -6,10 +8,14 @@ namespace MrRobot.Section
 	{
 		public Markets_SPOT()
 		{
-			DataContext = new MWsizeDC();
-			WindowState = MWsizeDC.State;
-
+			TickersUpdate();
 			InitializeComponent();
+			SpotList.ItemsSource = BYBIT.Instrument.ListLimit(50);
+		}
+
+		async void TickersUpdate()
+		{
+			await Task.Run(BYBIT.Tickers);
 		}
 	}
 }

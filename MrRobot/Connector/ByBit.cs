@@ -54,15 +54,26 @@ namespace MrRobot.Connector
 
 			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
 			{
-				unit.Symbol        = res.GetString("symbol");
-				unit.BaseCoin      = res.GetString("baseCoin");
-				unit.QuoteCoin     = res.GetString("quoteCoin");
-				unit.HistoryBegin  = res.GetMySqlDateTime("historyBegin").ToString();
-				unit.BasePrecision = res.GetDecimal("basePrecision");
-				unit.MinOrderQty   = res.GetDouble("minOrderQty");
-				unit.TickSize      = res.GetDouble("tickSize");
-				unit.IsTrading     = res.GetInt16("isTrading") == 1;
-				unit.CdiCount      = CCASS.ContainsKey(unit.Id) ? CCASS[unit.Id] : 0;
+				unit.Symbol			= res.GetString("symbol");
+				unit.BaseCoin		= res.GetString("baseCoin");
+				unit.QuoteCoin		= res.GetString("quoteCoin");
+				unit.HistoryBegin	= res.GetMySqlDateTime("historyBegin").ToString();
+				unit.BasePrecision	= res.GetDecimal("basePrecision");
+				unit.MinOrderQty	= res.GetDouble("minOrderQty");
+				unit.TickSize		= res.GetDouble("tickSize");
+				unit.IsTrading		= res.GetInt16("isTrading") == 1;
+				unit.CdiCount		= CCASS.ContainsKey(unit.Id) ? CCASS[unit.Id] : 0;
+
+				unit.Dbl01			= res.GetDouble("lastPrice");
+				unit.Dbl05			= res.GetDouble("price24hPcnt");
+				unit.Dbl05str		= $"{(unit.Dbl05 > 0 ? "+" : "")}{unit.Dbl05}%";
+				unit.Lng01			= res.GetInt64("turnover24h");
+				unit.Lng01str		= format.Num(unit.Lng01);
+
+				unit.Str01 = "≈-.--$";
+				if (unit.QuoteCoin == "USDT")
+					unit.Str01 = $"≈{format.Price(unit.MinOrderQty * unit.Dbl01, 2)}$";
+
 				return unit;
 			}
 
@@ -165,7 +176,7 @@ namespace MrRobot.Connector
 
 
 		// Последние цены и объёмы за 24 часа
-		public static dynamic Tickers()
+		public static void Tickers()
 		{
 /*
 	"symbol":"VEGAUSDT",
@@ -185,14 +196,37 @@ namespace MrRobot.Connector
 			string url = $"{API_URL}/v5/market/tickers?category=spot";
 			string str = new WebClient().DownloadString(url);
 			if (!str.Contains("spot"))
-				return null;
+				return;
 
 			dynamic json = JsonConvert.DeserializeObject(str);
 			dynamic list = json.result.list;
 
 			WriteLine($"{url}   {list.Count}   {dur.Second()}");
 
-			return list;
+			var insert = new List<string>();
+			for (int k = 0; k < list.Count; k++)
+			{
+				var item = list[k];
+				int id = Instrument.FieldToId("Symbol", item.symbol.ToString());
+				if (id > 0)
+				{
+					decimal price24 = Convert.ToDecimal(item.price24hPcnt) * 100;
+					insert.Add($"({id}," +
+							   $"{item.lastPrice}," +
+							   $"{price24}," +
+							   $"{item.turnover24h})");
+				}
+			}
+			string sql = "INSERT INTO `_instrument`" +
+							"(`id`,`lastPrice`,`price24hPcnt`,`turnover24h`)" +
+						$"VALUES{string.Join(",", insert.ToArray())}" +
+						 "ON DUPLICATE KEY UPDATE" +
+							"`lastPrice`=VALUES(`lastPrice`)," +
+							"`price24hPcnt`=VALUES(`price24hPcnt`)," +
+							"`turnover24h`=VALUES(`turnover24h`)";
+			my.Main.Query(sql);
+
+			WriteLine($"Updated: {insert.Count}");
 		}
 
 		// Получение свечных данных по указанному инструменту

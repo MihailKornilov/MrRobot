@@ -166,6 +166,8 @@ namespace MrRobot.Section
 					return;
 
 				var list = BYBIT.Kline(PARAM.Symbol, PARAM.TimeFrame, PARAM.UnixStart);
+				if (list == null)
+					break;
 
 				PARAM.Bar.Val(barIndex++, PARAM.Progress);
 
@@ -279,6 +281,6 @@ namespace MrRobot.Section
 		void DownloadedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
 
 		// Открытие окна с подробностями об инструментах BYBIT Spot
-		void MarketsShow(object s, MouseButtonEventArgs e) => new Markets_SPOT().Show();
+		void MarketsShow(object s, MouseButtonEventArgs e) => new Markets_SPOT().ShowDialog();
 	}
 }

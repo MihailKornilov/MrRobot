@@ -36,6 +36,7 @@ namespace MrRobot.Entity
 
 			string sql = "SELECT*" +
 						 "FROM`_candle_data_info`" +
+						 "WHERE`rowsCount`" +
 						 "ORDER BY`exchangeId`,`timeFrame`";
 			my.Main.Delegat(sql, res =>
 			{

@@ -5,17 +5,69 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d"
 
-        Title="BYBIT: Markets.Spot"
-		MinWidth="1300"
-		MinHeight="700"
+		Title="BYBIT: Markets.Spot"
+		Width ="865"
+		Height="855"
+        WindowStartupLocation="CenterScreen">
 
-		Width ="{Binding Width}"
-		Height="{Binding Height}"
-		Left  ="{Binding Left}"
-		Top   ="{Binding Top}">
+	<Window.Resources>
+		<!-- Запись информации об инструменте -->
+		<DataTemplate x:Key="SpotItemTmp">
+			<StackPanel Orientation="Horizontal">
+                <WrapPanel Width="{Binding ElementName=HdSymbol,Path=Width}" Margin="10,1,0,1">
+                    <Label Content="{Binding BaseCoin}" Padding="0" FontWeight="Bold" Foreground="#555"/>
+                    <Label Content="/" Padding="0" Foreground="#999"/>
+                    <Label Content="{Binding QuoteCoin}" Padding="0" Foreground="#999"/>
+                </WrapPanel>
 
-    <Grid>
-        
+                <Label Content="{Binding Dbl01str}"		Width="{Binding ElementName=HdPrice,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Dbl03str}"		Width="{Binding ElementName=HdTickSize,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+
+                <DockPanel  Width="{Binding ElementName=HdMinQty,Path=Width}">
+                    <Label Content="{Binding Dbl02str}" Padding="0"        Width="80"    HorizontalContentAlignment="Right"/>
+                    <Label Content="{Binding Str01}"    Padding="0,0,20,0" FontSize="11" HorizontalContentAlignment="Right" Foreground="#AAA"/>
+                </DockPanel>
+                <Label Content="{Binding Dbl03str}"		Width="{Binding ElementName=HdQtyStep,Path=Width}"	Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+
+                <Label Content="{Binding Dbl05str}"	    Width="{Binding ElementName=HdPrice24,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Lng01str}"	    Width="{Binding ElementName=HdVolume24,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+
+                <Label Content="{Binding HistoryBegin}"	Padding="0" Foreground="#999"/>
+            </StackPanel>
+		</DataTemplate>
+
+	</Window.Resources>
+	
+	<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="21"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+			<Separator Background="#E8E8E8" Margin="0"/>
+			<WrapPanel Background="#EEE">
+                <Label Width="15"/>
+                <Label Name="HdSymbol"	 Content="Инструмент"	    Width="110" Style="{StaticResource OrderItem}"/>
+
+                <Label Name="HdPrice"	 Content="Цена"			    Width="110" Style="{StaticResource OrderItemRight}"/>
+                <Label Name="HdTickSize" Content="Шаг цены"		    Width="70"  Style="{StaticResource OrderItemRight}"/>
+
+                <Label Name="HdMinQty"	Content="Минимальный ордер"	Width="150" Style="{StaticResource OrderItemRight}"/>
+                <Label Name="HdQtyStep"	 Content="Шаг ордера"	    Width="80"  Style="{StaticResource OrderItemRight}"/>
+
+                <Label Name="HdPrice24"  Content="Цена 24"          Width="80"  Style="{StaticResource OrderItemRight}"/>
+                <Label Name="HdVolume24" Content="Торги 24"	        Width="100" Style="{StaticResource OrderItemRight}"/>
+
+                <Label Name="HdListed"	 Content="Листинг"	                    Style="{StaticResource OrderItem}"/>
+            </WrapPanel>
+			<Separator Background="#DDD" Margin="0,-1,0,0"/>
+		</StackPanel>
+
+        <ListBox Grid.Row="1"
+                 Name="SpotList"
+				 BorderThickness="0"
+				 ItemTemplate="{StaticResource SpotItemTmp}"/>
+
 	</Grid>
 
 </Window>

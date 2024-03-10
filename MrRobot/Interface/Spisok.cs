@@ -66,6 +66,20 @@ namespace MrRobot.Interface
 		/// Весь список
 		/// </summary>
 		public List<SpisokUnit> ListAll => UnitList;
+		/// <summary>
+		/// Лимитированный список
+		/// </summary>
+		public List<SpisokUnit> ListLimit(int limit = 100)
+		{
+			var send = new List<SpisokUnit>();
+			foreach(var unit in UnitList)
+			{
+				send.Add(unit);
+				if (--limit == 0)
+					return send;
+			}
+			return send;
+		}
 
 		/// <summary>
 		/// Весь список с нулевой записью
@@ -170,14 +184,39 @@ namespace MrRobot.Interface
 
 	public class SpisokUnit
 	{
-		public SpisokUnit(int id) => Id = id;
-		// Конструктор с запросом из БД
-		public SpisokUnit(dynamic res) => Id = res.GetInt32("id");
+		public SpisokUnit(int id) =>
+			Id = id;
+
+		public SpisokUnit(dynamic res) =>			// Конструктор с запросом из БД
+			Id = res.GetInt32("id");
 
 		public bool IsNull =>						// Пустая запись
 			Id == 0;
 		public string Num { get; set; }             // Порядковый номер для вывода в списке
 		public int Id { get; set; }                 // ID единицы списка
+
+
+		// ---=== Общие переменные ===---
+		public double Dbl01 { get; set; }           // Значение DOUBLE 1
+		public string Dbl01str => format.E(Dbl01);  // Значение DOUBLE в формате STRING с избавлением от E
+		public string Dbl02str => format.E(MinOrderQty);
+		public string Dbl03str => format.E(BasePrecision);
+		public string Dbl04str => format.E(TickSize);
+
+		public double Dbl05 { get; set; }           // Значение DOUBLE 5
+		public string Dbl05str { get; set; }
+
+		public double Dbl06 { get; set; }           // Значение DOUBLE 6
+		public string Dbl06str { get; set; }
+
+		public string Str01 { get; set; }
+
+		public long   Lng01 { get; set; }           // Значение LONG 1
+		public string Lng01str { get; set; }        // Значение LONG 1
+
+
+
+
 		public string Name { get; set; }            // Имя единицы списка
 		public string Symbol { get; set; }          // Идентификатор инструмента в виде "BTCUSDT"
 		public string HistoryBegin { get; set; }    // Дата начала истории свечных данных
@@ -200,7 +239,7 @@ namespace MrRobot.Interface
 		public string SymbolName =>					// Название инструмента в виде "BTC/USDT"
 			$"{BaseCoin}/{QuoteCoin}"; 
 
-		public decimal BasePrecision { get; set; }   // Точность базовой монеты
+		public decimal BasePrecision { get; set; }	// Точность базовой монеты
 		public double MinOrderQty { get; set; }     // Минимальная сумма ордера
 		public double TickSize { get; set; }        // Шаг цены
 		public int Decimals =>						// Количество нулей после запятой

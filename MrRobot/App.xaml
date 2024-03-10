@@ -182,14 +182,14 @@
 
         <Style x:Key="OrderItem" TargetType="Label">
             <Setter Property="Foreground" Value="#777"/>
-            <Setter Property="Padding" Value="0,2,0,1"/>
+            <Setter Property="Padding" Value="0,2,0,3"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
         </Style>
 
         <Style x:Key="OrderItemRight" TargetType="Label">
             <Setter Property="Foreground" Value="#777"/>
-            <Setter Property="Padding" Value="0,2,0,1"/>
+            <Setter Property="Padding" Value="0,2,20,3"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
         </Style>
