@@ -6,6 +6,8 @@ using static System.Console;
 using MrRobot.inc;
 using MrRobot.Entity;
 using System.Windows;
+using System.Linq;
+using System.Reflection;
 
 namespace MrRobot.Interface
 {
@@ -69,10 +71,18 @@ namespace MrRobot.Interface
 		/// <summary>
 		/// Лимитированный список
 		/// </summary>
-		public List<SpisokUnit> ListLimit(int limit = 100)
+		public List<SpisokUnit> ListLimit(int limit = 100, string sort = "Id", bool desc = false)
 		{
+			if(Count == 0)
+				return UnitList;
+
+			var prop = UnitList[0].GetType().GetProperty(sort);
+			var sorted = desc ? 
+						 UnitList.OrderByDescending(x => prop.GetValue(x)).ToList()
+						 :
+						 UnitList.OrderBy(x => prop.GetValue(x)).ToList();
 			var send = new List<SpisokUnit>();
-			foreach(var unit in UnitList)
+			foreach (var unit in sorted)
 			{
 				send.Add(unit);
 				if (--limit == 0)
@@ -80,6 +90,33 @@ namespace MrRobot.Interface
 			}
 			return send;
 		}
+
+		/// <summary>
+		/// Фильтр-список по тексту
+		/// </summary>
+		/// fields: поля, по которым производится поиск. Через запятую.
+		public List<SpisokUnit> ListFilterTxt(string fields, string txt)
+		{
+			if(Count == 0)
+				return UnitList;
+
+			txt = txt.Trim().ToLower();
+			if (txt.Length == 0)
+				return UnitList;
+
+			var prop = UnitList[0].GetType().GetProperty(fields);
+			var send = new List<SpisokUnit>();
+			foreach(var unit in UnitList)
+			{
+				string value = prop.GetValue(unit).ToString().ToLower();
+				if(value.Contains(txt))
+					send.Add(unit);
+			}
+			return send;
+		}
+
+
+
 
 		/// <summary>
 		/// Весь список с нулевой записью
@@ -205,14 +242,18 @@ namespace MrRobot.Interface
 
 		public double Dbl05 { get; set; }           // Значение DOUBLE 5
 		public string Dbl05str { get; set; }
+		public SolidColorBrush Dbl05clr { get; set; }
 
 		public double Dbl06 { get; set; }           // Значение DOUBLE 6
 		public string Dbl06str { get; set; }
 
 		public string Str01 { get; set; }
+		public string Str02 { get; set; }
 
 		public long   Lng01 { get; set; }           // Значение LONG 1
-		public string Lng01str { get; set; }        // Значение LONG 1
+		public string Lng01str { get; set; }
+
+		public DateTime DTime01 { get; set; }
 
 
 

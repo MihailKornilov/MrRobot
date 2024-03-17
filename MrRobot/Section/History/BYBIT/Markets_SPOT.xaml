@@ -7,7 +7,7 @@
 
 		Title="BYBIT: Markets.Spot"
 		Width ="865"
-		Height="855"
+		Height="635"
         WindowStartupLocation="CenterScreen">
 
 	<Window.Resources>
@@ -29,25 +29,63 @@
                 </DockPanel>
                 <Label Content="{Binding Dbl03str}"		Width="{Binding ElementName=HdQtyStep,Path=Width}"	Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
 
-                <Label Content="{Binding Dbl05str}"	    Width="{Binding ElementName=HdPrice24,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Dbl05str}"
+                       Width="{Binding ElementName=HdPrice24,Path=Width}"
+                       Padding="0,0,20,0"
+                       Foreground="{Binding Str02}"
+                       HorizontalContentAlignment="Right"/>
+                <!-- Торги 24 -->
                 <Label Content="{Binding Lng01str}"	    Width="{Binding ElementName=HdVolume24,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
 
+                <!-- Листинг -->
                 <Label Content="{Binding HistoryBegin}"	Padding="0" Foreground="#999"/>
             </StackPanel>
 		</DataTemplate>
 
-	</Window.Resources>
+        <!-- Ссылка: изменение цвета при наведении -->
+        <Style x:Key="HDLink" TargetType="Label">
+            <Setter Property="Padding" Value="0,2,0,3"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#414082"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#5C5AB8" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Ссылка: изменение цвета при наведении (выравнивание вправо) -->
+        <Style x:Key="HDLinkR" TargetType="Label">
+            <Setter Property="Padding" Value="0,2,20,3"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#414082"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#5C5AB8" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
 	
 	<Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="21"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+        <StackPanel Grid.Row="0" Background="AliceBlue">
+            <Separator Background="#E8E8E8" Margin="0"/>
+            <WrapPanel Name="FFpanel"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
 			<Separator Background="#E8E8E8" Margin="0"/>
 			<WrapPanel Background="#EEE">
                 <Label Width="15"/>
-                <Label Name="HdSymbol"	 Content="Инструмент"	    Width="110" Style="{StaticResource OrderItem}"/>
+                <Label Name="HdSymbol"	 Content="Инструмент"	    Width="110" Style="{StaticResource HDLink}" MouseLeftButtonDown="Sort" Tag="Symbol"/>
 
                 <Label Name="HdPrice"	 Content="Цена"			    Width="110" Style="{StaticResource OrderItemRight}"/>
                 <Label Name="HdTickSize" Content="Шаг цены"		    Width="70"  Style="{StaticResource OrderItemRight}"/>
@@ -55,19 +93,18 @@
                 <Label Name="HdMinQty"	Content="Минимальный ордер"	Width="150" Style="{StaticResource OrderItemRight}"/>
                 <Label Name="HdQtyStep"	 Content="Шаг ордера"	    Width="80"  Style="{StaticResource OrderItemRight}"/>
 
-                <Label Name="HdPrice24"  Content="Цена 24"          Width="80"  Style="{StaticResource OrderItemRight}"/>
-                <Label Name="HdVolume24" Content="Торги 24"	        Width="100" Style="{StaticResource OrderItemRight}"/>
+                <Label Name="HdPrice24"  Content="Цена 24"          Width="80"  Style="{StaticResource HDLinkR}" MouseLeftButtonDown="Sort" Tag="Dbl05"/>
+                <Label Name="HdVolume24" Content="Торги 24"	        Width="100" Style="{StaticResource HDLinkR}" MouseLeftButtonDown="Sort" Tag="Lng01"/>
 
-                <Label Name="HdListed"	 Content="Листинг"	                    Style="{StaticResource OrderItem}"/>
+                <Label Name="HdListed"	 Content="Листинг"	                    Style="{StaticResource HDLink}" MouseLeftButtonDown="Sort" Tag="DTime01"/>
             </WrapPanel>
 			<Separator Background="#DDD" Margin="0,-1,0,0"/>
 		</StackPanel>
 
-        <ListBox Grid.Row="1"
+        <ListBox Grid.Row="2"
                  Name="SpotList"
 				 BorderThickness="0"
 				 ItemTemplate="{StaticResource SpotItemTmp}"/>
-
 	</Grid>
 
 </Window>

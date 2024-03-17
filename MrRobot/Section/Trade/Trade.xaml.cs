@@ -5,7 +5,6 @@ using static System.Console;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
-using System.Collections.Generic;
 
 namespace MrRobot.Section
 {
@@ -46,9 +45,11 @@ namespace MrRobot.Section
 				/v5/account/wallet-balance?accountType=SPOT
 			*/
 
-			//ApiQuery = ApiQueryTB.Text;
+			ApiQuery = ApiQueryTB.Text;
 			//dynamic res = ByBit.Api(ApiQuery);
 			//QueryResult.Text = res.ToString();
+
+			new WSS();
 		}
 
 

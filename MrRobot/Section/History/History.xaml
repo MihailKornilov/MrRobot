@@ -153,7 +153,11 @@
 							<Label Content="Таймфрейм:" Style="{StaticResource LabelHistory}"/>
 						</WrapPanel>
 						<WrapPanel Name="SetupPanel" Margin="0,3,0,0" HorizontalAlignment="Left">
-							<DatePicker Name="SetupDateBegin" Width="130" SelectedDateFormat="Short"/>
+							<DatePicker Name="SetupDateBegin"
+                                        Width="130"
+                                        SelectedDateFormat="Short"
+                                        SelectedDate="{Binding DTime01}"
+                                        DisplayDateStart="{Binding DTime01}"/>
 							<ComboBox Name="SetupPeriod" Width="90" Margin="10,0,0,0" SelectedIndex="2">
 								<ComboBoxItem TabIndex="1">1 день</ComboBoxItem>
 								<ComboBoxItem TabIndex="7">1 неделя</ComboBoxItem>

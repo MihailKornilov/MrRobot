@@ -165,12 +165,14 @@
     <Compile Include="Entity\ChartUC.xaml.cs">
       <DependentUpon>ChartUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entity\FastFind.cs" />
     <Compile Include="Entity\InstrumentSelect.xaml.cs">
       <DependentUpon>InstrumentSelect.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entity\MainMenu.cs" />
     <Compile Include="Connector\MOEX.cs" />
     <Compile Include="Entity\Patterns.cs" />
+    <Compile Include="Entity\WSS.cs" />
     <Compile Include="inc\HttpServer.cs" />
     <Compile Include="inc\my.cs" />
     <Compile Include="Interface\Spisok.cs" />

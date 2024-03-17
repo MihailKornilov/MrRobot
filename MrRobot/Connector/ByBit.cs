@@ -67,12 +67,15 @@ namespace MrRobot.Connector
 				unit.Dbl01			= res.GetDouble("lastPrice");
 				unit.Dbl05			= res.GetDouble("price24hPcnt");
 				unit.Dbl05str		= $"{(unit.Dbl05 > 0 ? "+" : "")}{unit.Dbl05}%";
+				unit.Str02			= unit.Dbl05 >= 0 ? "#20B26C" : "#EF454A";
 				unit.Lng01			= res.GetInt64("turnover24h");
 				unit.Lng01str		= format.Num(unit.Lng01);
 
 				unit.Str01 = "≈-.--$";
 				if (unit.QuoteCoin == "USDT")
 					unit.Str01 = $"≈{format.Price(unit.MinOrderQty * unit.Dbl01, 2)}$";
+
+				unit.DTime01		= res.GetDateTime("historyBegin");
 
 				return unit;
 			}

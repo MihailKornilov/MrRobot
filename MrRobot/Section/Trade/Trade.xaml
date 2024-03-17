@@ -113,13 +113,12 @@
                                 <Label Content="Запрос:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
                                 <TextBox Name="ApiQueryTB" Width="250" Padding="4"/>
                             </WrapPanel>
-                            <Button Name="ApiQueryButton"
-                                    Content="GO"
-                                    Width="100"
-                                    Height="25"
-                                    Margin="72,6,0,0"
-                                    HorizontalAlignment="Left"
-                                    Click="QueryGo"/>
+                            <WrapPanel Margin="72,6,0,0">
+                                <Button Content="WSS start" Width="70" Height="25" Click="QueryGo"/>
+                                <Button Content="Subscribe" Width="80" Height="25" Click="QueryGo" Margin="10,0,0,0"/>
+                                <Button Content="Unsubscribe" Width="80" Height="25" Click="QueryGo" Margin="10,0,0,0"/>
+                            </WrapPanel>
+                            
                             <TextBox Name="QueryResult"
                                      Width="320"
                                      Height="450"

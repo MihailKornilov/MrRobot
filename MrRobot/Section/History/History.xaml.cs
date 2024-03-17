@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static System.Console;
-
-using Newtonsoft.Json;
 
 using MrRobot.inc;
 using MrRobot.Entity;
@@ -25,6 +22,7 @@ namespace MrRobot.Section
 
 		public void Init()
 		{
+			DataContext = new SpisokUnit(0);
 			InitializeComponent();
 
 			MenuCreate();
@@ -61,27 +59,10 @@ namespace MrRobot.Section
 			if (IUnit.IsNull)
 				return;
 
-			//IUnit.BasePrecision = format.E(IUnit.BasePrecision);
-			//ByBitInstrumentMinOrder.Text = format.E(IUnit.MinOrderQty);
-			//ByBitInstrumentTickSize.Text = format.E(IUnit.TickSize);
-
 			IUnit.Prefix = $"~{IUnit.MinOrderQty*22}$";
-			InfoPanel.DataContext = IUnit;
+			DataContext = IUnit;
 
 			DownloadedListCreate();
-
-			string[] data = IUnit.HistoryBegin.Split(' ');
-			string[] sp = data[0].Split('.');
-			if (sp.Length < 3)
-				return;
-			if (sp[2] == "0000")
-				return;
-
-			int year = int.Parse(sp[2]);
-			int mon = int.Parse(sp[1]);
-			int day = int.Parse(sp[0]);
-			SetupDateBegin.SelectedDate = new DateTime(year, mon, day);
-			SetupDateBegin.DisplayDateStart = new DateTime(year, mon, day);
 		}
 
 
