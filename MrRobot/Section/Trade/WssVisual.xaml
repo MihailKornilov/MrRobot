@@ -1,0 +1,74 @@
+﻿<Window x:Class="MrRobot.Section.WssVisual"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+
+		Title="WssVisual"
+		Width="520"
+		Height="1055"
+		Left="1400"
+		Top="0"
+		Background="#D5E4EE">
+
+    <Window.Resources>
+        <Style x:Key="DepthLBL" TargetType="Label">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="5,0,0,0"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontFamily" Value="Verdana"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+        </Style>
+    </Window.Resources>
+
+	<Grid Background="AliceBlue" Margin="0,1,0,0">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="330"/>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="150"/>
+		</Grid.ColumnDefinitions>
+
+		<!-- Подключение и подписка -->
+		<StackPanel Grid.Column="0" Margin="10">
+			<Button Name="WssOpenBut"
+					Content="WSS open"
+					Width="150"
+					Height="25"
+					HorizontalAlignment="Left"
+					Margin="55,0,0,0"
+					Click="WssOpen"/>
+
+			<WrapPanel Margin="0,20,0,0">
+				<Label Content="Стакан:"
+					   Width="55"
+					   Foreground="#777"
+					   VerticalContentAlignment="Center"/>
+				<TextBox Name="OrderbookTB" Width="150" Padding="4"/>
+                <Button Name="OrderbookBut"
+						Content="Подписка"
+                        Width="80"
+                        Margin="7,0,0,0"
+                        Click="OrderbookSub"/>
+            </WrapPanel>
+
+            <WrapPanel Margin="0,8,0,0">
+				<Label Content="Заявки:"
+					   Width="55"
+					   Foreground="#777"
+					   VerticalContentAlignment="Center"/>
+				<TextBox Name="TradeTB" Width="150" Padding="4"/>
+                <Button Name="TradeBut"
+						Content="Подписка"
+                        Width="80"
+                        Margin="7,0,0,0"
+                        Click="TradeSub"/>
+            </WrapPanel>
+		</StackPanel>
+
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Hidden">
+            <StackPanel Name="DepthPanel"/>
+        </ScrollViewer>
+	</Grid>
+
+</Window>

@@ -227,6 +227,9 @@
     <Compile Include="Section\Trade\Trade.xaml.cs">
       <DependentUpon>Trade.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Section\Trade\WssVisual.xaml.cs">
+      <DependentUpon>WssVisual.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StartWindow.xaml.cs">
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
@@ -323,6 +326,10 @@
     <Page Include="Section\Trade\Trade.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Trade\WssVisual.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StartWindow.xaml">
       <SubType>Designer</SubType>

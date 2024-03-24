@@ -23,7 +23,6 @@ namespace MrRobot.Section
 			ApiKey.TextChanged += BYBIT.ApiKeyChanged;
 			ApiSecret.Password = BYBIT.ApiSecret;
 			ApiSecret.PasswordChanged += BYBIT.ApiSecretChanged;
-			ApiQueryTB.Text = ApiQuery;
 
 			new ISunit(TradeIS);
 
@@ -32,11 +31,6 @@ namespace MrRobot.Section
 		}
 
 
-		string ApiQuery
-		{
-			get => position.Val("5_ApiQuery_Text");
-			set => position.Set("5_ApiQuery_Text", value);
-		}
 		void QueryGo(object sender, RoutedEventArgs e)
 		{
 			/*
@@ -44,13 +38,26 @@ namespace MrRobot.Section
 				/v5/user/get-member-type - тип аккаунта
 				/v5/account/wallet-balance?accountType=SPOT
 			*/
-
-			ApiQuery = ApiQueryTB.Text;
-			//dynamic res = ByBit.Api(ApiQuery);
-			//QueryResult.Text = res.ToString();
-
-			new WSS();
 		}
+
+
+		/// <summary>
+		/// Открытие окна WebStream
+		/// </summary>
+		void WssOpen(object s, RoutedEventArgs e) =>
+			new WssVisual().ShowDialog();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 		void MenuChanged(object sender, SelectionChangedEventArgs e)
@@ -63,7 +70,6 @@ namespace MrRobot.Section
 					LogList.ScrollIntoView(LogList.Items[c - 1]);
 			}
 		}
-
 
 		/// <summary>
 		/// Выбран робот

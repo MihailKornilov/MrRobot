@@ -104,7 +104,8 @@
         <ListBox Grid.Row="2"
                  Name="SpotList"
 				 BorderThickness="0"
-				 ItemTemplate="{StaticResource SpotItemTmp}"/>
+				 ItemTemplate="{StaticResource SpotItemTmp}"
+                 MouseDoubleClick="GoSite"/>
 	</Grid>
 
 </Window>

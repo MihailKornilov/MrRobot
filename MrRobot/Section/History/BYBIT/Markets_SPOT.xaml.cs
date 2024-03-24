@@ -6,6 +6,8 @@ using static System.Console;
 
 using MrRobot.Entity;
 using MrRobot.Connector;
+using MrRobot.Interface;
+using System.Diagnostics;
 
 namespace MrRobot.Section
 {
@@ -43,10 +45,17 @@ namespace MrRobot.Section
 		}
 
 		int SpotListShow() {
-			//SpotList.ItemsSource = BYBIT.Instrument.ListLimit(Limit, Order, Desc);
-			var list = BYBIT.Instrument.ListFilterTxt("Symbol", ffTxt);
+			var list = BYBIT.Instrument.ListLimit(Limit, Order, Desc);
+			//var list = BYBIT.Instrument.ListFilterTxt("Symbol", ffTxt);
 			SpotList.ItemsSource = list;
 			return list.Count;
+		}
+
+		void GoSite(object s, MouseButtonEventArgs e)
+		{
+			var box = s as ListBox;
+			var item = box.SelectedItem as SpisokUnit;
+			Process.Start($"https://www.bybit.com/ru-RU/trade/spot/{item.SymbolName}");
 		}
 	}
 }

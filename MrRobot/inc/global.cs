@@ -114,6 +114,8 @@ namespace MrRobot.inc
 
 		public static CDIselectPanel CDIselectPanel { get; set; }
 		public static InstrumentSelect ISPanel { get; set; }
+
+		public static WssVisual WssVisual { get; set; }
 	}
 
 

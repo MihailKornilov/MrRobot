@@ -1,278 +1,263 @@
 ﻿<UserControl x:Class="MrRobot.Section.Trade"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Entity="clr-namespace:MrRobot.Entity"
-             mc:Ignorable="d"
-             d:DesignWidth="1200"
-             d:DesignHeight="750"
-             Background="#FFF">
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:Entity="clr-namespace:MrRobot.Entity"
+			 mc:Ignorable="d"
+			 d:DesignWidth="1200"
+			 d:DesignHeight="750"
+			 Background="#FFF">
 
-    <UserControl.Resources>
-        <!-- Шаблон для стакана -->
-        <DataTemplate x:Key="DepthItemTmp">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Price}"
-                       Width="78"
-                       Foreground="{Binding PriceColor}"
-                       Padding="0,2"
-                       FontFamily="Trebuchet MS"/>
-                <Label Content="{Binding Quantity}"
-                       Width="60"
-                       Foreground="{Binding AmountColor}"
-                       Padding="0,2"
-                       FontFamily="Trebuchet MS"
-                       HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Amount}"
-                       Width="70"
-                       Foreground="{Binding AmountColor}"
-                       Padding="0,2"
-                       FontFamily="Trebuchet MS"
-                       HorizontalContentAlignment="Right"/>
-            </StackPanel>
-        </DataTemplate>
-        <!-- Шаблон для сделок -->
-        <DataTemplate x:Key="TradeItemTmp">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Price}"
-                       Width="78"
-                       Foreground="{Binding PriceColor}"
-                       Padding="0,2"
-                       FontFamily="Trebuchet MS"/>
-                <Label Content="{Binding Amount}"
-                       Width="55"
-                       Foreground="{Binding AmountColor}"
-                       Padding="0,2"
-                       FontFamily="Trebuchet MS"
-                       HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Time}"
-                       Width="55"
-                       Foreground="{Binding AmountColor}"
-                       Padding="0,2"
-                       FontFamily="Trebuchet MS"
-                       HorizontalContentAlignment="Right"/>
-            </StackPanel>
-        </DataTemplate>
-        <!-- Шаблон для Роботов -->
-        <DataTemplate x:Key="RobotListTmp">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Num}"
-                       Width="{Binding NumWidth}"
-                       Padding="0,2,3,2"
-                       Foreground="#888"
-                       FontWeight="Medium"
-                       HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Name}" Foreground="{Binding NameColor}" Padding="0,2"/>
-            </StackPanel>
-        </DataTemplate>
-        <!-- Шаблон для Лога -->
-        <DataTemplate x:Key="LogTmp">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding DTime}" Width="103" Padding="0" FontSize="11" Foreground="#AAA"/>
-                <Label Content="{Binding Text}" Padding="0" Margin="0,1,0,0" FontSize="13" FontFamily="Courier New"/>
-            </StackPanel>
-        </DataTemplate>
-    </UserControl.Resources>
+	<UserControl.Resources>
+		<!-- Шаблон для стакана -->
+		<DataTemplate x:Key="DepthItemTmp">
+			<StackPanel Orientation="Horizontal">
+				<Label Content="{Binding Price}"
+					   Width="78"
+					   Foreground="{Binding PriceColor}"
+					   Padding="0,2"
+					   FontFamily="Trebuchet MS"/>
+				<Label Content="{Binding Quantity}"
+					   Width="60"
+					   Foreground="{Binding AmountColor}"
+					   Padding="0,2"
+					   FontFamily="Trebuchet MS"
+					   HorizontalContentAlignment="Right"/>
+				<Label Content="{Binding Amount}"
+					   Width="70"
+					   Foreground="{Binding AmountColor}"
+					   Padding="0,2"
+					   FontFamily="Trebuchet MS"
+					   HorizontalContentAlignment="Right"/>
+			</StackPanel>
+		</DataTemplate>
+		<!-- Шаблон для сделок -->
+		<DataTemplate x:Key="TradeItemTmp">
+			<StackPanel Orientation="Horizontal">
+				<Label Content="{Binding Price}"
+					   Width="78"
+					   Foreground="{Binding PriceColor}"
+					   Padding="0,2"
+					   FontFamily="Trebuchet MS"/>
+				<Label Content="{Binding Amount}"
+					   Width="55"
+					   Foreground="{Binding AmountColor}"
+					   Padding="0,2"
+					   FontFamily="Trebuchet MS"
+					   HorizontalContentAlignment="Right"/>
+				<Label Content="{Binding Time}"
+					   Width="55"
+					   Foreground="{Binding AmountColor}"
+					   Padding="0,2"
+					   FontFamily="Trebuchet MS"
+					   HorizontalContentAlignment="Right"/>
+			</StackPanel>
+		</DataTemplate>
+		<!-- Шаблон для Роботов -->
+		<DataTemplate x:Key="RobotListTmp">
+			<StackPanel Orientation="Horizontal">
+				<Label Content="{Binding Num}"
+					   Width="{Binding NumWidth}"
+					   Padding="0,2,3,2"
+					   Foreground="#888"
+					   FontWeight="Medium"
+					   HorizontalContentAlignment="Right"/>
+				<Label Content="{Binding Name}" Foreground="{Binding NameColor}" Padding="0,2"/>
+			</StackPanel>
+		</DataTemplate>
+		<!-- Шаблон для Лога -->
+		<DataTemplate x:Key="LogTmp">
+			<StackPanel Orientation="Horizontal">
+				<Label Content="{Binding DTime}" Width="103" Padding="0" FontSize="11" Foreground="#AAA"/>
+				<Label Content="{Binding Text}" Padding="0" Margin="0,1,0,0" FontSize="13" FontFamily="Courier New"/>
+			</StackPanel>
+		</DataTemplate>
+	</UserControl.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="41"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="41"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
 
-        <!-- ЗАГОЛОВОК -->
-        <StackPanel Grid.Row="0" Background="#D9E3EC">
-            <Separator Background="#C2CBD3" Margin="0"/>
-            <TextBlock Text="Реальная торговля роботами" Style="{StaticResource HeadName}"/>
-            <Separator Background="#C2CBD3" Margin="0"/>
-        </StackPanel>
+		<!-- ЗАГОЛОВОК -->
+		<StackPanel Grid.Row="0" Background="#D9E3EC">
+			<Separator Background="#C2CBD3" Margin="0"/>
+			<TextBlock Text="Реальная торговля роботами" Style="{StaticResource HeadName}"/>
+			<Separator Background="#C2CBD3" Margin="0"/>
+		</StackPanel>
 
-        <!-- ПОДКЛЮЧЕНИЕ, ГРАФИК, ЛОГ -->
-        <Grid Grid.Row="1" Margin="0,0,0,.5">
-            <TabControl BorderThickness="0"
-                        Background="#ECF3F8"
-                        Padding="0"
-                        Margin="0,5,0,0"
-                        SelectedIndex="0"
-                        SelectionChanged="MenuChanged">
-                <!-- Подключение -->
-                <TabItem>
-                    <TabItem.Header>Подключение</TabItem.Header>
-                    <TabItem.Content>
-                        <StackPanel Margin="8,6">
-                            <WrapPanel Margin="0,8,0,0">
-                                <Label Content="API ключ:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
-                                <TextBox Name="ApiKey" Width="250" Padding="4"/>
-                            </WrapPanel>
-                            <WrapPanel Margin="0,5,0,0">
-                                <Label Content="API секрет:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
-                                <PasswordBox Name="ApiSecret" Width="250" Padding="4"/>
-                            </WrapPanel>
-                            <WrapPanel Margin="0,5,0,0">
-                                <Label Content="Запрос:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
-                                <TextBox Name="ApiQueryTB" Width="250" Padding="4"/>
-                            </WrapPanel>
-                            <WrapPanel Margin="72,6,0,0">
-                                <Button Content="WSS start" Width="70" Height="25" Click="QueryGo"/>
-                                <Button Content="Subscribe" Width="80" Height="25" Click="QueryGo" Margin="10,0,0,0"/>
-                                <Button Content="Unsubscribe" Width="80" Height="25" Click="QueryGo" Margin="10,0,0,0"/>
-                            </WrapPanel>
-                            
-                            <TextBox Name="QueryResult"
-                                     Width="320"
-                                     Height="450"
-                                     Margin="0,10"
-                                     Padding="5"
-                                     FontSize="11"
-                                     FontFamily="Verdana"
-                                     HorizontalAlignment="Left"/>
-                        </StackPanel>
-                    </TabItem.Content>
-                </TabItem>
+		<!-- ПОДКЛЮЧЕНИЕ, ГРАФИК, ЛОГ -->
+		<Grid Grid.Row="1" Margin="0,0,0,.5">
+			<TabControl BorderThickness="0"
+						Background="#ECF3F8"
+						Padding="0"
+						Margin="0,5,0,0"
+						SelectedIndex="0"
+						SelectionChanged="MenuChanged">
+				<!-- Подключение -->
+				<TabItem>
+					<TabItem.Header>Подключение</TabItem.Header>
+					<TabItem.Content>
+						<StackPanel Margin="8,6">
+							<WrapPanel Margin="0,8,0,0">
+								<Label Content="API ключ:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
+								<TextBox Name="ApiKey" Width="250" Padding="4"/>
+							</WrapPanel>
+							<WrapPanel Margin="0,5,0,0">
+								<Label Content="API секрет:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
+								<PasswordBox Name="ApiSecret" Width="250" Padding="4"/>
+							</WrapPanel>
+							<WrapPanel Margin="72,6,0,0">
+								<Button Content="WSS open" Width="100" Height="25" Click="WssOpen"/>
+							</WrapPanel>
+						</StackPanel>
+					</TabItem.Content>
+				</TabItem>
 
-                <!-- Параметры и график -->
-                <TabItem>
-                    <TabItem.Header>Параметры</TabItem.Header>
-                    <TabItem.Content>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="75"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
+				<!-- Параметры и график -->
+				<TabItem>
+					<TabItem.Header>Параметры</TabItem.Header>
+					<TabItem.Content>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="75"/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
 
-                            <!-- Выбор инструмента и робота -->
-                            <StackPanel Grid.Row="0" Margin="8,8,0,0">
-                                <WrapPanel>
-                                    <Label Content="Инструмент:" Width="75" Style="{StaticResource LabelMain}"/>
-                                    <TextBlock Name="TradeIS" Text="выбрать" Padding="0,2"/>
-                                </WrapPanel>
-                                <WrapPanel Margin="0,7,0,0">
-                                    <Label Content="Робот:"
-                                               Width="75"
-                                               Padding="0,5,0,0"
-                                               Style="{StaticResource LabelMain}"/>
-                                    <ComboBox Name="RobotsListBox"
-                                                  Width="120"
-                                                  Height="26"
-                                                  ItemTemplate="{StaticResource RobotListTmp}"
-                                                  SelectionChanged="RobotListChanged"/>
-                                    <Button Name="RobotButton"
-                                                Content="Старт"
-                                                Width="50"
-                                                Margin="5,0"
-                                                Visibility="Hidden"
-                                                Click="RobotButtonGo"/>
-                                </WrapPanel>
-                            </StackPanel>
+							<!-- Выбор инструмента и робота -->
+							<StackPanel Grid.Row="0" Margin="8,8,0,0">
+								<WrapPanel>
+									<Label Content="Инструмент:" Width="75" Style="{StaticResource LabelMain}"/>
+									<TextBlock Name="TradeIS" Text="выбрать" Padding="0,2"/>
+								</WrapPanel>
+								<WrapPanel Margin="0,7,0,0">
+									<Label Content="Робот:"
+											   Width="75"
+											   Padding="0,5,0,0"
+											   Style="{StaticResource LabelMain}"/>
+									<ComboBox Name="RobotsListBox"
+												  Width="120"
+												  Height="26"
+												  ItemTemplate="{StaticResource RobotListTmp}"
+												  SelectionChanged="RobotListChanged"/>
+									<Button Name="RobotButton"
+												Content="Старт"
+												Width="50"
+												Margin="5,0"
+												Visibility="Hidden"
+												Click="RobotButtonGo"/>
+								</WrapPanel>
+							</StackPanel>
 
-                            <!-- График -->
-                            <Grid Grid.Row="1" Background="#222">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="220"/>
-                                    <ColumnDefinition Width="203"/>
-                                </Grid.ColumnDefinitions>
+							<!-- График -->
+							<Grid Grid.Row="1" Background="#222">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition/>
+									<ColumnDefinition Width="220"/>
+									<ColumnDefinition Width="203"/>
+								</Grid.ColumnDefinitions>
 
-                                <!-- График -->
-                                <Entity:ChartUC x:Name="EChart" Grid.Column="0"/>
+								<!-- График -->
+								<Entity:ChartUC x:Name="EChart" Grid.Column="0"/>
 
-                                <!-- СТАКАН (книга ордеров) -->
-                                <Grid Grid.Column="1" Background="#555">
-                                    <Grid Name="DepthPanel" Background="#222" Margin="1,0,0,0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="24"/>
-                                            <RowDefinition/>
-                                            <RowDefinition Height="30"/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
+								<!-- СТАКАН (книга ордеров) -->
+								<Grid Grid.Column="1" Background="#555">
+									<Grid Name="DepthPanel" Background="#222" Margin="1,0,0,0">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="24"/>
+											<RowDefinition/>
+											<RowDefinition Height="30"/>
+											<RowDefinition/>
+										</Grid.RowDefinitions>
 
-                                        <!-- Заголовок -->
-                                        <WrapPanel Grid.Row="0" Name="HeadPanel">
-                                            <Label Name="DepthHeadPrice"  Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="4,5,0,0"/>
-                                            <Label Name="DepthHeadQty"    Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
-                                            <Label Name="DepthHeadAmount" Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
-                                        </WrapPanel>
+										<!-- Заголовок -->
+										<WrapPanel Grid.Row="0" Name="HeadPanel">
+											<Label Name="DepthHeadPrice"  Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="4,5,0,0"/>
+											<Label Name="DepthHeadQty"    Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
+											<Label Name="DepthHeadAmount" Padding="0" FontSize="11" Foreground="#ADB1B8" Width="70" Margin="0,5,0,0" HorizontalContentAlignment="Right"/>
+										</WrapPanel>
 
-                                        <!-- Ask -->
-                                        <ListBox Grid.Row="1"
-                                                     Name="DepthSellListBox"
-                                                     Width="219"
-                                                     HorizontalAlignment="Left"
-                                                     VerticalAlignment="Bottom"
-                                                     Background="Transparent"
-                                                     BorderThickness="0"
-                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                                     ItemTemplate="{StaticResource DepthItemTmp}"/>
+										<!-- Ask -->
+										<ListBox Grid.Row="1"
+													 Name="DepthSellListBox"
+													 Width="219"
+													 HorizontalAlignment="Left"
+													 VerticalAlignment="Bottom"
+													 Background="Transparent"
+													 BorderThickness="0"
+													 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+													 ItemTemplate="{StaticResource DepthItemTmp}"/>
 
-                                        <!-- Текущая цена -->
-                                        <StackPanel Grid.Row="2" Name="PricePanel">
-                                            <Separator Background="#555" Margin="0"/>
-                                            <TextBlock Name="DepthPrice"
-                                                           Foreground="#EF454A"
-                                                           FontSize="15"
-                                                           FontWeight="Bold"
-                                                           Margin="5,4"/>
-                                            <Separator Background="#555" Margin="0"/>
-                                        </StackPanel>
+										<!-- Текущая цена -->
+										<StackPanel Grid.Row="2" Name="PricePanel">
+											<Separator Background="#555" Margin="0"/>
+											<TextBlock Name="DepthPrice"
+														   Foreground="#EF454A"
+														   FontSize="15"
+														   FontWeight="Bold"
+														   Margin="5,4"/>
+											<Separator Background="#555" Margin="0"/>
+										</StackPanel>
 
-                                        <!-- Bid -->
-                                        <ListBox Grid.Row="3"
-                             Name="DepthBuyListBox"
-                             Width="219"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Top"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                             ItemTemplate="{StaticResource DepthItemTmp}"/>
-                                    </Grid>
-                                </Grid>
+										<!-- Bid -->
+										<ListBox Grid.Row="3"
+							 Name="DepthBuyListBox"
+							 Width="219"
+							 HorizontalAlignment="Left"
+							 VerticalAlignment="Top"
+							 Background="Transparent"
+							 BorderThickness="0"
+							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+							 ItemTemplate="{StaticResource DepthItemTmp}"/>
+									</Grid>
+								</Grid>
 
-                                <!-- СДЕЛКИ -->
-                                <Grid Grid.Column="2" Background="#888">
-                                    <Grid Name="TradePanel" Background="#222" Margin="2,0,1,0">
-                                        <ListBox Grid.Row="0"
-                                                     Name="TradeListBox"
-                                                     Width="200"
-                                                     HorizontalAlignment="Left"
-                                                     VerticalAlignment="Top"
-                                                     Background="Transparent"
-                                                     BorderThickness="0"
-                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                                     ItemTemplate="{StaticResource TradeItemTmp}"/>
-                                    </Grid>
-                                </Grid>
+								<!-- СДЕЛКИ -->
+								<Grid Grid.Column="2" Background="#888">
+									<Grid Name="TradePanel" Background="#222" Margin="2,0,1,0">
+										<ListBox Grid.Row="0"
+													Name="TradeListBox"
+													Width="200"
+													HorizontalAlignment="Left"
+													VerticalAlignment="Top"
+													Background="Transparent"
+													BorderThickness="0"
+													ScrollViewer.VerticalScrollBarVisibility="Disabled"
+													ItemTemplate="{StaticResource TradeItemTmp}"/>
+									</Grid>
+								</Grid>
 
-                            </Grid>
-                        </Grid>
-                    </TabItem.Content>
-                </TabItem>
+							</Grid>
+						</Grid>
+					</TabItem.Content>
+				</TabItem>
 
-                <!-- Лог -->
-                <TabItem>
-                    <TabItem.Header>Log</TabItem.Header>
-                    <TabItem.Content>
-                        <ListBox Name="LogList" Margin="5" ItemTemplate="{StaticResource LogTmp}"/>
-                    </TabItem.Content>
-                </TabItem>
+				<!-- Лог -->
+				<TabItem>
+					<TabItem.Header>Log</TabItem.Header>
+					<TabItem.Content>
+						<ListBox Name="LogList" Margin="5" ItemTemplate="{StaticResource LogTmp}"/>
+					</TabItem.Content>
+				</TabItem>
 
-                <!-- Статический лог -->
-                <TabItem>
-                    <TabItem.Header>Static Log</TabItem.Header>
-                    <TabItem.Content>
-                        <TextBox Name="StaticLogBox"
-                                     Margin="5"
-                                     IsReadOnly="True"
-                                     AcceptsReturn="True"
-                                     BorderBrush="#E0E0D1"
-                                     Padding="5,7"
-                                     FontSize="13"
-                                     FontFamily="Courier New"/>
-                    </TabItem.Content>
-                </TabItem>
+				<!-- Статический лог -->
+				<TabItem>
+					<TabItem.Header>Static Log</TabItem.Header>
+					<TabItem.Content>
+						<TextBox Name="StaticLogBox"
+									 Margin="5"
+									 IsReadOnly="True"
+									 AcceptsReturn="True"
+									 BorderBrush="#E0E0D1"
+									 Padding="5,7"
+									 FontSize="13"
+									 FontFamily="Courier New"/>
+					</TabItem.Content>
+				</TabItem>
 
-            </TabControl>
-        </Grid>
-    </Grid>
+			</TabControl>
+		</Grid>
+	</Grid>
 </UserControl>

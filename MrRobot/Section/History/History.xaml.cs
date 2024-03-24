@@ -39,6 +39,11 @@ namespace MrRobot.Section
 		}
 
 
+		// Открытие окна с подробностями об инструментах BYBIT Spot
+		void MarketsShow(object s, MouseButtonEventArgs e) => new Markets_SPOT().ShowDialog();
+
+
+
 		ISunit IS { get; set; }
 		SpisokUnit IUnit => IS.IUnit;
 
@@ -260,8 +265,5 @@ namespace MrRobot.Section
 		/// Нажатие на крестик удаления загруженной истории
 		/// </summary>
 		void DownloadedX(object sender, MouseButtonEventArgs e) => Candle.UnitDel((sender as Label).TabIndex);
-
-		// Открытие окна с подробностями об инструментах BYBIT Spot
-		void MarketsShow(object s, MouseButtonEventArgs e) => new Markets_SPOT().ShowDialog();
 	}
 }

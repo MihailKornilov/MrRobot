@@ -41,10 +41,17 @@
 
 		<Style TargetType="Button">
 			<Setter Property="Cursor" Value="Hand"/>
-			<Setter Property="Foreground" Value="#3C5A6D"/>
-			<Setter Property="Background" Value="#AACEE3"/>
-			<Setter Property="BorderBrush" Value="#7EACC7"/>
-		</Style>
+            <Setter Property="Foreground" Value="#3C5A6D"/>
+            <Setter Property="Background" Value="#AACEE3"/>
+            <Setter Property="BorderBrush" Value="#7EACC7"/>
+        </Style>
+
+        <!-- Зелёная кнопка -->
+		<Style x:Key="ButtonGreen" TargetType="Button">
+            <Setter Property="Foreground" Value="#3C6D5A"/>
+            <Setter Property="Background" Value="#AAE3CE"/>
+            <Setter Property="BorderBrush" Value="#7EC7AC"/>
+        </Style>
 
 		<Style TargetType="Line">
 			<Setter Property="Cursor" Value="Hand"/>
