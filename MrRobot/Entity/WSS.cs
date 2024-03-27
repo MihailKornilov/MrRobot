@@ -112,7 +112,7 @@ namespace MrRobot.Entity
 					dynamic json = JsonConvert.DeserializeObject(RecMsg);
 					DataNew(json);
 					isConcat = false;
-					WriteLine($"{RecMsg.Length}:	{RecMsg}");
+					//WriteLine($"{RecMsg.Length}:	{RecMsg}");
 				}
 				catch (Exception ex)
 				{
