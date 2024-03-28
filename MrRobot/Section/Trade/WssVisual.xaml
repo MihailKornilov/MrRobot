@@ -12,16 +12,6 @@
 		Top="0"
 		Background="#D5E4EE">
 
-    <Window.Resources>
-        <Style x:Key="DepthLBL" TargetType="Label">
-            <Setter Property="Margin" Value="0"/>
-            <Setter Property="Padding" Value="5,0,0,0"/>
-            <Setter Property="FontSize" Value="7"/>
-            <Setter Property="FontFamily" Value="Verdana"/>
-            <Setter Property="HorizontalContentAlignment" Value="Right"/>
-        </Style>
-    </Window.Resources>
-
 	<Grid Background="AliceBlue" Margin="0,1,0,0">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="330"/>
@@ -74,6 +64,7 @@
             </WrapPanel>
         </StackPanel>
 
+        <!-- Стакан -->
         <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
             <StackPanel Name="DepthPanel"/>
         </ScrollViewer>

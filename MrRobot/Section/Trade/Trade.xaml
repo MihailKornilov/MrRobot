@@ -112,7 +112,13 @@
 							<WrapPanel Margin="72,6,0,0">
 								<Button Content="WSS open" Width="100" Height="25" Click="WssOpen"/>
 							</WrapPanel>
-						</StackPanel>
+                            <Button Content="OBT open"
+                                    Width="100"
+                                    Height="25"
+                                    Margin="72,30,0,0"
+                                    HorizontalAlignment="Left"
+                                    Click="ObtOpen"/>
+                        </StackPanel>
 					</TabItem.Content>
 				</TabItem>
 

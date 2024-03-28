@@ -90,6 +90,11 @@ namespace MrRobot.inc
 			elem.Visibility = Visibility.Collapsed;
 
 
+		// Программное нажатие на кнопку
+		public static void ButtonClick(Button but) =>
+			but.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+
 		// ---=== Entities приложения ===---
 		public static Exchange Exchange { get; set; }
 
@@ -116,6 +121,7 @@ namespace MrRobot.inc
 		public static InstrumentSelect ISPanel { get; set; }
 
 		public static WssVisual WssVisual { get; set; }
+		public static ObtPlay ObtPlay { get; set; }
 	}
 
 

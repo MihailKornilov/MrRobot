@@ -42,10 +42,13 @@ namespace MrRobot.Section
 
 
 		/// <summary>
-		/// Открытие окна WebStream
+		/// Открытие окна WebStream для записи стакана и сделок
 		/// </summary>
 		void WssOpen(object s, RoutedEventArgs e) =>
 			new WssVisual().ShowDialog();
+
+		void ObtOpen(object s, RoutedEventArgs e) =>
+			new ObtPlay().ShowDialog();
 
 
 

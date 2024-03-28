@@ -223,6 +223,9 @@
       <DependentUpon>Tester.xaml</DependentUpon>
     </Compile>
     <Compile Include="Section\Trade\Depth.cs" />
+    <Compile Include="Section\Trade\ObtPlay.xaml.cs">
+      <DependentUpon>ObtPlay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Section\Trade\TradeRobotBind.cs" />
     <Compile Include="Section\Trade\Trade.xaml.cs">
       <DependentUpon>Trade.xaml</DependentUpon>
@@ -322,6 +325,10 @@
     <Page Include="Section\Tester\Tester.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Section\Trade\ObtPlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Section\Trade\Trade.xaml">
       <Generator>MSBuild:Compile</Generator>

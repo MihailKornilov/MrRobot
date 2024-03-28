@@ -401,7 +401,18 @@
 		</Style>
 
 
-	</Application.Resources>
+
+        <!-- Стили стакана WSS -->
+        <Style x:Key="DepthLBL" TargetType="Label">
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="5,0,0,0"/>
+            <Setter Property="FontSize" Value="8"/>
+            <Setter Property="FontFamily" Value="Verdana"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+        </Style>
+
+    </Application.Resources>
 </Application>
 
 

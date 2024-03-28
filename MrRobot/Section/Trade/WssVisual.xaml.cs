@@ -9,12 +9,11 @@ using static System.Console;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
-using System.Windows.Documents;
 
 namespace MrRobot.Section
 {
 	/// <summary>
-	/// Логика взаимодействия для WssVisual.xaml
+	/// Запись стакана и сделок в базу
 	/// </summary>
 	public partial class WssVisual : Window
 	{
@@ -28,8 +27,15 @@ namespace MrRobot.Section
 			CheckOB50.IsChecked = CheckOB50Pos;
 			CheckTrade.IsChecked = CheckTradePos;
 
-			var args = new RoutedEventArgs(Button.ClickEvent);
-			WssOpenBut.RaiseEvent(args);
+			new DepthScroll(DepthPanel.Parent);
+			G.ButtonClick(WssOpenBut);
+
+			// Отписка перед закрытием
+			Closed += (s, e) =>
+			{
+				if (SubscrBut.Content.ToString() != "Подписка")
+					G.ButtonClick(SubscrBut);
+			};
 		}
 		string SymbolPos
 		{
@@ -115,6 +121,8 @@ namespace MrRobot.Section
 			Snapshot(json);
 			Delta(json);
 			PublicTrade(json);
+			DepthScroll.Upd();
+			OBTdb.Insert();
 		}
 
 		void Snapshot(dynamic json)
@@ -124,7 +132,7 @@ namespace MrRobot.Section
 			if (json.type != "snapshot")
 				return;
 
-			long cts = json.cts;
+			long ts = json.cts;
 			var Ask = json.data.a;
 			var Bid = json.data.b;
 
@@ -144,31 +152,32 @@ namespace MrRobot.Section
 			foreach (var v in Bid)
 				BidASS.Add((decimal)v[0], (decimal)v[1]);
 
+			var row = OBTdb.RowCreate(ts);
 			for (decimal price = OBunit.PriceMax; price >= OBunit.PriceMin; price -= OBunit.Step)
 			{
 				decimal vol = 0;
 				var type = DepthType.Spred;
 
 				if (AskASS.ContainsKey(price))
+				{
 					vol = AskASS[price];
+					row.Ask.Add($"{price},{vol}");
+				}
 				if (price > OBunit.PriceAskF)
 					type = DepthType.Ask;
 
 				if (BidASS.ContainsKey(price))
+				{
 					vol = BidASS[price];
+					row.Bid.Add($"{price},{vol}");
+				}
 				if (price < OBunit.PriceBidF)
 					type = DepthType.Bid;
 
 				var unit = new OBunit(price, vol, type);
 				OBunit.puASS.Add(price, unit);
 				DepthPanel.Children.Add(unit.WP);
-				unit.DBinsert(cts);
 			}
-
-			//var PF = OBunit.PriceAskF;
-			//WriteLine($"ask	{PF}: {OBunit.puASS[PF].Volume}");
-			//PF = OBunit.PriceBidF;
-			//WriteLine($"bid	{PF}: {OBunit.puASS[PF].Volume}");
 		}
 
 		// Расширение стакана с ценами вверх, если появилась более высокая цена
@@ -275,7 +284,7 @@ namespace MrRobot.Section
 			if (json.type != "delta")
 				return;
 
-			long cts = json.cts;
+			long ts = json.cts;
 			var ask = json.data.a;
 			var bid = json.data.b;
 
@@ -289,12 +298,15 @@ namespace MrRobot.Section
 			//WriteLine(DeltaTestA(ask));
 			//WriteLine(DeltaTestB(bid));
 
-			if(isAsk)
+			var row = OBTdb.RowCreate(ts);
+
+			if (isAsk)
 				for(int i = ask.Count-1; i >= 0; i--)
 				{
 					decimal price = ask[i][0];
 					decimal vol = ask[i][1];
-					OBunit.puASS[price].VolumeUpd(vol, cts);
+					OBunit.puASS[price].VolumeUpd(vol);
+					row.Ask.Add($"{price},{vol}");
 				}
 
 			if(isBid)
@@ -302,7 +314,8 @@ namespace MrRobot.Section
 				{
 					decimal price = bid[i][0];
 					decimal vol = bid[i][1];
-					OBunit.puASS[price].VolumeUpd(vol, cts);
+					OBunit.puASS[price].VolumeUpd(vol);
+					row.Bid.Add($"{price},{vol}");
 				}
 
 
@@ -331,53 +344,54 @@ namespace MrRobot.Section
 				}
 			}
 
-			if(ffChanged)
-				return;
-
-
-			if (isAsk)
+			if (!ffChanged)
 			{
-				decimal price = ask[0][0];
-				decimal vol = ask[0][1];
-				if (OBunit.PriceAskF == price)
+				if (isAsk)
 				{
-					if (vol == 0)
+					decimal price = ask[0][0];
+					decimal vol = ask[0][1];
+					if (OBunit.PriceAskF == price)
 					{
-						// Цена отлетела наверх
-						decimal p = OBunit.PriceAskF;
-						while (OBunit.puASS[p].Volume == 0)
-							p += OBunit.Step;
+						if (vol == 0)
+						{
+							// Цена отлетела наверх
+							decimal p = OBunit.PriceAskF;
+							while (OBunit.puASS[p].Volume == 0)
+								p += OBunit.Step;
 
-						OBunit.PriceAskF = p;
+							OBunit.PriceAskF = p;
+						}
 					}
-				}
-				else
-					if (OBunit.PriceAskF > price)
+					else
+						if (OBunit.PriceAskF > price)
 						OBunit.PriceAskF = price;
-			}
-
-
-			if (isBid)
-			{
-				decimal price = bid[0][0];
-				decimal vol = bid[0][1];
-				if (OBunit.PriceBidF == price)
-				{
-					if (vol == 0)
-					{
-						// Цена провалилась вниз
-						decimal p = OBunit.PriceBidF;
-						while (OBunit.puASS[p].Volume == 0)
-							p -= OBunit.Step;
-
-						OBunit.PriceBidF = p;
-					}
 				}
-				else
-					// Цена отскочила вверх
-					if (OBunit.PriceBidF < price)
+
+				if (isBid)
+				{
+					decimal price = bid[0][0];
+					decimal vol = bid[0][1];
+					if (OBunit.PriceBidF == price)
+					{
+						if (vol == 0)
+						{
+							// Цена провалилась вниз
+							decimal p = OBunit.PriceBidF;
+							while (OBunit.puASS[p].Volume == 0)
+								p -= OBunit.Step;
+
+							OBunit.PriceBidF = p;
+						}
+					}
+					else
+						// Цена отскочила вверх
+						if (OBunit.PriceBidF < price)
 						OBunit.PriceBidF = price;
+				}
 			}
+
+			row.askPriceF = OBunit.PriceAskF;
+			row.bidPriceF = OBunit.PriceBidF;
 		}
 		void PublicTrade(dynamic json)
 		{
@@ -388,8 +402,11 @@ namespace MrRobot.Section
 
 			foreach(var v in json.data)
 			{
-				int dir = v.S == "Buy" ? 1 : 0;
-				OBTdb.RowAdd($"({v.T},1,{dir},{v.p},{v.v})");
+				long ts = v.T;
+				decimal price = v.p;
+				decimal vol = v.v;
+				var row = OBTdb.RowCreate(ts);
+				row.TradeAdd(v.S == "Buy", price, vol);
 			}
 		}
 	}
@@ -402,13 +419,13 @@ namespace MrRobot.Section
 	{
 		public OBunit(decimal price, decimal vol = 0, DepthType type = DepthType.Spred)
 		{
-			Price = price;
+			Price = Math.Round(price, Decimals);
 			Volume = vol;
 			Type = type;
 			WPcreate();
 		}
 
-		// Очистка статический переменных
+		// Очистка статических переменных
 		public static void StaticClear()
 		{
 			puASS = new Dictionary<decimal, OBunit>();
@@ -418,16 +435,18 @@ namespace MrRobot.Section
 			PriceMin = 0;
 		}
 		public static Dictionary<decimal, OBunit> puASS { get; set; }
-		static decimal _Step;
-		public static decimal Step {
-			get => _Step;
+
+		static int _Decimals;
+		public static int Decimals
+		{
+			get => _Decimals;
 			set
 			{
-				if(value == 0)
-					throw new Exception("OBunit.Step не может равен 0.");
-				_Step = value;
+				_Decimals = value;
+				Step = (decimal)1 / format.Exp(value);
 			}
 		}
+		public static decimal Step { get; private set; }
 		public static decimal PriceMax { get; set; }
 		static decimal _askF;
 		public static decimal PriceAskF
@@ -501,6 +520,7 @@ namespace MrRobot.Section
 		}
 		public static decimal PriceMin { get; set; }
 
+		public decimal Price { get; set; }
 
 		DepthType _Type;
 		public DepthType Type
@@ -525,14 +545,11 @@ namespace MrRobot.Section
 		public decimal Volume { get; set; }
 		string VolumeStr =>
 			Volume == 0 ? "" : Volume.ToString();
-		public void VolumeUpd(decimal vol, long cts)
+		public void VolumeUpd(decimal vol)
 		{
 			Volume = vol;
 			(WP.Children[0] as Label).Content = VolumeStr;
-			DBinsert(cts);
 		}
-
-		public decimal Price { get; set; }
 
 		public WrapPanel WP { get; set; }
 		// Создание строки с ценой и объёмом для стакана
@@ -544,13 +561,13 @@ namespace MrRobot.Section
 			var lb = new Label();
 			lb.Width = 80;
 			lb.Content = VolumeStr;
-			lb.Style = G.WssVisual.Resources["DepthLBL"] as Style;
+			lb.Style = Application.Current.Resources["DepthLBL"] as Style;
 			WP.Children.Add(lb);
 
 			lb = new Label();
 			lb.Width = 62;
 			lb.Content = Price;
-			lb.Style = G.WssVisual.Resources["DepthLBL"] as Style;
+			lb.Style = Application.Current.Resources["DepthLBL"] as Style;
 			WP.Children.Add(lb);
 		}
 
@@ -569,20 +586,6 @@ namespace MrRobot.Section
 			}
 			WP.Background = format.RGB(bg);
 		}
-
-		// Внесение данных в базу
-		public void DBinsert(long cts)
-		{
-			int dir = 0;
-			switch (Type)
-			{
-				case DepthType.Spred: return;
-				case DepthType.Ask:
-				case DepthType.AskFirst: dir = 1; break;
-			}
-
-			OBTdb.RowAdd($"({cts},0,{dir},{Price},{Volume})");
-		}
 	}
 
 	/// <summary>
@@ -593,60 +596,250 @@ namespace MrRobot.Section
 		public delegate void INF(int c);
 		public static INF Info { get; set; }
 
-
 		public OBTdb(string symbol)
 		{
 			dynamic info = BYBIT.LinearInfo(symbol);
-			int priceScale = info.priceScale;
-			OBunit.Step = (decimal)1 / format.Exp(priceScale);
+			OBunit.Decimals = format.Decimals((decimal)info.priceFilter.tickSize);
+			int qtyDecimals = format.Decimals((decimal)info.lotSizeFilter.qtyStep);
 
-			decimal qtyStep = info.lotSizeFilter.qtyStep;
-			int step = format.Decimals(qtyStep);
+			Table = $"bybit_linear_{symbol}".ToLower();
 
-			Table = $"obt_{symbol}".ToLower();
-			Rows = new List<string>();
-
-			my.Obt.Query($"DROP TABLE IF EXISTS `{Table}`");
+			my.Obt.Query($"DROP TABLE IF EXISTS`{Table}`");
 
 			string sql =
 				$"CREATE TABLE`{Table}`(" +
 					"`id` INT UNSIGNED NOT NULL AUTO_INCREMENT," +
+				   $"`priceDecimals` TINYINT UNSIGNED DEFAULT {OBunit.Decimals}," +
+				   $"`volDecimals` TINYINT UNSIGNED DEFAULT {qtyDecimals}," +
 					"`ts` BIGINT UNSIGNED DEFAULT 0," +
-					"`act` TINYINT(1) UNSIGNED DEFAULT 0," +
-					"`dir` TINYINT(1) UNSIGNED DEFAULT 0," +
-				   $"`price` DECIMAL(20,{priceScale}) UNSIGNED DEFAULT 0," +
-				   $"`vol`   DECIMAL(20,{step}) UNSIGNED DEFAULT 0," +
+					"`allCount` INT UNSIGNED DEFAULT 0," +
+					"`askCount` INT UNSIGNED DEFAULT 0," +
+					"`bidCount` INT UNSIGNED DEFAULT 0," +
+					"`tradeCount` INT UNSIGNED DEFAULT 0," +
+					"`ask`TEXT," +
+					"`bid`TEXT," +
+					"`trade`TEXT," +
+				   $"`askPriceF` DECIMAL(20,{OBunit.Decimals}) UNSIGNED DEFAULT 0," +
+				   $"`bidPriceF` DECIMAL(20,{OBunit.Decimals}) UNSIGNED DEFAULT 0," +
+				   $"`tradePriceMin` DECIMAL(20,{OBunit.Decimals}) UNSIGNED DEFAULT 0," +
+				   $"`tradePriceMax` DECIMAL(20,{OBunit.Decimals}) UNSIGNED DEFAULT 0," +
+					"`tradePn` INT UNSIGNED DEFAULT 0," +
 					"PRIMARY KEY (`id`)" +
-				") ENGINE =MyISAM DEFAULT CHARSET=cp1251;";
+				") ENGINE=MyISAM DEFAULT CHARSET=cp1251";
 			my.Obt.Query(sql);
 
-			RowsAll = 0;
+			InsertedRows = 0;
 			Info = null;
+			ASS = new Dictionary<long, Row>();
+			isBusy = false;
 		}
 		static string Table { get; set; }
-		static int Count => 500;// Количество записей, которые вносятся за раз
-		static int RowsAll { get; set; }		// Всего внесено записай
-		static List<string> Rows { get; set; }	// Список готовых записей для объединения в один запрос
-		public static void RowAdd(string row)
-		{
-			Rows.Add(row);
 
-			if (Rows.Count < Count)
+
+		static Dictionary<long, Row> ASS { get; set; }
+		public static Row RowCreate(long ts) =>
+			ASS.ContainsKey(ts) ? ASS[ts] : new Row(ts);
+		public class Row
+		{
+			public Row(long ts)
+			{
+				Ts = ts;
+				Ask = new List<string>();
+				Bid = new List<string>();
+				askPriceF = OBunit.PriceAskF;
+				bidPriceF = OBunit.PriceBidF;
+				TradeBuy = new Dictionary<decimal, decimal>();
+				TradeSell = new Dictionary<decimal, decimal>();
+				_tradePriceMin = 0;
+				_tradePriceMax = 0;
+				ASS.Add(ts, this);
+			}
+
+			long Ts { get; set; }
+			public List<string> Ask { get; set; }
+			public List<string> Bid { get; set; }
+			public decimal askPriceF { get; set; }
+			public decimal bidPriceF { get; set; }
+
+			decimal _tradePriceMin;
+			decimal TradePriceMin
+			{
+				get => _tradePriceMin;
+				set
+				{
+					if(_tradePriceMin == 0 || _tradePriceMin > value)
+						_tradePriceMin = value;
+				}
+			}
+			decimal _tradePriceMax;
+			decimal TradePriceMax
+			{
+				get => _tradePriceMax;
+				set
+				{
+					if (_tradePriceMax == 0 || _tradePriceMax < value)
+						_tradePriceMax = value;
+				}
+			}
+			int TradePn => (int)((TradePriceMax - TradePriceMin) * OBunit.Decimals);
+
+			Dictionary<decimal, decimal> TradeBuy { get; set; }
+			Dictionary<decimal, decimal> TradeSell { get; set; }
+			public void TradeAdd(bool dir, decimal p, decimal v)
+			{
+				TradePriceMin = p;
+				TradePriceMax = p;
+
+				if (dir)
+				{
+					if (!TradeBuy.ContainsKey(p))
+						TradeBuy.Add(p, v);
+					else
+						TradeBuy[p] += v;
+					return;
+				}
+
+				if (!TradeSell.ContainsKey(p))
+					TradeSell.Add(p, v);
+				else
+					TradeSell[p] += v;
+			}
+
+			// Получение строки для внесения в базу
+			public string Get()
+			{
+				int tradeCount = TradeBuy.Count + TradeSell.Count;
+				int allCount = Ask.Count + Bid.Count + tradeCount;
+
+				var trade = new List<string>();
+				foreach(var t in TradeBuy)
+					trade.Add($"1,{t.Key},{t.Value}");
+				foreach(var t in TradeSell)
+					trade.Add($"0,{t.Key},{t.Value}");
+
+				return "(" +
+					$"{Ts}," +
+					$"{allCount}," +
+					$"{Ask.Count}," +
+					$"{Bid.Count}," +
+					$"{tradeCount}," +
+					$"'{string.Join(";", Ask.ToArray())}'," +
+					$"'{string.Join(";", Bid.ToArray())}'," +
+					$"'{string.Join(";", trade.ToArray())}'," +
+					$"{askPriceF}," +
+					$"{bidPriceF}," +
+					$"{TradePriceMin}," +
+					$"{TradePriceMax}," +
+					$"{TradePn}" +
+				")";
+			}
+		}
+
+		static int InsertAtOnce => 100;			// Количество записей, которые вносятся за раз
+		static int InsertedRows { get; set; }	// Всего внесено записей
+		static bool isBusy { get; set; }
+		async public static void Insert()
+		{
+			if (isBusy)
+				return;
+			if (ASS.Count < InsertAtOnce + 5)
 				return;
 
-			RowsAll += Rows.Count;
+			isBusy = true;
 
-			string sql = $"INSERT INTO`{Table}`" +
-							"(`ts`,`act`,`dir`,`price`,`vol`)" +
-						  "VALUES" +
-						   $"{string.Join(",", Rows.ToArray())}";
-			Rows.Clear();
-			Insert(sql);
+			var tss = new List<long>();
+			foreach (var a in ASS)
+			{
+				tss.Add(a.Key);
+				if (tss.Count >= InsertAtOnce)
+					break;
+			}
+			await Task.Run(() =>
+			{
+				var list = new List<string>();
+				foreach (var ts in tss)
+				{
+					list.Add(ASS[ts].Get());
+					ASS.Remove(ts);
+				}
 
-			Info?.Invoke(RowsAll);
+				var sql =
+					$"INSERT INTO`{Table}`(" +
+						"`ts`," +
+						"`allCount`," +
+						"`askCount`," +
+						"`bidCount`," +
+						"`tradeCount`," +
+						"`ask`," +
+						"`bid`," +
+						"`trade`," +
+						"`askPriceF`," +
+						"`bidPriceF`," +
+						"`tradePriceMin`," +
+						"`tradePriceMax`," +
+						"`tradePn`" +
+					 ")" +
+					$"VALUES{string.Join(",", list.ToArray())}";
+				my.Obt.Query(sql);
+			});
+
+			InsertedRows += tss.Count;
+			Info?.Invoke(InsertedRows);
+			isBusy = false;
 		}
-		async static void Insert(string sql) =>
-			await Task.Run(() => my.Obt.Query(sql));
+	}
+
+
+	public class DepthScroll
+	{
+		public DepthScroll(DependencyObject scroll)
+		{
+			TopLast = 0;
+			isBusy = false;
+			Scroll = scroll as ScrollViewer;
+		}
+
+		static ScrollViewer Scroll { get; set; }
+		static int TopLast { get; set; }
+		static bool isBusy { get; set; }
+		async public static void Upd()
+		{
+			if (isBusy)
+				return;
+
+			int ask = (int)((OBunit.PriceMax - OBunit.PriceAskF) / OBunit.Step);
+			int spred = (int)((OBunit.PriceAskF - OBunit.PriceBidF) / OBunit.Step / 2);
+			int top = (ask + spred) * 10 - 500;
+
+			if (top < 0)
+				top = 0;
+
+			if (TopLast == top)
+				return;
+			if (Math.Abs(TopLast - top) < 450)
+				return;
+
+			isBusy = true;
+			var prgs = new Progress<int>(v => Scroll.ScrollToVerticalOffset(v));
+			await Task.Run(() => UpdProcess(prgs, top));
+			TopLast = top;
+			isBusy = false;
+		}
+		static void UpdProcess(IProgress<int> prgs, int top)
+		{
+			int step = 30;
+			int count = Math.Abs(TopLast - top) / step;
+			int start = TopLast;
+			if (TopLast > top)
+				step *= -1;
+			while (count > 0)
+			{
+				count--;
+				start += step;
+				prgs.Report(start);
+				Task.Delay(7).Wait();
+			}
+		}
 	}
 
 	public enum DepthType

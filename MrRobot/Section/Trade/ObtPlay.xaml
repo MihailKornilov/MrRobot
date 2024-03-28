@@ -1,0 +1,61 @@
+﻿<Window x:Class="MrRobot.Section.ObtPlay"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+
+		Title="ObtPlay"
+		Width="1100"
+		Height="1055"
+		Left="810"
+		Top="0"
+		Background="#D5E4EE">
+
+    <Grid Background="AliceBlue" Margin="0,1,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="180"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="10">
+            <TextBlock Text="Таблицы с данными:" Foreground="#888"/>
+            <WrapPanel>
+                <ComboBox Name="TableCB" Width="150" SelectionChanged="TableChange"/>
+                <TextBlock Name="PrgsTB" FontSize="16" Margin="5,0,0,0" Foreground="#292"/>
+            </WrapPanel>
+            <WrapPanel Margin="0,10,0,0" Visibility="{Binding RowsCountVis}">
+                <TextBlock Text="Всего записей:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <TextBlock Text="{Binding RowsCountStr}"/>
+            </WrapPanel>
+            <WrapPanel Visibility="{Binding InfoVis}">
+                <TextBlock Text="Стакан:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <TextBlock Text="{Binding DepthCountStr}"/>
+            </WrapPanel>
+            <WrapPanel Visibility="{Binding InfoVis}">
+                <TextBlock Text="Сделки:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <TextBlock Text="{Binding TradeCountStr}"/>
+            </WrapPanel>
+
+            <StackPanel Visibility="{Binding InfoVis}" Margin="0,20,0,0">
+                <Label Content="{Binding TsCur}"
+                       Width="120"
+                       Padding="0"
+                       FontSize="13"
+                       Foreground="#AAA"
+                       HorizontalContentAlignment="Center"/>
+                <Button Content="{Binding TsNext}"
+                        Width="120"
+                        FontSize="13"
+                        Margin="0,5,0,0"
+                        Click="Delta"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Стакан -->
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="DepthPanel"/>
+        </ScrollViewer>
+    </Grid>
+</Window>
