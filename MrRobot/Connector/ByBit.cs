@@ -144,38 +144,65 @@ namespace MrRobot.Connector
 
 
 
-		/*
-		"symbol":"DOTUSDT",
-		"contractType":"LinearPerpetual",
-		"status":"Trading",
-		"baseCoin":"DOT",
-		"quoteCoin":"USDT",
-		"launchTime":"1616060040000",
-		"deliveryTime":"0",
-		"deliveryFeeRate":"",
-		"priceScale":"3",
-		"leverageFilter":
-			"minLeverage":"1",
-			"maxLeverage":"50.00",
-			"leverageStep":"0.01"
-		"priceFilter":{
-			"minPrice":"0.001",
-			"maxPrice":"1999.998",
-			"tickSize":"0.001"},
-		"lotSizeFilter":{
-			"maxOrderQty":"91420.0",
-			"minOrderQty":"0.1",
-			"qtyStep":"0.1",
-			"postOnlyMaxOrderQty":"91420.0",
-			"maxMktOrderQty":"32900.0"},
-		"unifiedMarginTrade":true,
-		"fundingInterval":480,
-		"settleCoin":"USDT",
-		"copyTrading":"both",
-		"upperFundingRate":"0.0075",
-		"lowerFundingRate":"-0.0075"
-		 */
+		// Информация об инструменте Linear
+		public static dynamic LinearInfo(string symbol)
+		{
+/*
+	"retCode":0,
+	"retMsg":"OK",
+	"result":{
+		"category":"linear",
+		"list":[
+			{"symbol":"BTCUSDT",
+			 "contractType":"LinearPerpetual",
+			 "status":"Trading",
+			 "baseCoin":"BTC",
+			 "quoteCoin":"USDT",
+			 "launchTime":"1584230400000",
+			 "deliveryTime":"0",
+			 "deliveryFeeRate":"",
+			 "priceScale":"2",
+			 "leverageFilter":{
+				"minLeverage":"1",
+				"maxLeverage":"100.00",
+				"leverageStep":"0.01"},
+			"priceFilter":{
+				"minPrice":"0.10",
+				"maxPrice":"199999.80",
+				"tickSize":"0.10"
+			},
+			"lotSizeFilter":{
+				"maxOrderQty":"1190.000",
+				"minOrderQty":"0.001",
+				"qtyStep":"0.001",
+				"postOnlyMaxOrderQty":"1190.000",
+				"maxMktOrderQty":"119.000"
+			},
+			"unifiedMarginTrade":true,
+			"fundingInterval":480,
+			"settleCoin":"USDT",
+			"copyTrading":"both",
+			"upperFundingRate":"0.00375",
+			"lowerFundingRate":"-0.00375"
+			}
+		],
+		"nextPageCursor":""
+	},
+	"retExtInfo":{},
+	"time":1711556411709}
+*/
+			var dur = new Dur();
+			string url = $"{API_URL}/v5/market/instruments-info?category=linear&symbol={symbol.ToUpper()}";
+			string str = new WebClient().DownloadString(url);
+			if (!str.Contains("linear"))
+				return 0;
 
+			dynamic json = JsonConvert.DeserializeObject(str);
+
+			WriteLine($"{url}   {dur.Second()}");
+
+			return json.result.list[0];
+		}
 
 
 		// Последние цены и объёмы за 24 часа

@@ -21,11 +21,13 @@ namespace MrRobot.inc
 
 		public static my Main { get; set; }
 		public static my Data { get; set; }
+		public static my Obt { get; set; }	// OrderBookTrade
 
 		public my()
 		{
 			Main = new my("mrrobot");
 			Data = new my("candles");
+			Obt  = new my("orderbooktrade");
 		}
 		my(string db)
 		{

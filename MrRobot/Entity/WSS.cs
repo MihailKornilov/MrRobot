@@ -3,10 +3,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
+using System.Collections.Generic;
 using static System.Console;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace MrRobot.Entity
 {
@@ -51,15 +51,17 @@ namespace MrRobot.Entity
 
 		#region ПОДПИСКА И ОТПИСКА
 
-		public async void Subscribe(string topic)
+		public async void Subscribe(List<string> topic)
 		{
 			await ConnWait();
-			await SubTask(topic);
+			foreach(string str in topic)
+				await SubTask(str);
 		}
-		public async void Unsubscribe(string topic)
+		public async void Unsubscribe(List<string> topic)
 		{
 			await ConnWait();
-			await SubTask(topic, "unsubscribe");
+			foreach (string str in topic)
+				await SubTask(str, "unsubscribe");
 		}
 
 		async Task SubTask(string topic, string sub = "subscribe")
