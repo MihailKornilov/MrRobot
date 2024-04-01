@@ -851,6 +851,9 @@
     <None Include="!\mysql\server\share\english\errmsg.sys" />
     <None Include="!\mysql\server\share\russian\errmsg.sys" />
     <None Include="Browser\AdvChart\library\bundles\EuclidCircular.be8f862db48c2976009f.woff2" />
+    <Content Include="Browser\Line\tmp.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Browser\Pattern\PatternVisual.tmp" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

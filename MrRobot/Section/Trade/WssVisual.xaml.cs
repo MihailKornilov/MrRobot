@@ -447,6 +447,19 @@ namespace MrRobot.Section
 			}
 		}
 		public static decimal Step { get; private set; }
+		
+		static int _VolumeDecimals;
+		public static int VolumeDecimals
+		{
+			get => _VolumeDecimals;
+			set
+			{
+				_VolumeDecimals = value;
+				VolumeStep = (decimal)1 / format.Exp(value);
+			}
+		}
+		public static decimal VolumeStep { get; private set; }
+		
 		public static decimal PriceMax { get; set; }
 		static decimal _askF;
 		public static decimal PriceAskF
@@ -548,7 +561,14 @@ namespace MrRobot.Section
 		public void VolumeUpd(decimal vol)
 		{
 			Volume = vol;
-			(WP.Children[0] as Label).Content = VolumeStr;
+			(WP.Children[1] as Label).Content = VolumeStr;
+		}
+
+		public void TradePrint(decimal vol, bool isBuy = false)
+		{
+			var lb = WP.Children[0] as Label;
+			lb.Foreground = format.RGB(isBuy ? "#229922" : "992222");
+			lb.Content = vol;
 		}
 
 		public WrapPanel WP { get; set; }
@@ -559,13 +579,17 @@ namespace MrRobot.Section
 			BGset();
 
 			var lb = new Label();
-			lb.Width = 80;
+			lb.Style = Application.Current.Resources["DepthLBL"] as Style;
+			lb.Background = format.RGB("#FFFFFF");
+			lb.Padding = new Thickness(0, 0, 5, 0);
+			WP.Children.Add(lb);
+
+			lb = new Label();
 			lb.Content = VolumeStr;
 			lb.Style = Application.Current.Resources["DepthLBL"] as Style;
 			WP.Children.Add(lb);
 
 			lb = new Label();
-			lb.Width = 62;
 			lb.Content = Price;
 			lb.Style = Application.Current.Resources["DepthLBL"] as Style;
 			WP.Children.Add(lb);
@@ -681,7 +705,7 @@ namespace MrRobot.Section
 						_tradePriceMax = value;
 				}
 			}
-			int TradePn => (int)((TradePriceMax - TradePriceMin) * OBunit.Decimals);
+			int TradePn => (int)((TradePriceMax - TradePriceMin) * format.Exp(OBunit.Decimals));
 
 			Dictionary<decimal, decimal> TradeBuy { get; set; }
 			Dictionary<decimal, decimal> TradeSell { get; set; }

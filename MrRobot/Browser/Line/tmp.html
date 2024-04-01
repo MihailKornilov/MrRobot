@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
+	<title>Line Chart</title>
+	<link href="../styles.css" rel="stylesheet">
+	<script type="text/javascript" src="../lightweight-charts.production.js"></script>
+</head>
+	<body>
+		<div id="container"></div>
+
+		<script type="text/javascript">
+			const container = document.getElementById('container');
+
+			const chart1 = LightweightCharts.createChart(container,
+			{
+				height: 250,
+				crosshair: { mode: 0 },
+				timeScale: { visible: false },
+				layout: {
+					background: { color: "#222" },
+					textColor: "#C3BCDB",
+				},
+				grid: {
+					vertLines: { color: "#444" },
+					horzLines: { color: "#444" },
+				}
+			});
+			const PriceLine = chart1.addLineSeries({
+				color: '#AAA',
+				priceFormat: {
+					minMove: PRICE_STEP,
+					precision: PRICE_DECIMALS
+				}
+			});
+			PriceLine.setData(PRICE_DATA);
+
+
+			const chart2 = LightweightCharts.createChart(container,
+			{
+				height: 250,
+				layout: {
+					background: { color: "#222" },
+					textColor: "#C3BCDB",
+				},
+				grid: {
+					vertLines: { color: "#444" },
+					horzLines: { color: "#444" },
+				},
+				timeScale: {
+					borderColor: "#71649C",
+					timeVisible: true,
+					secondsVisible: false
+				}
+			});
+			const BuyLine = chart2.addLineSeries({
+				color: '#30B02D',
+				priceFormat: {
+					minMove:   VOLUME_STEP,
+					precision: VOLUME_DECIMALS
+				}
+			});
+			BuyLine.setData(BUY_DATA);
+
+			const SellLine = chart2.addLineSeries({
+				color: '#B02D2D',
+				priceFormat: {
+					minMove: VOLUME_STEP,
+					precision: VOLUME_DECIMALS
+				}
+			});
+			SellLine.setData(SELL_DATA);
+
+
+			chart1.timeScale().subscribeVisibleLogicalRangeChange(timeRange => {
+				chart2.timeScale().setVisibleLogicalRange(timeRange);
+			});
+
+			chart2.timeScale().subscribeVisibleLogicalRangeChange(timeRange => {
+				chart1.timeScale().setVisibleLogicalRange(timeRange);
+			});
+
+			chart1.timeScale().fitContent();
+
+
+
+			function getCrosshairDataPoint(series, param) {
+				if (!param.time)
+					return null;
+				const dataPoint = param.seriesData.get(series);
+				return dataPoint || null;
+			}
+
+			function syncCrosshair(chart, series, dataPoint) {
+				if (dataPoint) {
+					chart.setCrosshairPosition(dataPoint.value, dataPoint.time, series);
+					return;
+				}
+				chart.clearCrosshairPosition();
+			}
+			chart1.subscribeCrosshairMove(param => {
+				const dataPoint = getCrosshairDataPoint(PriceLine, param);
+				syncCrosshair(chart2, BuyLine, dataPoint);
+			});
+			chart2.subscribeCrosshairMove(param => {
+				const dataPoint = getCrosshairDataPoint(BuyLine, param);
+				syncCrosshair(chart1, PriceLine, dataPoint);
+			});
+
+
+
+
+
+
+			window.addEventListener("resize", () => {
+				chart1.resize(window.innerWidth, 250);
+				chart2.resize(window.innerWidth, 250);
+			});
+		</script>
+	</body>
+</html>

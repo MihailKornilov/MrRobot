@@ -3,6 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
 		mc:Ignorable="d"
 
 		Title="ObtPlay"
@@ -12,30 +13,69 @@
 		Top="0"
 		Background="#D5E4EE">
 
+    <Window.Resources>
+        <Style x:Key="lbl" TargetType="Label">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="Width" Value="110"/>
+        </Style>
+        <!-- Шаблон очередного события -->
+        <DataTemplate x:Key="TssItemTmp">
+            <WrapPanel>
+                <Label  Content="{Binding NumStr}"        FontSize="8"  Foreground="#770" Width="30" HorizontalContentAlignment="Right" Padding="0,2,5,0"/>
+                <TextBlock Text="{Binding TsTime}"        FontSize="11" Foreground="#999" Width="65"/>
+                <TextBlock Text="{Binding AskCountStr}"   FontSize="11" Foreground="#922" Width="25"/>
+                <TextBlock Text="{Binding BidCountStr}"   FontSize="11" Foreground="#292" Width="30"/>
+                <TextBlock Text="{Binding BuyCountStr}"   FontSize="11" Foreground="#292" Width="15"/>
+                <TextBlock Text="{Binding SellCountStr}"  FontSize="11" Foreground="#922" Width="15"/>
+                <TextBlock Text="{Binding PnStr}"         FontSize="11" Foreground="#000" Width="20"/>
+            </WrapPanel>
+        </DataTemplate>
+    </Window.Resources>
+    
     <Grid Background="AliceBlue" Margin="0,1,0,0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="180"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Данные -->
         <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="10">
             <TextBlock Text="Таблицы с данными:" Foreground="#888"/>
             <WrapPanel>
-                <ComboBox Name="TableCB" Width="150" SelectionChanged="TableChange"/>
+                <ComboBox Name="TableCB" Width="205" SelectionChanged="TableChange"/>
                 <TextBlock Name="PrgsTB" FontSize="16" Margin="5,0,0,0" Foreground="#292"/>
             </WrapPanel>
             <WrapPanel Margin="0,10,0,0" Visibility="{Binding RowsCountVis}">
-                <TextBlock Text="Всего записей:" Width="{Binding LbWidth}" Foreground="#888"/>
-                <TextBlock Text="{Binding RowsCountStr}"/>
+                <TextBlock Text="Строк в таблице:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <Label Content="{Binding RowsCountStr}" Style="{StaticResource lbl}"/>
+            </WrapPanel>
+            <WrapPanel Visibility="{Binding InfoVis}">
+                <TextBlock Text="Всего событий:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <Label Content="{Binding AllCountStr}" Style="{StaticResource lbl}"/>
             </WrapPanel>
             <WrapPanel Visibility="{Binding InfoVis}">
                 <TextBlock Text="Стакан:" Width="{Binding LbWidth}" Foreground="#888"/>
-                <TextBlock Text="{Binding DepthCountStr}"/>
+                <Label Content="{Binding DepthCountStr}" Style="{StaticResource lbl}"/>
             </WrapPanel>
             <WrapPanel Visibility="{Binding InfoVis}">
                 <TextBlock Text="Сделки:" Width="{Binding LbWidth}" Foreground="#888"/>
-                <TextBlock Text="{Binding TradeCountStr}"/>
+                <Label Content="{Binding TradeCountStr}" Style="{StaticResource lbl}"/>
+            </WrapPanel>
+
+            <!-- Время и длительность -->
+            <WrapPanel Visibility="{Binding InfoVis}" Margin="0,10,0,0">
+                <TextBlock Text="Старт:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <Label Content="{Binding DTimeStart}" Style="{StaticResource lbl}"/>
+            </WrapPanel>
+            <WrapPanel Visibility="{Binding InfoVis}">
+                <TextBlock Text="Финиш:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <Label Content="{Binding DTimeFinish}" Style="{StaticResource lbl}"/>
+            </WrapPanel>
+            <WrapPanel Visibility="{Binding InfoVis}">
+                <TextBlock Text="Длительность:" Width="{Binding LbWidth}" Foreground="#888"/>
+                <Label Content="{Binding DTimeDur}" Style="{StaticResource lbl}"/>
             </WrapPanel>
 
             <StackPanel Visibility="{Binding InfoVis}" Margin="0,20,0,0">
@@ -45,14 +85,39 @@
                        FontSize="13"
                        Foreground="#AAA"
                        HorizontalContentAlignment="Center"/>
-                <Button Content="{Binding TsNext}"
-                        Width="120"
-                        FontSize="13"
+                <!--ContentTemplate="{StaticResource TssItemTmp}"-->
+
+                <Button Name="DeltaBut"
                         Margin="0,5,0,0"
-                        Click="Delta"/>
+                        Padding="5,1"
+                        BorderThickness="0.6"
+                        HorizontalContentAlignment="Left"
+                        Click="Delta">
+                    <WrapPanel>
+                        <Label  Content="{Binding NumStr}"        FontSize="8"  Foreground="#770" Width="30" HorizontalContentAlignment="Right" Padding="0,2,5,0"/>
+                        <TextBlock Text="{Binding TsTime}"        FontSize="11" Foreground="#999" Width="65"/>
+                        <TextBlock Text="{Binding AskCountStr}"   FontSize="11" Foreground="#922" Width="25"/>
+                        <TextBlock Text="{Binding BidCountStr}"   FontSize="11" Foreground="#292" Width="30"/>
+                        <TextBlock Text="{Binding BuyCountStr}"   FontSize="11" Foreground="#292" Width="15"/>
+                        <TextBlock Text="{Binding SellCountStr}"  FontSize="11" Foreground="#922" Width="15"/>
+                        <TextBlock Text="{Binding PnStr}"         FontSize="11" Foreground="#000" Width="20"/>
+                    </WrapPanel>
+                </Button>
             </StackPanel>
+
+            <!-- Очередные события изменения стакана -->
+            <ListBox Name="TssBL"
+                     Visibility="{Binding InfoVis}"
+                     BorderThickness="0.6"
+                     ItemTemplate="{StaticResource TssItemTmp}"
+                     MouseDoubleClick="DeltaGo"/>
         </StackPanel>
 
+        <!-- График -->
+        <Grid Grid.Column="1">
+            <wpf:ChromiumWebBrowser Name="LineChart" Background="#222" Height="500"/>
+        </Grid>
+        
         <!-- Стакан -->
         <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
             <StackPanel Name="DepthPanel"/>

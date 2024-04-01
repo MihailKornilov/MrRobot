@@ -105,7 +105,11 @@ namespace MrRobot.Entity
 				string msg = Encoding.UTF8.GetString(buffer.Array, 0, Rec.Count);
 
 				if (isConcat)
+				{
 					RecMsg += msg;
+					isConcat = false;
+					WriteLine($"   {RecMsg.Length}:	{RecMsg}");
+				}
 				else
 					RecMsg = msg;
 
@@ -113,7 +117,6 @@ namespace MrRobot.Entity
 				{
 					dynamic json = JsonConvert.DeserializeObject(RecMsg);
 					DataNew(json);
-					isConcat = false;
 					//WriteLine($"{RecMsg.Length}:	{RecMsg}");
 				}
 				catch (Exception ex)

@@ -10,6 +10,7 @@ namespace MrRobot.inc
 	public class format
 	{
 		public static int Offset = (int)DateTimeOffset.Now.Offset.TotalSeconds;
+		public static int OffsetMsec => Offset * 1000;
 
 		/// <summary>
 		/// Получение начала дня в формате UNIX
@@ -60,6 +61,10 @@ namespace MrRobot.inc
 			dt = dt.AddSeconds(unix).ToLocalTime();
 			return dt.ToString();
 		}
+		// Из миллисекунд
+		public static string DTimeFromUnix(long unix) =>
+			DTimeFromUnix((int)(unix / 1000));
+
 		/// <summary>
 		/// Получение даты в формате 12.05.2022
 		/// </summary>
@@ -70,10 +75,8 @@ namespace MrRobot.inc
 		/// <summary>
 		/// Получение времени в формате 12:49:34
 		/// </summary>
-		public static string TimeFromUnix(int unix)
-		{
-			return DTimeFromUnix(unix).Substring(11, 8);
-		}
+		public static string TimeFromUnix(int unix) =>
+			DTimeFromUnix(unix).Substring(11, 8);
 
 
 		/// <summary>
