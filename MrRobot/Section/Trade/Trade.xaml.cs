@@ -19,25 +19,25 @@ namespace MrRobot.Section
 		{
 			InitializeComponent();
 
-			ApiKey.Text = BYBIT.ApiKey;
-			ApiKey.TextChanged += BYBIT.ApiKeyChanged;
-			ApiSecret.Password = BYBIT.ApiSecret;
-			ApiSecret.PasswordChanged += BYBIT.ApiSecretChanged;
+			ApiKey.Text = BYBIT.API_KEY;
+			ApiKey.TextChanged += (s, e) => BYBIT.API_KEY = (s as TextBox).Text;
+			ApiSecret.Password = BYBIT.API_SECRET;
+			ApiSecret.PasswordChanged += (s, e) => BYBIT.API_SECRET = (s as PasswordBox).Password;
 
 			new ISunit(TradeIS);
 
 			RobotsListBox.ItemsSource = Robots.ListBox();
 			RobotsListBox.SelectedIndex = position.Val("5.RobotsListBox.Index", 0);
+
+			FundLB.ItemsSource = BYBIT.FundBalance();
+			UnifiedLB.ItemsSource = BYBIT.UnifiedBalance();
 		}
+
 
 
 		void QueryGo(object sender, RoutedEventArgs e)
 		{
-			/*
-				/v5/user/query-api - информация о ключах
-				/v5/user/get-member-type - тип аккаунта
-				/v5/account/wallet-balance?accountType=SPOT
-			*/
+			BYBIT.BuyLimit("DOTUSDT", 8, 2m);
 		}
 
 

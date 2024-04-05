@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
-using MrRobot.Entity;
-using MrRobot.Connector;
 
 namespace MrRobot.Section
 {
@@ -490,7 +488,6 @@ namespace MrRobot.Section
 				PriceLine.Add(Next, price);
 				Next += 60;
 			}
-
 			public static void Chart(dynamic browser)
 			{
 				var tmp  = Path.GetFullPath($"Browser/Line/tmp.html");

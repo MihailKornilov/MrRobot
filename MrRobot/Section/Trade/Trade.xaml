@@ -10,7 +10,14 @@
 			 Background="#FFF">
 
 	<UserControl.Resources>
-		<!-- Шаблон для стакана -->
+        <!-- Шаблон для Балансов монет -->
+        <DataTemplate x:Key="BalanceTmp">
+            <WrapPanel Margin="0,2">
+                <TextBlock Text="{Binding CoinStr}" Width="75" Foreground="#555" FontFamily="Tahoma"/>
+                <TextBlock Text="{Binding Sum}" Foreground="#292" FontFamily="Tahoma" FontWeight="Medium"/>
+            </WrapPanel>
+        </DataTemplate>
+        <!-- Шаблон для стакана -->
 		<DataTemplate x:Key="DepthItemTmp">
 			<StackPanel Orientation="Horizontal">
 				<Label Content="{Binding Price}"
@@ -100,25 +107,59 @@
 				<TabItem>
 					<TabItem.Header>Подключение</TabItem.Header>
 					<TabItem.Content>
-						<StackPanel Margin="8,6">
-							<WrapPanel Margin="0,8,0,0">
-								<Label Content="API ключ:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
-								<TextBox Name="ApiKey" Width="250" Padding="4"/>
-							</WrapPanel>
-							<WrapPanel Margin="0,5,0,0">
-								<Label Content="API секрет:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
-								<PasswordBox Name="ApiSecret" Width="250" Padding="4"/>
-							</WrapPanel>
-							<WrapPanel Margin="72,6,0,0">
-								<Button Content="WSS open" Width="100" Height="25" Click="WssOpen"/>
-							</WrapPanel>
-                            <Button Content="OBT open"
-                                    Width="100"
-                                    Height="25"
-                                    Margin="72,30,0,0"
-                                    HorizontalAlignment="Left"
-                                    Click="ObtOpen"/>
-                        </StackPanel>
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="300"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+							<StackPanel Grid.Column="0">
+								<WrapPanel>
+									<Label Content="API ключ:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
+									<TextBox Name="ApiKey" Width="200" Padding="4"/>
+								</WrapPanel>
+								<WrapPanel Margin="0,5,0,0">
+									<Label Content="API секрет:" Width="72" Foreground="#777" VerticalContentAlignment="Center"/>
+									<PasswordBox Name="ApiSecret" Width="200" Padding="4"/>
+								</WrapPanel>
+								<WrapPanel Margin="72,6,0,0">
+									<Button Content="WSS open" Width="100" Height="25" Click="WssOpen"/>
+									<Button Content="Query" Width="50" Height="25" Margin="50,0,0,0" Click="QueryGo"/>
+								</WrapPanel>
+								<Button Content="OBT open"
+										Width="100"
+										Height="25"
+										Margin="72,30,0,0"
+										HorizontalAlignment="Left"
+										Click="ObtOpen"/>
+							</StackPanel>
+
+                            <!-- Подключение -->
+                            <Grid Grid.Column="1" MaxHeight="500" VerticalAlignment="Top" Background="#EEB">
+                                <StackPanel Background="#FFE" Margin="1">
+                                    <TextBlock Text="Фиат:"
+                                               Margin="11,5,0,0"
+                                               FontSize="15"
+                                               Foreground="#579"/>
+                                    <Separator Background="#EEB" Margin="11,0"/>
+                                    <ListBox Name="FundLB"
+                                             Background="Transparent"
+                                             Margin="7,2"
+                                             BorderThickness="0"
+                                             ItemTemplate="{StaticResource BalanceTmp}"/>
+                                    <TextBlock Text="Единый торговый:"
+                                               Margin="11,8,0,0"
+                                               FontSize="15"
+                                               Foreground="#579"/>
+                                    <Separator Background="#EEB" Margin="11,0"/>
+                                    <ListBox Name="UnifiedLB"
+                                             Background="Transparent"
+                                             Margin="7,2,7,7"
+                                             BorderThickness="0"
+                                             ItemTemplate="{StaticResource BalanceTmp}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
 					</TabItem.Content>
 				</TabItem>
 

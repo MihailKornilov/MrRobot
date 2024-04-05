@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Linq;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Interface;
 using MrRobot.Entity;
+using System.Runtime.CompilerServices;
 
 namespace MrRobot.Connector
 {
@@ -42,6 +44,7 @@ namespace MrRobot.Connector
 		{
 			CCASScreate();
 			Instrument = new _Instrument();
+			new Param();
 		}
 
 		public class _Instrument : Spisok
@@ -54,28 +57,28 @@ namespace MrRobot.Connector
 
 			public override SpisokUnit UnitFieldsFill(SpisokUnit unit, dynamic res)
 			{
-				unit.Symbol			= res.GetString("symbol");
-				unit.BaseCoin		= res.GetString("baseCoin");
-				unit.QuoteCoin		= res.GetString("quoteCoin");
-				unit.HistoryBegin	= res.GetMySqlDateTime("historyBegin").ToString();
-				unit.BasePrecision	= res.GetDecimal("basePrecision");
-				unit.MinOrderQty	= res.GetDouble("minOrderQty");
-				unit.TickSize		= res.GetDouble("tickSize");
-				unit.IsTrading		= res.GetInt16("isTrading") == 1;
-				unit.CdiCount		= CCASS.ContainsKey(unit.Id) ? CCASS[unit.Id] : 0;
+				unit.Symbol = res.GetString("symbol");
+				unit.BaseCoin = res.GetString("baseCoin");
+				unit.QuoteCoin = res.GetString("quoteCoin");
+				unit.HistoryBegin = res.GetMySqlDateTime("historyBegin").ToString();
+				unit.BasePrecision = res.GetDecimal("basePrecision");
+				unit.MinOrderQty = res.GetDouble("minOrderQty");
+				unit.TickSize = res.GetDouble("tickSize");
+				unit.IsTrading = res.GetInt16("isTrading") == 1;
+				unit.CdiCount = CCASS.ContainsKey(unit.Id) ? CCASS[unit.Id] : 0;
 
-				unit.Dbl01			= res.GetDouble("lastPrice");
-				unit.Dbl05			= res.GetDouble("price24hPcnt");
-				unit.Dbl05str		= $"{(unit.Dbl05 > 0 ? "+" : "")}{unit.Dbl05}%";
-				unit.Str02			= unit.Dbl05 >= 0 ? "#20B26C" : "#EF454A";
-				unit.Lng01			= res.GetInt64("turnover24h");
-				unit.Lng01str		= format.Num(unit.Lng01);
+				unit.Dbl01 = res.GetDouble("lastPrice");
+				unit.Dbl05 = res.GetDouble("price24hPcnt");
+				unit.Dbl05str = $"{(unit.Dbl05 > 0 ? "+" : "")}{unit.Dbl05}%";
+				unit.Str02 = unit.Dbl05 >= 0 ? "#20B26C" : "#EF454A";
+				unit.Lng01 = res.GetInt64("turnover24h");
+				unit.Lng01str = format.Num(unit.Lng01);
 
 				unit.Str01 = "≈-.--$";
 				if (unit.QuoteCoin == "USDT")
 					unit.Str01 = $"≈{format.Price(unit.MinOrderQty * unit.Dbl01, 2)}$";
 
-				unit.DTime01		= res.GetDateTime("historyBegin");
+				unit.DTime01 = res.GetDateTime("historyBegin");
 
 				return unit;
 			}
@@ -89,60 +92,182 @@ namespace MrRobot.Connector
 
 
 
-		#region API
 
 		static string API_URL = "https://api.bybit.com";
-		public static string ApiKey
+		public static string API_KEY
 		{
 			get => position.Val("5_ApiKey_Text");
 			set => position.Set("5_ApiKey_Text", value);
 		}
-		public static string ApiSecret
+		public static string API_SECRET
 		{
 			get => position.Val("5_ApiSecret_Text");
 			set => position.Set("5_ApiSecret_Text", value);
 		}
-		public static void ApiKeyChanged(object s, TextChangedEventArgs e) =>
-			ApiKey = (s as TextBox).Text;
-		public static void ApiSecretChanged(object s, RoutedEventArgs e) =>
-			ApiSecret = (s as PasswordBox).Password;
+		static string RECV_WINDOW => "20000";
 
-
-		// Защищённые запросы к бирже
-		public static dynamic Api(string query)
+		class Param
 		{
-			string API_KEY = ApiKey;
-			string API_SECRET = ApiSecret;
-			long timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-			long recvWindow = 5000;
-
-			string signature = "";
-			using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(API_SECRET)))
+			public Param()
 			{
-				string msg = $"{timestamp}{API_KEY}{recvWindow}";
-				byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(msg));
-				signature = BitConverter.ToString(hash).Replace("-", "").ToLower();
+				IsPost = false;
+				prm = new Dictionary<string, object>();
+				ts = 0;
 			}
+			public static bool IsPost { get; set; }
+			static Dictionary<string, object> prm { get; set; }
+			static long ts { get; set; }
+			public static string Timestamp =>
+				(ts == 0 ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : ts).ToString();
+			public static void Add(string key, object val) => prm.Add(key, val);
+			public static string Query =>
+				string.Join("&", prm.Select(p => $"{p.Key}={p.Value}"));
+			public static string Sign
+			{
+				get
+				{
+					var msg = $"{Timestamp}{API_KEY}{RECV_WINDOW}{(IsPost ? Json : Query)}";
+					var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(API_SECRET));
+					byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(msg));
+					return BitConverter.ToString(hash).Replace("-", "").ToLower();
+				}
+			}
+			public static string Json =>
+				JsonConvert.SerializeObject(prm);
+		}
+
+		// Отправка сообщения об ошибке защищённого запроса
+		static dynamic PrivError(string url, string content, Dur dur)
+		{
+			var msg = $"PRIVATE API ERROR: {url}\n{content}\n{dur.Second()}";
+			WriteLine(msg);
+			G.LogWrite(msg);
+			return "";
+		}
+		// Защищённые запросы к бирже
+		static dynamic PRIVATE_GET(string endpoint)
+		{
+			var dur = new Dur();
 
 			var client = new HttpClient();
 			client.DefaultRequestHeaders.Add("X-BAPI-API-KEY", API_KEY);
-			client.DefaultRequestHeaders.Add("X-BAPI-TIMESTAMP", timestamp.ToString());
-			client.DefaultRequestHeaders.Add("X-BAPI-RECV-WINDOW", recvWindow.ToString());
-			client.DefaultRequestHeaders.Add("X-BAPI-SIGN", signature);
+			client.DefaultRequestHeaders.Add("X-BAPI-TIMESTAMP", Param.Timestamp);
+			client.DefaultRequestHeaders.Add("X-BAPI-RECV-WINDOW", RECV_WINDOW);
+			client.DefaultRequestHeaders.Add("X-BAPI-SIGN", Param.Sign);
 
-			var res = client.GetAsync(API_URL + query).Result;
+			var url = $"{API_URL}{endpoint}?{Param.Query}";
+			var res = client.GetAsync(url).Result;
+			new Param();
+
+			if (res.ReasonPhrase != "OK")
+				return PrivError(url, res.ToString(), dur);
+
 			string content = res.Content.ReadAsStringAsync().Result;
-
-			if (content.Length == 0)
-				return "пусто..";
+			if (!content.Contains("retCode"))
+				return PrivError(url, content, dur);
 
 			dynamic json = JsonConvert.DeserializeObject(content);
+			if (json.retCode > 0)
+				return PrivError(url, content, dur);
 
+			WriteLine($"BYBIT Private Api: {dur.Second()}");
+			
 			return json;
+		}
+
+		static dynamic PRIVATE_POST(string endpoint)
+		{
+			var dur = new Dur();
+
+			Param.IsPost = true;
+			var client = new HttpClient();
+			var url = $"{API_URL}{endpoint}";
+			var req = new HttpRequestMessage
+			{
+				Method = HttpMethod.Post,
+				RequestUri = new Uri(url),
+				Content = new StringContent(Param.Json, Encoding.UTF8, "application/json")
+			};
+
+			WriteLine(Param.Json);
+
+			req.Headers.Add("X-BAPI-API-KEY", API_KEY);
+			req.Headers.Add("X-BAPI-TIMESTAMP", Param.Timestamp);
+			req.Headers.Add("X-BAPI-RECV-WINDOW", RECV_WINDOW);
+			req.Headers.Add("X-BAPI-SIGN", Param.Sign);
+			new Param();
+
+			var res = client.SendAsync(req).Result;
+			if (res.ReasonPhrase != "OK")
+				return PrivError(url, res.ToString(), dur);
+
+			var content = res.Content.ReadAsStringAsync().Result;
+			if (!content.Contains("retCode"))
+				return PrivError(url, content, dur);
+
+			dynamic json = JsonConvert.DeserializeObject(content);
+			if (json.retCode > 0)
+				return PrivError(url, content, dur);
+
+			WriteLine($"BYBIT Private Api: {dur.Second()}");
+			
+			return json;
+		}
+
+		// Балансы монет на счёте финансирования
+		public static List<CoinSumUnit> FundBalance()
+		{
+			Param.Add("accountType", "FUND");
+
+			var wallet = new List<CoinSumUnit>();
+			var res = PRIVATE_GET("/v5/asset/transfer/query-account-coins-balance");
+			if (res.Length == 0)
+				return wallet;
+
+			var list = res.result.balance;
+			foreach (var v in list)
+				wallet.Add(new CoinSumUnit(v));
+
+			return wallet.OrderBy(x => x.Coin).ToList();
+		}
+
+		// Балансы монет на едином торговом счёте
+		public static List<CoinSumUnit> UnifiedBalance()
+		{
+			Param.Add("accountType", "UNIFIED");
+
+			var wallet = new List<CoinSumUnit>();
+			var res = PRIVATE_GET("/v5/account/wallet-balance");
+			if (res.Length == 0)
+				return wallet;
+
+			var list = res.result.list[0];
+			foreach (var v in list.coin)
+				wallet.Add(new CoinSumUnit(v));
+
+			return wallet.OrderBy(x => x.Coin).ToList();
+		}
+
+		// Размещение лимитного ордера на покупку
+		public static void BuyLimit(string symbol, decimal price, decimal qty)
+		{
+			Param.Add("category",	"spot");
+			Param.Add("symbol",		symbol);
+			Param.Add("side",		"Buy");
+			Param.Add("orderType",	"Limit");
+			Param.Add("price",	   $"{price}");
+			Param.Add("qty",	   $"{qty}");
+
+			var res = PRIVATE_POST("/v5/order/create");
+
+			WriteLine(res);
 		}
 
 
 
+
+
+		#region API: открытые запросы
 
 		// Информация об инструменте Linear
 		public static dynamic LinearInfo(string symbol)
@@ -203,7 +328,6 @@ namespace MrRobot.Connector
 
 			return json.result.list[0];
 		}
-
 
 		// Последние цены и объёмы за 24 часа
 		public static void Tickers()
@@ -286,63 +410,18 @@ namespace MrRobot.Connector
 
 		#endregion
 	}
+
+	// Баланс монеты
+	public class CoinSumUnit
+	{
+		public CoinSumUnit(dynamic v)
+		{
+			Coin = v.coin;
+			Sum = v.walletBalance;
+		}
+		public string Coin { get; set; }
+		public string CoinStr => $"{Coin}:";
+		public decimal Sum { get; set; }
+		//public decimal Usdt { get; set; }		// Перерасчёт монеты в USDT
+	}
 }
-
-
-
-/*
- "retCode": 0,
-  "retMsg": "",
-  "result": {
-	"id": "28844402",
-	"note": "StockMarket",
-	"apiKey": "ECrLHflpIkeCnuo2oZ",
-	"readOnly": 0,
-	"secret": "",
-	"permissions": {
-	  "ContractTrade": [
-		"Order",
-		"Position"
-	  ],
-	  "Spot": [
-		"SpotTrade"
-	  ],
-	  "Wallet": [
-		"AccountTransfer",
-		"SubMemberTransfer"
-	  ],
-	  "Options": [
-		"OptionsTrade"
-	  ],
-	  "Derivatives": [],
-	  "CopyTrading": [],
-	  "BlockTrade": [],
-	  "Exchange": [
-		"ExchangeHistory"
-	  ],
-	  "NFT": [],
-	  "Affiliate": []
-	},
-	"ips": [
-	  "*"
-	],
-	"type": 1,
-	"deadlineDay": 27,
-	"expiredAt": "2024-03-02T22:51:42Z",
-	"createdAt": "2023-12-02T22:51:42Z",
-	"unified": 0,
-	"uta": 0,
-	"userID": 7362350,
-	"inviterID": 0,
-	"vipLevel": "No VIP",
-	"mktMakerLevel": "0",
-	"affiliateID": 0,
-	"rsaPublicKey": "",
-	"isMaster": true,
-	"parentUid": "0",
-	"kycLevel": "LEVEL_1",
-	"kycRegion": "RUS"
-  },
-  "retExtInfo": {},
-  "time": 1707039874333
- */
