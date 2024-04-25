@@ -11,3 +11,6 @@
 /RobotAPI/obj/Release
 /MrRobot/log.txt
 /RobotAPI/.vs
+/RobotLib/bin/Debug
+/RobotAPI/obj/x64/Debug
+/RobotLib/obj
