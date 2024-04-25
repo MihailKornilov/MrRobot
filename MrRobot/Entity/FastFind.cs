@@ -30,7 +30,7 @@ namespace MrRobot.Entity
 			}
 		}
 
-		public FastFind(Panel panel)
+		public FastFind(Panel panel, string txt = "")
 		{
 			var SP = new StackPanel();
 			SP.Width = 200;
@@ -61,6 +61,9 @@ namespace MrRobot.Entity
 			X.Style = Application.Current.Resources["FFCancel"] as Style;
 			X.MouseLeftButtonDown += Cancel;
 			SP.Children.Add(X);
+
+			if(txt.Length > 0)
+				TB.Text = txt;
 
 			TB.Focus();
 		}

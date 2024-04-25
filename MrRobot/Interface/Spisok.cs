@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
-using System.Windows;
-using System.Linq;
-using System.Reflection;
 
 namespace MrRobot.Interface
 {
@@ -70,50 +69,47 @@ namespace MrRobot.Interface
 		public List<SpisokUnit> ListAll => UnitList;
 		/// <summary>
 		/// Лимитированный список
+		/// fields: поле, по которым производится поиск
 		/// </summary>
-		public List<SpisokUnit> ListLimit(int limit = 100, string sort = "Id", bool desc = false)
+		public List<SpisokUnit> ListLimit(int limit = 100,
+										  string sort = "Id",
+										  bool desc = false,
+										  string fields = "",
+										  string txt = "")
 		{
 			if(Count == 0)
 				return UnitList;
 
+			// Сортировка по ключу возрастанию или убыванию
 			var prop = UnitList[0].GetType().GetProperty(sort);
 			var sorted = desc ? 
 						 UnitList.OrderByDescending(x => prop.GetValue(x)).ToList()
 						 :
 						 UnitList.OrderBy(x => prop.GetValue(x)).ToList();
+
+			// Текст быстрого поиска
+			var isTxt = fields.Length > 0 && txt.Length > 0;
+			if(isTxt)
+				prop = UnitList[0].GetType().GetProperty(fields);
+
 			var send = new List<SpisokUnit>();
 			foreach (var unit in sorted)
 			{
+				if (isTxt)
+				{
+					string value = prop.GetValue(unit).ToString().ToLower();
+					if (!value.Contains(txt))
+						continue;
+				}
+
 				send.Add(unit);
+
 				if (--limit == 0)
 					return send;
 			}
 			return send;
 		}
 
-		/// <summary>
-		/// Фильтр-список по тексту
-		/// </summary>
-		/// fields: поля, по которым производится поиск. Через запятую.
-		public List<SpisokUnit> ListFilterTxt(string fields, string txt)
-		{
-			if(Count == 0)
-				return UnitList;
-
-			txt = txt.Trim().ToLower();
-			if (txt.Length == 0)
-				return UnitList;
-
-			var prop = UnitList[0].GetType().GetProperty(fields);
-			var send = new List<SpisokUnit>();
-			foreach(var unit in UnitList)
-			{
-				string value = prop.GetValue(unit).ToString().ToLower();
-				if(value.Contains(txt))
-					send.Add(unit);
-			}
-			return send;
-		}
 
 
 
@@ -234,6 +230,7 @@ namespace MrRobot.Interface
 
 
 		// ---=== Общие переменные ===---
+		public int Int01 { get; set; }				// Значение INT32 1
 		public double Dbl01 { get; set; }           // Значение DOUBLE 1
 		public string Dbl01str => format.E(Dbl01);  // Значение DOUBLE в формате STRING с избавлением от E
 		public string Dbl02str => format.E(MinOrderQty);
@@ -246,6 +243,8 @@ namespace MrRobot.Interface
 
 		public double Dbl06 { get; set; }           // Значение DOUBLE 6
 		public string Dbl06str { get; set; }
+
+		public double Dbl07 { get; set; }           // Значение DOUBLE 7
 
 		public string Str01 { get; set; }
 		public string Str02 { get; set; }

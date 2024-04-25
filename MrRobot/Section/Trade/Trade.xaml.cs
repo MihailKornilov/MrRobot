@@ -37,7 +37,7 @@ namespace MrRobot.Section
 
 		void QueryGo(object sender, RoutedEventArgs e)
 		{
-			BYBIT.BuyLimit("DOTUSDT", 8, 2m);
+			//BYBIT.BuyLimit("DOTUSDT", 8, 2m);
 		}
 
 

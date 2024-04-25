@@ -6,8 +6,8 @@
 		mc:Ignorable="d"
 
 		Title="BYBIT: Markets.Spot"
-		Width ="865"
-		Height="635"
+		Width ="1030"
+		Height="835"
         WindowStartupLocation="CenterScreen">
 
 	<Window.Resources>
@@ -21,7 +21,8 @@
                 </WrapPanel>
 
                 <Label Content="{Binding Dbl01str}"		Width="{Binding ElementName=HdPrice,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Dbl03str}"		Width="{Binding ElementName=HdTickSize,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Dbl04str}"		Width="{Binding ElementName=HdTickSize,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Int01}"		Width="{Binding ElementName=HdComissPn,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right" Foreground="#B00" FontWeight="Thin"/>
 
                 <DockPanel  Width="{Binding ElementName=HdMinQty,Path=Width}">
                     <Label Content="{Binding Dbl02str}" Padding="0"        Width="80"    HorizontalContentAlignment="Right"/>
@@ -39,6 +40,9 @@
 
                 <!-- Листинг -->
                 <Label Content="{Binding HistoryBegin}"	Padding="0" Foreground="#999"/>
+
+                <!-- Скрытие -->
+                <Label Content="hide" Padding="20,0,0,0" Foreground="#9AC" MouseLeftButtonDown="Hide" Tag="{Binding Id}"/>
             </StackPanel>
 		</DataTemplate>
 
@@ -88,9 +92,10 @@
                 <Label Name="HdSymbol"	 Content="Инструмент"	    Width="110" Style="{StaticResource HDLink}" MouseLeftButtonDown="Sort" Tag="Symbol"/>
 
                 <Label Name="HdPrice"	 Content="Цена"			    Width="110" Style="{StaticResource OrderItemRight}"/>
-                <Label Name="HdTickSize" Content="Шаг цены"		    Width="70"  Style="{StaticResource OrderItemRight}"/>
+                <Label Name="HdTickSize" Content="Шаг цены"		    Width="110" Style="{StaticResource OrderItemRight}"/>
+                <Label Name="HdComissPn" Content="Комиссия"		    Width="70"  Style="{StaticResource HDLinkR}" MouseLeftButtonDown="Sort" Tag="Int01"/>
 
-                <Label Name="HdMinQty"	Content="Минимальный ордер"	Width="150" Style="{StaticResource OrderItemRight}"/>
+                <Label Name="HdMinQty"	Content="Минимальный ордер"	Width="150" Style="{StaticResource HDLinkR}" MouseLeftButtonDown="Sort" Tag="Dbl06"/>
                 <Label Name="HdQtyStep"	 Content="Шаг ордера"	    Width="80"  Style="{StaticResource OrderItemRight}"/>
 
                 <Label Name="HdPrice24"  Content="Цена 24"          Width="80"  Style="{StaticResource HDLinkR}" MouseLeftButtonDown="Sort" Tag="Dbl05"/>

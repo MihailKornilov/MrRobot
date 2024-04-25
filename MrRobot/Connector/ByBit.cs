@@ -14,7 +14,6 @@ using Newtonsoft.Json;
 using MrRobot.inc;
 using MrRobot.Interface;
 using MrRobot.Entity;
-using System.Runtime.CompilerServices;
 
 namespace MrRobot.Connector
 {
@@ -74,11 +73,18 @@ namespace MrRobot.Connector
 				unit.Lng01 = res.GetInt64("turnover24h");
 				unit.Lng01str = format.Num(unit.Lng01);
 
+				// Минимальный ордер
 				unit.Str01 = "≈-.--$";
 				if (unit.QuoteCoin == "USDT")
-					unit.Str01 = $"≈{format.Price(unit.MinOrderQty * unit.Dbl01, 2)}$";
+				{
+					unit.Dbl06 = unit.MinOrderQty * unit.Dbl01;
+					unit.Str01 = $"≈{format.Price(unit.Dbl06, 2)}$";
+				}
 
 				unit.DTime01 = res.GetDateTime("historyBegin");
+
+				// Комиссия в пунктах (для спота)
+				unit.Int01 = (int)Math.Ceiling(unit.Dbl01 * 0.002 * format.Exp(unit.Decimals));
 
 				return unit;
 			}
