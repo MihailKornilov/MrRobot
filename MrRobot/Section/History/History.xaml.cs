@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using static System.Console;
 
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;

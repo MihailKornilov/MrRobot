@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using static System.Console;
 
 using Newtonsoft.Json;
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;

@@ -5,6 +5,8 @@ using System.Windows.Media;
 using System.Collections.Generic;
 using static System.Console;
 
+using RobotLib;
+
 using MrRobot.inc;
 using MrRobot.Entity;
 
@@ -217,8 +219,7 @@ namespace MrRobot.Interface
 
 	public class SpisokUnit
 	{
-		public SpisokUnit(int id) =>
-			Id = id;
+		public SpisokUnit(int id) => Id = id;
 
 		public SpisokUnit(dynamic res) =>			// Конструктор с запросом из БД
 			Id = res.GetInt32("id");

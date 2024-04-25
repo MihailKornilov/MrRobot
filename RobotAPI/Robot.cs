@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using static System.Console;
+
+using RobotLib;
 
 namespace RobotAPI
 {
@@ -14,7 +16,7 @@ namespace RobotAPI
         public static double LOW    { get; private set; }
         public static double VOLUME { get; private set; }
         public static int UNIX      { get; private set; }
-        public static string DATE_TIME { get { return format.DTimeFromUnix(UNIX); } }
+        public static string DATE_TIME => format.DTimeFromUnix(UNIX);
 
         
         static bool IS_TESTER { get; set; }                     // Робот запущен с тестера
@@ -27,7 +29,7 @@ namespace RobotAPI
 
         static dynamic CANDLE_CURRENT { get; set; }     // Текущая свеча, которая формируется в данный момент из TF1
         static int CANDLES_INDEX { get; set; }  // Индекс свечных данных
-        public static int CANDLES_COUNT { get { return CANDLES_INDEX + 1; } }
+        public static int CANDLES_COUNT => CANDLES_INDEX + 1;
         public static dynamic CANDLES(int index = 0)
         {
             if (CANDLES_TF1_USE && index == 0)
@@ -85,7 +87,7 @@ namespace RobotAPI
             /// Описание настройки
             /// </summary>
             public string Label1 { get; private set; } = "";
-            public string Label1Vis { get => Label1.Length > 0 ? "Visible" : "Hidden"; }
+            public string Label1Vis => Label1.Length > 0 ? "Visible" : "Hidden";
 
 
 

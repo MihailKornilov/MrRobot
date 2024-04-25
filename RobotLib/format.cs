@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Media;
+using System.Collections.Generic;
 using static System.Console;
 
-namespace MrRobot.inc
+namespace RobotLib
 {
 	public class format
 	{

@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using static System.Console;
 
 using static RobotAPI.Robot;
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
-using System.Windows.Markup;
 
 namespace MrRobot.Section
 {
@@ -164,7 +164,7 @@ namespace MrRobot.Section
 			AutoGoStop();
 			RobotSetupList.ItemsSource = null;
 			RobotLogList.Items.Clear();
-			OrderExecuted.ItemsSource = null;
+			//OrderExecuted.ItemsSource = null;
 
 			if (!RobotApply())
 				return;
@@ -189,7 +189,7 @@ namespace MrRobot.Section
 			LOGG.Output();
 
 			G.Vis(RobotSetupButton, SETUP.Items.Count > 0);
-			OrderExecutedView();
+			OrderActiveView();
 			TesterChartInit();
 			TesterBar.Value = 0;
 
@@ -291,7 +291,7 @@ namespace MrRobot.Section
 				AutoGoStop();
 				BalanceUpdate();
 				LOGG.Output();
-				OrderExecutedView();
+				OrderActiveView();
 				return;
 			}
 
@@ -375,7 +375,7 @@ namespace MrRobot.Section
 				AutoGoStop();
 				BalanceUpdate();
 				LOGG.Output();
-				OrderExecutedView();
+				OrderActiveView();
 				return;
 			}
 
@@ -398,7 +398,7 @@ namespace MrRobot.Section
 			{
 				BalanceUpdate();
 				LOGG.Output();
-				OrderExecutedView();
+				OrderActiveView();
 			}
  
 			RobotLine();
@@ -410,7 +410,7 @@ namespace MrRobot.Section
 			Finish?.Invoke(ObjInstance, new object[] { });
 			BalanceUpdate();
 			LOGG.Output();
-			OrderExecutedView();
+			OrderActiveView();
 		}
 
 
@@ -459,7 +459,7 @@ namespace MrRobot.Section
 
 			BalanceUpdate();
 			LOGG.Output();
-			OrderExecutedView();
+			OrderActiveView();
 
 			NoVisualLock(ButtonContent, ButtonWidth);
 
@@ -519,19 +519,21 @@ namespace MrRobot.Section
 		}
 
 		/// <summary>
-		/// Вывод исполненных SPOT ордеров
+		/// Вывод списка текущих ордеров
 		/// </summary>
-		void OrderExecutedView()
+		void OrderActiveView()
 		{
-			OrderExecuted.ItemsSource = null;
+			WriteLine($"ORDERS.Count: {ORDERS.Count}");
+
+			OrderActive.ItemsSource = null;
 
 			if (ORDERS.Count == 0)
 				return;
 
-			OrderExecuted.ItemsSource = ORDERS;
+			OrderActive.ItemsSource = ORDERS;
 
 			int c = ORDERS.Count - 1;
-			OrderExecuted.ScrollIntoView(ORDERS[c]);
+			OrderActive.ScrollIntoView(ORDERS[c]);
 		}
 	}
 }

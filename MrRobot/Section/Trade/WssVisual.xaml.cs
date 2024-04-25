@@ -6,6 +6,7 @@ using System.Net.WebSockets;
 using System.Collections.Generic;
 using static System.Console;
 
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;

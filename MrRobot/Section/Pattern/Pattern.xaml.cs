@@ -8,6 +8,7 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using static System.Console;
 
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 

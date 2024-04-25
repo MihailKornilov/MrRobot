@@ -1,18 +1,17 @@
-﻿using System.Windows;
+﻿using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
-using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using static System.Console;
 
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
 using MrRobot.Interface;
-using System.Collections.Generic;
-using System.Web.UI.WebControls.WebParts;
-using System;
-using System.Linq;
 
 namespace MrRobot.Section
 {

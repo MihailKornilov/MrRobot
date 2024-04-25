@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using static System.Console;
 
 using Newtonsoft.Json;
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Section;

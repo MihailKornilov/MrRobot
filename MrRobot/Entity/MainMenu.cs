@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using static System.Console;
 
+using RobotLib;
 using MrRobot.inc;
 
 namespace MrRobot.Entity

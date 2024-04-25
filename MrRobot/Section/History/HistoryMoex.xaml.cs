@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Collections.Generic;
 using static System.Console;
 
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Connector;
 using MrRobot.Interface;

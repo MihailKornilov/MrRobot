@@ -11,6 +11,7 @@ using static System.Console;
 using CefSharp;
 using CefSharp.Wpf;
 
+using RobotLib;
 using MrRobot.Section;
 using MrRobot.Entity;
 

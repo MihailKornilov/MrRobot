@@ -108,6 +108,9 @@
     <Reference Include="RobotAPI">
       <HintPath>..\RobotAPI\bin\Debug\RobotAPI.dll</HintPath>
     </Reference>
+    <Reference Include="RobotLib">
+      <HintPath>..\RobotLib\bin\Debug\RobotLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -141,7 +144,6 @@
       <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -271,7 +273,6 @@
     <Compile Include="Entity\Candle.cs" />
     <Compile Include="Entity\Exchange.cs" />
     <Compile Include="Entity\Robots.cs" />
-    <Compile Include="inc\format.cs" />
     <Compile Include="inc\global.cs" />
     <Compile Include="inc\position.cs" />
     <Compile Include="MainWindow.xaml.cs">

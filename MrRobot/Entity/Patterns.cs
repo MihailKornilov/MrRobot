@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using static System.Console;
 
+using RobotLib;
 using MrRobot.inc;
 
 namespace MrRobot.Entity

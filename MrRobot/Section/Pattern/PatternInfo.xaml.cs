@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Collections.Generic;
 
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 

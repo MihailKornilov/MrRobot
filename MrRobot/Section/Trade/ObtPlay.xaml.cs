@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using static System.Console;
 
+using RobotLib;
 using MrRobot.inc;
 
 namespace MrRobot.Section

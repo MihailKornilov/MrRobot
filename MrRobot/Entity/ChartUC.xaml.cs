@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using static System.Console;
 
 using CefSharp;
+using RobotLib;
 using MrRobot.inc;
 using MrRobot.Interface;
 

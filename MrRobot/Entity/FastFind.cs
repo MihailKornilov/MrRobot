@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Controls;
 
+using RobotLib;
 using MrRobot.inc;
 
 namespace MrRobot.Entity
