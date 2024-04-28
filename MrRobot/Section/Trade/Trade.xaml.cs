@@ -29,8 +29,8 @@ namespace MrRobot.Section
 			RobotsListBox.ItemsSource = Robots.ListBox();
 			RobotsListBox.SelectedIndex = position.Val("5.RobotsListBox.Index", 0);
 
-			FundLB.ItemsSource = BYBIT.FundBalance();
-			UnifiedLB.ItemsSource = BYBIT.UnifiedBalance();
+			//FundLB.ItemsSource = BYBIT.FundBalance();
+			//UnifiedLB.ItemsSource = BYBIT.UnifiedBalance();
 		}
 
 

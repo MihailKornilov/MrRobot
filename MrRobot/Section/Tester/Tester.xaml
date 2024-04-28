@@ -32,7 +32,9 @@
 		<!-- Шаблон для активных ордеров -->
 		<DataTemplate x:Key="OrderActiveTmp">
 			<StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Num}"	Width="{Binding ElementName=Hd01,Path=Width}" Padding="0,0,7,0" HorizontalContentAlignment="Right"/>
+                <Label Content="{Binding Num}"	Width="{Binding ElementName=Hd01,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right" Foreground="#999"/>
+
+                <Label Content="{Binding TypeStr}" Width="{Binding ElementName=Hd09,Path=Width}" Padding="0"/>
 
                 <Label Content="{Binding Side}" Width="{Binding ElementName=Hd02,Path=Width}" Padding="0" Foreground="{Binding SideColor}" FontWeight="Bold"/>
 
@@ -41,7 +43,7 @@
 					<Label Content="{Binding QuoteCoin}"	Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
 				</WrapPanel>
 
-                <Label Content="{Binding DtimeOpen}" Width="{Binding ElementName=Hd04,Path=Width}" Padding="23,0,0,0"/>
+                <Label Content="{Binding DTimeOpen}" Width="{Binding ElementName=Hd04,Path=Width}" Padding="0"/>
 
                 <WrapPanel Width="{Binding ElementName=Hd05,Path=Width}">
 					<Label Content="{Binding QtyStr}" Padding="0"/>
@@ -49,15 +51,15 @@
 				</WrapPanel>
 
                 <WrapPanel Width="{Binding ElementName=Hd06,Path=Width}">
-					<Label Content="{Binding CostStr}" Padding="0"/>
+					<Label Content="{Binding CostStr}"	 Padding="0"/>
 					<Label Content="{Binding QuoteCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
 				</WrapPanel>
 
-                <Label Content="{Binding PN}" Width="{Binding ElementName=Hd07,Path=Width}" Padding="0" Foreground="{Binding PNcolor}"/>
+                <Label Content="{Binding PN}" Width="{Binding ElementName=Hd07,Path=Width}" Padding="0" Foreground="{Binding PNcolor}" FontWeight="Medium"/>
 
                 <WrapPanel Width="{Binding ElementName=Hd08,Path=Width}">
-					<Label Content="{Binding ProfitStr}" Padding="0" Foreground="{Binding ProfitColor}"/>
-					<Label Content="{Binding BaseCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
+                    <Label Content="{Binding ProfitStr}" Padding="0" MinWidth="47" Foreground="{Binding PNcolor}" HorizontalContentAlignment="Right"/>
+                    <Label Content="{Binding QuoteCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB" HorizontalContentAlignment="Right"/>
 				</WrapPanel>
 			</StackPanel>
 		</DataTemplate>
@@ -141,7 +143,20 @@
 					   Visibility="{Binding Label3Vis}"/>
 			</Grid>
 		</DataTemplate>
-	</UserControl.Resources>
+
+        <Style x:Key="BalanceCoin" TargetType="Label">
+            <Setter Property="Padding" Value="5,3,10,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+        <Style x:Key="BalanceSum" TargetType="Label">
+            <Setter Property="Padding" Value="0,3,0,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#090"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+    </UserControl.Resources>
 
 	<Grid Background="#FFF">
 		<Grid.RowDefinitions>
@@ -211,7 +226,7 @@
 			</StackPanel>
 
 			<!-- Текущие активы (балансы монет) -->
-			<StackPanel Name="BalancePanel" Grid.Column="1" Visibility="Hidden">
+			<StackPanel Name="BalancePanel" Grid.Column="1">
 				<Label Content="Балансы:" Margin="0,10,0,0" Style="{StaticResource LabelDark}"/>
 				<Border BorderThickness="1"
 						BorderBrush="#ddb"
@@ -219,20 +234,20 @@
 						Margin="0,4,0,0"
 						Height="72">
 					<StackPanel Orientation="Horizontal">
-						<StackPanel Width="65">
-							<Label Content="Депозит:"  Padding="0" FontSize="11" Margin="5,25,0,0" Foreground="#555"/>
-							<Label Content="Комиссии:" Padding="0" FontSize="11" Margin="5,7,0,0"  Foreground="#555"/>
+						<StackPanel MinWidth="40">
+                            <Label Content="USDT" Name="QuoteBalanceCoin" Style="{StaticResource BalanceCoin}"/>
+                            <Label Content="MYRO" Name="BaseBalanceCoin"  Style="{StaticResource BalanceCoin}"/>
 						</StackPanel>
-						<StackPanel Width="145">
-							<Label Name="BaseBalanceCoin" Padding="0,5,7,0" FontWeight="Bold" Foreground="#555" HorizontalContentAlignment="Right"/>
-							<Label Name="BaseBalanceSum" Style="{StaticResource BalanceSum}"/>
-							<Label Name="BaseCommissSum" Style="{StaticResource BalanceSum}" Foreground="#999"/>
-						</StackPanel>
-						<StackPanel Width="145">
-							<Label Name="QuoteBalanceCoin" Padding="0,5,7,0" FontWeight="Bold" Foreground="#555" HorizontalContentAlignment="Right"/>
-							<Label Name="QuoteBalanceSum" Style="{StaticResource BalanceSum}"/>
-							<Label Name="QuoteCommissSum" Style="{StaticResource BalanceSum}" Foreground="#999"/>
-						</StackPanel>
+                        <StackPanel MinWidth="40">
+							<Label Content="100.00" Name="QuoteBalanceSum" Style="{StaticResource BalanceSum}"/>
+                            <WrapPanel>
+								<Label Content="0.65" Name="BaseBalanceSum" Style="{StaticResource BalanceSum}"/>
+                                <Label Content="0.22*8" Name="BaseBalanceX" Padding="5,6,0,0" FontSize="11" Foreground="#999"/>
+                                <Label Content="≈0.87123" Name="BaseBalanceQuote" Padding="15,6,0,0" FontSize="11" Foreground="#770"/>
+                                <Label Content="USDT" Name="QuoteBalanceCoin1" Padding="2,8,0,0" FontSize="9" Foreground="#AAA"/>
+                            </WrapPanel>
+                            <Label Content="+0.9879" Name="QuoteBalanceItog" Padding="0,3,0,0"/>
+                        </StackPanel>
 					</StackPanel>
 				</Border>
 			</StackPanel>
@@ -332,22 +347,21 @@
 				<!-- Список ордеров -->
 				<TabItem Header="Текущие ордера">
 					<TabItem.Content>
-						<StackPanel HorizontalAlignment="Left">
-							<WrapPanel Background="#EEE" Margin="3,3,1,0">
+						<StackPanel Margin="2,0">
+							<WrapPanel Background="#EEE">
+                                <Label Width="5"/>
                                 <Label Name="Hd01" Content="Id"			Width="54"	Style="{StaticResource OrderItemRight}"/>
-                                <Label Name="Hd02" Content="Side"		Width="91"	Style="{StaticResource OrderItem}"/>
-                                <Label Name="Hd03" Content="Price open"	Width="183" Style="{StaticResource OrderItem}"/>
-                                <Label Name="Hd04" Content="DTime Open"	Width="138" Style="{StaticResource OrderItem}"/>
-                                <Label Name="Hd05" Content="Объём"		Width="169" Style="{StaticResource OrderItem}"/>
-                                <Label Name="Hd06" Content="Cost $"		Width="170" Style="{StaticResource OrderItem}"/>
-                                <Label Name="Hd07" Content="Пункты"		Width="83"	Style="{StaticResource OrderItem}"/>
-                                <Label Name="Hd08" Content="PnL"		Width="136" Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd09" Content="Type"		Width="60"	Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd02" Content="Side"		Width="50"	Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd03" Content="Price open"	Width="100" Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd04" Content="DateTime Open"	Width="140" Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd05" Content="Объём"		Width="100" Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd06" Content="Стоимость"	Width="140" Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd07" Content="PN"			Width="60"	Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd08" Content="PnL"		Width="100" Style="{StaticResource OrderItemRight}"/>
 							</WrapPanel>
-							<Separator Background="#BBB" Margin="3,0,1,0"/>
+							<Separator Background="#CCC" Margin="0"/>
 							<ListBox Name="OrderActive"
-									 Width="1282"
-									 Height="100"
-									 Margin="2,0,0,0"
 									 BorderThickness="0"
 									 ItemTemplate="{StaticResource OrderActiveTmp}"/>
 						</StackPanel>

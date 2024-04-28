@@ -42,6 +42,7 @@ namespace RobotAPI
                 return false;
 
             CandleNew();
+            OrderLimitCheck();
 
             return true;
         }

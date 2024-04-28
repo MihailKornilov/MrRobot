@@ -228,6 +228,7 @@
     <Compile Include="Section\Setting\SettingMain.xaml.cs">
       <DependentUpon>SettingMain.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Section\Tester\TesterBalance.cs" />
     <Compile Include="Section\Tester\TesterRobotBind.cs" />
     <Compile Include="Section\Tester\Tester.xaml.cs">
       <DependentUpon>Tester.xaml</DependentUpon>

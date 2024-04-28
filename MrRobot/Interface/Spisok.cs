@@ -306,10 +306,10 @@ namespace MrRobot.Interface
 
 
 		// ---=== ДЛЯ РОБОТА ===---
-		public double BaseBalance { get; set; }		// Баланс базовой монеты
-		public double QuoteBalance { get; set; }	// Баланс котировочной монеты
-		public double BaseCommiss { get; set; }		// Сумма комиссий исполненных ордеров базовой монеты
-		public double QuoteCommiss { get; set; }	// Сумма комиссий исполненных ордеров базовой котировочной монеты
+		public decimal BaseBalance { get; set; }		// Баланс базовой монеты
+		public decimal QuoteBalance { get; set; }	// Баланс котировочной монеты
+		//public double BaseCommiss { get; set; }		// Сумма комиссий исполненных ордеров базовой монеты
+		//public double QuoteCommiss { get; set; }	// Сумма комиссий исполненных ордеров базовой котировочной монеты
 
 		public int CdiId { get; set; }				// ID свечных данных
 		CDIunit CDI => Candle.Unit(CdiId);			// Свечные данные

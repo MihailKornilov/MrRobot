@@ -208,16 +208,6 @@
 			<Setter Property="Foreground" Value="#BBB"/>
 		</Style>
 
-		<Style x:Key="BalanceSum" TargetType="Label">
-			<Setter Property="Width" Value="130"/>
-			<Setter Property="Padding" Value="0,4,0,0"/>
-			<Setter Property="FontSize" Value="14"/>
-			<Setter Property="FontWeight" Value="Medium"/>
-			<Setter Property="FontFamily" Value="Symbol"/>
-			<Setter Property="Foreground" Value="#0A0"/>
-			<Setter Property="HorizontalContentAlignment" Value="Right"/>
-		</Style>
-
 
 
 

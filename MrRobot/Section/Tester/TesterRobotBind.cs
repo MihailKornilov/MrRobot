@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using static System.Console;
 
 using static RobotAPI.Robot;
-using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Connector;
@@ -32,8 +31,6 @@ namespace MrRobot.Section
 		/// <summary>
 		/// Установка выбранного инструмента
 		/// </summary>
-		const double BaseBalance = 0;
-		const double QuoteBalance = 100;
 		int CandleId;
 		CDIparam InitParam;     // Для фоновой загрузки свечных данных
 
@@ -74,8 +71,6 @@ namespace MrRobot.Section
 
 			INSTRUMENT.BaseBalance = BaseBalance;
 			INSTRUMENT.QuoteBalance = QuoteBalance;
-			INSTRUMENT.BaseCommiss = 0;
-			INSTRUMENT.QuoteCommiss = 0;
 
 			// Если свечные данные не менялись, то загружаться из базы не будут
 			if(CandleId != item.Id)
@@ -88,6 +83,7 @@ namespace MrRobot.Section
 
 			BaseBalanceCoin.Content = INSTRUMENT.BaseCoin;
 			QuoteBalanceCoin.Content = INSTRUMENT.QuoteCoin;
+			QuoteBalanceCoin1.Content = INSTRUMENT.QuoteCoin;
 		}
 		/// <summary>
 		/// Загрузка свечных данных
@@ -217,13 +213,6 @@ namespace MrRobot.Section
 				return;
 			}
 			EChart.TesterGraficInit(item);
-		}
-		void BalanceUpdate()
-		{
-			BaseBalanceSum.Content  = format.Coin(INSTRUMENT.BaseBalance);
-			QuoteBalanceSum.Content = format.Coin(INSTRUMENT.QuoteBalance);
-			BaseCommissSum.Content  = format.Coin(INSTRUMENT.BaseCommiss);
-			QuoteCommissSum.Content = format.Coin(INSTRUMENT.QuoteCommiss);
 		}
 
 		/// <summary>
@@ -523,8 +512,6 @@ namespace MrRobot.Section
 		/// </summary>
 		void OrderActiveView()
 		{
-			WriteLine($"ORDERS.Count: {ORDERS.Count}");
-
 			OrderActive.ItemsSource = null;
 
 			if (ORDERS.Count == 0)
