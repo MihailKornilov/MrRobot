@@ -2,9 +2,10 @@
 	Ордера в тестере
  */
 
-using System;
+using System.Windows;
 using System.Windows.Media;
 using System.Collections.Generic;
+
 using static System.Console;
 using RobotLib;
 
@@ -12,6 +13,10 @@ namespace RobotAPI
 {
 	public static partial class Robot
 	{
+		public static void QTY_MIN_SET(decimal v) =>
+			TesterOrderUnit.QtyMin = v;
+
+
 		/// <summary>
 		/// Создание нового ордера на покупку по текущему курсу
 		/// </summary>
@@ -20,7 +25,6 @@ namespace RobotAPI
 			var Order = new TesterOrderUnit("Market", "BUY", PRICE, qty);
 			return ORDER_OPEN(Order);
 		}
-
 
 		/// <summary>
 		/// Создание нового ордера на продажу по текущему курсу
@@ -37,6 +41,23 @@ namespace RobotAPI
 		{
 			var Order = new TesterOrderUnit("Limit", "BUY", price, qty);
 			return ORDER_OPEN(Order);
+		}
+		// Создание лимитного ордера на продажу
+		public static TesterOrderUnit LIMIT_SELL(decimal price, decimal qty)
+		{
+			var Order = new TesterOrderUnit("Limit", "SELL", price, qty);
+			return ORDER_OPEN(Order);
+		}
+		public static int LIMIT_COUNT
+		{
+			get
+			{
+				int c = 0;
+				foreach (TesterOrderUnit order in ORDERS)
+					if (order.Type == "Limit")
+						c++;
+				return c;
+			}
 		}
 
 		// Проверка лимитных ордеров, которые нужно сделать активными
@@ -55,8 +76,6 @@ namespace RobotAPI
 						order.BalanceUpd();
 					}
 			}
-
-//			INSTRUMENT.BaseBalance += (Order.Qty - Order.Commission);
 		}
 
 
@@ -112,10 +131,6 @@ namespace RobotAPI
 
 			return Order;
 		}
-
-
-
-
 
 
 		/// <summary>
@@ -188,21 +203,24 @@ namespace RobotAPI
 		}
 
 		public bool IsActive { get; set; }			// Одрер активен или нет
-		public string BaseCoin => Robot.INSTRUMENT.BaseCoin;
+		public string BaseCoin  => Robot.INSTRUMENT.BaseCoin;
 		public string QuoteCoin => Robot.INSTRUMENT.QuoteCoin;
-		public int Decimals => Robot.INSTRUMENT.Decimals;
-		public ulong Exp => format.Exp(Decimals);
+		public int Decimals		=> Robot.INSTRUMENT.Decimals;
+		public ulong Exp		=> format.Exp(Decimals);
 
 		public long Id { get; set; }
 		public string Num => $"#{Id}";
 		public string Type { get; set; }		// Тип: Market, Limit
 		public string TypeStr => IsActive ? "Active" : Type;
+		public SolidColorBrush TypeClr =>
+			format.RGB(IsActive ? "#007700" : "#AAAA55");
 		public string Side { get; set; }		// Направление: BUY SELL
 		public SolidColorBrush SideColor =>		// Окраска направления ордера
 			format.RGB(Side == "BUY" ? "#44AA44" : "#CC4444");
 		public string DTimeOpen { get; set; }	// Дата и время открытия
 		public decimal PriceOpen { get; set; }	// Цена открытия
 		public string PriceOpenStr => format.E(PriceOpen);
+		public static decimal QtyMin { get; set; }		// Минимальный разрешённый объём
 		public decimal Qty { get; set; }		// Объём
 		public string QtyStr => format.E(Qty);
 		public decimal Cost =>					// Стоимость ордера: Price * Qty
@@ -211,8 +229,12 @@ namespace RobotAPI
 			format.Price(Cost, Decimals + format.Decimals(Qty));
 		public int PN =>						// Изменение цены в пунктах
 			IsActive ? (int)((Robot.PRICE - PriceOpen) * Exp) : 0;
+		public int PNsum =>						// Сумма пунктов с учётом объёма
+			(int)(PN * Qty / QtyMin);
 		public SolidColorBrush PNcolor =>		// Окраска пунктов
 			format.RGB(PN >= 0 ? "#22AA22" : "#CC2222");
+		public Visibility PNvis =>
+			IsActive ? Visibility.Visible : Visibility.Collapsed;
 		public decimal Profit =>
 			PN / (decimal)Exp * Qty;
 		public string ProfitStr =>

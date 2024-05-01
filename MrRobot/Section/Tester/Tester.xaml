@@ -34,7 +34,10 @@
 			<StackPanel Orientation="Horizontal">
                 <Label Content="{Binding Num}"	Width="{Binding ElementName=Hd01,Path=Width}" Padding="0,0,20,0" HorizontalContentAlignment="Right" Foreground="#999"/>
 
-                <Label Content="{Binding TypeStr}" Width="{Binding ElementName=Hd09,Path=Width}" Padding="0"/>
+                <Label Content="{Binding TypeStr}"
+                       Width="{Binding ElementName=Hd09,Path=Width}"
+                       Padding="0"
+                       Foreground="{Binding TypeClr}"/>
 
                 <Label Content="{Binding Side}" Width="{Binding ElementName=Hd02,Path=Width}" Padding="0" Foreground="{Binding SideColor}" FontWeight="Bold"/>
 
@@ -55,9 +58,20 @@
 					<Label Content="{Binding QuoteCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB"/>
 				</WrapPanel>
 
-                <Label Content="{Binding PN}" Width="{Binding ElementName=Hd07,Path=Width}" Padding="0" Foreground="{Binding PNcolor}" FontWeight="Medium"/>
+                <Label Content="{Binding PN}"
+                       Width="{Binding ElementName=Hd07,Path=Width}"
+                       Padding="0"
+                       Foreground="{Binding PNcolor}"
+                       FontWeight="Medium"
+                       Visibility="{Binding PNvis}"/>
 
-                <WrapPanel Width="{Binding ElementName=Hd08,Path=Width}">
+                <Label Content="{Binding PNsum}"
+                       Width="{Binding ElementName=Hd10,Path=Width}"
+                       Padding="0"
+                       Foreground="{Binding PNcolor}"
+                       Visibility="{Binding PNvis}"/>
+
+                <WrapPanel Width="{Binding ElementName=Hd08,Path=Width}" Visibility="{Binding PNvis}">
                     <Label Content="{Binding ProfitStr}" Padding="0" MinWidth="47" Foreground="{Binding PNcolor}" HorizontalContentAlignment="Right"/>
                     <Label Content="{Binding QuoteCoin}" Padding="2,0,0,0" MinWidth="20" FontWeight="Bold" Foreground="#BBB" HorizontalContentAlignment="Right"/>
 				</WrapPanel>
@@ -235,18 +249,21 @@
 						Height="72">
 					<StackPanel Orientation="Horizontal">
 						<StackPanel MinWidth="40">
-                            <Label Content="USDT" Name="QuoteBalanceCoin" Style="{StaticResource BalanceCoin}"/>
-                            <Label Content="MYRO" Name="BaseBalanceCoin"  Style="{StaticResource BalanceCoin}"/>
+                            <Label Content="{Binding QuoteCoin}" Style="{StaticResource BalanceCoin}"/>
+                            <Label Content="{Binding BaseCoin}"  Style="{StaticResource BalanceCoin}"/>
 						</StackPanel>
                         <StackPanel MinWidth="40">
-							<Label Content="100.00" Name="QuoteBalanceSum" Style="{StaticResource BalanceSum}"/>
+                            <Label Content="{Binding QuoteSum}" Style="{StaticResource BalanceSum}"/>
                             <WrapPanel>
-								<Label Content="0.65" Name="BaseBalanceSum" Style="{StaticResource BalanceSum}"/>
-                                <Label Content="0.22*8" Name="BaseBalanceX" Padding="5,6,0,0" FontSize="11" Foreground="#999"/>
-                                <Label Content="≈0.87123" Name="BaseBalanceQuote" Padding="15,6,0,0" FontSize="11" Foreground="#770"/>
-                                <Label Content="USDT" Name="QuoteBalanceCoin1" Padding="2,8,0,0" FontSize="9" Foreground="#AAA"/>
+                                <Label Content="{Binding BaseSum}"	 Style="{StaticResource BalanceSum}"/>
+                                <Label Content="{Binding BaseX}"	 Padding="5,6,0,0" FontSize="11" Foreground="#999"/>
+                                <Label Content="{Binding QuoteCost}" Padding="15,6,0,0" FontSize="11" Foreground="#770"/>
+                                <Label Content="{Binding QuoteCoin}" Padding="2,8,0,0" FontSize="9" Foreground="#AAA"/>
                             </WrapPanel>
-                            <Label Content="+0.9879" Name="QuoteBalanceItog" Padding="0,3,0,0"/>
+                            <WrapPanel>
+                                <Label Content="{Binding ItogStr}"	 Padding="0,3,0,0" Foreground="{Binding ItogClr}"/>
+                                <Label Content="{Binding QuoteCoin}" Padding="2,6,0,0" FontSize="9" Foreground="#AAA"/>
+                            </WrapPanel>
                         </StackPanel>
 					</StackPanel>
 				</Border>
@@ -358,6 +375,7 @@
                                 <Label Name="Hd05" Content="Объём"		Width="100" Style="{StaticResource OrderItem}"/>
                                 <Label Name="Hd06" Content="Стоимость"	Width="140" Style="{StaticResource OrderItem}"/>
                                 <Label Name="Hd07" Content="PN"			Width="60"	Style="{StaticResource OrderItem}"/>
+                                <Label Name="Hd10" Content="PN sum"		Width="60"	Style="{StaticResource OrderItem}"/>
                                 <Label Name="Hd08" Content="PnL"		Width="100" Style="{StaticResource OrderItemRight}"/>
 							</WrapPanel>
 							<Separator Background="#CCC" Margin="0"/>

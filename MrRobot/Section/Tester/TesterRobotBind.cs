@@ -69,8 +69,10 @@ namespace MrRobot.Section
 			INSTRUMENT = BYBIT.Instrument.Unit(item.InstrumentId);
 			INSTRUMENT.CdiId = item.Id;
 
-			INSTRUMENT.BaseBalance = BaseBalance;
-			INSTRUMENT.QuoteBalance = QuoteBalance;
+			Balance.BaseCoin = INSTRUMENT.BaseCoin;
+			Balance.QuoteCoin = INSTRUMENT.QuoteCoin;
+			INSTRUMENT.BaseBalance  = Balance.BaseStart;
+			INSTRUMENT.QuoteBalance = Balance.QuoteStart;
 
 			// Если свечные данные не менялись, то загружаться из базы не будут
 			if(CandleId != item.Id)
@@ -81,9 +83,6 @@ namespace MrRobot.Section
 
 			CandleId = item.Id;
 
-			BaseBalanceCoin.Content = INSTRUMENT.BaseCoin;
-			QuoteBalanceCoin.Content = INSTRUMENT.QuoteCoin;
-			QuoteBalanceCoin1.Content = INSTRUMENT.QuoteCoin;
 		}
 		/// <summary>
 		/// Загрузка свечных данных
