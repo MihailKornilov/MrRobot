@@ -232,7 +232,11 @@ namespace MrRobot.Interface
 
 		// ---=== Общие переменные ===---
 		public int Int01 { get; set; }				// Значение INT32 1
+		public decimal Dec01 { get; set; }           // Значение DECIMAL 1
 		public double Dbl01 { get; set; }           // Значение DOUBLE 1
+		public double Dbl02 { get; set; }           // Значение DOUBLE 2
+		public double Dbl03 { get; set; }           // Значение DOUBLE 3
+		public double Dbl04 { get; set; }           // Значение DOUBLE 4
 		public string Dbl01str => format.E(Dbl01);  // Значение DOUBLE в формате STRING с избавлением от E
 		public string Dbl02str => format.E(MinOrderQty);
 		public string Dbl03str => format.E(BasePrecision);

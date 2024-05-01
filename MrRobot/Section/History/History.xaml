@@ -65,7 +65,7 @@
 			</Grid>
 
 			<!-- BYBIT -->
-			<Grid Grid.Column="1" Name="MarketPanel1">
+			<Grid Grid.Column="1" Name="MarketPanel1" Visibility="Collapsed">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="60"/>
 					<RowDefinition Height="210"/>
@@ -98,7 +98,7 @@
 								   Margin="-76,3,0,0"/>
 						</WrapPanel>
 						<TextBlock  Text="Обзор рынка"
-                                    Margin="200,12,0,0"
+									Margin="200,12,0,0"
 									TextDecorations="Underline"
 									Style="{StaticResource TBLink}"
 									MouseLeftButtonDown="MarketsShow"/>
@@ -154,10 +154,10 @@
 						</WrapPanel>
 						<WrapPanel Name="SetupPanel" Margin="0,3,0,0" HorizontalAlignment="Left">
 							<DatePicker Name="SetupDateBegin"
-                                        Width="130"
-                                        SelectedDateFormat="Short"
-                                        SelectedDate="{Binding DTime01}"
-                                        DisplayDateStart="{Binding DTime01}"/>
+										Width="130"
+										SelectedDateFormat="Short"
+										SelectedDate="{Binding DTime01}"
+										DisplayDateStart="{Binding DTime01}"/>
 							<ComboBox Name="SetupPeriod" Width="90" Margin="10,0,0,0" SelectedIndex="2">
 								<ComboBoxItem TabIndex="1">1 день</ComboBoxItem>
 								<ComboBoxItem TabIndex="7">1 неделя</ComboBoxItem>
@@ -218,10 +218,8 @@
 			<!-- MOEX -->
 			<Section:HistoryMoex Grid.Column="1" x:Name="MarketPanel2" Visibility="Collapsed"/>
 
-			<!-- HUOBI -->
-			<StackPanel Grid.Column="1" Name="MarketPanel3" Visibility="Collapsed">
-				<TextBlock Text="123" FontSize="22" Margin="10" Foreground="#888"/>
-			</StackPanel>
+			<!-- BINANCE -->
+            <Section:HistoryBinance Grid.Column="1" x:Name="MarketPanel3" Visibility="Visible"/>
 
 		</Grid>
 	</Grid>

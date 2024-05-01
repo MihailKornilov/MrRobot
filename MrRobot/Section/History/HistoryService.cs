@@ -41,23 +41,6 @@ namespace MrRobot.Section
 		}
 		void InstrumentUpdateProcess(IProgress<decimal> Progress)
 		{
-			/*
-			"symbol":"BTCUSDT",
-			"baseCoin":"BTC",
-			"quoteCoin":"USDT",
-			"innovation":"0",
-			"status":"Trading",
-			"marginTrading":"both",
-			"lotSizeFilter":{
-				"basePrecision":"0.000001",
-				"quotePrecision":"0.00000001",
-				"minOrderQty":"0.000048",
-				"maxOrderQty":"71.73956243",
-				"minOrderAmt":"1",
-				"maxOrderAmt":"2000000"},
-			"priceFilter":{"tickSize":"0.01"}
-			 */
-
 			// Ассоциативный массив инструментов по Symbol
 			var mass = BYBIT.Instrument.FieldASS("Symbol");
 			string url = "https://api.bybit.com/v5/market/instruments-info?category=spot";
@@ -85,7 +68,7 @@ namespace MrRobot.Section
 				{
 					var unit = mass[symbol];
 					InstrumentValueCheck(unit, "basePrecision", unit.BasePrecision, lsf.basePrecision);
-					InstrumentValueCheck(unit, "minOrderQty",	unit.MinOrderQty,	lsf.minOrderQty);
+					InstrumentValueCheck(unit, "qtyMin",		unit.MinOrderQty,	lsf.minOrderQty);
 					InstrumentValueCheck(unit, "tickSize",		unit.TickSize,		v.priceFilter.tickSize);
 					InstrumentValueCheck(unit, "isTrading",		unit.IsTrading,		v.status == "Trading" ? "1" : "0");
 					BeginUpdate(unit);
@@ -99,7 +82,7 @@ namespace MrRobot.Section
 								"`baseCoin`," +
 								"`quoteCoin`," +
 								"`basePrecision`," +
-								"`minOrderQty`," +
+								"`qtyMin`," +
 								"`tickSize`" +
 							 ")VALUES(" +
 							   $"{BYBIT.ExchangeId}," +

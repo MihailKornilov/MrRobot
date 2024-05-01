@@ -60,7 +60,7 @@ namespace MrRobot.Connector
 				unit.QuoteCoin = res.GetString("quoteCoin");
 				unit.HistoryBegin = res.GetMySqlDateTime("historyBegin").ToString();
 				unit.BasePrecision = res.GetDecimal("basePrecision");
-				unit.MinOrderQty = res.GetDouble("minOrderQty");
+				unit.MinOrderQty = res.GetDouble("qtyMin");
 				unit.TickSize = res.GetDouble("tickSize");
 				unit.IsTrading = res.GetInt16("isTrading") == 1;
 				unit.CdiCount = CCASS.ContainsKey(unit.Id) ? CCASS[unit.Id] : 0;
@@ -277,50 +277,6 @@ namespace MrRobot.Connector
 		// Информация об инструменте Linear
 		public static dynamic LinearInfo(string symbol)
 		{
-/*
-	"retCode":0,
-	"retMsg":"OK",
-	"result":{
-		"category":"linear",
-		"list":[
-			{"symbol":"BTCUSDT",
-			 "contractType":"LinearPerpetual",
-			 "status":"Trading",
-			 "baseCoin":"BTC",
-			 "quoteCoin":"USDT",
-			 "launchTime":"1584230400000",
-			 "deliveryTime":"0",
-			 "deliveryFeeRate":"",
-			 "priceScale":"2",
-			 "leverageFilter":{
-				"minLeverage":"1",
-				"maxLeverage":"100.00",
-				"leverageStep":"0.01"},
-			"priceFilter":{
-				"minPrice":"0.10",
-				"maxPrice":"199999.80",
-				"tickSize":"0.10"
-			},
-			"lotSizeFilter":{
-				"maxOrderQty":"1190.000",
-				"minOrderQty":"0.001",
-				"qtyStep":"0.001",
-				"postOnlyMaxOrderQty":"1190.000",
-				"maxMktOrderQty":"119.000"
-			},
-			"unifiedMarginTrade":true,
-			"fundingInterval":480,
-			"settleCoin":"USDT",
-			"copyTrading":"both",
-			"upperFundingRate":"0.00375",
-			"lowerFundingRate":"-0.00375"
-			}
-		],
-		"nextPageCursor":""
-	},
-	"retExtInfo":{},
-	"time":1711556411709}
-*/
 			var dur = new Dur();
 			string url = $"{API_URL}/v5/market/instruments-info?category=linear&symbol={symbol.ToUpper()}";
 			string str = new WebClient().DownloadString(url);
