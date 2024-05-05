@@ -8,6 +8,8 @@ using RobotLib;
 using MrRobot.inc;
 using MrRobot.Entity;
 using MrRobot.Interface;
+using System.Web.Hosting;
+using System.Windows.Documents;
 
 namespace MrRobot.Connector
 {
@@ -70,7 +72,6 @@ namespace MrRobot.Connector
 			return json.symbols;
 		}
 
-
 		// Дата начала истории конкретного инструмента
 		public static long HistoryBegin(string symbol)
 		{
@@ -89,5 +90,19 @@ namespace MrRobot.Connector
 			return Convert.ToInt64(unix);
 		}
 
+		// Тиковые данные
+		public static dynamic Trades(string symbol, long startTime, int limit = 1000)
+		{
+			var dur = new Dur();
+			string url = $"{API_URL}/api/v3/aggTrades?" +
+									$"symbol={symbol}" +
+								   $"&limit={limit}" +
+								   $"&startTime={startTime}";
+			string str = new WebClient().DownloadString(url);
+
+			WriteLine($"{url}	{dur.Second()}");
+
+			return JsonConvert.DeserializeObject(str);
+		}
 	}
 }

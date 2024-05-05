@@ -38,6 +38,8 @@ namespace RobotLib
 			DateTimeOffset dtime = Convert.ToDateTime(dt);
 			return (int)dtime.ToUnixTimeSeconds();
 		}
+		public static long UnixMsFromDate(string dt) =>
+			(long)UnixFromDate(dt) * 1000;
 		/// <summary>
 		/// Получение даты и времени в формате 12.05.2022 12:44
 		/// </summary>
@@ -67,54 +69,48 @@ namespace RobotLib
 		/// <summary>
 		/// Получение даты в формате 12.05.2022
 		/// </summary>
-		public static string DayFromUnix(int unix)
-		{
-			return DTimeFromUnix(unix).Substring(0, 10);
-		}
+		public static string DayFromUnix(int unix) =>
+			DTimeFromUnix(unix).Substring(0, 10);
 		/// <summary>
 		/// Получение времени в формате 12:49:34
 		/// </summary>
 		public static string TimeFromUnix(int unix) =>
 			DTimeFromUnix(unix).Substring(11, 8);
 
+		// Дата и время в формате DateTime из UNIX
+		public static DateTime DTFromUnix(int unix) =>
+			new DateTime(1970, 1, 1).AddSeconds(unix).ToLocalTime();
+
+
+
 
 		/// <summary>
 		/// Текущее время в виде 12:45:34
 		/// </summary>
-		public static string TimeNow()
-		{
-			return DateTime.Now.ToString().Substring(11, 8);
-		}
+		public static string TimeNow()=>
+			DateTime.Now.ToString().Substring(11, 8);
 
 		/// <summary>
 		/// Текущее UTC время в формате Unix в секундах
 		/// </summary>
-		public static int UnixNow()
-		{
-			return (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-		}
+		public static int UnixNow() =>
+			(int)DateTimeOffset.Now.ToUnixTimeSeconds();
 		/// <summary>
 		/// Текущее МЕСТНОЕ время в формате Unix в миллисекундах
 		/// </summary>
-		public static long UnixNow_MilliSec()
-		{
-			return DateTimeOffset.Now.ToUnixTimeMilliseconds();
-		}
+		public static long UnixNow_MilliSec() =>
+			DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		/// <summary>
 		/// Текущее время в миллисекундах (последние три цифры)
 		/// </summary>
-		public static int MilliSec()
-		{
-			return DateTime.Now.Millisecond;
-		}
+		public static int MilliSec() =>
+			DateTime.Now.Millisecond;
 
 		/// <summary>
 		/// Смещение временной зоны для правильного отображения времени на графиках
 		/// </summary>
-		public static int TimeZone(int unix)
-		{
-			return unix + Offset;
-		}
+		public static int TimeZone(int unix) =>
+			unix + Offset;
 
 
 

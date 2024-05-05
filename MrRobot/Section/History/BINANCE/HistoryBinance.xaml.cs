@@ -9,6 +9,7 @@ using RobotLib;
 using MrRobot.inc;
 using MrRobot.Connector;
 using MrRobot.Interface;
+using System;
 
 namespace MrRobot.Section
 {
@@ -22,17 +23,21 @@ namespace MrRobot.Section
 
 			InstrLB.ItemsSource = BINANCE.Instrument.ListAll;
 			InstrLB.SelectionChanged += InstrLBchanged;
+			InstrLB.SelectedIndex = BinanceDC.IS_Index;
+			InstrLB.ScrollIntoView(InstrLB.SelectedItem);
 		}
 
 		void InstrLBchanged(object s, SelectionChangedEventArgs e)
 		{
 			var unit = InstrLB.SelectedItem as SpisokUnit;
 
+			BinanceDC.IS_Index = InstrLB.SelectedIndex;
 			BinanceDC.IS_SymbolName = unit.Str04;
 			BinanceDC.IS_TickSize = format.E(unit.Dec01);
 			BinanceDC.IS_QtyMin	  = format.E(unit.Dec02);
 			BinanceDC.IS_QtyStep  = format.E(unit.Dec03);
 			BinanceDC.IS_History  = format.DTimeFromUnix((int)unit.Lng01);
+			BinanceDC.DateBegin   = format.DTFromUnix((int)unit.Lng01);
 
 			DataContext = new BinanceDC();
 		}
@@ -44,6 +49,42 @@ namespace MrRobot.Section
 			var spl = txt.Split('/');
 			Process.Start($"https://www.binance.com/ru/trade/{spl[0]}_{spl[1]}?type=spot");
 		}
+
+
+
+
+
+		void DownloadGo(object s, RoutedEventArgs e)
+		{
+			var unit = InstrLB.SelectedItem as SpisokUnit;
+
+			long start = format.UnixMsFromDate(SetupDateBegin.Text);
+			var arr = BINANCE.Trades(unit.Str01, start, 1);
+			if (arr.Count == 0)
+				return;
+			decimal idMin = arr[0].a;
+
+
+			long finish = format.UnixNow_MilliSec() - 60000;
+			arr = BINANCE.Trades(unit.Str01, finish);
+			if (arr.Count == 0)
+				return;
+			int c = arr.Count - 1;
+			decimal idMax = arr[c].a;
+
+			// Количество страниц для загрузки
+			int pgCount = (int)Math.Ceiling((idMax - idMin) / 1000m);
+			WriteLine(pgCount);
+		}
+
+		void DownloadCancel(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+
+
+
 
 
 
@@ -123,11 +164,20 @@ namespace MrRobot.Section
 			public static string HDinstrCount =>
 				$"{BINANCE.Instrument.Count} инструмент{format.End(BINANCE.Instrument.Count, "", "а", "ов")}";
 
+			
+			public static int IS_Index
+			{
+				get => position.Val("1.Binance.IS.Index", 0);
+				set => position.Set("1.Binance.IS.Index", value);
+			}
+
 			public static string IS_SymbolName { get; set; }
 			public static string IS_TickSize { get; set; }
 			public static string IS_QtyMin { get; set; }
 			public static string IS_QtyStep { get; set; }
 			public static string IS_History { get; set; }
+			public static DateTime DateBegin { get; set; }
 		}
+
 	}
 }
