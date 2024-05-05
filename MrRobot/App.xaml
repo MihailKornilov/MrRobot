@@ -247,10 +247,23 @@
 		</Style>
 
 
+        <!-- Ссылка: крупный текст -->
+        <Style x:Key="TBUrl" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="MinWidth" Value="20"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#31618C"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#3C76AA" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
 
 
-		<!-- Красный крестик отмены выбора -->
+        <!-- Красный крестик отмены выбора -->
 		<Style x:Key="CancelRed" TargetType="TextBlock">
 			<Setter Property="Cursor" Value="Hand"/>
 			<Setter Property="Margin" Value="7,-1,0,0"/>

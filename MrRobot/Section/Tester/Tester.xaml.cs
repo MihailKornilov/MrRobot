@@ -16,9 +16,11 @@ namespace MrRobot.Section
 
         public void TesterInit()
         {
-            InitializeComponent();
+			DataContext = new Balance();
 
-            CDIpanel.Page(4).TBLink = SelectLink.TBLink;
+			InitializeComponent();
+
+			CDIpanel.Page(4).TBLink = SelectLink.TBLink;
             CDIpanel.Page(4).OutMethod += SourceChanged;
 
             RobotsListBox.ItemsSource = Robots.ListBox();

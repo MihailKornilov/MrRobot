@@ -48,10 +48,12 @@ namespace MrRobot.Interface
 			UnitList = new List<SpisokUnit>();
 			ID_UNIT = new Dictionary<int, SpisokUnit>();
 
+			int num = 1;
 			my.Main.Delegat(SQL, res =>
 			{
 				var unit = new SpisokUnit(res);
 				unit = UnitFieldsFill(unit, res);
+				unit.Num = $"{num++}.";
 				UnitList.Add(unit);
 				ID_UNIT.Add(unit.Id, unit);
 			});
@@ -233,6 +235,8 @@ namespace MrRobot.Interface
 		// ---=== Общие переменные ===---
 		public int Int01 { get; set; }				// Значение INT32 1
 		public decimal Dec01 { get; set; }           // Значение DECIMAL 1
+		public decimal Dec02 { get; set; }           // Значение DECIMAL 2
+		public decimal Dec03 { get; set; }           // Значение DECIMAL 3
 		public double Dbl01 { get; set; }           // Значение DOUBLE 1
 		public double Dbl02 { get; set; }           // Значение DOUBLE 2
 		public double Dbl03 { get; set; }           // Значение DOUBLE 3
@@ -253,6 +257,8 @@ namespace MrRobot.Interface
 
 		public string Str01 { get; set; }
 		public string Str02 { get; set; }
+		public string Str03 { get; set; }
+		public string Str04 { get; set; }
 
 		public long   Lng01 { get; set; }           // Значение LONG 1
 		public string Lng01str { get; set; }

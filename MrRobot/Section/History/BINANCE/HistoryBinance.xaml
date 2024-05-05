@@ -8,24 +8,85 @@
 			 d:DesignWidth="975"
 			 d:DesignHeight="600">
 
+    <UserControl.Resources>
+        <!-- Шаблон для списка инструментов -->
+        <DataTemplate x:Key="InstrUnitTmp">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding Num}"
+                       Width="30"
+                       FontSize="11"
+                       Padding="0,1,5,0"
+                       HorizontalContentAlignment="Right"
+                       Foreground="#999"/>
+                <Label Content="{Binding Str04}" Padding="0,1" FontSize="11"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="210"/>
+            <RowDefinition Height="150"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
         <!-- ЗАГОЛОВОК -->
         <Border Grid.Row="0" Margin="10" BorderBrush="#C6D8E6" BorderThickness="1">
             <StackPanel Background="#ECF3F8" Orientation="Horizontal">
-                <TextBlock Text="Binance" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
+                <TextBlock Text="{Binding HDname}" Margin="8,3,0,0" FontSize="22" Foreground="#444"/>
                 <TextBlock Text=":" Margin="0,3,0,0" FontSize="22" Foreground="#444"/>
-                <TextBlock Text="123 инструмента" Margin="5,3,0,0" FontSize="22" Foreground="#999"/>
+                <TextBlock Text="{Binding HDinstrCount}" Margin="5,3,0,0" FontSize="22" Foreground="#999"/>
+                <Button Content="Обновить"
+						Background="Transparent"
+						Foreground="#A0B5C8"
+						BorderThickness="0"
+						Width="80"
+                        Margin="60,8"
+						Cursor="Hand"
+                        Click="InstrumentListUpd"/>
             </StackPanel>
         </Border>
 
         <Grid Grid.Row="1">
-            <Button Content="ExchangeInfo" Width="90" Height="30" Click="Info"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="500"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!--Информация о выбранном инструменте-->
+            <Grid Grid.Column="0" Margin="10,0,0,9" Background="#ECECCD">
+                <Grid Background="#FFFFE0" Margin="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <ListBox Grid.Column="0"
+                             Name="InstrLB"
+                             Margin="8"
+                             ItemTemplate="{StaticResource InstrUnitTmp}"/>
+
+                    <StackPanel Grid.Column="1" Margin="0,7,0,0">
+                        <TextBlock Text="{Binding IS_SymbolName}" Style="{StaticResource TBUrl}" MouseLeftButtonDown="SiteGo"/>
+                        <WrapPanel Margin="0,4,0,0">
+                            <Label Content="Шаг цены:" Style="{StaticResource LabelHistory}"/>
+                            <TextBlock Text="{Binding IS_TickSize}"/>
+                        </WrapPanel>
+                        <WrapPanel Margin="0,4,0,0">
+                            <Label Content="Мин. ордер:" Style="{StaticResource LabelHistory}"/>
+                            <TextBlock Text="{Binding IS_QtyMin}"/>
+                        </WrapPanel>
+                        <WrapPanel Margin="0,4,0,0">
+                            <Label Content="Шаг ордера:" Style="{StaticResource LabelHistory}"/>
+                            <TextBlock Text="{Binding IS_QtyStep}"/>
+                        </WrapPanel>
+                        <WrapPanel Margin="0,4,0,0">
+                            <Label Content="Начало истории:" Style="{StaticResource LabelHistory}"/>
+                            <TextBlock Text="{Binding IS_History}"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
         </Grid>
 
     </Grid>

@@ -61,6 +61,7 @@ namespace MrRobot
 			await Task.Run(() => new Robots());		StartLog("Загрузка Роботов");
 			await Task.Run(() => new BYBIT());		StartLog("Загрузка данных биржи ByBit");
 			await Task.Run(() => new MOEX());		StartLog("Загрузка данных МосБиржи");
+			await Task.Run(() => new BINANCE());	StartLog("Загрузка данных биржи Binance");
 			await Task.Run(() => new CDIpanel());	StartLog("Инициализация выпадающего списка для выбора Свечных данных");
 			await Task.Run(() => new HttpServer());	StartLog("Запуск Http-сервера");
 			
