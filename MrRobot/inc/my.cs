@@ -19,15 +19,17 @@ namespace MrRobot.inc
 			$"database={db};" +
 			 "Convert Zero Datetime=True;";
 
-		public static my Main { get; set; }
-		public static my Data { get; set; }
+		public static my Main { get; set; }	// mrrobot
+		public static my Data { get; set; }	// candles
 		public static my Obt { get; set; }	// OrderBookTrade
+		public static my Tick { get; set; }	// ticks
 
 		public my()
 		{
 			Main = new my("mrrobot");
 			Data = new my("candles");
 			Obt  = new my("orderbooktrade");
+			Tick = new my("ticks");
 		}
 		my(string db)
 		{

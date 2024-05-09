@@ -71,6 +71,8 @@ namespace RobotLib
 		/// </summary>
 		public static string DayFromUnix(int unix) =>
 			DTimeFromUnix(unix).Substring(0, 10);
+		public static string DayFromUnixMs(long unix) =>
+			DTimeFromUnix(unix).Substring(0, 10);
 		/// <summary>
 		/// Получение времени в формате 12:49:34
 		/// </summary>

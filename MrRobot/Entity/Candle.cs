@@ -480,15 +480,16 @@ namespace MrRobot.Entity
 		}
 		public string Symbol { get; set; }
 		public int TimeFrame { get; set; }
-		public int Decimals { get; set; }			// Нулей после запятой
+		public int Decimals { get; set; }			// Нулей после запятой для цены
+		public int QtyDecimals { get; set; }		// Нулей после запятой для объёма
 		public IProgress<decimal> Progress { get; set; }
 		public ProBar Bar { get; set; }             // Основная линия Прогресс-бара
 
 
 		// Для History
 		public int CC { get; set; }                 // CandlesCount - сколько свечей загружено (в процессе)
-		public int UnixStart { get; set; }
-		public int UnixFinish { get; set; }
+		public long UnixStart { get; set; }
+		public long UnixFinish { get; set; }
 
  
 		// Для Converter
@@ -549,10 +550,8 @@ namespace MrRobot.Entity
 
 
 		// Клонирование текущей свечи для создания новой с другим таймфреймом
-		public CandleUnit Clone(int tf)
-		{
-			return new CandleUnit(this, tf);
-		}
+		public CandleUnit Clone(int tf) =>
+			new CandleUnit(this, tf);
 
 
 		public int Unix { get; set; }           // Время свечи в формате Unix согласно Таймфрейму

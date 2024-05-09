@@ -183,6 +183,7 @@
     <Compile Include="Entity\MainMenu.cs" />
     <Compile Include="Connector\MOEX.cs" />
     <Compile Include="Entity\Patterns.cs" />
+    <Compile Include="Entity\Tick.cs" />
     <Compile Include="Entity\WSS.cs" />
     <Compile Include="inc\HttpServer.cs" />
     <Compile Include="inc\my.cs" />

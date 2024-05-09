@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using static System.Console;
 
@@ -9,7 +11,7 @@ using RobotLib;
 using MrRobot.inc;
 using MrRobot.Connector;
 using MrRobot.Interface;
-using System;
+using MrRobot.Entity;
 
 namespace MrRobot.Section
 {
@@ -53,34 +55,126 @@ namespace MrRobot.Section
 
 
 
+		CDIparam PARAM;
 
-		void DownloadGo(object s, RoutedEventArgs e)
+		// Установка UNIX-даты окончания загрузки
+		long UnixFinish()
 		{
-			var unit = InstrLB.SelectedItem as SpisokUnit;
+			var item = SetupPeriod.SelectedItem as ComboBoxItem;
+			var today = format.UnixNow_MilliSec() - 60000;
+			if (item.TabIndex > 0)
+			{
+				var finish = format.UnixMsFromDate(SetupDateBegin.Text) + (long)item.TabIndex * 24 * 60 * 60 * 1000;
+				return finish > today ? today : finish;
+			}
 
-			long start = format.UnixMsFromDate(SetupDateBegin.Text);
-			var arr = BINANCE.Trades(unit.Str01, start, 1);
+			// По сегодняшний день
+			return today;
+		}
+		async void DownloadGo(object s, RoutedEventArgs e)
+		{
+			var IUnit = InstrLB.SelectedItem as SpisokUnit;
+
+			PARAM = new CDIparam()
+			{
+				ExchangeId	 = BINANCE.ExchangeId,
+				InstrumentId = IUnit.Id,
+				Symbol		 = IUnit.Str01,
+				UnixStart	 = format.UnixMsFromDate(SetupDateBegin.Text),
+				UnixFinish   = UnixFinish(),
+				Decimals	 = format.Decimals(IUnit.Dec01),
+				QtyDecimals  = format.Decimals(IUnit.Dec03),
+				CC = 0,
+				Progress = new Progress<decimal>(v =>
+				{
+					ProBar.Value = (double)v;
+					ProcessText.Text = $"{format.DayFromUnixMs(PARAM.UnixStart)}: " +
+									   $"загружено тиков: {PARAM.CC}" +
+									   $"   ({v}%)" +
+									   $"   {PARAM.Bar.TimeLeft}";
+				})
+			};
+
+			ElemBlock();
+			await Task.Run(DownloadProcess);
+			ElemBlock();
+		}
+
+		// Блокировка элементов настроек скачивания данных при загрузке
+		void ElemBlock()
+		{
+			ProBar.Value = 0;
+			SetupPanel.IsEnabled = !PARAM.IsProcess;
+			G.Vis(ProgressPanel, PARAM.IsProcess);
+			//			G.Hid(DownloadedPanel);
+		}
+
+		// Количество страниц для загрузки
+		int BarCount()
+		{
+			var arr = BINANCE.Trades(PARAM.Symbol, PARAM.UnixStart, 1);
 			if (arr.Count == 0)
-				return;
+				return 0;
 			decimal idMin = arr[0].a;
 
 
-			long finish = format.UnixNow_MilliSec() - 60000;
-			arr = BINANCE.Trades(unit.Str01, finish);
+			arr = BINANCE.Trades(PARAM.Symbol, PARAM.UnixFinish);
 			if (arr.Count == 0)
-				return;
+				return 0;
 			int c = arr.Count - 1;
 			decimal idMax = arr[c].a;
 
-			// Количество страниц для загрузки
-			int pgCount = (int)Math.Ceiling((idMax - idMin) / 1000m);
-			WriteLine(pgCount);
+			return (int)Math.Ceiling((idMax - idMin) / 1000m);
 		}
 
-		void DownloadCancel(object sender, RoutedEventArgs e)
+		// Процесс скачивания исторических данных в фоновом режиме
+		void DownloadProcess()
 		{
+			Tick.TDIcreate(PARAM);
 
+			PARAM.Bar = new ProBar(BarCount(), 1000);
+
+			int barIndex = 0;
+			var insert = new List<string>();
+			var unixList = new List<long>();	// Список Unix для избежания повторов
+			while (PARAM.IsProcess)
+			{
+				var list = BINANCE.Trades(PARAM.Symbol, PARAM.UnixStart);
+				int count = list.Count;
+				if (count == 0)
+					break;
+
+				PARAM.Bar.Val(barIndex++, PARAM.Progress);
+
+				for (int k = 0; k < count; k++)
+				{
+					var tick = new TickUnit(list[k]);
+
+					while (unixList.Contains(tick.Unix))
+						tick.Unix++;
+
+					unixList.Add(tick.Unix);
+
+					if (tick.Unix > PARAM.UnixFinish)
+					{
+						PARAM.IsProcess = false;
+						break;
+					}
+					insert.Add(tick.Insert);
+				}
+
+				PARAM.CC += insert.Count;
+				Tick.DataInsert(PARAM.Table, insert);
+				PARAM.UnixStart = (long)(list[count - 1].T) + 1;
+			}
+
+			Tick.TDIupdate(PARAM);
 		}
+
+
+		// Отмена процесса загрузки
+		void DownloadCancel(object s, RoutedEventArgs e) =>
+			PARAM.IsProcess = false;
 
 
 

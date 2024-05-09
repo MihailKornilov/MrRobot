@@ -113,7 +113,7 @@ namespace MrRobot.Section
 				Progress = new Progress<decimal>(v =>
 				{
 					ProBar.Value = (double)v;
-					ProcessText.Text = $"{format.DayFromUnix(PARAM.UnixStart)}: " +
+					ProcessText.Text = $"{format.DayFromUnix((int)PARAM.UnixStart)}: " +
 									   $"загружено свечей: {PARAM.CC}" +
 									   $"   ({v}%)" +
 									   $"   {PARAM.Bar.TimeLeft}";
@@ -152,7 +152,7 @@ namespace MrRobot.Section
 				if (!PARAM.IsProcess)
 					return;
 
-				var list = BYBIT.Kline(PARAM.Symbol, PARAM.TimeFrame, PARAM.UnixStart);
+				var list = BYBIT.Kline(PARAM.Symbol, PARAM.TimeFrame, (int)PARAM.UnixStart);
 				if (list == null)
 					break;
 
@@ -190,7 +190,7 @@ namespace MrRobot.Section
 			if (PARAM.TimeFrame > 1)
 				return;
 
-			var list = BYBIT.Kline(PARAM.Symbol, 1, PARAM.UnixStart);
+			var list = BYBIT.Kline(PARAM.Symbol, 1, (int)PARAM.UnixStart);
 
 			// Прибавление 12 часов
 			PARAM.UnixStart += list.Count > 0 ? 0 : 43_200;
