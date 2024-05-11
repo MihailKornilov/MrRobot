@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
+    <title>TITLE</title>
+    <link href="../styles.css" rel="stylesheet">
+    <script type="text/javascript" src="../lightweight-charts.production.js"></script>
+</head>
+    <body>
+        <div id="container"></div>
+
+        <script type="text/javascript">
+            const container = document.getElementById('container');
+            const chart = LightweightCharts.createChart(container,
+            {
+                layout: {
+                    background: { color: "#222" },
+                    textColor: "#C3BCDB",
+                },
+                grid: {
+                    vertLines: { color: "#444" },
+                    horzLines: { color: "#444" },
+                },
+                timeScale: {
+                    borderColor: "#71649C",
+                    timeVisible: true,
+                    secondsVisible: true
+                }
+            });
+
+
+
+
+            // График-линия
+            const Line = chart.addLineSeries({
+                color: '#2962FF',
+                priceFormat: {
+                    minMove: 0.00001,
+                    precision: 5
+                }
+            });
+            Line.setData(LINE_DATA);
+
+
+
+
+            //chart.timeScale().scrollToPosition(10);
+
+            window.addEventListener("resize", () => { chart.resize(window.innerWidth, window.innerHeight); });
+        </script>
+    </body>
+</html>

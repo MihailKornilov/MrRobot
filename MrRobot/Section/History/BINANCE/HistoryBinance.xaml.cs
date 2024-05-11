@@ -27,6 +27,8 @@ namespace MrRobot.Section
 			InstrLB.SelectionChanged += InstrLBchanged;
 			InstrLB.SelectedIndex = BinanceDC.IS_Index;
 			InstrLB.ScrollIntoView(InstrLB.SelectedItem);
+
+			new ChartLight(ChartPanel);
 		}
 
 		void InstrLBchanged(object s, SelectionChangedEventArgs e)

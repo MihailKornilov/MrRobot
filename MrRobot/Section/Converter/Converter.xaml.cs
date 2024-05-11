@@ -40,7 +40,7 @@ namespace MrRobot.Section
 				return;
 
 			ResultListCreate();
-			new AdvChart(ChartPanel, SourceUnit);
+			new ChartAdvanced(ChartPanel, SourceUnit);
 		}
 
 
@@ -235,7 +235,7 @@ namespace MrRobot.Section
 				return;
 
 			var item = (sender as ListBox).SelectedItem as CDIunit;
-			new AdvChart(ChartPanel, item);
+			new ChartAdvanced(ChartPanel, item);
 		}
 
 		/// <summary>

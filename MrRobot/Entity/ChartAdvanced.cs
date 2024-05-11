@@ -10,12 +10,12 @@ using MrRobot.inc;
 
 namespace MrRobot.Entity
 {
-	public class AdvChart
+	public class ChartAdvanced
 	{
 		static readonly IPAddress IP = IPAddress.Loopback;
 		static readonly int Port = 8888;
 
-		public AdvChart(Panel panel, CDIunit cdi)
+		public ChartAdvanced(Panel panel, CDIunit cdi)
 		{
 			if (cdi == null)
 				return;

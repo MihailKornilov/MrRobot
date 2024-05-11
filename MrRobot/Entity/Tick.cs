@@ -10,6 +10,7 @@ using System.Diagnostics;
 using CefSharp.DevTools.CSS;
 using static MrRobot.Section.OBTdb;
 using System.Windows.Media.Animation;
+using MySqlConnector;
 
 namespace MrRobot.Entity
 {
@@ -105,6 +106,13 @@ namespace MrRobot.Entity
 			Qty   = v.q;
 			IsBuy = v.m;
 		}
+		// Данные из базы
+		public TickUnit(MySqlDataReader res)
+		{
+			Unix  = res.GetInt64("unix");
+			Price = res.GetDecimal("price");
+		}
+
 		public long Unix { get; set; }		// Время тика в формате UnixMs
 		public decimal Price { get; set; }	// Цена
 		public decimal Qty { get; set; }    // Объём
@@ -113,5 +121,9 @@ namespace MrRobot.Entity
 		// Внесение в базу одного тика
 		public string Insert =>
 			$"({Unix},{Price},{Qty},{(IsBuy ? 1 : 0)})";
+
+		// Запись для графика
+		public string ToChart =>
+			$"{{value:{Price},time:{(int)(Unix/1000)}}}";
 	}
 }

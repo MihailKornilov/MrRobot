@@ -166,13 +166,14 @@
     </ApplicationDefinition>
     <Compile Include="Connector\BINANCE.cs" />
     <Compile Include="Connector\BYBIT.cs" />
-    <Compile Include="Entity\AdvChart.cs" />
+    <Compile Include="Entity\ChartAdvanced.cs" />
     <Compile Include="Entity\CDIselectPanel.xaml.cs">
       <DependentUpon>CDIselectPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entity\CDIselectLink.xaml.cs">
       <DependentUpon>CDIselectLink.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entity\ChartLight.cs" />
     <Compile Include="Entity\ChartUC.xaml.cs">
       <DependentUpon>ChartUC.xaml</DependentUpon>
     </Compile>
@@ -668,6 +669,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Browser\History\Chart.tmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Browser\History\LightLine.tmp.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Browser\MoexIssQueries.tmp.html">
