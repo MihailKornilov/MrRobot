@@ -13,7 +13,8 @@ namespace MrRobot.Entity
         public delegate void DLGT();
         public static DLGT Changed { get; set; }
 
-        public MainMenu()
+		static ListBox LB { get; set; }
+		public MainMenu()
         {
             // Создание главного меню
             var SP = new StackPanel();
@@ -33,8 +34,6 @@ namespace MrRobot.Entity
 
             Go();
         }
-
-        static ListBox LB { get; set; }
 
         /// <summary>
         /// Клик по кнопке меню
@@ -76,7 +75,7 @@ namespace MrRobot.Entity
         public int Index { get; private set; }
         // Имя раздела
         public string Section => Enum.GetName(typeof(SECT), Index);
-        public string Image => $"pack://application:,,,/Resources/images/button-{Section}.png";
+        public string Image     => $"pack://application:,,,/Resources/images/button-{Section}.png";
         public string ImageOver => $"pack://application:,,,/Resources/images/button-{Section}-over.png";
     }
 }

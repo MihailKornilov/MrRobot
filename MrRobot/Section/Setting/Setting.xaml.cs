@@ -28,6 +28,7 @@ namespace MrRobot.Section
 		/// </summary>
 		string[] MenuUnits = {
 				"Общие",
+				"Разделы",
 				"Данные",
 				"АвтоПрогон"
 			};

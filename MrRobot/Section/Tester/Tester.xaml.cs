@@ -19,8 +19,8 @@ namespace MrRobot.Section
 
 			InitializeComponent();
 
-			CDIpanel.Page(4).TBLink = SelectLink.TBLink;
-            CDIpanel.Page(4).OutMethod += SourceChanged;
+			//CDIpanel.Page(4).TBLink = SelectLink.TBLink;
+   //         CDIpanel.Page(4).OutMethod += SourceChanged;
 
             RobotsListBox.ItemsSource = Robots.ListBox();
             RobotsListBox.SelectedIndex = 0;
@@ -43,7 +43,7 @@ namespace MrRobot.Section
         /// </summary>
         void SourceChanged()
         {
-            if (position.MainMenu() != (int)SECT.Tester)
+            //if (position.MainMenu() != (int)SECT.Tester)
                 return;
 
             G.Vis(RobotPanel, CDIpanel.CdiId > 0);

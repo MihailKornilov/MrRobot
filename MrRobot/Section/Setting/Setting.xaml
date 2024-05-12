@@ -52,10 +52,11 @@
                         <Separator Background="#C8D2DA" Margin="0"/>
                     </StackPanel>
 
-                    <Section:SettingMain Grid.Row="1" x:Name="Setting0" Visibility="Collapsed"/>
-                    <Section:SettingEntity Grid.Row="1" x:Name="Setting1" Visibility="Collapsed"/>
+                    <Section:SettingMain    Grid.Row="1" x:Name="Setting0" Visibility="Collapsed"/>
+                    <Section:SettingSection Grid.Row="1" x:Name="Setting1" Visibility="Collapsed"/>
+                    <Section:SettingEntity  Grid.Row="1" x:Name="Setting2" Visibility="Collapsed"/>
 
-                    <StackPanel Grid.Row="1" x:Name="Setting2" Visibility="Collapsed">
+                    <StackPanel Grid.Row="1" x:Name="Setting3" Visibility="Collapsed">
                         <Button Name="AutoProgonButton"
                                 Content="Go!"
                                 Width="50"

@@ -202,13 +202,13 @@ namespace MrRobot
 		public LogLoad()
 		{
 			LB = new ListBox();
+			LB.Width  = 460;
+			LB.Height = 400;
+			LB.Margin = new Thickness(20, 20, 0, 0);
+			LB.Background  = format.RGB("#FFFFF0");
+			LB.BorderBrush = format.RGB("#CCCC88");
 			LB.HorizontalAlignment = HorizontalAlignment.Left;
 			LB.VerticalAlignment = VerticalAlignment.Top;
-			LB.Margin = new Thickness(20, 20, 0, 0);
-			LB.Width = 460;
-			LB.Height = 400;
-			LB.Background = format.RGB("#FFFFF0");
-			LB.BorderBrush = format.RGB("#CCCC88");
 			Panel.SetZIndex(LB, 10);
 			Grid.SetColumn(LB, 1);
 			G.MainGrid.Add(LB);
