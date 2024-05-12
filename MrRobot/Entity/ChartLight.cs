@@ -14,7 +14,7 @@ namespace MrRobot.Entity
 
 		ChromiumWebBrowser Browser;
 		string PathTmp  => Path.GetFullPath($"Browser/History/LightLine.tmp.html");
-		string PathHtml => Path.GetFullPath($"Browser/History/LightLine.html");
+		string PathHtml => PathTmp.Replace(".tmp", "");
 
 
 		public ChartLight(Panel panel)

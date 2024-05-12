@@ -139,7 +139,7 @@ namespace MrRobot.Entity
 
             MainMenu.Changed += PageChanged;
         }
-        public static CDIpageUnit Page(int page) => PageASS[page];
+        public static CDIpageUnit Page(int page) => new CDIpageUnit(0);// PageASS[page];
         static Border OpenPanel  => G.CDIselectPanel.OpenPanel;
         static ListView GroupBox => G.CDIselectPanel.GroupBox;
         static ListBox CDIList   => G.CDIselectPanel.CDIList;

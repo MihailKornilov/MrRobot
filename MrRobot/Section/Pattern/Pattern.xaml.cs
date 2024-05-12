@@ -19,31 +19,32 @@ namespace MrRobot.Section
     /// </summary>
     public partial class Pattern : UserControl
     {
-        public Pattern() => G.Pattern = this;
-
-        public void Init()
+        public Pattern()
         {
-            InitializeComponent();
-            CDIpanel.Page(3).TBLink = SelectLink.TBLink;
-            CDIpanel.Page(3).OutMethod += SourceChanged;
-            MainMenu.Changed += () => ArchiveGo(true);
-            MainMenu.Changed += FoundLine;
+			G.Pattern = this;
 
-            LengthSlider.Value = position.Val("3_CandlesCountForSearch", 3);
-            LengthSlider.ValueChanged += LengthSliderChanged;
-            PrecisionPercentSlider.Value = position.Val("3_ScatterPercent", 100);
-            PrecisionPercentSlider.ValueChanged += PrecisionPercentChanged;
-            FoundRepeatMin.Text = position.Val("3_FoundRepeatMin", "0");
-            FoundButtonBack.Content = "<<<";
-            FoundSlider.ValueChanged += (s, e) => PatternFoundStep();
+			InitializeComponent();
 
-            SourceChanged();
+			CDIpanel.Page(3).TBLink = SelectLink.TBLink;
+			CDIpanel.Page(3).OutMethod += SourceChanged;
+			MainMenu.Changed += () => ArchiveGo(true);
+			MainMenu.Changed += FoundLine;
 
-            G.PatternArchive.Init();
-        }
+			LengthSlider.Value = position.Val("3_CandlesCountForSearch", 3);
+			LengthSlider.ValueChanged += LengthSliderChanged;
+			PrecisionPercentSlider.Value = position.Val("3_ScatterPercent", 100);
+			PrecisionPercentSlider.ValueChanged += PrecisionPercentChanged;
+			FoundRepeatMin.Text = position.Val("3_FoundRepeatMin", "0");
+			FoundButtonBack.Content = "<<<";
+			FoundSlider.ValueChanged += (s, e) => PatternFoundStep();
+
+			SourceChanged();
+
+			G.PatternArchive.Init();
+		}
 
 
-        bool IsSrcChosen => SrcId > 0;  // Свечные данные выбраны
+		bool IsSrcChosen => SrcId > 0;  // Свечные данные выбраны
         int SrcId => CDIpanel.CdiId;    // ID свечных данных
         CDIunit SrcUnit => Candle.Unit(SrcId);  // Единица свечных данных
 

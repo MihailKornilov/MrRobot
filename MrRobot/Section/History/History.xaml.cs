@@ -19,10 +19,11 @@ namespace MrRobot.Section
 	/// </summary>
 	public partial class History : UserControl
 	{
-		public History() => G.History = this;
-
-		public void Init()
+		public History()
 		{
+			G.History = this;
+			new BYBIT();
+
 			DataContext = new SpisokUnit(0);
 			InitializeComponent();
 
@@ -36,7 +37,7 @@ namespace MrRobot.Section
 
 			Candle.Updated += DownloadedListCreate;
 
-			G.HistoryMoex.Init();
+			//G.HistoryMoex.Init();
 		}
 
 

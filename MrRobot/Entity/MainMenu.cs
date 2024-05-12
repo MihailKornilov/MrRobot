@@ -16,24 +16,21 @@ namespace MrRobot.Entity
         public MainMenu()
         {
             // Создание главного меню
-            var GridMain = G.MW.Content as Panel;
-            var grid = GridMain.Children[0] as Panel;
-            grid.Background = format.RGB("#C8DCEE");
-            
             var SP = new StackPanel();
             SP.Background = format.RGB("#DCEBF8");
             SP.Margin = new Thickness(0,1,1,0);
-            grid.Children.Add(SP);
 
-            var lb = new ListBox();
-            lb.Style = Application.Current.Resources["MMStyle"] as Style;
-            lb.ItemTemplate = Application.Current.Resources["MMItemTmp"] as DataTemplate;
-            lb.ItemContainerStyle = Application.Current.Resources["MMItemStyle"] as Style;
+            LB = new ListBox();
+			LB.Style = Application.Current.Resources["MMStyle"] as Style;
+			LB.ItemTemplate = Application.Current.Resources["MMItemTmp"] as DataTemplate;
+			LB.ItemContainerStyle = Application.Current.Resources["MMItemStyle"] as Style;
             for (int i = 1; i <= Enum.GetNames(typeof(SECT)).Length; i++)
-                lb.Items.Add(new MMUnit(i));
-            lb.SelectionChanged += Change;
-            SP.Children.Add(lb);
-            LB = lb;
+				LB.Items.Add(new MMUnit(i));
+			LB.SelectionChanged += Change;
+            SP.Children.Add(LB);
+
+			G.Grid0.Add(SP);
+
             Go();
         }
 
@@ -43,30 +40,23 @@ namespace MrRobot.Entity
         /// Клик по кнопке меню
         /// </summary>
         public static void Go(object s, RoutedEventArgs e) => Go();
-        public static void Go(int i = 0) => LB.SelectedIndex = position.MainMenu(i) - 1;
+        public static void Go(int i = 0) =>
+            LB.SelectedIndex = position.MainMenu(i) - 1;
 
         /// <summary>
         /// Смена раздела Главного меню
         /// </summary>
         void Change(object sender, SelectionChangedEventArgs e)
         {
-            var box = sender as ListBox;
+			var box = sender as ListBox;
             var unit = box.SelectedItem as MMUnit;
 
-            position.MainMenu(unit.Index);
+			position.MainMenu(unit.Index);
 
-            int index = 1;
-            var UC = (G.MW.Content as Panel).Children;
-            for (int i = 0; i < UC.Count; i++)
+            for (int index = 1; index <= G.Grid1.Count; index++)
             {
-                var uc = UC[i] as UserControl;
-                if (uc == null)
-                    continue;
-                if(!uc.GetType().FullName.Contains("Section"))
-                    continue;
-
-                G.Vis(uc, index == unit.Index);
-                index++;
+				var uc = G.Grid1[index-1] as UserControl;
+				G.Vis(uc, index == unit.Index);
             }
 
             Changed?.Invoke();

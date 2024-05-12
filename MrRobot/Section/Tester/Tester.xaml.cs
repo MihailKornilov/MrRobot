@@ -12,11 +12,10 @@ namespace MrRobot.Section
     /// </summary>
     public partial class Tester : UserControl
     {
-        public Tester() => G.Tester = this;
-
-        public void TesterInit()
+        public Tester()
         {
-			DataContext = new Balance();
+			G.Tester = this;
+            DataContext = new Balance();
 
 			InitializeComponent();
 

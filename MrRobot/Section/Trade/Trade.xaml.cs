@@ -13,10 +13,10 @@ namespace MrRobot.Section
 	/// </summary>
 	public partial class Trade : UserControl
 	{
-		public Trade() => G.Trade = this;
-
-		public void TradeInit()
+		public Trade()
 		{
+			G.Trade = this; 
+
 			InitializeComponent();
 
 			ApiKey.Text = BYBIT.API_KEY;

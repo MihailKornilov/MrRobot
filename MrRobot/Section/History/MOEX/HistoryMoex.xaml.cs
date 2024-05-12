@@ -13,8 +13,13 @@ namespace MrRobot.Section
 {
 	public partial class HistoryMoex : UserControl
 	{
-		public HistoryMoex() =>
+		public HistoryMoex()
+		{
 			G.HistoryMoex = this;
+
+			new MOEX();
+			Init();
+		}
 
 		public void Init()
 		{

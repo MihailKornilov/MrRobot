@@ -177,7 +177,8 @@
     <Compile Include="Entity\ChartUC.xaml.cs">
       <DependentUpon>ChartUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Entity\FastFind.cs" />
+    <Compile Include="Entity\Elem\Back.cs" />
+    <Compile Include="Entity\Elem\FastFind.cs" />
     <Compile Include="Entity\InstrumentSelect.xaml.cs">
       <DependentUpon>InstrumentSelect.xaml</DependentUpon>
     </Compile>
@@ -249,9 +250,6 @@
     </Compile>
     <Compile Include="Section\Trade\WssVisual.xaml.cs">
       <DependentUpon>WssVisual.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StartWindow.xaml.cs">
-      <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Entity\CDIselectPanel.xaml">
       <SubType>Designer</SubType>
@@ -355,10 +353,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Section\Trade\WssVisual.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="StartWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

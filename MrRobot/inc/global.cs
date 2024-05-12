@@ -20,8 +20,9 @@ namespace MrRobot.inc
 	public class G
 	{
 		public static Dur dur { get; set; }
-		public G()
+		public G(MainWindow mw)
 		{
+			MW = mw;
 			dur = new Dur();
 			Settings();
 		}
@@ -100,6 +101,13 @@ namespace MrRobot.inc
 		public static Exchange Exchange { get; set; }
 
 
+		// Первый Grid главного окна
+		public static UIElementCollection MainGrid =>
+			(MW.Content as Grid).Children;
+		public static UIElementCollection Grid0 =>
+			(MainGrid[0] as Grid).Children;
+		public static UIElementCollection Grid1 =>
+			(MainGrid[1] as Grid).Children;
 
 		// ---=== UserControl's всего приложения ===---
 		public static MainWindow MW     { get; set; }
@@ -158,12 +166,11 @@ namespace MrRobot.inc
 		/// <summary>
 		/// Вывод результата в секундах и миллисекундах в Консоль
 		/// </summary>
-		public void SecondCWL(string msg="")
-		{
+		public void SecondCWL(string msg="") =>
 			WriteLine(msg + Second());
-		}
 
-		public int TotalSeconds() => (int)(SW.ElapsedMilliseconds / 1000);
+		public int TotalSeconds() =>
+			(int)(SW.ElapsedMilliseconds / 1000);
 		public long ElapsedMS => SW.ElapsedMilliseconds;
 
 
@@ -288,57 +295,6 @@ namespace MrRobot.inc
 		}
 	}
 
-
-	/// <summary>
-	/// Задний фон для выпадающего списка
-	/// </summary>
-	class GridBack
-	{
-		delegate void Dcall();
-		static Dcall GBremove;
-
-		public GridBack(FrameworkElement elem)
-		{
-			elem.Visibility = Visibility.Visible;
-
-			var border = elem as Border;
-
-			var grid = new Grid();
-			grid.Background = format.RGB("#888888");
-			grid.Opacity = 0.05;
-			grid.MouseLeftButtonDown += (s, ee) =>
-			{
-				(grid.Parent as Panel).Children.Remove(grid);
-				G.Hid(border);
-			};
-			Grid.SetRow(grid, 0);
-			Grid.SetRowSpan(grid, 5);
-			(border.Parent as Panel).Children.Add(grid);
-		}
-
-		public GridBack(InstrumentSelect panel) => Create(panel.Parent as Panel, panel.OpenPanel);
-		public GridBack(CDIselectPanel panel)   => Create(panel.Parent as Panel, panel.OpenPanel);
-		void Create(Panel panel, Border border)
-		{
-			var grid = new Grid();
-			grid.Background = format.RGB("#888888");
-			grid.Opacity = 0.05;
-			GBremove += () => {
-				panel.Children.Remove(grid);
-				G.Hid(border);
-				GBremove = null;
-			};
-			grid.MouseLeftButtonDown += (s, e) => GBremove();
-			Grid.SetColumn(grid, 0);
-			Grid.SetColumnSpan(grid, 2);
-			panel.Children.Add(grid);
-		}
-		public static void Remove()
-		{
-			if (GBremove != null)
-				GBremove();
-		}
-	}
 
 	/// <summary>
 	/// Список главных разделов приложения

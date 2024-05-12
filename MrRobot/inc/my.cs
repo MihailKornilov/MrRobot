@@ -101,6 +101,10 @@ namespace MrRobot.inc
 			Main.Cmd.Dispose();
 			Data.Cmd.Connection.Close();
 			Data.Cmd.Dispose();
+			Obt.Cmd.Connection.Close();
+			Obt.Cmd.Dispose();
+			Tick.Cmd.Connection.Close();
+			Tick.Cmd.Dispose();
 		}
 
 

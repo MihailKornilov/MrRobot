@@ -19,6 +19,8 @@ namespace MrRobot.Section
 	{
 		public HistoryBinance()
 		{
+			new BINANCE();
+
 			DataContext = new BinanceDC();
 
 			InitializeComponent();

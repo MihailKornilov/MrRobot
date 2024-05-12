@@ -12,10 +12,10 @@ namespace MrRobot.Section
 	/// </summary>
 	public partial class Setting : UserControl
 	{
-		public Setting() => G.Setting = this;
-
-		public void Init()
+		public Setting()
 		{
+			G.Setting = this;
+
 			InitializeComponent();
 			MenuCreate();
 

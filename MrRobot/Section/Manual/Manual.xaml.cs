@@ -7,10 +7,9 @@ namespace MrRobot.Section
 {
     public partial class Manual : UserControl
     {
-        public Manual() => G.Manual = this;
-
-		public void Init()
+        public Manual()
         {
+			G.Manual = this; 
             InitializeComponent();
         }
     }

@@ -15,16 +15,18 @@ namespace MrRobot.Section
 {
 	public partial class Converter : UserControl
 	{
-		public Converter() => G.Converter = this;
-
-		public void Init()
+		public Converter()
 		{
+			G.Converter = this;
+
 			InitializeComponent();
+
 			CDIpanel.Page(2).TBLink = SelectLink.TBLink;
 			CDIpanel.Page(2).OutMethod += SourceChanged;
 			SourceChanged();
 			Candle.Updated += ResultListCreate;
 		}
+
 
 
 		bool IsSourceChosen => SourceId > 0;        // Свечные данные выбраны
