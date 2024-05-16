@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MrRobot.Entity.Elem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,11 @@ namespace MrRobot.Section
 		public SettingSection()
 		{
 			InitializeComponent();
+		}
+
+		void SectionNew(object sender, RoutedEventArgs e)
+		{
+			new Dialog();
 		}
 	}
 }

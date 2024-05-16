@@ -178,6 +178,7 @@
       <DependentUpon>ChartUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Entity\Elem\Back.cs" />
+    <Compile Include="Entity\Elem\Dialog.cs" />
     <Compile Include="Entity\Elem\FastFind.cs" />
     <Compile Include="Entity\InstrumentSelect.xaml.cs">
       <DependentUpon>InstrumentSelect.xaml</DependentUpon>

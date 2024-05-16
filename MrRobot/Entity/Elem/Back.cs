@@ -18,18 +18,20 @@ namespace MrRobot.Entity
 		public Back()
 		{
 			grid = new Grid();
-			grid.Background = format.RGB("#888888");
+			grid.Background = format.RGB("#000000");
 			grid.Opacity = 0.5;
 			grid.MouseLeftButtonDown += (s, e) =>
 			{
 				Method?.Invoke();
-				G.MainGrid.Remove(grid);
+				Hide();
 			};
 			Grid.SetColumn(grid, 0);
 			Grid.SetColumnSpan(grid, 2);
 			Panel.SetZIndex(grid, 2);
 			G.MainGrid.Add(grid);
 		}
+		public void Hide() =>
+			G.MainGrid.Remove(grid);
 	}
 
 
