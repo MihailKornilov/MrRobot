@@ -26,15 +26,6 @@
         <!-- Основные разделы -->
         <Grid Grid.Column="1"/>
 
-        <!--<Section:History	Grid.Column="1"	Visibility="Collapsed"/>
-        <Section:Converter	Grid.Column="1"	Visibility="Collapsed"/>
-        <Section:Pattern	Grid.Column="1"	Visibility="Collapsed"/>
-        <Section:Tester		Grid.Column="1"	Visibility="Collapsed"/>
-        <Section:Trade		Grid.Column="1"	Visibility="Collapsed"/>
-        <Section:Setting	Grid.Column="1" Visibility="Collapsed"/>
-        <Section:LogFile	Grid.Column="1" Visibility="Collapsed"/>
-        <Section:Manual		Grid.Column="1" Visibility="Collapsed"/>-->
-
         <!-- Выпадающий список с инструментами -->
 		<!--<Entity:InstrumentSelect Grid.Column="1" Panel.ZIndex="2"/>-->
         

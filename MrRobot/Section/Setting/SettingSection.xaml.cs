@@ -1,18 +1,10 @@
-﻿using MrRobot.Entity.Elem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using static System.Console;
+
+using MrRobot.Entity;
+using MrRobot.inc;
 
 namespace MrRobot.Section
 {
@@ -24,11 +16,38 @@ namespace MrRobot.Section
 		public SettingSection()
 		{
 			InitializeComponent();
+
+			var tab = new Roster(RodsterSP);
+			tab.Col("Имя раздела", 100);
+			tab.Col("Текст в меню", 100);
+			tab.Col("Заголовок", 200);
 		}
 
 		void SectionNew(object sender, RoutedEventArgs e)
 		{
-			new Dialog();
+			var DLG = new Dialog();
+			var name = DLG.Input("Имя раздела:");
+			name.Focus();
+			var menu = DLG.Input("Текст в меню:");
+			var head = DLG.Input("Заголовок:");
+			var sort = DLG.Input("Сортировка:");
+
+			DLG.Submit += () =>
+			{
+				var sql = "INSERT INTO`_section`(" +
+							"`name`," +
+							"`menu`," +
+							"`head`," +
+							"`sort`" +
+						  ")VALUES(" +
+						   $"'{name.Text}'," +
+						   $"'{menu.Text}'," +
+						   $"'{head.Text}'," +
+						   $"{Convert.ToInt32(sort.Text)}" +
+						  ")";
+				WriteLine(sql);
+				my.Main.Query(sql);
+			};
 		}
 	}
 }

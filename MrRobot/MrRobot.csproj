@@ -180,6 +180,7 @@
     <Compile Include="Entity\Elem\Back.cs" />
     <Compile Include="Entity\Elem\Dialog.cs" />
     <Compile Include="Entity\Elem\FastFind.cs" />
+    <Compile Include="Entity\Elem\Roster.cs" />
     <Compile Include="Entity\InstrumentSelect.xaml.cs">
       <DependentUpon>InstrumentSelect.xaml</DependentUpon>
     </Compile>
